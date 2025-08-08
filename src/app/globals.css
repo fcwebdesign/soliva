@@ -5,6 +5,19 @@
   --bg: #fff;
   --fg: #0a0a0a;
   --accent: #0066CC;
+  --surface: #f5f5f5;
+  --text: #333333;
+  --text-secondary: #666666;
+}
+
+/* Thème sombre */
+[data-theme="dark"] {
+  --bg: #0a0a0a;
+  --fg: #ffffff;
+  --accent: #0066CC;
+  --surface: #1a1a1a;
+  --text: #ffffff;
+  --text-secondary: #cccccc;
 }
 
 * {
@@ -16,6 +29,8 @@ body {
   color: var(--fg);
   max-width: 100%;
   overflow-x: hidden;
+  background-color: var(--bg);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 img {
@@ -67,29 +82,31 @@ p {
   display: flex;
   gap: 1em;
   z-index: 2;
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 .nav-logo {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  font-size: 2rem;
   font-weight: 600;
+  margin-top: -10px;
 }
-
 .nav-logo a {
   display: flex;
   align-items: center;
   gap: 0.25rem;
   font-size: 2rem;
 }
-
 .logo-dot {
   display: inline-block;
-  width: 17px;
-  height: 17px;
+  width: 19px;
+  height: 19px;
   background-color: var(--accent);
   border-radius: 50%;
-  margin: 0 0.05em;
+  margin: -1px 2px;
 }
-
 .styled-word .letter-mask:nth-child(2) > div {
   width: 0.75em;
   height: 0.75em;
@@ -105,10 +122,6 @@ p {
 
 
 
-
-
-
-
 .nav .col:nth-child(1) {
   flex: 1;
 }
@@ -119,12 +132,19 @@ p {
   justify-content: space-between;
 }
 
+.nav-copy {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
 .home {
   width: 100vw;
   height: 100svh;
   overflow: hidden;
   background-color: var(--bg);
   position: relative;
+  transition: background-color 0.3s ease;
 }
 
 .home-mask {
@@ -152,6 +172,8 @@ p {
   font-size: 41vw;
   white-space: nowrap;
   line-height: 0.75;
+  color: var(--fg);
+  transition: color 0.3s ease;
 }
 
 /* Responsive pour mobile - permettre le retour à la ligne */
@@ -199,7 +221,6 @@ p {
 }
 
 
-
 .home .hero-img {
   position: absolute;
   inset: 0;
@@ -212,6 +233,8 @@ p {
   display: flex;
   gap: 1em;
   background-color: var(--bg);
+  color: var(--text);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .work .col:nth-child(1) {
@@ -259,6 +282,8 @@ p {
   display: flex;
   gap: 1em;
   background-color: var(--bg);
+  color: var(--text);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .project-page .col:nth-child(1) {
@@ -317,6 +342,8 @@ p {
   display: flex;
   gap: 1em;
   background-color: var(--bg);
+  color: var(--text);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .studio .col:nth-child(1),
@@ -404,5 +431,47 @@ p {
     flex-direction: column;
   }
 }
+
+/* Styles pour le bouton de toggle */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  transition: all 0.3s ease;
+  color: var(--text);
+  margin-right: 1rem;
+}
+
+.theme-toggle:hover {
+  color: var(--accent);
+  transform: scale(1.1);
+}
+
+.theme-toggle:active {
+  transform: scale(0.95);
+}
+
+/* Styles pour les images en dark mode */
+[data-theme="dark"] img {
+  filter: brightness(0.9) contrast(1.1);
+}
+
+/* Styles pour les liens en dark mode */
+[data-theme="dark"] a {
+  color: var(--text);
+}
+
+[data-theme="dark"] a:hover {
+  color: var(--accent);
+}
+
+
+
+
+
 
 

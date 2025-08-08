@@ -4,6 +4,7 @@ import { useTransitionRouter } from "next-view-transitions";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
+import ThemeToggle from "./ThemeToggle";
 
 const Nav = () => {
   const router = useTransitionRouter();
@@ -130,6 +131,7 @@ const Nav = () => {
           ))}
         </div>
         <div className="nav-copy">
+          <ThemeToggle />
           <p>paris, le havre</p>
         </div>
       </div>
