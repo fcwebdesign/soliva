@@ -2,6 +2,7 @@
 import { useGSAP } from "@gsap/react";
 import { useTransition } from "@/hooks/useTransition";
 import { TRANSITION_CONFIG } from "@/config";
+import BriefGenerator from "@/components/BriefGenerator";
 
 import gsap from "gsap";
 import SplitText from "gsap/SplitText";
@@ -59,6 +60,8 @@ const Contact = () => {
               <p>Twitter</p>
               <p>LinkedIn</p>
             </div>
+
+            <BriefGenerator />
           </div>
         </div>
       </ReactLenis>

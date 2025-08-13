@@ -1,10 +1,25 @@
 "use client";
-import { useTheme } from '@/hooks/useTheme';
+import { useEffect, useState } from 'react';
 
 const ThemeToggle = () => {
-  const { theme, toggleTheme, isDark, mounted } = useTheme();
+  const [isDark, setIsDark] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  // Ne pas rendre le bouton tant que le composant n'est pas monté côté client
+  useEffect(() => {
+    setMounted(true);
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    setIsDark(savedTheme === 'dark');
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = isDark ? 'light' : 'dark';
+    setIsDark(!isDark);
+    localStorage.setItem('theme', newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
+  };
+
+  // Ne rien rendre tant que le composant n'est pas monté
   if (!mounted) {
     return <div style={{ width: '24px', height: '24px' }}></div>;
   }

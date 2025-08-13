@@ -65,7 +65,7 @@ const Studio = () => {
         
         <div className="studio">
           <div className="col">
-            <h1 className="studio-header">Our Story</h1>
+            <h1 className="studio-header">Le studio</h1>
           </div>
           <div className="col">
             <h2>

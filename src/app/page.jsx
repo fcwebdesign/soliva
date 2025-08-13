@@ -50,40 +50,27 @@ export default function Home() {
   
 
   return (
-<>
-  {/* Div revealer seulement en mode curtain */}
-  {TRANSITION_CONFIG.mode === 'curtain' && <div className="revealer"></div>}
+    <>
+      {/* Div revealer seulement en mode curtain */}
+      {TRANSITION_CONFIG.mode === 'curtain' && <div className="revealer"></div>}
 
-  {/* Partie fixe (fond) */}
-  <div className="home fixed z-0" style={{ position: 'fixed', inset: 0, zIndex: 0 }}>
-    <div className="home-mask">
-      <div className="header">
-        <div className="container baseline absolute w-screen flex justify-end">
-          <h2 className="studio-header tracking-widest leading-snug">
-            creative studio.
-            <br />
-            digital & brand strategy.
-          </h2>
-        </div>
+      <div className="home">
+        <div className="home-mask">
+          <div className="header">
+            <div className="container baseline absolute w-screen flex justify-end">
+              <h2 className="studio-header tracking-widest leading-snug">
+                creative studio.
+                <br />
+                digital & brand strategy.
+              </h2>
+            </div>
 
-        <div className="h1-wrapper">
-          <h1 className="styled-word">soliva</h1>
+            <div className="h1-wrapper">
+              <h1 className="styled-word">soliva</h1>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-
-  {/* Scroll zone vide pour scroller d'abord sans recouvrir */}
-  <div style={{ height: '100vh' }} />
-
-  {/* Section qui recouvre ensuite */}
-  <div style={{ position: 'relative', zIndex: 10, backgroundColor: 'black', color:'white', minHeight: '100vh' }}>
-    <div style={{ padding: '6rem 1rem' }}>
-      <h2>test</h2>
-      <p>Contenu après le scroll</p>
-    </div>
-  </div>
-</>
-
+    </>
   );
 }

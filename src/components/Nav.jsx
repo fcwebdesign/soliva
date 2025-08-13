@@ -122,13 +122,21 @@ const Nav = () => {
 
       <div className="col">
         <div className="nav-items">
-          {["work", "studio", "contact"].map((item) => (
-            <div key={item} className="nav-item">
-              <Link onClick={handleNavigation(`/${item}`)} href={`/${item}`}>
-                {item}
-              </Link>
-            </div>
-          ))}
+          {["", "work", "studio", "blog", "contact"].map((item) => {
+            const path = item === "" ? "/" : `/${item}`;
+            const isActive = pathname === path;
+            return (
+              <div key={item || "home"} className="nav-item">
+                <Link 
+                  onClick={handleNavigation(path)} 
+                  href={path}
+                  className={isActive ? "active" : ""}
+                >
+                  {item === "" ? "home" : item}
+                </Link>
+              </div>
+            );
+          })}
         </div>
         <div className="nav-copy">
           <ThemeToggle />
