@@ -320,22 +320,22 @@ export default function BlogArticleEdit() {
         {/* Header avec SaveBar sticky */}
         <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <h1 className="text-4xl font-semibold text-gray-900 mb-2" style={{ fontSize: '2.25rem' }}>
+                  {article.title || 'Nouvel article'}
+                </h1>
                 <button
-                  onClick={() => router.push('/admin')}
-                  className="text-gray-500 hover:text-gray-700"
+                  onClick={() => {
+                    // Rediriger vers /admin et forcer la sélection de la page blog
+                    router.push('/admin');
+                    // Utiliser sessionStorage pour passer l'information
+                    sessionStorage.setItem('adminDefaultPage', 'blog');
+                  }}
+                  className="text-sm text-gray-500 hover:text-gray-700"
                 >
                   ← Retour au blog
                 </button>
-                <div>
-                  <h1 className="text-xl font-semibold text-gray-900">
-                    {article.title || 'Nouvel article'}
-                  </h1>
-                  <p className="text-sm text-gray-500">
-                    ID: {article.id} • Statut: {article.status || 'draft'}
-                  </p>
-                </div>
               </div>
             
             <div className="flex items-center space-x-3">
@@ -402,8 +402,8 @@ export default function BlogArticleEdit() {
       </header>
 
       {/* Contenu principal */}
-      <main className="flex-1 px-6 py-8">
-        <div className="space-y-6">
+      <main className="flex-1 p-6">
+        <div className="max-w-7xl mx-auto space-y-6">
           {/* Titre */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">

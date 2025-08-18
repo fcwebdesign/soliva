@@ -41,7 +41,7 @@ export default function Sidebar({ pages, currentPage, onPageChange }: SidebarPro
             </h3>
             <ul className="space-y-1">
               {pages.map((page) => (
-                <li key={page.id}>
+                <li key={page.id}> 
                   <button
                     onClick={() => onPageChange(page.id)}
                     className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
@@ -100,12 +100,12 @@ export default function Sidebar({ pages, currentPage, onPageChange }: SidebarPro
       </aside>
 
       {/* Mobile menu button */}
-      <div className="lg:hidden fixed top-4 left-4 z-50">
+      <div className="lg:hidden fixed top-4 left-4 z-[9999]">
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="bg-white p-2 rounded-lg shadow-lg border border-gray-200"
+          className="bg-white p-3 rounded-lg shadow-xl border border-gray-200 hover:bg-gray-50 transition-colors"
         >
-          <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>

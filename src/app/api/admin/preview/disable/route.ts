@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 export async function GET(request: NextRequest) {
   try {
     // Désactiver le Draft Mode
-    draftMode().disable();
+    (await draftMode()).disable();
     
     // Rediriger vers la page d'accueil
     return NextResponse.redirect(new URL('/', request.url));

@@ -4,6 +4,7 @@ import { useGSAP } from "@gsap/react";
 import { useTransitionRouter } from "next-view-transitions";
 import { useTransition } from "@/hooks/useTransition";
 import { TRANSITION_CONFIG } from "@/config";
+import PreviewBar from "@/components/PreviewBar";
 
 import gsap from "gsap";
 import SplitText from "gsap/SplitText";
@@ -13,6 +14,17 @@ gsap.registerPlugin(SplitText);
 
 const BlogClient = ({ content: initialContent }) => {
   const [content, setContent] = useState(initialContent);
+
+  // Vérifier si on est en mode aperçu (Draft Mode de Next.js)
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
+
+  useEffect(() => {
+    // Vérifier le Draft Mode via un cookie ou une classe CSS
+    const isDraftMode = document.documentElement.classList.contains('preview-mode') ||
+                       document.cookie.includes('__prerender_bypass') ||
+                       window.location.search.includes('preview=true');
+    setIsPreviewMode(isDraftMode);
+  }, []);
 
   // Recharger le contenu périodiquement pour les mises à jour
   useEffect(() => {
@@ -138,6 +150,9 @@ const BlogClient = ({ content: initialContent }) => {
     <>
       <ReactLenis root>
         {TRANSITION_CONFIG.mode === 'curtain' && <div className="revealer"></div>}
+        
+        {/* Bandeau d'aperçu */}
+        {isPreviewMode && <PreviewBar />}
         
         <div className="blog">
           <div className="col">

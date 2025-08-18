@@ -6,6 +6,7 @@ import { useTransition } from "@/hooks/useTransition";
 import { TRANSITION_CONFIG } from "@/config";
 import { notFound } from "next/navigation";
 import FormattedText from "@/components/FormattedText";
+import PreviewBar from "@/components/PreviewBar";
 
 import gsap from "gsap";
 import SplitText from "gsap/SplitText";
@@ -17,6 +18,17 @@ const ProjectPage = ({ params }) => {
   const resolvedParams = use(params);
   const router = useTransitionRouter();
   useTransition(); // Utilise la configuration de transition
+
+  // Vérifier si on est en mode aperçu (Draft Mode de Next.js)
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
+
+  useEffect(() => {
+    // Vérifier le Draft Mode via un cookie ou une classe CSS
+    const isDraftMode = document.documentElement.classList.contains('preview-mode') ||
+                       document.cookie.includes('__prerender_bypass') ||
+                       window.location.search.includes('preview=true');
+    setIsPreviewMode(isDraftMode);
+  }, []);
 
   // Même logique que le Nav pour l'animation du cercle
   const isSafari = () => {
@@ -119,7 +131,30 @@ const ProjectPage = ({ params }) => {
   useEffect(() => {
     const fetchProject = async () => {
       try {
-        const response = await fetch('/api/content');
+        // Vérifier d'abord s'il y a des données d'aperçu dans sessionStorage
+        if (isPreviewMode) {
+          const previewData = sessionStorage.getItem(`preview-${resolvedParams.slug}`);
+          console.log('📖 Recherche aperçu projet:', { slug: resolvedParams.slug, previewData: !!previewData });
+          
+          if (previewData) {
+            console.log('📖 Mode aperçu: utilisation des données temporaires');
+            const previewProject = JSON.parse(previewData);
+            console.log('📖 Données aperçu projet:', previewProject);
+            setProject(previewProject);
+            setLoading(false);
+            return;
+          } else {
+            console.log('📖 Aucune donnée d\'aperçu trouvée, chargement normal');
+          }
+        }
+        
+        // Sinon, charger normalement depuis l'API
+        const response = await fetch('/api/content', {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        });
         const content = await response.json();
         
         const foundProject = content.work.projects.find(p => p.slug === resolvedParams.slug);
@@ -138,7 +173,7 @@ const ProjectPage = ({ params }) => {
     };
 
     fetchProject();
-  }, [resolvedParams.slug]);
+  }, [resolvedParams.slug, isPreviewMode]);
 
   if (loading) {
     return (
@@ -154,11 +189,19 @@ const ProjectPage = ({ params }) => {
     notFound();
   }
 
+  // Vérifier si le projet est publié ou si on est en mode aperçu
+  if (!isPreviewMode && project.status && project.status !== 'published') {
+    return <div>Ce projet n'est pas encore publié</div>;
+  }
+
   return (
     <>
       <ReactLenis root>
         {/* Div revealer seulement en mode curtain */}
         {TRANSITION_CONFIG.mode === 'curtain' && <div className="revealer"></div>}
+        
+        {/* Bandeau d'aperçu */}
+        {isPreviewMode && <PreviewBar />}
         
         <div className="project-page">
           <div className="col">

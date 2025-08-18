@@ -62,11 +62,27 @@ export interface Project {
   slug: string;
 }
 
+export interface AdminProject {
+  id: string;
+  title: string;
+  content?: string;
+  slug?: string;
+  status?: 'draft' | 'published';
+  publishedAt?: string;
+  excerpt?: string;
+  client?: string;
+  category?: string;
+  year?: string;
+  featured?: boolean;
+  blocks?: any[];
+}
+
 export interface Work {
   hero: Hero;
   filters: string[];
   description: string;
   projects: Project[];
+  adminProjects?: AdminProject[]; // Nouveaux projets pour l'admin
 }
 
 export interface Article {

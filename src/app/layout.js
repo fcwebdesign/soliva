@@ -1,6 +1,7 @@
 import "./globals.css";
 import { ViewTransitions } from "next-view-transitions";
 import { readContent } from "@/lib/content";
+import { draftMode } from 'next/headers';
 
 import Nav from "@/components/Nav";
 
@@ -14,10 +15,11 @@ export async function generateMetadata() {
 
 export default async function RootLayout({ children }) {
   const content = await readContent();
+  const { isEnabled: isDraftMode } = await draftMode();
   
   return (
     <ViewTransitions>
-      <html lang="en">
+      <html lang="en" className={isDraftMode ? 'preview-mode' : ''}>
         <body>
           <Nav content={content.nav} />
           {children}

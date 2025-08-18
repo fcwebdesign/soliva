@@ -6,6 +6,7 @@ import { useTransitionRouter } from "next-view-transitions";
 import { useTransition } from "@/hooks/useTransition";
 import { TRANSITION_CONFIG } from "@/config";
 import FormattedText from '@/components/FormattedText';
+import PreviewBar from '@/components/PreviewBar';
 import gsap from "gsap";
 import SplitText from "gsap/SplitText";
 import ReactLenis from "lenis/react";
@@ -20,8 +21,20 @@ export default function BlogArticle() {
     const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Vérifier si on est en mode aperçu
-  const isPreviewMode = typeof window !== 'undefined' && window.location.search.includes('preview=true');
+  // Vérifier si on est en mode aperçu via l'URL
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [previewId, setPreviewId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const previewParam = urlParams.get('preview');
+    
+    if (previewParam) {
+      setIsPreviewMode(true);
+      setPreviewId(previewParam);
+      console.log('🔍 Mode aperçu détecté:', previewParam);
+    }
+  }, []);
 
   // Décaler tout le site en mode aperçu (comme WordPress)
   useEffect(() => {
@@ -118,31 +131,36 @@ export default function BlogArticle() {
 
   const fetchContent = async () => {
     try {
-      // Vérifier d'abord s'il y a des données d'aperçu dans sessionStorage
-      const isPreviewMode = typeof window !== 'undefined' && window.location.search.includes('preview=true');
-      
-      if (isPreviewMode) {
-        const previewData = sessionStorage.getItem(`preview-${slug}`);
-        console.log('📖 Recherche aperçu:', { slug, previewData: !!previewData });
+      // Si on est en mode aperçu, charger la révision temporaire
+      if (isPreviewMode && previewId) {
+        console.log('📖 Chargement de la révision temporaire:', previewId);
         
-        if (previewData) {
-          console.log('📖 Mode aperçu: utilisation des données temporaires');
-          const previewArticle = JSON.parse(previewData);
-          console.log('📖 Données aperçu:', previewArticle);
-          setArticle(previewArticle);
-          setLoading(false);
-          return;
+        const response = await fetch(`/api/admin/preview/${previewId}`, {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' }
+        });
+        
+        if (response.ok) {
+          const previewContent = await response.json();
+          const foundArticle = previewContent.blog?.articles?.find((a) => 
+            a.slug === slug || a.id === slug
+          );
+          
+          if (foundArticle) {
+            console.log('✅ Article de prévisualisation chargé');
+            setArticle(foundArticle);
+            setLoading(false);
+            return;
+          }
         } else {
-          console.log('📖 Aucune donnée d\'aperçu trouvée, chargement normal');
+          console.warn('⚠️ Révision temporaire non trouvée, chargement normal');
         }
       }
       
       // Sinon, charger normalement depuis l'API
       const response = await fetch('/api/content', {
-        cache: 'no-store', // Forcer le rechargement
-        headers: {
-          'Cache-Control': 'no-cache'
-        }
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache' }
       });
       const data = await response.json();
       
@@ -181,12 +199,7 @@ export default function BlogArticle() {
         {TRANSITION_CONFIG.mode === 'curtain' && <div className="revealer"></div>}
         
         {/* Bandeau d'aperçu */}
-        {isPreviewMode && (
-          <div className="fixed top-0 left-0 right-0 bg-orange-500 text-white text-center py-3 z-50">
-            <span className="font-medium">👁️ MODE APERÇU</span>
-            <span className="ml-2 text-sm opacity-90">- Modifications non sauvegardées</span>
-          </div>
-        )}
+        {isPreviewMode && <PreviewBar />}
         
         <div className="blog-article-page">
           <div className="col">

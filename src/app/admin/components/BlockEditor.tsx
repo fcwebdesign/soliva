@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { useRouter } from 'next/navigation';
 import WysiwygEditor from './WysiwygEditor';
 import MediaUploader from './MediaUploader';
 import VersionList from './VersionList';
@@ -24,6 +25,7 @@ interface BlockEditorProps {
 }
 
 export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditorProps) {
+  const router = useRouter();
   const [localData, setLocalData] = useState(pageData || {});
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -176,7 +178,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             break;
           default:
             // Pour tout autre élément (y compris blockquote, ul, ol), créer un bloc content
-            if (element.textContent?.trim() || element.innerHTML.trim()) {
+            if ((element.textContent && element.textContent.trim()) || (element.innerHTML && element.innerHTML.trim())) {
               blocks.push({
                 id: `block-${blockId++}`,
                 type: 'content',
@@ -189,7 +191,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     }
     
     // Si aucun bloc n'a été créé mais qu'il y a du contenu, créer un bloc content
-    if (blocks.length === 0 && content.trim()) {
+    if (blocks.length === 0 && content && typeof content === 'string' && content.trim()) {
       blocks.push({
         id: 'block-1',
         type: 'content',
@@ -216,7 +218,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       }
       
       // Nettoyer les blocs content vides
-      if (block.type === 'content' && (!block.content || block.content.trim() === '')) {
+      if (block.type === 'content' && (!block.content || (typeof block.content === 'string' && block.content.trim() === ''))) {
         console.warn(`🚫 Bloc content vide supprimé`);
         return false;
       }
@@ -307,7 +309,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         default:
           return '';
       }
-    }).filter(html => html.trim() !== '').join('\n');
+    }).filter(html => html && typeof html === 'string' && html.trim() !== '').join('\n');
     
     console.log('💾 Génération HTML:', {
       blocks: newBlocks.map(b => ({ type: b.type, content: b.content?.substring(0, 50) })),
@@ -554,95 +556,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     </div>
   );
 
-  const renderProjectsBlock = () => (
-    <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-      <div className="flex items-center space-x-2 mb-4">
-        <span className="text-2xl">💼</span>
-        <h3 className="text-lg font-semibold text-gray-900">Projets</h3>
-      </div>
-      
-      <div className="space-y-4">
-        {localData.projects?.map((project: any, index: number) => (
-          <div key={index} className="bg-gray-50 rounded-lg border border-gray-200 p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="text-md font-semibold text-gray-900">Projet {index + 1}</h4>
-              <div className="flex space-x-2">
-                <button className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200 transition-colors">
-                  Dupliquer
-                </button>
-                <button className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200 transition-colors">
-                  Supprimer
-                </button>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Titre
-                </label>
-                <input
-                  type="text"
-                  value={project.title || ''}
-                  onChange={(e) => {
-                    const newProjects = [...localData.projects];
-                    newProjects[index] = { ...project, title: e.target.value };
-                    updateField('projects', newProjects);
-                  }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Catégorie
-                </label>
-                <input
-                  type="text"
-                  value={project.category || ''}
-                  onChange={(e) => {
-                    const newProjects = [...localData.projects];
-                    newProjects[index] = { ...project, category: e.target.value };
-                    updateField('projects', newProjects);
-                  }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                />
-              </div>
-            </div>
-            
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description
-              </label>
-              <WysiwygEditor
-                value={project.description || ''}
-                onChange={(value) => {
-                  const newProjects = [...localData.projects];
-                  newProjects[index] = { ...project, description: value };
-                  updateField('projects', newProjects);
-                }}
-                placeholder="Description du projet"
-              />
-            </div>
-            
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Image
-              </label>
-              <MediaUploader
-                currentUrl={project.image}
-                onUpload={(url) => {
-                  const newProjects = [...localData.projects];
-                  newProjects[index] = { ...project, image: url };
-                  updateField('projects', newProjects);
-                }}
-              />
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+
 
   const renderArticlesBlock = () => {
     const articles = localData.articles || [];
@@ -669,7 +583,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
           <button 
             onClick={() => {
               const newId = `article-${Date.now()}`;
-              window.open(`/admin/blog/${newId}`, '_blank');
+              router.push(`/admin/blog/${newId}`);
             }}
             className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
@@ -708,7 +622,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                 
                 <div className="flex space-x-2 ml-4">
                   <button 
-                    onClick={() => window.open(`/admin/blog/${article.id}`, '_blank')}
+                    onClick={() => router.push(`/admin/blog/${article.id}`)}
                     className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200 transition-colors"
                     title="Éditer l'article complet"
                   >
@@ -718,6 +632,122 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                     onClick={() => window.open(`/blog/${article.slug || article.id}`, '_blank')}
                     className="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 transition-colors"
                     title="Aperçu de l'article"
+                  >
+                    👁️ Aperçu
+                  </button>
+                  <button className="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded hover:bg-orange-200 transition-colors">
+                    📋 Dupliquer
+                  </button>
+                  <button className="text-xs bg-red-100 text-red-700 px-3 py-1 rounded hover:bg-red-200 transition-colors">
+                    🗑️ Supprimer
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderProjectsBlock = () => {
+    const projects = localData.adminProjects || [];
+    const publishedCount = projects.filter((p: any) => p.status === 'published').length;
+    const draftCount = projects.filter((p: any) => p.status === 'draft' || !p.status).length;
+    const featuredCount = projects.filter((p: any) => p.featured).length;
+    
+    return (
+      <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <span className="text-2xl">💼</span>
+              <h3 className="text-lg font-semibold text-gray-900">Projets ({projects.length})</h3>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                ✅ {publishedCount} publié{publishedCount !== 1 ? 's' : ''}
+              </span>
+              <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">
+                📝 {draftCount} brouillon{draftCount !== 1 ? 's' : ''}
+              </span>
+              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                ⭐ {featuredCount} en vedette
+              </span>
+            </div>
+          </div>
+          <button 
+            onClick={() => {
+              const newId = `project-${Date.now()}`;
+              router.push(`/admin/work/${newId}`);
+            }}
+            className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            ➕ Nouveau projet
+          </button>
+        </div>
+        
+        <div className="space-y-3">
+          {projects.map((project: any, index: number) => (
+            <div key={index} className="bg-gray-50 rounded-lg border border-gray-200 p-4 hover:border-gray-300 transition-colors">
+              <div className="flex items-center justify-between">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center space-x-3">
+                    <h4 className="text-md font-semibold text-gray-900 truncate">
+                      {project.title || `Projet ${index + 1}`}
+                    </h4>
+                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                      project.status === 'published' 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {project.status === 'published' ? '✅ Publié' : '📝 Brouillon'}
+                    </span>
+                    {project.featured && (
+                      <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">
+                        ⭐ Vedette
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center space-x-4 mt-1">
+                    <p className="text-sm text-gray-500">
+                      ID: {project.slug || project.id}
+                    </p>
+                    {project.client && (
+                      <p className="text-sm text-gray-500">
+                        Client: {project.client}
+                      </p>
+                    )}
+                    {project.category && (
+                      <p className="text-sm text-gray-500">
+                        Catégorie: {project.category}
+                      </p>
+                    )}
+                    {project.year && (
+                      <p className="text-sm text-gray-500">
+                        Année: {project.year}
+                      </p>
+                    )}
+                    {project.publishedAt && (
+                      <p className="text-sm text-gray-500">
+                        Publié: {new Date(project.publishedAt).toLocaleDateString('fr-FR')}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="flex space-x-2 ml-4">
+                  <button 
+                    onClick={() => router.push(`/admin/work/${project.id}`)}
+                    className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200 transition-colors"
+                    title="Éditer le projet complet"
+                  >
+                    ✏️ Éditer
+                  </button>
+                  <button 
+                    onClick={() => window.open(`/work/${project.slug || project.id}`, '_blank')}
+                    className="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 transition-colors"
+                    title="Aperçu du projet"
                   >
                     👁️ Aperçu
                   </button>
@@ -1019,6 +1049,15 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     );
   }
 
+  // Si c'est la page work générale, afficher la liste des projets
+  if (pageKey === 'work' && localData.adminProjects) {
+    return (
+      <div className="space-y-6">
+        {renderProjectsBlock()}
+      </div>
+    );
+  }
+
   // Exposer la fonction saveBlocksContent via ref (seulement si ref existe)
   // React.useImperativeHandle(ref, () => ({
   //   saveBlocksContent
@@ -1123,7 +1162,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     <div className="space-y-6">
       {/* Rendu conditionnel selon le type de page */}
       {pageKey === 'home' && renderHeroBlock()}
-      {pageKey === 'work' && renderProjectsBlock()}
+
       {pageKey === 'contact' && renderContactBlock()}
       {renderContentBlock()}
       {renderMetadataBlock()}

@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     const to = searchParams.get('to') || '/';
     
     // Activer le Draft Mode
-    draftMode().enable();
+    (await draftMode()).enable();
     
     // Rediriger vers la page demandée
     return NextResponse.redirect(new URL(to, request.url));

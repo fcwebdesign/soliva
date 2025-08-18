@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Sidebar from './components/Sidebar';
 import BlockEditor from './components/BlockEditor';
 import type { Content } from '@/types/content';
@@ -16,7 +17,11 @@ const PAGES = [
 ];
 
 export default function AdminPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
   const [content, setContent] = useState<Content | null>(null);
+  const [originalContent, setOriginalContent] = useState<Content | null>(null); // Contenu original pour comparaison
   const [currentPage, setCurrentPage] = useState('home');
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -24,18 +29,40 @@ export default function AdminPage() {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [pageStatus, setPageStatus] = useState<'draft' | 'published'>('published'); // Nouveau état pour le statut de la page
+  const [isJustSaved, setIsJustSaved] = useState(false); // Flag pour éviter les modifications juste après sauvegarde
+  const [isPageLoading, setIsPageLoading] = useState(false); // Flag pour éviter les modifications pendant le chargement
 
   // Charger le contenu initial
   useEffect(() => {
     fetchContent();
   }, []);
 
+  // Initialiser la page depuis l'URL (une seule fois)
+  useEffect(() => {
+    const pageFromUrl = searchParams.get('page');
+    if (pageFromUrl && PAGES.find(p => p.id === pageFromUrl)) {
+      setCurrentPage(pageFromUrl);
+    } else {
+      // Vérifier s'il y a une page par défaut à afficher
+      const defaultPage = sessionStorage.getItem('adminDefaultPage');
+      if (defaultPage) {
+        setCurrentPage(defaultPage);
+        sessionStorage.removeItem('adminDefaultPage');
+        router.replace(`/admin?page=${defaultPage}`);
+      } else {
+        // Page par défaut
+        router.replace('/admin?page=home');
+      }
+    }
+  }, []); // Pas de dépendances - s'exécute une seule fois
+
   // Confirmation avant de quitter si modifications non enregistrées
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (hasUnsavedChanges) {
         e.preventDefault();
-        e.returnValue = '';
+        e.returnValue = 'Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir quitter ?';
+        return e.returnValue;
       }
     };
 
@@ -56,6 +83,104 @@ export default function AdminPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Debug: surveiller les changements de hasUnsavedChanges
+  useEffect(() => {
+    console.log('🔍 hasUnsavedChanges changed:', hasUnsavedChanges);
+  }, [hasUnsavedChanges]);
+
+  // Écouter les messages de publication depuis l'aperçu
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      // Vérifier l'origine pour la sécurité
+      if (event.origin !== window.location.origin) return;
+      
+      if (event.data.type === 'PREVIEW_PUBLISHED') {
+        console.log('📢 Publication reçue depuis l\'aperçu:', event.data.message);
+        
+        // Réinitialiser l'état des modifications
+        setHasUnsavedChanges(false);
+        setSaveStatus('success');
+        
+        // Recharger le contenu pour synchroniser
+        fetchContent();
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, []);
+
+  // Gérer les changements de page avec confirmation
+  useEffect(() => {
+    console.log('📄 Page changed to:', currentPage);
+    setSaveStatus('idle');
+    
+    // Bloquer les modifications pendant 2 secondes après changement de page
+    setIsPageLoading(true);
+    setTimeout(() => {
+      setIsPageLoading(false);
+      console.log('🟢 Page chargée, modifications autorisées');
+    }, 2000);
+  }, [currentPage]);
+
+  // Détecter les changements d'URL (boutons précédent/suivant du navigateur)
+  useEffect(() => {
+    const pageFromUrl = searchParams.get('page') || 'home';
+    if (pageFromUrl !== currentPage && PAGES.find(p => p.id === pageFromUrl)) {
+      if (hasUnsavedChanges) {
+        const confirmLeave = window.confirm(
+          'Vous avez des modifications non enregistrées.\n\nÊtes-vous sûr de vouloir quitter cette page sans enregistrer ?'
+        );
+        
+        if (!confirmLeave) {
+          // Restaurer l'URL précédente sans déclencher de re-render
+          window.history.pushState(null, '', `/admin?page=${currentPage}`);
+          return;
+        }
+        
+        // L'utilisateur confirme, on supprime les modifications
+        setHasUnsavedChanges(false);
+        setSaveStatus('idle');
+        if (originalContent) {
+          setContent(originalContent);
+        }
+      }
+      
+      setCurrentPage(pageFromUrl);
+    }
+  }, [searchParams]); // Seulement searchParams comme dépendance
+
+  // Fonction pour changer de page avec confirmation si modifications non sauvegardées
+  const handlePageChange = (newPage: string) => {
+    if (hasUnsavedChanges) {
+      const confirmLeave = window.confirm(
+        'Vous avez des modifications non enregistrées.\n\nÊtes-vous sûr de vouloir quitter cette page sans enregistrer ?'
+      );
+      
+      if (!confirmLeave) {
+        return; // L'utilisateur annule, on reste sur la page
+      }
+      
+      // L'utilisateur confirme, on supprime les modifications
+      console.log('🗑️ Modifications supprimées par l\'utilisateur');
+      setHasUnsavedChanges(false);
+      setSaveStatus('idle');
+      
+      // Recharger le contenu original pour annuler les modifications
+      if (originalContent) {
+        setContent(originalContent);
+        console.log('🔄 Contenu restauré à l\'état original');
+      }
+    }
+    
+    // Changer de page et mettre à jour l'URL
+    setCurrentPage(newPage);
+    router.replace(`/admin?page=${newPage}`);
+  };
+
   const fetchContent = async () => {
     try {
       setLoading(true);
@@ -66,10 +191,19 @@ export default function AdminPage() {
       }
       
       const data = await response.json();
-      setContent(data);
+      
+      // Nettoyer le contenu des propriétés temporaires
+      const cleanData = cleanContent(data);
+      
+      setContent(cleanData);
+      setOriginalContent(cleanData); // Sauvegarder le contenu original pour comparaison
       
       // Définir le statut de la page (pour simplifier, on considère toutes les pages comme publiées par défaut)
       setPageStatus('published');
+      
+      // S'assurer que l'état des modifications non sauvegardées est réinitialisé
+      setHasUnsavedChanges(false);
+      console.log('✅ Contenu chargé et original sauvegardé');
       
     } catch (err) {
       console.error('Erreur:', err);
@@ -83,8 +217,12 @@ export default function AdminPage() {
     if (!content) return;
     
     try {
+      console.log('💾 Début de la sauvegarde avec statut:', status);
       setSaveStatus('saving');
       setPageStatus(status);
+      
+      // Créer une copie du contenu sans les propriétés temporaires
+      const contentToSave = cleanContent(content);
       
       const response = await fetch('/api/admin/content', {
         method: 'PUT',
@@ -92,21 +230,34 @@ export default function AdminPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ...content,
-          _status: status, // Ajouter le statut au contenu
-          _lastModified: new Date().toISOString()
+          content: contentToSave
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Erreur lors de la sauvegarde');
+        const errorData = await response.json().catch(() => ({}));
+        console.error('❌ Erreur API:', response.status, response.statusText, errorData);
+        throw new Error(`Erreur lors de la sauvegarde: ${response.status} ${response.statusText}${errorData.details ? ` - ${errorData.details}` : ''}`);
       }
 
+      console.log('✅ Sauvegarde réussie');
       setSaveStatus('success');
-      setHasUnsavedChanges(false);
       
-      // Réinitialiser le statut après 3 secondes
-      setTimeout(() => setSaveStatus('idle'), 3000);
+      // Mettre à jour le contenu original avec le contenu sauvegardé
+      const cleanedContent = cleanContent(content);
+      setOriginalContent(cleanedContent);
+      setContent(cleanedContent); // S'assurer que le contenu est aussi nettoyé
+      
+      // Réinitialiser complètement l'état
+      setHasUnsavedChanges(false);
+      setIsJustSaved(true);
+      console.log('🔄 État réinitialisé après sauvegarde');
+      
+      // Réinitialiser le statut après 3 secondes et permettre les modifications
+      setTimeout(() => {
+        setSaveStatus('idle');
+        setIsJustSaved(false);
+      }, 3000);
       
     } catch (err) {
       console.error('Erreur:', err);
@@ -121,20 +272,75 @@ export default function AdminPage() {
     if (!content) return;
     
     try {
-      // Sauvegarder temporairement dans sessionStorage pour l'aperçu
-      sessionStorage.setItem(`preview-${currentPage}`, JSON.stringify(content));
+      // 1. Créer une révision temporaire avec les modifications actuelles
+      const previewId = `preview-${Date.now()}`;
+      console.log('📝 Création aperçu avec contenu:', {
+        currentPage,
+        hasUnsavedChanges,
+        contentKeys: Object.keys(content),
+        currentPageContent: content[currentPage as keyof typeof content],
+        fullContent: JSON.stringify(content).substring(0, 500) + '...'
+      });
       
-      // Ouvrir l'aperçu avec un paramètre spécial
+      const previewContent = {
+        ...content, // Utiliser le contenu avec les modifications
+        _isPreview: true,
+        _previewId: previewId,
+        _originalPage: currentPage,
+        _status: pageStatus // Ajouter le statut actuel de la page
+      };
+      
+      // 2. Sauvegarder la révision temporaire
+      const response = await fetch('/api/admin/preview/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          previewId,
+          content: previewContent,
+          page: currentPage
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Erreur lors de la création de l\'aperçu');
+      }
+      
+      // 3. Ouvrir l'URL spéciale d'aperçu
       const previewPath = PAGES.find(p => p.id === currentPage)?.path || '/';
-      window.open(`${previewPath}?preview=true`, '_blank');
+      window.open(`${previewPath}?preview=${previewId}`, '_blank');
       
     } catch (err) {
       console.error('Erreur aperçu:', err);
+      alert('Erreur lors de la création de l\'aperçu');
     }
   };
 
   const updateContent = (pageKey: string, updates: any) => {
-    if (!content) return;
+    if (!content) {
+      console.log('⚠️ updateContent appelé sans contenu');
+      return;
+    }
+    
+    console.log(`📝 updateContent appelé:`, { 
+      pageKey, 
+      updates: JSON.stringify(updates).substring(0, 100),
+      currentHasUnsavedChanges: hasUnsavedChanges,
+      isJustSaved,
+      isPageLoading,
+      stackTrace: new Error().stack?.split('\n').slice(1, 4).join('\n')
+    });
+    
+    // Ignorer les modifications juste après une sauvegarde
+    if (isJustSaved) {
+      console.log('⏳ Modification ignorée - vient de sauvegarder');
+      return;
+    }
+    
+    // Ignorer les modifications pendant le chargement de la page
+    if (isPageLoading) {
+      console.log('⏳ Modification ignorée - page en cours de chargement');
+      return;
+    }
     
     const newContent = { ...content };
     
@@ -148,6 +354,21 @@ export default function AdminPage() {
     
     setContent(newContent);
     setHasUnsavedChanges(true);
+    console.log(`📝 Contenu mis à jour (${pageKey}) - marqué comme modifié`);
+  };
+
+  // Fonction pour nettoyer le contenu des propriétés temporaires
+  const cleanContent = (data: any) => {
+    const cleaned = JSON.parse(JSON.stringify(data)); // Deep clone
+    delete cleaned._status;
+    delete cleaned._lastModified;
+    return cleaned;
+  };
+
+  // Fonction pour réinitialiser l'état des modifications non sauvegardées
+  const resetUnsavedChanges = () => {
+    console.log('🔄 Réinitialisation de hasUnsavedChanges');
+    setHasUnsavedChanges(false);
   };
 
   if (loading) {
@@ -190,36 +411,31 @@ export default function AdminPage() {
   const currentPageConfig = PAGES.find(p => p.id === currentPage);
 
   return (
-    <div className="min-h-screen bg-gray-50 grid grid-cols-1 xl:grid-cols-[256px_1fr]">
+    <div className="min-h-screen bg-gray-50">
       {/* Sidebar */}
       <Sidebar 
         pages={PAGES}
         currentPage={currentPage}
-        onPageChange={setCurrentPage}
+        onPageChange={handlePageChange}
       />
 
       {/* Zone principale */}
-      <div className="flex flex-col">
+      <div className="lg:ml-64 flex flex-col">
         {/* Header avec SaveBar sticky */}
         <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-3">
-                  <span className="text-2xl">{currentPageConfig?.icon}</span>
-                  <div>
-                    <h1 className="text-xl font-semibold text-gray-900">
-                      {currentPageConfig?.label}
-                    </h1>
-                    <p className="text-sm text-gray-500">
-                      {currentPageConfig?.path ? `Page: ${currentPageConfig.path}` : 'Configuration'}
-                    </p>
-                  </div>
-                </div>
+          <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4">
+            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+              <div>
+                <h1 className="text-2xl lg:text-4xl font-semibold text-gray-900 mb-2" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.25rem)' }}>
+                  {currentPageConfig?.label}
+                </h1>
+                <p className="text-sm text-gray-500">
+                  {currentPageConfig?.path ? `Page: ${currentPageConfig.path}` : 'Configuration'}
+                </p>
               </div>
                 
               {/* Status bar et boutons d'action */}
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-wrap items-center gap-2 lg:gap-4">
                 {hasUnsavedChanges && (
                   <span className="text-sm text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
                     Modifications non enregistrées
@@ -265,6 +481,8 @@ export default function AdminPage() {
                     {hasUnsavedChanges ? '👁️ Aperçu' : '🔗 Voir la page'}
                   </button>
                 )}
+
+
 
                 {/* Bouton Enregistrer brouillon */}
                 <button

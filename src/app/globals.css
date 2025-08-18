@@ -2056,6 +2056,15 @@ html.preview-mode body {
   cursor: pointer;
 }
 
+/* Mode aperçu - décalage WordPress-style */
+html.preview-mode .nav {
+  top: 48px !important;
+}
+
+html.preview-mode body {
+  padding-top: 48px !important;
+}
+
 
 
 
