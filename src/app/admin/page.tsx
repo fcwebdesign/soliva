@@ -7,10 +7,13 @@ import type { Content } from '@/types/content';
 
 const PAGES = [
   { id: 'home', label: 'Accueil', path: '/', icon: '🏠' },
-  { id: 'contact', label: 'Contact', path: '/contact', icon: '📧' },
   { id: 'studio', label: 'Studio', path: '/studio', icon: '🎨' },
+  { id: 'contact', label: 'Contact', path: '/contact', icon: '📧' },
   { id: 'work', label: 'Work', path: '/work', icon: '💼' },
   { id: 'blog', label: 'Blog', path: '/blog', icon: '📝' },
+];
+
+const SETTINGS = [
   { id: 'nav', label: 'Navigation', path: null, icon: '🧭' },
   { id: 'metadata', label: 'Métadonnées', path: null, icon: '⚙️' },
   { id: 'backup', label: 'Sauvegarde', path: null, icon: '💾' },
@@ -40,7 +43,7 @@ export default function AdminPage() {
   // Initialiser la page depuis l'URL (une seule fois)
   useEffect(() => {
     const pageFromUrl = searchParams.get('page');
-    if (pageFromUrl && PAGES.find(p => p.id === pageFromUrl)) {
+    if (pageFromUrl && [...PAGES, ...SETTINGS].find(p => p.id === pageFromUrl)) {
       setCurrentPage(pageFromUrl);
     } else {
       // Vérifier s'il y a une page par défaut à afficher
@@ -129,7 +132,7 @@ export default function AdminPage() {
   // Détecter les changements d'URL (boutons précédent/suivant du navigateur)
   useEffect(() => {
     const pageFromUrl = searchParams.get('page') || 'home';
-    if (pageFromUrl !== currentPage && PAGES.find(p => p.id === pageFromUrl)) {
+          if (pageFromUrl !== currentPage && [...PAGES, ...SETTINGS].find(p => p.id === pageFromUrl)) {
       if (hasUnsavedChanges) {
         const confirmLeave = window.confirm(
           'Vous avez des modifications non enregistrées.\n\nÊtes-vous sûr de vouloir quitter cette page sans enregistrer ?'
@@ -327,7 +330,7 @@ export default function AdminPage() {
       }
       
       // 3. Ouvrir l'URL spéciale d'aperçu
-      const previewPath = PAGES.find(p => p.id === currentPage)?.path || '/';
+      const previewPath = [...PAGES, ...SETTINGS].find(p => p.id === currentPage)?.path || '/';
       window.open(`${previewPath}?preview=${previewId}`, '_blank');
       
     } catch (err) {
@@ -429,13 +432,14 @@ export default function AdminPage() {
     }
   })();
 
-  const currentPageConfig = PAGES.find(p => p.id === currentPage);
+  const currentPageConfig = [...PAGES, ...SETTINGS].find(p => p.id === currentPage);
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Sidebar */}
       <Sidebar 
         pages={PAGES}
+        settings={SETTINGS}
         currentPage={currentPage}
         onPageChange={handlePageChange}
       />

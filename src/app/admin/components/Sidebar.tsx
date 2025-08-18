@@ -10,11 +10,12 @@ interface Page {
 
 interface SidebarProps {
   pages: Page[];
+  settings: Page[];
   currentPage: string;
   onPageChange: (pageId: string) => void;
 }
 
-export default function Sidebar({ pages, currentPage, onPageChange }: SidebarProps) {
+export default function Sidebar({ pages, settings, currentPage, onPageChange }: SidebarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -52,6 +53,29 @@ export default function Sidebar({ pages, currentPage, onPageChange }: SidebarPro
                   >
                     <span className="text-lg">{page.icon}</span>
                     <span>{page.label}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+          
+          <div className="mb-4">
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+              Paramètres
+            </h3>
+            <ul className="space-y-1">
+              {settings.map((setting) => (
+                <li key={setting.id}> 
+                  <button
+                    onClick={() => onPageChange(setting.id)}
+                    className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      currentPage === setting.id
+                        ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                  >
+                    <span className="text-lg">{setting.icon}</span>
+                    <span>{setting.label}</span>
                   </button>
                 </li>
               ))}
@@ -152,6 +176,32 @@ export default function Sidebar({ pages, currentPage, onPageChange }: SidebarPro
                       >
                         <span className="text-lg">{page.icon}</span>
                         <span>{page.label}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              <div className="mb-4">
+                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                  Paramètres
+                </h3>
+                <ul className="space-y-1">
+                  {settings.map((setting) => (
+                    <li key={setting.id}>
+                      <button
+                        onClick={() => {
+                          onPageChange(setting.id);
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                          currentPage === setting.id
+                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                            : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                        }`}
+                      >
+                        <span className="text-lg">{setting.icon}</span>
+                        <span>{setting.label}</span>
                       </button>
                     </li>
                   ))}
