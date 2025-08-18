@@ -122,63 +122,94 @@ export default function WorkProjectEdit() {
 
   const handleSave = () => handleSaveWithStatus(project?.status || 'draft');
 
-  const handlePreview = () => {
+  const handlePreview = async () => {
     if (!project) return;
     
-    console.log('📖 Préparation aperçu projet:', { 
-      projectId: project.id, 
-      slug: project.slug,
-      hasBlocks: !!project.blocks,
-      blocksCount: project.blocks?.length || 0,
-      currentContent: project.content?.substring(0, 100)
-    });
-    
-    // Générer le HTML à partir des blocs pour l'aperçu
-    let previewContent = project.content || '';
-    
-    if (project.blocks && Array.isArray(project.blocks) && project.blocks.length > 0) {
-      console.log('📖 Génération HTML à partir des blocs:', project.blocks);
-      previewContent = project.blocks.map(block => {
-        switch (block.type) {
-          case 'h2':
-            return block.content ? `<h2>${block.content}</h2>` : '';
-          case 'h3':
-            return block.content ? `<h3>${block.content}</h3>` : '';
-          case 'content':
-            return block.content || '';
-          case 'image':
-            return block.image?.src ? `<img src="${block.image.src}" alt="${block.image.alt || ''}" />` : '';
-          case 'cta':
-            return (block.ctaText || block.ctaLink) ? 
-              `<div class="cta-block"><p>${block.ctaText || ''}</p><a href="${block.ctaLink || ''}" class="cta-button">En savoir plus</a></div>` : '';
-          default:
-            return '';
-        }
-      }).filter(html => html.trim() !== '').join('\n');
-      console.log('📖 HTML généré:', previewContent);
-    } else {
-      console.log('📖 Pas de blocs, utilisation du contenu existant:', previewContent);
+    try {
+      // 1. Créer une révision temporaire avec les modifications actuelles
+      const previewId = `preview-${Date.now()}`;
+      console.log('📝 Création aperçu projet:', {
+        projectId: project.id,
+        slug: project.slug,
+        hasUnsavedChanges,
+        blocksCount: project.blocks?.length || 0
+      });
+      
+      // 2. Générer le HTML à partir des blocs pour l'aperçu
+      let previewContent = project.content || '';
+      
+      if (project.blocks && Array.isArray(project.blocks) && project.blocks.length > 0) {
+        previewContent = project.blocks.map(block => {
+          switch (block.type) {
+            case 'h2':
+              return block.content ? `<h2>${block.content}</h2>` : '';
+            case 'h3':
+              return block.content ? `<h3>${block.content}</h3>` : '';
+            case 'content':
+              return block.content || '';
+            case 'image':
+              return block.image?.src ? `<img src="${block.image.src}" alt="${block.image.alt || ''}" />` : '';
+            case 'cta':
+              return (block.ctaText || block.ctaLink) ? 
+                `<div class="cta-block"><p>${block.ctaText || ''}</p><a href="${block.ctaLink || ''}" class="cta-button">En savoir plus</a></div>` : '';
+            default:
+              return '';
+          }
+        }).filter(html => html.trim() !== '').join('\n');
+      }
+      
+      if (!previewContent || previewContent.trim() === '') {
+        previewContent = `<p>Contenu du projet en cours de rédaction...</p>`;
+      }
+      
+      // 3. Créer le projet avec le contenu généré
+      const previewProject = {
+        ...project,
+        content: previewContent
+      };
+      
+      // 4. Récupérer le contenu complet pour mettre à jour la section work
+      const contentResponse = await fetch('/api/content');
+      const fullContent = await contentResponse.json();
+      
+      // 5. Mettre à jour le projet dans la liste des projets
+      const updatedProjects = fullContent.work.projects.map((p: any) => 
+        p.id === project.id ? previewProject : p
+      );
+      
+      const previewContentData = {
+        ...fullContent,
+        work: {
+          ...fullContent.work,
+          projects: updatedProjects
+        },
+        _isPreview: true,
+        _previewId: previewId,
+        _originalPage: 'work'
+      };
+      
+      // 6. Sauvegarder la révision temporaire
+      const response = await fetch('/api/admin/preview/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          previewId,
+          content: previewContentData,
+          page: 'work'
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Erreur lors de la création de l\'aperçu');
+      }
+      
+      // 7. Ouvrir l'URL spéciale d'aperçu
+      window.open(`/work/${project.slug || project.id}?preview=${previewId}`, '_blank');
+      
+    } catch (err) {
+      console.error('Erreur aperçu projet:', err);
+      alert('Erreur lors de la création de l\'aperçu');
     }
-    
-    // Si pas de contenu du tout, créer un contenu par défaut
-    if (!previewContent || previewContent.trim() === '') {
-      previewContent = `<p>Contenu du projet en cours de rédaction...</p>`;
-      console.log('📖 Contenu par défaut créé');
-    }
-    
-    // Sauvegarder temporairement dans sessionStorage pour l'aperçu
-    const previewData = {
-      ...project,
-      content: previewContent
-    };
-    
-    const previewKey = project.slug || project.id;
-    sessionStorage.setItem(`preview-${previewKey}`, JSON.stringify(previewData));
-    
-    console.log('📖 Sauvegarde aperçu:', { previewKey, previewData });
-    
-    // Ouvrir l'aperçu avec un paramètre spécial
-    window.open(`/work/${previewKey}?preview=true`, '_blank');
   };
 
   const handleSaveInternal = async (projectToSave: Project = project!) => {

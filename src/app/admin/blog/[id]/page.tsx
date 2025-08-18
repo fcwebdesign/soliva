@@ -112,63 +112,94 @@ export default function BlogArticleEdit() {
 
   const handleSave = () => handleSaveWithStatus(article?.status || 'draft');
 
-  const handlePreview = () => {
+  const handlePreview = async () => {
     if (!article) return;
     
-    console.log('📖 Préparation aperçu:', { 
-      articleId: article.id, 
-      slug: article.slug,
-      hasBlocks: !!article.blocks,
-      blocksCount: article.blocks?.length || 0,
-      currentContent: article.content?.substring(0, 100)
-    });
-    
-    // Générer le HTML à partir des blocs pour l'aperçu
-    let previewContent = article.content || '';
-    
-    if (article.blocks && Array.isArray(article.blocks) && article.blocks.length > 0) {
-      console.log('📖 Génération HTML à partir des blocs:', article.blocks);
-      previewContent = article.blocks.map(block => {
-        switch (block.type) {
-          case 'h2':
-            return block.content ? `<h2>${block.content}</h2>` : '';
-          case 'h3':
-            return block.content ? `<h3>${block.content}</h3>` : '';
-          case 'content':
-            return block.content || '';
-          case 'image':
-            return block.image?.src ? `<img src="${block.image.src}" alt="${block.image.alt || ''}" />` : '';
-          case 'cta':
-            return (block.ctaText || block.ctaLink) ? 
-              `<div class="cta-block"><p>${block.ctaText || ''}</p><a href="${block.ctaLink || ''}" class="cta-button">En savoir plus</a></div>` : '';
-          default:
-            return '';
-        }
-      }).filter(html => html.trim() !== '').join('\n');
-      console.log('📖 HTML généré:', previewContent);
-    } else {
-      console.log('📖 Pas de blocs, utilisation du contenu existant:', previewContent);
+    try {
+      // 1. Créer une révision temporaire avec les modifications actuelles
+      const previewId = `preview-${Date.now()}`;
+      console.log('📝 Création aperçu article:', {
+        articleId: article.id,
+        slug: article.slug,
+        hasUnsavedChanges,
+        blocksCount: article.blocks?.length || 0
+      });
+      
+      // 2. Générer le HTML à partir des blocs pour l'aperçu
+      let previewContent = article.content || '';
+      
+      if (article.blocks && Array.isArray(article.blocks) && article.blocks.length > 0) {
+        previewContent = article.blocks.map(block => {
+          switch (block.type) {
+            case 'h2':
+              return block.content ? `<h2>${block.content}</h2>` : '';
+            case 'h3':
+              return block.content ? `<h3>${block.content}</h3>` : '';
+            case 'content':
+              return block.content || '';
+            case 'image':
+              return block.image?.src ? `<img src="${block.image.src}" alt="${block.image.alt || ''}" />` : '';
+            case 'cta':
+              return (block.ctaText || block.ctaLink) ? 
+                `<div class="cta-block"><p>${block.ctaText || ''}</p><a href="${block.ctaLink || ''}" class="cta-button">En savoir plus</a></div>` : '';
+            default:
+              return '';
+          }
+        }).filter(html => html.trim() !== '').join('\n');
+      }
+      
+      if (!previewContent || previewContent.trim() === '') {
+        previewContent = `<p>Contenu de l'article en cours de rédaction...</p>`;
+      }
+      
+      // 3. Créer l'article avec le contenu généré
+      const previewArticle = {
+        ...article,
+        content: previewContent
+      };
+      
+      // 4. Récupérer le contenu complet pour mettre à jour la section blog
+      const contentResponse = await fetch('/api/content');
+      const fullContent = await contentResponse.json();
+      
+      // 5. Mettre à jour l'article dans la liste des articles
+      const updatedArticles = fullContent.blog.articles.map((a: any) => 
+        a.id === article.id ? previewArticle : a
+      );
+      
+      const previewContentData = {
+        ...fullContent,
+        blog: {
+          ...fullContent.blog,
+          articles: updatedArticles
+        },
+        _isPreview: true,
+        _previewId: previewId,
+        _originalPage: 'blog'
+      };
+      
+      // 6. Sauvegarder la révision temporaire
+      const response = await fetch('/api/admin/preview/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          previewId,
+          content: previewContentData,
+          page: 'blog'
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Erreur lors de la création de l\'aperçu');
+      }
+      
+      // 7. Ouvrir l'URL spéciale d'aperçu
+      window.open(`/blog/${article.slug || article.id}?preview=${previewId}`, '_blank');
+      
+    } catch (err) {
+      console.error('Erreur aperçu article:', err);
+      alert('Erreur lors de la création de l\'aperçu');
     }
-    
-    // Si pas de contenu du tout, créer un contenu par défaut
-    if (!previewContent || previewContent.trim() === '') {
-      previewContent = `<p>Contenu de l'article en cours de rédaction...</p>`;
-      console.log('📖 Contenu par défaut créé');
-    }
-    
-    // Sauvegarder temporairement dans sessionStorage pour l'aperçu
-    const previewData = {
-      ...article,
-      content: previewContent
-    };
-    
-    const previewKey = article.slug || article.id;
-    sessionStorage.setItem(`preview-${previewKey}`, JSON.stringify(previewData));
-    
-    console.log('📖 Sauvegarde aperçu:', { previewKey, previewData });
-    
-    // Ouvrir l'aperçu avec un paramètre spécial
-    window.open(`/blog/${previewKey}?preview=true`, '_blank');
   };
 
   const handleSaveInternal = async (articleToSave: Article = article!) => {

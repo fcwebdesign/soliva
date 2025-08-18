@@ -129,48 +129,53 @@ const ProjectPage = ({ params }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProject = async () => {
-      try {
-        // Vérifier d'abord s'il y a des données d'aperçu dans sessionStorage
-        if (isPreviewMode) {
-          const previewData = sessionStorage.getItem(`preview-${resolvedParams.slug}`);
-          console.log('📖 Recherche aperçu projet:', { slug: resolvedParams.slug, previewData: !!previewData });
+      const fetchProject = async () => {
+    try {
+      // Si on est en mode aperçu, charger la révision temporaire
+      if (isPreviewMode && previewId) {
+        console.log('📖 Chargement de la révision temporaire (projet):', previewId);
+        
+        const response = await fetch(`/api/admin/preview/${previewId}`, {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' }
+        });
+        
+        if (response.ok) {
+          const previewContent = await response.json();
+          const foundProject = previewContent.work?.projects?.find(p => p.slug === resolvedParams.slug);
           
-          if (previewData) {
-            console.log('📖 Mode aperçu: utilisation des données temporaires');
-            const previewProject = JSON.parse(previewData);
-            console.log('📖 Données aperçu projet:', previewProject);
-            setProject(previewProject);
+          if (foundProject) {
+            console.log('✅ Projet de prévisualisation chargé');
+            setProject(foundProject);
             setLoading(false);
             return;
-          } else {
-            console.log('📖 Aucune donnée d\'aperçu trouvée, chargement normal');
           }
+        } else {
+          console.warn('⚠️ Révision temporaire non trouvée, chargement normal');
         }
-        
-        // Sinon, charger normalement depuis l'API
-        const response = await fetch('/api/content', {
-          cache: 'no-store',
-          headers: {
-            'Cache-Control': 'no-cache'
-          }
-        });
-        const content = await response.json();
-        
-        const foundProject = content.work.projects.find(p => p.slug === resolvedParams.slug);
-        
-        if (!foundProject) {
-          notFound();
-        }
-        
-        setProject(foundProject);
-      } catch (error) {
-        console.error('Erreur lors du chargement du projet:', error);
-        notFound();
-      } finally {
-        setLoading(false);
       }
-    };
+      
+      // Sinon, charger normalement depuis l'API
+      const response = await fetch('/api/content', {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache' }
+      });
+      const content = await response.json();
+      
+      const foundProject = content.work.projects.find(p => p.slug === resolvedParams.slug);
+      
+      if (!foundProject) {
+        notFound();
+      }
+      
+      setProject(foundProject);
+    } catch (error) {
+      console.error('Erreur lors du chargement du projet:', error);
+      notFound();
+    } finally {
+      setLoading(false);
+    }
+  };
 
     fetchProject();
   }, [resolvedParams.slug, isPreviewMode]);

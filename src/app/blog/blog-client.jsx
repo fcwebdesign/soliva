@@ -15,16 +15,41 @@ gsap.registerPlugin(SplitText);
 const BlogClient = ({ content: initialContent }) => {
   const [content, setContent] = useState(initialContent);
 
-  // Vérifier si on est en mode aperçu (Draft Mode de Next.js)
+  // Vérifier si on est en mode aperçu via l'URL
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [previewId, setPreviewId] = useState(null);
+  const [previewContent, setPreviewContent] = useState(initialContent);
 
   useEffect(() => {
-    // Vérifier le Draft Mode via un cookie ou une classe CSS
-    const isDraftMode = document.documentElement.classList.contains('preview-mode') ||
-                       document.cookie.includes('__prerender_bypass') ||
-                       window.location.search.includes('preview=true');
-    setIsPreviewMode(isDraftMode);
-  }, []);
+    const urlParams = new URLSearchParams(window.location.search);
+    const previewParam = urlParams.get('preview');
+    
+    if (previewParam) {
+      setIsPreviewMode(true);
+      setPreviewId(previewParam);
+      console.log('🔍 Mode aperçu détecté (blog):', previewParam);
+      
+      // Ajouter la classe CSS pour le décalage
+      document.documentElement.classList.add('preview-mode');
+      
+      // Charger le contenu de prévisualisation
+      fetch(`/api/admin/preview/${previewParam}`)
+        .then(response => response.json())
+        .then(data => {
+          console.log('✅ Contenu de prévisualisation chargé (blog)');
+          setPreviewContent(data.blog || initialContent);
+        })
+        .catch(error => {
+          console.error('Erreur chargement prévisualisation (blog):', error);
+          setPreviewContent(initialContent);
+        });
+    }
+    
+    // Cleanup function pour supprimer la classe
+    return () => {
+      document.documentElement.classList.remove('preview-mode');
+    };
+  }, [initialContent]);
 
   // Recharger le contenu périodiquement pour les mises à jour
   useEffect(() => {
@@ -156,14 +181,14 @@ const BlogClient = ({ content: initialContent }) => {
         
         <div className="blog">
           <div className="col">
-            <h1 className="blog-header">{content?.hero?.title || 'Journal'}</h1>
+            <h1 className="blog-header">{previewContent?.hero?.title || 'Journal'}</h1>
             <div className="blog-description">
-              <p>{content?.description || "Réflexions, analyses et insights sur le design, la technologie et la stratégie digitale."}</p>
+              <p>{previewContent?.description || "Réflexions, analyses et insights sur le design, la technologie et la stratégie digitale."}</p>
             </div>
           </div>
           <div className="col">
             <div className="blog-articles">
-              {(content?.articles || [])
+              {(previewContent?.articles || [])
                 .filter(article => article.status === 'published' || !article.status)
                 .map((article, index, filteredArray) => (
                 <div key={article.id}>

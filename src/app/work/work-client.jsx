@@ -17,16 +17,41 @@ const WorkClient = ({ content }) => {
   const router = useTransitionRouter();
   useTransition(); // Utilise la configuration de transition
 
-  // Vérifier si on est en mode aperçu (Draft Mode de Next.js)
+  // Vérifier si on est en mode aperçu via l'URL
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [previewId, setPreviewId] = useState(null);
+  const [previewContent, setPreviewContent] = useState(content);
 
   useEffect(() => {
-    // Vérifier le Draft Mode via un cookie ou une classe CSS
-    const isDraftMode = document.documentElement.classList.contains('preview-mode') ||
-                       document.cookie.includes('__prerender_bypass') ||
-                       window.location.search.includes('preview=true');
-    setIsPreviewMode(isDraftMode);
-  }, []);
+    const urlParams = new URLSearchParams(window.location.search);
+    const previewParam = urlParams.get('preview');
+    
+    if (previewParam) {
+      setIsPreviewMode(true);
+      setPreviewId(previewParam);
+      console.log('🔍 Mode aperçu détecté (work):', previewParam);
+      
+      // Ajouter la classe CSS pour le décalage
+      document.documentElement.classList.add('preview-mode');
+      
+      // Charger le contenu de prévisualisation
+      fetch(`/api/admin/preview/${previewParam}`)
+        .then(response => response.json())
+        .then(data => {
+          console.log('✅ Contenu de prévisualisation chargé (work)');
+          setPreviewContent(data.work || content);
+        })
+        .catch(error => {
+          console.error('Erreur chargement prévisualisation (work):', error);
+          setPreviewContent(content);
+        });
+    }
+    
+    // Cleanup function pour supprimer la classe
+    return () => {
+      document.documentElement.classList.remove('preview-mode');
+    };
+  }, [content]);
 
   useGSAP(() => {
     const splitText = SplitText.create("h1", {
@@ -121,10 +146,10 @@ const WorkClient = ({ content }) => {
         <div className="work">
           <div className="col">
             <div className="work-header-section sticky top-32">
-              <h1 className="work-header">{content?.hero?.title || 'selected work'}</h1>
+              <h1 className="work-header">{previewContent?.hero?.title || 'selected work'}</h1>
               
               <div className="work-filters">
-                {(content?.filters || ['All', 'Strategy', 'Brand', 'Digital', 'IA']).map((filter, index) => (
+                {(previewContent?.filters || ['All', 'Strategy', 'Brand', 'Digital', 'IA']).map((filter, index) => (
                   <button key={index} className={`filter-btn ${index === 0 ? 'active' : ''}`}>
                     {filter}
                   </button>
@@ -133,14 +158,14 @@ const WorkClient = ({ content }) => {
               
               <div className="work-description">
                 <FormattedText>
-                  {content?.description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."}
+                  {previewContent?.description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."}
                 </FormattedText>
               </div>
             </div>
           </div>
           <div className="col">
             <div className="projects">
-              {(content?.projects || []).map((project, index) => (
+              {(previewContent?.projects || []).map((project, index) => (
                 <div key={index} className="project">
                   <div className="project-layout">
                     <div onClick={handleProjectClick(`/work/${project.slug}`)} style={{ cursor: 'pointer' }}>
