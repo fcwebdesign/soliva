@@ -13,6 +13,7 @@ const PAGES = [
   { id: 'blog', label: 'Blog', path: '/blog', icon: '📝' },
   { id: 'nav', label: 'Navigation', path: null, icon: '🧭' },
   { id: 'metadata', label: 'Métadonnées', path: null, icon: '⚙️' },
+  { id: 'backup', label: 'Sauvegarde', path: null, icon: '💾' },
 ];
 
 interface Article {

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import WysiwygEditor from './WysiwygEditor';
 import MediaUploader from './MediaUploader';
+import VersionList from './VersionList';
 
 interface Block {
   id: string;
@@ -27,6 +28,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [backupLoading, setBackupLoading] = useState(false);
   
   // Synchroniser localData avec pageData quand pageData change
   useEffect(() => {
@@ -1021,6 +1023,101 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   // React.useImperativeHandle(ref, () => ({
   //   saveBlocksContent
   // }), [blocks]);
+
+  const renderBackupBlock = () => {
+    const handleCreateBackup = async () => {
+      setBackupLoading(true);
+      try {
+        const response = await fetch('/api/admin/content', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'backup' }),
+        });
+        
+        if (response.ok) {
+          alert('Sauvegarde créée avec succès !');
+        } else {
+          alert('Erreur lors de la création de la sauvegarde');
+        }
+      } catch (err) {
+        alert('Erreur lors de la création de la sauvegarde');
+      } finally {
+        setBackupLoading(false);
+      }
+    };
+
+    const handleCleanupVersions = async () => {
+      if (!confirm('Nettoyer les anciennes versions ? (garde les 10 plus récentes)')) {
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/admin/versions/cleanup', {
+          method: 'POST',
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          alert(`✅ ${result.deleted} anciennes versions supprimées !`);
+          // Recharger la liste des versions
+          window.location.reload();
+        } else {
+          alert('Erreur lors du nettoyage');
+        }
+      } catch (err) {
+        alert('Erreur lors du nettoyage');
+      }
+    };
+
+    return (
+      <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+        <div className="flex items-center space-x-2 mb-6">
+          <span className="text-2xl">💾</span>
+          <h3 className="text-lg font-semibold text-gray-900">Gestion des sauvegardes</h3>
+        </div>
+
+        <div className="space-y-6">
+          {/* Actions rapides */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button
+              onClick={handleCreateBackup}
+              disabled={backupLoading}
+              className="flex items-center justify-center space-x-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
+            >
+              <span>💾</span>
+              <span>{backupLoading ? 'Création...' : 'Créer une sauvegarde'}</span>
+            </button>
+
+            <button
+              onClick={handleCleanupVersions}
+              className="flex items-center justify-center space-x-2 bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors"
+            >
+              <span>🧹</span>
+              <span>Nettoyer les versions</span>
+            </button>
+          </div>
+
+          {/* Liste des versions */}
+          <div>
+            <h4 className="text-md font-semibold text-gray-900 mb-4">Versions sauvegardées</h4>
+            <VersionList onRevert={(filename) => {
+              alert(`Version ${filename} restaurée !`);
+              window.location.reload();
+            }} />
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Si c'est la page backup, afficher la gestion des sauvegardes
+  if (pageKey === 'backup') {
+    return (
+      <div className="space-y-6">
+        {renderBackupBlock()}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

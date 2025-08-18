@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import BlockEditor from './components/BlockEditor';
-import RightPanel from './components/RightPanel';
 import type { Content } from '@/types/content';
 
 const PAGES = [
@@ -13,6 +12,7 @@ const PAGES = [
   { id: 'blog', label: 'Blog', path: '/blog', icon: '📝' },
   { id: 'nav', label: 'Navigation', path: null, icon: '🧭' },
   { id: 'metadata', label: 'Métadonnées', path: null, icon: '⚙️' },
+  { id: 'backup', label: 'Sauvegarde', path: null, icon: '💾' },
 ];
 
 export default function AdminPage() {
@@ -23,6 +23,7 @@ export default function AdminPage() {
   const [error, setError] = useState<string | null>(null);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [pageStatus, setPageStatus] = useState<'draft' | 'published'>('published'); // Nouveau état pour le statut de la page
 
   // Charger le contenu initial
   useEffect(() => {
@@ -58,133 +59,101 @@ export default function AdminPage() {
   const fetchContent = async () => {
     try {
       setLoading(true);
-      setError(null);
-      
-      console.log('🔄 Chargement du contenu...');
       const response = await fetch('/api/admin/content');
       
-      console.log('📡 Réponse API:', response.status, response.statusText);
-      
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(`Erreur ${response.status}: ${errorData.error || response.statusText}`);
+        throw new Error('Erreur lors du chargement');
       }
       
       const data = await response.json();
-      console.log('✅ Contenu chargé:', data);
-      
-      if (!data || Object.keys(data).length === 0) {
-        throw new Error('Le contenu est vide. Vérifiez que le fichier content.json existe.');
-      }
-      
       setContent(data);
-      setHasUnsavedChanges(false);
+      
+      // Définir le statut de la page (pour simplifier, on considère toutes les pages comme publiées par défaut)
+      setPageStatus('published');
+      
     } catch (err) {
-      console.error('❌ Erreur lors du chargement:', err);
-      setError(err instanceof Error ? err.message : 'Erreur inconnue');
+      console.error('Erreur:', err);
+      setError(err instanceof Error ? err.message : 'Une erreur est survenue');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleContentUpdate = (updates: any) => {
+  const handleSaveWithStatus = async (status: 'draft' | 'published') => {
     if (!content) return;
-
-    const newContent = { ...content };
-    newContent[currentPage as keyof Content] = updates;
-    setContent(newContent);
-    setHasUnsavedChanges(true);
-  };
-
-  const handleSave = async () => {
-    if (!content) return;
-
+    
     try {
       setSaveStatus('saving');
+      setPageStatus(status);
+      
       const response = await fetch('/api/admin/content', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ content }),
+        body: JSON.stringify({
+          ...content,
+          _status: status, // Ajouter le statut au contenu
+          _lastModified: new Date().toISOString()
+        }),
       });
 
       if (!response.ok) {
         throw new Error('Erreur lors de la sauvegarde');
       }
 
-      const updatedContent = await response.json();
-      setContent(updatedContent);
       setSaveStatus('success');
       setHasUnsavedChanges(false);
       
+      // Réinitialiser le statut après 3 secondes
       setTimeout(() => setSaveStatus('idle'), 3000);
-    } catch (error) {
-      setSaveStatus('error');
-      setTimeout(() => setSaveStatus('idle'), 5000);
-      throw error;
-    }
-  };
-
-  const handlePreview = () => {
-    const pagePaths: Record<string, string> = {
-      home: '/',
-      contact: '/contact',
-      studio: '/studio',
-      work: '/work',
-      blog: '/blog',
-    };
-    
-    const targetPath = pagePaths[currentPage] || '/';
-    window.open(`/api/admin/preview/enable?to=${targetPath}`, '_blank');
-    setIsPreviewMode(true);
-  };
-
-  const handleDisablePreview = () => {
-    window.open('/api/admin/preview/disable', '_blank');
-    setIsPreviewMode(false);
-  };
-
-  const handleRevert = (filename: string) => {
-    fetchContent();
-  };
-
-  const handleResetContent = async () => {
-    if (!confirm('Êtes-vous sûr de vouloir réinitialiser le contenu avec le seed complet ? Cela va remplacer tout le contenu actuel.')) {
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const response = await fetch('/api/admin/reset-content', {
-        method: 'POST',
-      });
-
-      if (!response.ok) {
-        throw new Error('Erreur lors de la réinitialisation');
-      }
-
-      const result = await response.json();
-      console.log('✅ Contenu réinitialisé:', result);
       
-      // Recharger le contenu
-      await fetchContent();
-      alert('Contenu réinitialisé avec succès !');
-    } catch (error) {
-      console.error('❌ Erreur lors de la réinitialisation:', error);
-      alert('Erreur lors de la réinitialisation');
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      console.error('Erreur:', err);
+      setSaveStatus('error');
+      setTimeout(() => setSaveStatus('idle'), 3000);
     }
+  };
+
+  const handleSave = () => handleSaveWithStatus(pageStatus);
+
+  const handlePreview = async () => {
+    if (!content) return;
+    
+    try {
+      // Sauvegarder temporairement dans sessionStorage pour l'aperçu
+      sessionStorage.setItem(`preview-${currentPage}`, JSON.stringify(content));
+      
+      // Ouvrir l'aperçu avec un paramètre spécial
+      const previewPath = PAGES.find(p => p.id === currentPage)?.path || '/';
+      window.open(`${previewPath}?preview=true`, '_blank');
+      
+    } catch (err) {
+      console.error('Erreur aperçu:', err);
+    }
+  };
+
+  const updateContent = (pageKey: string, updates: any) => {
+    if (!content) return;
+    
+    const newContent = { ...content };
+    
+    if (pageKey === 'nav') {
+      newContent.navigation = { ...newContent.navigation, ...updates };
+    } else if (pageKey === 'metadata') {
+      newContent.metadata = { ...newContent.metadata, ...updates };
+    } else {
+      newContent[pageKey as keyof Content] = { ...newContent[pageKey as keyof Content], ...updates };
+    }
+    
+    setContent(newContent);
+    setHasUnsavedChanges(true);
   };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Chargement...</p>
-        </div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
       </div>
     );
   }
@@ -192,142 +161,179 @@ export default function AdminPage() {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto p-6">
-          <div className="text-red-500 text-4xl mb-4">⚠️</div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Erreur de chargement</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <div className="space-y-3">
-            <button 
-              onClick={fetchContent}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              🔄 Réessayer
-            </button>
-            <div className="text-xs text-gray-500">
-              <p>Si le problème persiste :</p>
-              <p>1. Vérifiez que le fichier data/content.json existe</p>
-              <p>2. Ouvrez la console (F12) pour voir les détails</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!content) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">Aucun contenu disponible</p>
+          <p className="text-red-600 mb-4">{error}</p>
+          <button
+            onClick={fetchContent}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          >
+            Réessayer
+          </button>
         </div>
       </div>
     );
   }
 
-  const currentPageData = content?.[currentPage as keyof Content];
-  const currentPageInfo = PAGES.find(p => p.id === currentPage);
-  
-  // Debug: afficher les données de la page courante
-  console.log('🔍 Debug - Page courante:', currentPage);
-  console.log('🔍 Debug - Contenu complet:', JSON.stringify(content, null, 2));
-  console.log('🔍 Debug - Données de la page:', JSON.stringify(currentPageData, null, 2));
+  if (!content) return null;
+
+  const currentPageData = (() => {
+    switch (currentPage) {
+      case 'nav':
+        return content.navigation;
+      case 'metadata':
+        return content.metadata;
+      default:
+        return content[currentPage as keyof Content];
+    }
+  })();
+
+  const currentPageConfig = PAGES.find(p => p.id === currentPage);
 
   return (
-    <div className="min-h-screen bg-gray-50 grid grid-cols-1 xl:grid-cols-[256px_1fr_320px]">
-      {/* Sidebar gauche */}
+    <div className="min-h-screen bg-gray-50 grid grid-cols-1 xl:grid-cols-[256px_1fr]">
+      {/* Sidebar */}
       <Sidebar 
         pages={PAGES}
         currentPage={currentPage}
         onPageChange={setCurrentPage}
       />
 
-      {/* Zone centrale */}
+      {/* Zone principale */}
       <div className="flex flex-col">
-        {/* Header */}
-        <header className="px-6 py-4">
-          <div className="max-w-6xl mx-auto">
-            <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-xl font-semibold text-gray-900">
-                    {currentPageInfo?.label}
-                  </h1>
-                  <p className="text-sm text-gray-500">
-                    {currentPageInfo?.path || 'Configuration globale'}
-                  </p>
+        {/* Header avec SaveBar sticky */}
+        <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-3">
+                  <span className="text-2xl">{currentPageConfig?.icon}</span>
+                  <div>
+                    <h1 className="text-xl font-semibold text-gray-900">
+                      {currentPageConfig?.label}
+                    </h1>
+                    <p className="text-sm text-gray-500">
+                      {currentPageConfig?.path ? `Page: ${currentPageConfig.path}` : 'Configuration'}
+                    </p>
+                  </div>
                 </div>
+              </div>
                 
-                {/* Status bar */}
-                <div className="flex items-center space-x-4">
-                  {hasUnsavedChanges && (
-                    <span className="text-sm text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
-                      Modifications non enregistrées
-                    </span>
-                  )}
-                  
-                  {isPreviewMode && (
-                    <span className="text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full">
-                      Preview actif
-                    </span>
-                  )}
-                  
-                  {saveStatus === 'saving' && (
-                    <div className="flex items-center space-x-2">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                      <span className="text-sm text-gray-600">Enregistrement...</span>
-                    </div>
-                  )}
-                  
-                  {saveStatus === 'success' && (
-                    <span className="text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full">
-                      Enregistré à {new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                  )}
-                  
-                  {saveStatus === 'error' && (
-                    <span className="text-sm text-red-600 bg-red-50 px-3 py-1 rounded-full">
-                      Erreur lors de l'enregistrement
-                    </span>
-                  )}
+              {/* Status bar et boutons d'action */}
+              <div className="flex items-center space-x-4">
+                {hasUnsavedChanges && (
+                  <span className="text-sm text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
+                    Modifications non enregistrées
+                  </span>
+                )}
+                
+                {isPreviewMode && (
+                  <span className="text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                    Preview actif
+                  </span>
+                )}
+                
+                {saveStatus === 'saving' && (
+                  <div className="flex items-center space-x-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                    <span className="text-sm text-gray-600">Enregistrement...</span>
+                  </div>
+                )}
+                
+                {saveStatus === 'success' && (
+                  <span className="text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                    Enregistré à {new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                )}
+                
+                {saveStatus === 'error' && (
+                  <span className="text-sm text-red-600 bg-red-50 px-3 py-1 rounded-full">
+                    Erreur lors de l'enregistrement
+                  </span>
+                )}
 
-                  {/* Bouton de réinitialisation */}
+                {/* Bouton Aperçu */}
+                {currentPageConfig?.path && (
                   <button
-                    onClick={handleResetContent}
-                    disabled={loading}
-                    className="text-sm bg-red-600 text-white px-3 py-1 rounded-full hover:bg-red-700 transition-colors disabled:bg-gray-400"
-                    title="Réinitialiser le contenu avec le seed complet"
+                    onClick={hasUnsavedChanges ? handlePreview : () => window.open(currentPageConfig.path!, '_blank')}
+                    className={`text-sm px-4 py-2 rounded-lg transition-colors ${
+                      hasUnsavedChanges 
+                        ? 'bg-orange-600 text-white hover:bg-orange-700' 
+                        : 'bg-gray-600 text-white hover:bg-gray-700'
+                    }`}
+                    title={hasUnsavedChanges ? "Aperçu avec les modifications non sauvegardées" : "Voir la page publiée"}
                   >
-                    🔄 Réinitialiser
+                    {hasUnsavedChanges ? '👁️ Aperçu' : '🔗 Voir la page'}
                   </button>
-                </div>
+                )}
+
+                {/* Bouton Enregistrer brouillon */}
+                <button
+                  onClick={() => handleSaveWithStatus('draft')}
+                  disabled={saveStatus === 'saving'}
+                  className={`text-sm px-4 py-2 rounded-lg transition-colors ${
+                    saveStatus === 'saving'
+                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                      : 'bg-gray-600 text-white hover:bg-gray-700'
+                  }`}
+                  title={pageStatus === 'published' ? "Passer la page en brouillon" : "Enregistrer comme brouillon"}
+                >
+                  {pageStatus === 'published' ? '📝 Passer en brouillon' : '💾 Enregistrer brouillon'}
+                </button>
+
+                {/* Bouton Publier */}
+                <button
+                  onClick={() => handleSaveWithStatus('published')}
+                  disabled={saveStatus === 'saving'}
+                  className={`text-sm px-4 py-2 rounded-lg transition-colors ${
+                    saveStatus === 'saving'
+                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                      : pageStatus === 'published'
+                        ? 'bg-green-600 text-white hover:bg-green-700'
+                        : 'bg-blue-600 text-white hover:bg-blue-700'
+                  }`}
+                >
+                  {pageStatus === 'published' ? '✅ Mettre à jour' : '🚀 Publier'}
+                </button>
               </div>
             </div>
           </div>
         </header>
 
         {/* Contenu principal */}
-        <main className="flex-1 p-6 overflow-auto h-full">
-          <div className="w-full h-full max-w-6xl mx-auto">
-            <BlockEditor
-              pageData={currentPageData}
-              pageKey={currentPage}
-              onUpdate={handleContentUpdate}
-            />
+        <main className="flex-1 p-6">
+          <div className="max-w-7xl mx-auto">
+            {currentPageConfig && (
+              <>
+                {/* Informations de statut */}
+                <div className="bg-gray-50 p-4 rounded-lg mb-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-sm font-medium text-gray-700">Statut :</span>
+                      <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${
+                        pageStatus === 'published' 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-yellow-100 text-yellow-800'
+                      }`}>
+                        {pageStatus === 'published' ? '✅ Publié' : '📝 Brouillon'}
+                      </span>
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      Page: {currentPageConfig.label}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Éditeur de blocs */}
+                <BlockEditor
+                  pageData={currentPageData}
+                  pageKey={currentPage}
+                  onUpdate={(updates) => updateContent(currentPage, updates)}
+                />
+              </>
+            )}
           </div>
         </main>
       </div>
-
-      {/* Sidebar droite */}
-      <RightPanel
-        onSave={handleSave}
-        onPreview={handlePreview}
-        onDisablePreview={handleDisablePreview}
-        isPreviewMode={isPreviewMode}
-        currentPage={currentPage}
-        onRevert={handleRevert}
-        saveStatus={saveStatus}
-        hasUnsavedChanges={hasUnsavedChanges}
-      />
     </div>
   );
 } 

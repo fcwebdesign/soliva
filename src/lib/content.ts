@@ -370,6 +370,32 @@ export async function writeContent(next: Content, opts?: { actor?: string }): Pr
       
       await fs.writeFile(backupPath, currentContent, 'utf-8');
       console.log(`✅ Version sauvegardée: ${backupPath}`);
+
+      // Nettoyage automatique : garder seulement les 15 plus récentes
+      try {
+        const files = await fs.readdir(versionsDir);
+        const versionFiles = files
+          .filter(file => file.startsWith('content-') && file.endsWith('.json'))
+          .map(file => ({
+            name: file,
+            path: join(versionsDir, file),
+            timestamp: file.replace('content-', '').replace('.json', '')
+          }))
+          .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+
+        const MAX_VERSIONS = 15;
+        const toDelete = versionFiles.slice(MAX_VERSIONS);
+
+        for (const file of toDelete) {
+          await fs.unlink(file.path);
+        }
+
+        if (toDelete.length > 0) {
+          console.log(`🧹 Auto-nettoyage: ${toDelete.length} anciennes versions supprimées`);
+        }
+      } catch (cleanupError) {
+        console.warn('⚠️ Erreur lors du nettoyage automatique:', cleanupError);
+      }
     } catch (error) {
       console.warn('⚠️ Impossible de sauvegarder la version actuelle:', error);
     }
