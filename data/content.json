@@ -32,7 +32,7 @@
       },
       "inquiries": {
         "title": "Demandes générales",
-        "email": "contact@soliva.studio"
+        "email": "contact@soliva.studio yep"
       }
     },
     "socials": [
@@ -60,7 +60,7 @@
       "subtitle": "Notre approche créative"
     },
     "content": {
-      "description": "<p><strong>test en gras</strong></p><p><strong><em>hello</em></strong></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\">nouveau lien</a></p><p>hello</p><p>on va voir hein hein</p><p></p><p>suis-je fort ? ou pas ?</p>",
+      "description": "<p><strong>test en gras</strong></p><p><strong><em>hello</em></strong></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\">nouveau lien</a></p><p>hello</p><p>on va voir hein hein</p><p></p><p>suis-je fort ? ou pas ? yep</p>",
       "image": {
         "src": "/studio.jpg",
         "alt": "L'équipe Soliva au travail dans notre espace créatif"
@@ -381,6 +381,5 @@
   },
   "_isPreview": true,
   "_previewId": "preview-1755558070217",
-  "_originalPage": "blog",
-  "_status": "published"
+  "_originalPage": "blog"
 }

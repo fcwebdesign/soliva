@@ -268,6 +268,27 @@ export default function AdminPage() {
 
   const handleSave = () => handleSaveWithStatus(pageStatus);
 
+  // Écouter les messages de l'aperçu
+  useEffect(() => {
+    const handleMessage = async (event: MessageEvent) => {
+      if (event.origin !== window.location.origin) return;
+      
+      if (event.data.type === 'SAVE_FROM_PREVIEW') {
+        console.log('📢 Demande de sauvegarde depuis l\'aperçu');
+        console.log('📊 État de la page avant sauvegarde:', {
+          currentPage,
+          hasContent: !!content,
+          hasUnsavedChanges
+        });
+        // Sauvegarder automatiquement la page actuelle
+        await handleSaveWithStatus('published');
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [content, currentPage, hasUnsavedChanges]);
+
   const handlePreview = async () => {
     if (!content) return;
     
