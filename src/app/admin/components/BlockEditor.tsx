@@ -937,105 +937,118 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     </div>
   );
 
+  // Fonction pour rendre l'éditeur drag & drop
+  const renderDragDropEditor = () => (
+    <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center space-x-2">
+          <span className="text-2xl">📝</span>
+          <h3 className="text-lg font-semibold text-gray-900">Éditeur de contenu</h3>
+        </div>
+        
+        {/* Menu pour ajouter des blocs */}
+        <div className="flex items-center space-x-2">
+          <select
+            onChange={(e) => {
+              if (e.target.value) {
+                addBlock(e.target.value as Block['type']);
+                e.target.value = '';
+              }
+            }}
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="">Ajouter un bloc...</option>
+            <option value="h2">Titre H2</option>
+            <option value="h3">Sous-titre H3</option>
+            <option value="content">Contenu</option>
+            <option value="image">Image</option>
+            <option value="cta">CTA</option>
+          </select>
+        </div>
+      </div>
+      
+      {/* Zone de blocs avec drag & drop natif */}
+      <div 
+        className="space-y-4 min-h-[100px] p-2 rounded-lg border-2 border-dashed border-gray-200 transition-colors"
+        onDragOver={(e) => {
+          e.preventDefault();
+          e.currentTarget.classList.add('border-blue-300', 'bg-blue-50');
+        }}
+        onDragLeave={(e) => {
+          e.currentTarget.classList.remove('border-blue-300', 'bg-blue-50');
+        }}
+        onDrop={(e) => {
+          e.currentTarget.classList.remove('border-blue-300', 'bg-blue-50');
+        }}
+      >
+        {(blocks || []).length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            <div className="text-4xl mb-2">📝</div>
+            <p className="text-sm">Aucun bloc pour le moment</p>
+            <p className="text-xs text-gray-400 mt-1">Utilisez le menu ci-dessus pour ajouter votre premier bloc</p>
+          </div>
+        ) : (
+          (blocks || []).map((block, index) => (
+            <div
+              key={block.id}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDrop={(e) => handleDrop(e, index)}
+              className={`block-container relative ${
+                draggedIndex === index ? 'opacity-50' : ''
+              } ${
+                dragOverIndex === index && draggedIndex !== index 
+                  ? 'ring-2 ring-blue-500 ring-opacity-50 bg-blue-50' 
+                  : ''
+              }`}
+            >
+              {/* Indicateur de drop au-dessus */}
+              {dragOverIndex === index && draggedIndex !== null && draggedIndex !== index && (
+                <div className="absolute -top-2 left-0 right-0 h-1 bg-blue-500 rounded-full z-10"></div>
+              )}
+              
+              {/* Indicateur de drop en dessous */}
+              {dragOverIndex === index && draggedIndex !== null && draggedIndex !== index && (
+                <div className="absolute -bottom-2 left-0 right-0 h-1 bg-blue-500 rounded-full z-10"></div>
+              )}
+              <div 
+                className="block-header"
+                draggable
+                onDragStart={(e) => handleDragStart(e, index)}
+                onDragEnd={handleDragEndNative}
+              >
+                <div className="drag-handle cursor-grab active:cursor-grabbing">
+                  ⋮⋮
+                </div>
+                <span className="block-type">{renderBlockTypeLabel(block.type)}</span>
+                <button
+                  onClick={() => removeBlock(block.id)}
+                  className="remove-block"
+                >
+                  ×
+                </button>
+              </div>
+              {renderBlock(block, index)}
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+
   // Si c'est un article individuel, utiliser l'éditeur de blocs
   if (pageKey === 'article') {
     return (
       <div className="space-y-6">
-        {/* Éditeur de blocs pour l'article */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-2">
-              <span className="text-2xl">📝</span>
-              <h3 className="text-lg font-semibold text-gray-900">Éditeur de blocs</h3>
-            </div>
-            
-            {/* Menu pour ajouter des blocs */}
-            <div className="flex items-center space-x-2">
-              <select
-                onChange={(e) => {
-                  if (e.target.value) {
-                    addBlock(e.target.value as Block['type']);
-                    e.target.value = '';
-                  }
-                }}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="">Ajouter un bloc...</option>
-                <option value="h2">Titre H2</option>
-                <option value="h3">Sous-titre H3</option>
-                <option value="content">Contenu</option>
-                <option value="image">Image</option>
-                <option value="cta">CTA</option>
-              </select>
-            </div>
-          </div>
-          
-          {/* Zone de blocs avec drag & drop natif */}
-          <div 
-            className="space-y-4 min-h-[100px] p-2 rounded-lg border-2 border-dashed border-gray-200 transition-colors"
-            onDragOver={(e) => {
-              e.preventDefault();
-              e.currentTarget.classList.add('border-blue-300', 'bg-blue-50');
-            }}
-            onDragLeave={(e) => {
-              e.currentTarget.classList.remove('border-blue-300', 'bg-blue-50');
-            }}
-            onDrop={(e) => {
-              e.currentTarget.classList.remove('border-blue-300', 'bg-blue-50');
-            }}
-          >
-            {(blocks || []).length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <div className="text-4xl mb-2">📝</div>
-                <p className="text-sm">Aucun bloc pour le moment</p>
-                <p className="text-xs text-gray-400 mt-1">Utilisez le menu ci-dessus pour ajouter votre premier bloc</p>
-              </div>
-            ) : (
-              (blocks || []).map((block, index) => (
-                <div
-                  key={block.id}
-                  onDragOver={(e) => handleDragOver(e, index)}
-                  onDrop={(e) => handleDrop(e, index)}
-                  className={`block-container relative ${
-                    draggedIndex === index ? 'opacity-50' : ''
-                  } ${
-                    dragOverIndex === index && draggedIndex !== index 
-                      ? 'ring-2 ring-blue-500 ring-opacity-50 bg-blue-50' 
-                      : ''
-                  }`}
-                >
-                  {/* Indicateur de drop au-dessus */}
-                  {dragOverIndex === index && draggedIndex !== null && draggedIndex !== index && (
-                    <div className="absolute -top-2 left-0 right-0 h-1 bg-blue-500 rounded-full z-10"></div>
-                  )}
-                  
-                  {/* Indicateur de drop en dessous */}
-                  {dragOverIndex === index && draggedIndex !== null && draggedIndex !== index && (
-                    <div className="absolute -bottom-2 left-0 right-0 h-1 bg-blue-500 rounded-full z-10"></div>
-                  )}
-                  <div 
-                    className="block-header"
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, index)}
-                    onDragEnd={handleDragEndNative}
-                  >
-                    <div className="drag-handle cursor-grab active:cursor-grabbing">
-                      ⋮⋮
-                    </div>
-                    <span className="block-type">{renderBlockTypeLabel(block.type)}</span>
-                    <button
-                      onClick={() => removeBlock(block.id)}
-                      className="remove-block"
-                    >
-                      ×
-                    </button>
-                  </div>
-                  {renderBlock(block, index)}
-                </div>
-              ))
-            )}
-          </div>
-        </div>
+        {renderDragDropEditor()}
+      </div>
+    );
+  }
+
+  // Si c'est un projet individuel, utiliser l'éditeur de blocs
+  if (pageKey === 'project' || pageKey.startsWith('project-')) {
+    return (
+      <div className="space-y-6">
+        {renderDragDropEditor()}
       </div>
     );
   }
@@ -1162,11 +1175,24 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     <div className="space-y-6">
       {/* Rendu conditionnel selon le type de page */}
       {pageKey === 'home' && renderHeroBlock()}
-
       {pageKey === 'contact' && renderContactBlock()}
-      {renderContentBlock()}
-      {renderMetadataBlock()}
-      {renderNavBlock()}
+      
+      {/* Pour les projets et articles individuels, afficher l'éditeur de blocs */}
+      {(pageKey === 'project' || pageKey === 'article' || pageKey.startsWith('project-') || pageKey.startsWith('article-')) && (
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Éditeur de contenu</h3>
+          {renderDragDropEditor()}
+        </div>
+      )}
+      
+      {/* Pour les autres pages, afficher les blocs classiques */}
+      {!['blog', 'work', 'backup', 'project', 'article'].includes(pageKey) && !pageKey.startsWith('project-') && !pageKey.startsWith('article-') && (
+        <>
+          {renderContentBlock()}
+          {renderMetadataBlock()}
+          {renderNavBlock()}
+        </>
+      )}
     </div>
   );
 } 

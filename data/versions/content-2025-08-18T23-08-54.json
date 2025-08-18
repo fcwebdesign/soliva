@@ -60,7 +60,7 @@
       "subtitle": "Notre approche créative"
     },
     "content": {
-      "description": "<p><strong>test en gras</strong></p><p><strong><em>hello</em></strong></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\">nouveau lien</a></p><p>hello</p><p>on va voir</p>",
+      "description": "<p><strong>test en gras</strong></p><p><strong><em>hello</em></strong></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\">nouveau lien</a></p><p>hello</p><p>on va voir hein hein</p><p></p><p>suis-je fort ? ou pas ?</p>",
       "image": {
         "src": "/studio.jpg",
         "alt": "L'équipe Soliva au travail dans notre espace créatif"
@@ -82,12 +82,43 @@
     "description": "Découvrez notre sélection de projets qui illustrent notre approche créative et notre expertise en stratégie de marque et design digital. Chaque projet raconte une histoire unique, celle d'une collaboration fructueuse entre notre vision créative et les objectifs de nos clients.\n\nDe la conception d'identités de marque mémorables à la création d'expériences digitales innovantes, nous nous efforçons de dépasser les attentes et de créer un impact durable.",
     "projects": [
       {
+        "id": "ecotech-solutions",
         "title": "EcoTech Solutions",
-        "description": "Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.",
+        "content": "<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>\n<h2>Défis du projet</h2>\n<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>\n<img src=\"/uploads/1755556322957-c5ae9812.jpg\" alt=\"\">\n<h3>qsdqdqq</h3>",
+        "slug": "ecotech-solutions",
+        "status": "published",
+        "publishedAt": "2024-01-15T10:00:00.000Z",
+        "excerpt": "Identité de marque complète pour une startup spécialisée dans les technologies vertes.",
+        "client": "EcoTech Solutions",
         "category": "Identité",
-        "image": "/img1.jpg",
-        "alt": "EcoTech Solutions - Identité de marque",
-        "slug": "ecotech-solutions"
+        "year": "2024",
+        "featured": true,
+        "blocks": [
+          {
+            "id": "block-1",
+            "type": "content",
+            "content": "<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwcxw</p>"
+          },
+          {
+            "id": "block-2",
+            "type": "h2",
+            "content": "Défis du projet"
+          },
+          {
+            "id": "block-3",
+            "type": "content",
+            "content": "<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>"
+          },
+          {
+            "id": "block-1755556319801",
+            "type": "image",
+            "content": "",
+            "image": {
+              "src": "/uploads/1755556322957-c5ae9812.jpg",
+              "alt": ""
+            }
+          }
+        ]
       },
       {
         "title": "Art Gallery Digital",
@@ -110,7 +141,7 @@
       {
         "id": "ecotech-solutions",
         "title": "EcoTech Solutions",
-        "content": "<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.</p><p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>",
+        "content": "<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>\n<h2>Défis du projet</h2>\n<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>\n<img src=\"/uploads/1755556322957-c5ae9812.jpg\" alt=\"\">\n<h3>qsdqdqq</h3>",
         "slug": "ecotech-solutions",
         "status": "published",
         "publishedAt": "2024-01-15T10:00:00.000Z",
@@ -123,7 +154,7 @@
           {
             "id": "block-1",
             "type": "content",
-            "content": "<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.</p>"
+            "content": "<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>"
           },
           {
             "id": "block-2",
@@ -134,6 +165,20 @@
             "id": "block-3",
             "type": "content",
             "content": "<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>"
+          },
+          {
+            "id": "block-1755556319801",
+            "type": "image",
+            "content": "",
+            "image": {
+              "src": "/uploads/1755556322957-c5ae9812.jpg",
+              "alt": ""
+            }
+          },
+          {
+            "id": "block-1755558496641",
+            "type": "h3",
+            "content": "qsdqdqq"
           }
         ]
       },
@@ -305,7 +350,7 @@
       {
         "id": "ceci-est-mon-nouveal-id",
         "title": "Nouvel article",
-        "content": "<h2>test de section</h2>\n<p><strong>test contenu</strong></p><p><em>ça marche pas</em></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\"><em>yepddsfd</em></a></p><p></p><ul><li><p>test</p></li></ul><ol><li><p>ok je crois que c'est bon</p></li></ol><blockquote><p>citation</p></blockquote><p></p><p>hello c'est vraiment cool ce CMS</p><p>mais aloirs très cool</p><p>wai bof</p>\n<img src=\"/uploads/1755521225223-9689ec4e.png\" alt=\"test image\">",
+        "content": "<h2>test de section vsfdgfdggdf</h2>\n<p><strong>test contenu</strong></p><p><em>ça marche pas</em></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\"><em>yepddsfd</em></a></p><p></p><ul><li><p>test</p></li></ul><ol><li><p>ok je crois que c'est bon</p></li></ol><blockquote><p>citation</p></blockquote><p></p><p>hello c'est vraiment cool ce CMS</p><p>mais aloirs très cool</p><p>wai bof</p><p>xcvvcxcvx</p><p>fsfdsfdsdfsfds</p>\n<img src=\"/uploads/1755521225223-9689ec4e.png\" alt=\"test image\">",
         "status": "published",
         "slug": "ceci-est-mon-nouveal-id",
         "excerpt": "wxcxwcwxc xcccfffd cv",
@@ -313,12 +358,12 @@
           {
             "id": "block-1",
             "type": "h2",
-            "content": "test de section"
+            "content": "test de section vsfdgfdggdf"
           },
           {
             "id": "block-2",
             "type": "content",
-            "content": "<p><strong>test contenu</strong></p><p><em>ça marche pas</em></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\"><em>yepddsfd</em></a></p><p></p><ul><li><p>test</p></li></ul><ol><li><p>ok je crois que c'est bon</p></li></ol><blockquote><p>citation</p></blockquote><p></p><p>hello c'est vraiment cool ce CMS</p><p>mais aloirs très cool</p><p>wai bof</p>"
+            "content": "<p><strong>test contenu</strong></p><p><em>ça marche pas</em></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\"><em>yepddsfd</em></a></p><p></p><ul><li><p>test</p></li></ul><ol><li><p>ok je crois que c'est bon</p></li></ol><blockquote><p>citation</p></blockquote><p></p><p>hello c'est vraiment cool ce CMS</p><p>mais aloirs très cool</p><p>wai bof</p><p>xcvvcxcvx</p><p>fsfdsfdsdfsfds</p>"
           },
           {
             "id": "block-3",
@@ -333,5 +378,9 @@
         "publishedAt": "2025-08-18T13:25:59.640Z"
       }
     ]
-  }
+  },
+  "_isPreview": true,
+  "_previewId": "preview-1755558070217",
+  "_originalPage": "blog",
+  "_status": "published"
 }

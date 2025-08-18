@@ -112,6 +112,29 @@ export default function BlogArticleEdit() {
 
   const handleSave = () => handleSaveWithStatus(article?.status || 'draft');
 
+  // Écouter les messages de l'aperçu
+  useEffect(() => {
+    const handleMessage = async (event: MessageEvent) => {
+      if (event.origin !== window.location.origin) return;
+      
+      if (event.data.type === 'SAVE_FROM_PREVIEW') {
+        console.log('📢 Demande de sauvegarde depuis l\'aperçu');
+        console.log('📊 État de l\'article avant sauvegarde:', {
+          hasArticle: !!article,
+          hasBlocks: !!article?.blocks,
+          blocksCount: article?.blocks?.length || 0,
+          hasContent: !!article?.content,
+          contentLength: article?.content?.length || 0
+        });
+        // Sauvegarder automatiquement l'article actuel
+        await handleSaveWithStatus('published');
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [article]);
+
   const handlePreview = async () => {
     if (!article) return;
     
@@ -122,7 +145,9 @@ export default function BlogArticleEdit() {
         articleId: article.id,
         slug: article.slug,
         hasUnsavedChanges,
-        blocksCount: article.blocks?.length || 0
+        blocksCount: article.blocks?.length || 0,
+        blocks: article.blocks?.map(b => ({ type: b.type, content: b.content?.substring(0, 50) })),
+        articleContent: article.content?.substring(0, 100)
       });
       
       // 2. Générer le HTML à partir des blocs pour l'aperçu
@@ -163,9 +188,25 @@ export default function BlogArticleEdit() {
       const fullContent = await contentResponse.json();
       
       // 5. Mettre à jour l'article dans la liste des articles
+      console.log('🔍 Recherche de l\'article dans la liste:', {
+        articleId: article.id,
+        articleSlug: article.slug,
+        existingArticles: fullContent.blog.articles.map((a: any) => ({ id: a.id, slug: a.slug, title: a.title }))
+      });
+      
       const updatedArticles = fullContent.blog.articles.map((a: any) => 
-        a.id === article.id ? previewArticle : a
+        (a.id === article.id || a.slug === article.slug) ? previewArticle : a
       );
+      
+      console.log('✅ Article mis à jour dans l\'aperçu:', {
+        updatedArticlesCount: updatedArticles.length,
+        previewArticle: {
+          title: previewArticle.title,
+          slug: previewArticle.slug,
+          hasContent: !!previewArticle.content,
+          contentLength: previewArticle.content?.length || 0
+        }
+      });
       
       const previewContentData = {
         ...fullContent,

@@ -47,6 +47,8 @@ export default function WorkProjectEdit() {
     fetchContent();
   }, []);
 
+
+
   const fetchContent = async () => {
     try {
       setLoading(true);
@@ -122,6 +124,29 @@ export default function WorkProjectEdit() {
 
   const handleSave = () => handleSaveWithStatus(project?.status || 'draft');
 
+  // Écouter les messages de l'aperçu
+  useEffect(() => {
+    const handleMessage = async (event: MessageEvent) => {
+      if (event.origin !== window.location.origin) return;
+      
+      if (event.data.type === 'SAVE_FROM_PREVIEW') {
+        console.log('📢 Demande de sauvegarde depuis l\'aperçu');
+        console.log('📊 État du projet avant sauvegarde:', {
+          hasProject: !!project,
+          hasBlocks: !!project?.blocks,
+          blocksCount: project?.blocks?.length || 0,
+          hasContent: !!project?.content,
+          contentLength: project?.content?.length || 0
+        });
+        // Sauvegarder automatiquement le projet actuel
+        await handleSaveWithStatus('published');
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [project]);
+
   const handlePreview = async () => {
     if (!project) return;
     
@@ -173,9 +198,33 @@ export default function WorkProjectEdit() {
       const fullContent = await contentResponse.json();
       
       // 5. Mettre à jour le projet dans la liste des projets
-      const updatedProjects = fullContent.work.projects.map((p: any) => 
-        p.id === project.id ? previewProject : p
-      );
+      console.log('🔍 Recherche du projet dans la liste:', {
+        projectId: project.id,
+        projectSlug: project.slug,
+        existingProjects: fullContent.work.projects.map((p: any) => ({ id: p.id, slug: p.slug, title: p.title }))
+      });
+      
+      const updatedProjects = fullContent.work.projects.map((p: any) => {
+        if (p.id === project.id || p.slug === project.slug) {
+          // Fusionner le projet existant avec les modifications
+          return {
+            ...p, // Garder tous les champs existants (image, alt, etc.)
+            ...previewProject, // Appliquer les modifications (title, content, etc.)
+            content: previewProject.content // S'assurer que le contenu des blocs est bien appliqué
+          };
+        }
+        return p;
+      });
+      
+      console.log('✅ Projet mis à jour dans l\'aperçu:', {
+        updatedProjectsCount: updatedProjects.length,
+        previewProject: {
+          title: previewProject.title,
+          slug: previewProject.slug,
+          hasContent: !!previewProject.content,
+          contentLength: previewProject.content?.length || 0
+        }
+      });
       
       const previewContentData = {
         ...fullContent,
@@ -287,7 +336,61 @@ export default function WorkProjectEdit() {
         newContent.work.adminProjects.push(cleanedProject);
       }
       
+      // Synchroniser avec la liste projects pour le frontend
+      if (!newContent.work.projects) {
+        newContent.work.projects = [];
+      }
+      
+      // Trouver le projet dans la liste projects
+      const projectInFrontend = newContent.work.projects.find((p: any) => p.slug === cleanedProject.slug);
+      
+      if (projectInFrontend) {
+        // Mettre à jour le projet existant
+        const projectFrontendIndex = newContent.work.projects.findIndex((p: any) => p.slug === cleanedProject.slug);
+        newContent.work.projects[projectFrontendIndex] = {
+          ...projectInFrontend,
+          title: cleanedProject.title,
+          description: cleanedProject.description,
+          content: cleanedProject.content,
+          category: cleanedProject.category,
+          client: cleanedProject.client,
+          year: cleanedProject.year,
+          featured: cleanedProject.featured,
+          status: cleanedProject.status,
+          publishedAt: cleanedProject.publishedAt
+        };
+      } else {
+        // Ajouter le projet à la liste frontend
+        newContent.work.projects.push({
+          title: cleanedProject.title,
+          description: cleanedProject.description,
+          content: cleanedProject.content,
+          category: cleanedProject.category,
+          client: cleanedProject.client,
+          year: cleanedProject.year,
+          featured: cleanedProject.featured,
+          status: cleanedProject.status,
+          publishedAt: cleanedProject.publishedAt,
+          slug: cleanedProject.slug,
+          image: cleanedProject.image,
+          alt: cleanedProject.alt
+        });
+      }
+      
       console.log('💾 Contenu après sauvegarde:', JSON.stringify(newContent.work.adminProjects, null, 2));
+      console.log('💾 Structure envoyée:', {
+        hasContent: !!newContent,
+        allKeys: Object.keys(newContent),
+        workKeys: Object.keys(newContent.work || {}),
+        adminProjectsCount: newContent.work?.adminProjects?.length || 0,
+        projectsCount: newContent.work?.projects?.length || 0,
+        hasHome: !!newContent.home,
+        hasContact: !!newContent.contact,
+        hasStudio: !!newContent.studio,
+        hasBlog: !!newContent.blog,
+        hasNav: !!newContent.nav,
+        hasMetadata: !!newContent.metadata
+      });
       
       // Sauvegarder
       const response = await fetch('/api/admin/content', {
@@ -295,11 +398,17 @@ export default function WorkProjectEdit() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newContent),
+        body: JSON.stringify({ content: newContent }),
       });
 
       if (!response.ok) {
-        throw new Error('Erreur lors de la sauvegarde');
+        const errorData = await response.json().catch(() => ({}));
+        console.error('❌ Erreur API:', {
+          status: response.status,
+          statusText: response.statusText,
+          errorData
+        });
+        throw new Error(`Erreur ${response.status}: ${errorData.error || response.statusText}`);
       }
 
       setSaveStatus('success');

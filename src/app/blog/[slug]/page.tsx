@@ -127,7 +127,7 @@ export default function BlogArticle() {
 
   useEffect(() => {
     fetchContent();
-  }, []);
+  }, [previewId]); // Recharger quand previewId change
 
   const fetchContent = async () => {
     try {
@@ -142,15 +142,30 @@ export default function BlogArticle() {
         
         if (response.ok) {
           const previewContent = await response.json();
+          console.log('📖 Contenu de prévisualisation reçu:', {
+            hasBlog: !!previewContent.blog,
+            hasArticles: !!previewContent.blog?.articles,
+            articlesCount: previewContent.blog?.articles?.length || 0,
+            articles: previewContent.blog?.articles?.map(a => ({ title: a.title, slug: a.slug }))
+          });
+          
           const foundArticle = previewContent.blog?.articles?.find((a) => 
             a.slug === slug || a.id === slug
           );
           
           if (foundArticle) {
-            console.log('✅ Article de prévisualisation chargé');
+            console.log('✅ Article de prévisualisation chargé:', {
+              title: foundArticle.title,
+              slug: foundArticle.slug,
+              hasContent: !!foundArticle.content,
+              contentLength: foundArticle.content?.length || 0,
+              contentPreview: foundArticle.content?.substring(0, 100)
+            });
             setArticle(foundArticle);
             setLoading(false);
             return;
+          } else {
+            console.warn('⚠️ Article non trouvé dans la prévisualisation:', slug);
           }
         } else {
           console.warn('⚠️ Révision temporaire non trouvée, chargement normal');

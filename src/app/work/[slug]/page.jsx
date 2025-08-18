@@ -19,16 +19,30 @@ const ProjectPage = ({ params }) => {
   const router = useTransitionRouter();
   useTransition(); // Utilise la configuration de transition
 
-  // Vérifier si on est en mode aperçu (Draft Mode de Next.js)
+  // Vérifier si on est en mode aperçu via l'URL
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [previewId, setPreviewId] = useState(null);
 
   useEffect(() => {
-    // Vérifier le Draft Mode via un cookie ou une classe CSS
-    const isDraftMode = document.documentElement.classList.contains('preview-mode') ||
-                       document.cookie.includes('__prerender_bypass') ||
-                       window.location.search.includes('preview=true');
-    setIsPreviewMode(isDraftMode);
+    const urlParams = new URLSearchParams(window.location.search);
+    const previewParam = urlParams.get('preview');
+    
+    if (previewParam) {
+      setIsPreviewMode(true);
+      setPreviewId(previewParam);
+      console.log('🔍 Mode aperçu détecté (projet):', previewParam);
+    }
   }, []);
+
+  // Décaler tout le site en mode aperçu (comme WordPress)
+  useEffect(() => {
+    if (isPreviewMode) {
+      document.documentElement.classList.add('preview-mode');
+      return () => {
+        document.documentElement.classList.remove('preview-mode');
+      };
+    }
+  }, [isPreviewMode]);
 
   // Même logique que le Nav pour l'animation du cercle
   const isSafari = () => {
@@ -142,13 +156,28 @@ const ProjectPage = ({ params }) => {
         
         if (response.ok) {
           const previewContent = await response.json();
+          console.log('📖 Contenu de prévisualisation reçu:', {
+            hasWork: !!previewContent.work,
+            hasProjects: !!previewContent.work?.projects,
+            projectsCount: previewContent.work?.projects?.length || 0,
+            projects: previewContent.work?.projects?.map(p => ({ title: p.title, slug: p.slug }))
+          });
+          
           const foundProject = previewContent.work?.projects?.find(p => p.slug === resolvedParams.slug);
           
           if (foundProject) {
-            console.log('✅ Projet de prévisualisation chargé');
+            console.log('✅ Projet de prévisualisation chargé:', {
+              title: foundProject.title,
+              slug: foundProject.slug,
+              hasContent: !!foundProject.content,
+              contentLength: foundProject.content?.length || 0,
+              contentPreview: foundProject.content?.substring(0, 100)
+            });
             setProject(foundProject);
             setLoading(false);
             return;
+          } else {
+            console.warn('⚠️ Projet non trouvé dans la prévisualisation:', resolvedParams.slug);
           }
         } else {
           console.warn('⚠️ Révision temporaire non trouvée, chargement normal');
@@ -168,6 +197,16 @@ const ProjectPage = ({ params }) => {
         notFound();
       }
       
+      console.log('🔍 Projet trouvé:', {
+        title: foundProject.title,
+        slug: foundProject.slug,
+        hasContent: !!foundProject.content,
+        hasDescription: !!foundProject.description,
+        contentLength: foundProject.content?.length || 0,
+        contentPreview: foundProject.content?.substring(0, 100),
+        descriptionPreview: foundProject.description?.substring(0, 100)
+      });
+      
       setProject(foundProject);
     } catch (error) {
       console.error('Erreur lors du chargement du projet:', error);
@@ -178,7 +217,7 @@ const ProjectPage = ({ params }) => {
   };
 
     fetchProject();
-  }, [resolvedParams.slug, isPreviewMode]);
+  }, [resolvedParams.slug, isPreviewMode, previewId]);
 
   if (loading) {
     return (
@@ -229,8 +268,8 @@ const ProjectPage = ({ params }) => {
               </div>
               
               <div className="project-description">
-                <h2>Description</h2>
-                <FormattedText>{project.description}</FormattedText>
+                <h2>Contenu</h2>
+                <FormattedText>{project.content || project.description}</FormattedText>
               </div>
               
               <div className="project-navigation">

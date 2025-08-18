@@ -36,43 +36,28 @@ export default function PreviewBar() {
     if (!previewId) return;
     
     try {
-      // 1. Récupérer la révision temporaire
-      const previewResponse = await fetch(`/api/admin/preview/${previewId}`);
-      if (!previewResponse.ok) {
-        throw new Error('Révision non trouvée');
-      }
-      
-      const previewContent = await previewResponse.json();
-      
-      // 2. Publier le contenu
-      const publishResponse = await fetch('/api/admin/content', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: previewContent })
-      });
-      
-      if (!publishResponse.ok) {
-        throw new Error('Erreur lors de la publication');
-      }
-      
-      // 3. Supprimer la révision temporaire
-      await fetch(`/api/admin/preview/${previewId}`, { method: 'DELETE' });
-      
-      // 4. Notifier l'admin que le contenu a été publié
+      // Envoyer un message à l'admin pour qu'il sauvegarde
       if (window.opener && !window.opener.closed) {
+        console.log('📤 Envoi du message SAVE_FROM_PREVIEW à l\'admin');
         window.opener.postMessage({
-          type: 'PREVIEW_PUBLISHED',
-          message: 'Contenu publié depuis l\'aperçu'
+          type: 'SAVE_FROM_PREVIEW',
+          previewId: previewId,
+          message: 'Demande de sauvegarde depuis l\'aperçu'
         }, window.location.origin);
+        
+        // Attendre un peu pour laisser l'admin traiter
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Notifier et rediriger
+        alert('✅ Contenu sauvegardé avec succès !');
+        window.location.href = window.location.pathname; // Sans paramètre preview
+      } else {
+        alert('❌ Impossible de communiquer avec l\'admin. Veuillez sauvegarder depuis l\'admin.');
       }
-      
-      // 5. Notifier et rediriger
-      alert('✅ Contenu publié avec succès !');
-      window.location.href = window.location.pathname; // Sans paramètre preview
       
     } catch (error) {
-      console.error('Erreur lors de la publication:', error);
-      alert('Erreur lors de la publication');
+      console.error('Erreur lors de la sauvegarde:', error);
+      alert('Erreur lors de la sauvegarde');
     }
   };
 
