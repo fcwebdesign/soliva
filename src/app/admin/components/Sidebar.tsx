@@ -1,0 +1,207 @@
+"use client";
+import { useState } from 'react';
+
+interface Page {
+  id: string;
+  label: string;
+  path: string | null;
+  icon: string;
+}
+
+interface SidebarProps {
+  pages: Page[];
+  currentPage: string;
+  onPageChange: (pageId: string) => void;
+}
+
+export default function Sidebar({ pages, currentPage, onPageChange }: SidebarProps) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  return (
+    <>
+      {/* Sidebar desktop */}
+      <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 lg:z-50 lg:bg-white lg:border-r lg:border-gray-200">
+        {/* Logo */}
+        <div className="flex items-center px-6 py-4 border-b border-gray-200">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">S</span>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500">Admin Panel</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 px-4 py-6 space-y-2">
+          <div className="mb-4">
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+              Pages
+            </h3>
+            <ul className="space-y-1">
+              {pages.map((page) => (
+                <li key={page.id}>
+                  <button
+                    onClick={() => onPageChange(page.id)}
+                    className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      currentPage === page.id
+                        ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                  >
+                    <span className="text-lg">{page.icon}</span>
+                    <span>{page.label}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </nav>
+
+        {/* Actions */}
+        <div className="px-4 py-4 border-t border-gray-200">
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+            Actions
+          </h3>
+          <ul className="space-y-1">
+            <li>
+              <a
+                href="/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
+              >
+                <span className="text-lg">👁️</span>
+                <span>Voir le site</span>
+              </a>
+            </li>
+            <li>
+              <button
+                onClick={() => {
+                  // Logout - rediriger vers la page d'accueil
+                  window.location.href = '/';
+                }}
+                className="w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
+              >
+                <span className="text-lg">🚪</span>
+                <span>Déconnexion</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        {/* Footer */}
+        <div className="px-4 py-4 border-t border-gray-200">
+          <div className="text-xs text-gray-500 text-center">
+            Soliva CMS v2.0
+          </div>
+        </div>
+      </aside>
+
+      {/* Mobile menu button */}
+      <div className="lg:hidden fixed top-4 left-4 z-50">
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="bg-white p-2 rounded-lg shadow-lg border border-gray-200"
+        >
+          <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Mobile menu overlay */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 z-40">
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setIsMobileMenuOpen(false)} />
+          
+          <div className="fixed inset-y-0 left-0 flex flex-col w-64 bg-white shadow-xl">
+            {/* Logo mobile */}
+            <div className="flex items-center px-6 py-4 border-b border-gray-200">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">S</span>
+                </div>
+                <div>
+                  <h1 className="text-lg font-semibold text-gray-900">Soliva</h1>
+                  <p className="text-xs text-gray-500">Admin Panel</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Navigation mobile */}
+            <nav className="flex-1 px-4 py-6 space-y-2">
+              <div className="mb-4">
+                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                  Pages
+                </h3>
+                <ul className="space-y-1">
+                  {pages.map((page) => (
+                    <li key={page.id}>
+                      <button
+                        onClick={() => {
+                          onPageChange(page.id);
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                          currentPage === page.id
+                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                            : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                        }`}
+                      >
+                        <span className="text-lg">{page.icon}</span>
+                        <span>{page.label}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </nav>
+
+            {/* Actions mobile */}
+            <div className="px-4 py-4 border-t border-gray-200">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                Actions
+              </h3>
+              <ul className="space-y-1">
+                <li>
+                  <a
+                    href="/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
+                  >
+                    <span className="text-lg">👁️</span>
+                    <span>Voir le site</span>
+                  </a>
+                </li>
+                <li>
+                  <button
+                    onClick={() => {
+                      window.location.href = '/';
+                    }}
+                    className="w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
+                  >
+                    <span className="text-lg">🚪</span>
+                    <span>Déconnexion</span>
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            {/* Footer mobile */}
+            <div className="px-4 py-4 border-t border-gray-200">
+              <div className="text-xs text-gray-500 text-center">
+                Soliva CMS v2.0
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Spacer pour le contenu principal */}
+      <div className="hidden lg:block lg:w-64" />
+    </>
+  );
+} 

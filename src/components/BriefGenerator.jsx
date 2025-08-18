@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-export default function BriefGenerator() {
+export default function BriefGenerator({ content }) {
   const [input, setInput] = useState("");
   const [brief, setBrief] = useState("");
   const [loading, setLoading] = useState(false);
@@ -41,7 +41,7 @@ export default function BriefGenerator() {
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Décris ton projet ici... Sois le plus détaillé possible pour un brief optimal."
+          placeholder={content?.placeholder || "Décris ton projet ici... Sois le plus détaillé possible pour un brief optimal."}
           rows={6}
           className="brief-textarea"
         />
@@ -50,7 +50,7 @@ export default function BriefGenerator() {
           disabled={loading || !input.trim()}
           className="generate-btn"
         >
-          {loading ? "Génération..." : "Générer le brief"}
+          {loading ? (content?.loading || "Génération...") : (content?.button || "Générer le brief")}
         </button>
       </div>
 
@@ -62,7 +62,7 @@ export default function BriefGenerator() {
 
       {brief && (
         <div className="brief-result">
-          <h3>Brief généré :</h3>
+          <h3>{content?.resultTitle || "Brief généré :"}</h3>
           <div className="brief-content">
             {brief}
           </div>

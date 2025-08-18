@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 import ThemeToggle from "./ThemeToggle";
 
-const Nav = () => {
+const Nav = ({ content }) => {
   const router = useTransitionRouter();
   const pathname = usePathname();
   const logoRef = useRef();
@@ -115,14 +115,14 @@ const Nav = () => {
       <div className="col">
         <div className="nav-logo">
           <Link onClick={handleNavigation("/")} href="/">
-            <span ref={logoRef}>soliva</span>
+            <span ref={logoRef}>{content?.logo || 'soliva'}</span>
           </Link>
         </div>
       </div>
 
       <div className="col">
         <div className="nav-items">
-          {["", "work", "studio", "blog", "contact"].map((item) => {
+          {(content?.items || ["", "work", "studio", "blog", "contact"]).map((item) => {
             const path = item === "" ? "/" : `/${item}`;
             const isActive = pathname === path;
             return (
@@ -140,7 +140,7 @@ const Nav = () => {
         </div>
         <div className="nav-copy">
           <ThemeToggle />
-          <p>paris, le havre</p>
+          <p>{content?.location || 'paris, le havre'}</p>
         </div>
       </div>
     </div>

@@ -1,0 +1,205 @@
+{
+  "metadata": {
+    "title": "NextJS Page Transitions | Codegrid",
+    "description": "NextJS Page Transitions | Codegrid"
+  },
+  "nav": {
+    "logo": "soliva",
+    "items": [
+      "home",
+      "work",
+      "studio",
+      "blog",
+      "contact"
+    ],
+    "location": "paris, le havre"
+  },
+  "home": {
+    "hero": {
+      "title": "soliva",
+      "subtitle": "creative studio.\ndigitaI & brand strategy."
+    }
+  },
+  "contact": {
+    "hero": {
+      "title": "soliva",
+      "subtitle": "creative studio.\ndigitaI & brand strategy."
+    },
+    "socials": []
+  },
+  "studio": {
+    "hero": {
+      "title": "Le studio"
+    },
+    "content": {
+      "description": "At Nuvoro, we believe creativity isn't just a skill, a mindset. Born from a passion for bold ideas and beautifully crafted storytelling, we're a collective of designers, strategists, and dreamers who thrive at the intersection of art and innovation. Today, we collaborate with visionary clients around the world to shape identities,",
+      "image": {
+        "src": "/studio.jpg",
+        "alt": "Team at work in Nuvoro's creative space"
+      }
+    }
+  },
+  "work": {
+    "hero": {
+      "title": "selected work"
+    },
+    "filters": [
+      "All",
+      "Strategy",
+      "Brand",
+      "Digital",
+      "IA"
+    ],
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "projects": [
+      {
+        "title": "Project Alpha",
+        "description": "Une identité de marque moderne pour une startup innovante dans le secteur de la technologie.",
+        "category": "Brand",
+        "image": "/img1.jpg",
+        "alt": "Project Alpha",
+        "slug": "project-1"
+      },
+      {
+        "title": "Project Beta",
+        "description": "Plateforme web interactive pour une exposition d'art contemporain.",
+        "category": "Digital",
+        "image": "/img2.jpg",
+        "alt": "Project Beta",
+        "slug": "project-2"
+      },
+      {
+        "title": "Project Gamma",
+        "description": "Stratégie de communication globale pour une entreprise de mode durable.",
+        "category": "Strategy",
+        "image": "/img3.jpg",
+        "alt": "Project Gamma",
+        "slug": "project-3"
+      },
+      {
+        "title": "Project Delta",
+        "description": "Application mobile pour la gestion de projets créatifs et collaboratifs.",
+        "category": "Digital",
+        "image": "/img4.jpg",
+        "alt": "Project Delta",
+        "slug": "project-4"
+      }
+    ]
+  },
+  "blog": {
+    "hero": {
+      "title": "Journal"
+    },
+    "description": "Réflexions, analyses et insights sur le design, la technologie et la stratégie digitale.",
+    "articles": [
+      {
+        "id": "ecommerce-retour-relationnel",
+        "title": "E-commerce : le retour du relationnel"
+      },
+      {
+        "id": "sobriete-design-moins-plein-vue",
+        "title": "La sobriété design : l'art de faire mieux avec moins"
+      },
+      {
+        "id": "sortir-dependance-plateformes-audience-ne-vous-appartient-pas",
+        "title": "Sortir de la dépendance aux plateformes : votre audience ne vous appartient pas"
+      },
+      {
+        "id": "sites-vitrine-oublies-5-secondes",
+        "title": "Pourquoi 80 % des sites vitrine sont oubliés 5 secondes après leur visite"
+      },
+      {
+        "id": "slider-accueil-ne-sert-rien",
+        "title": "Votre slider d'accueil ne sert à rien"
+      },
+      {
+        "id": "site-lent-site-mort",
+        "title": "Un site lent est un site mort"
+      },
+      {
+        "id": "pourquoi-boutique-en-ligne-ne-vend-pas",
+        "title": "Pourquoi votre boutique en ligne ne vend pas"
+      },
+      {
+        "id": "mythe-theme-shopify-parfait",
+        "title": "Le mythe du thème Shopify parfait"
+      },
+      {
+        "id": "marques-misent-moins-mais-mieux",
+        "title": "Les marques qui misent sur moins mais mieux"
+      },
+      {
+        "id": "personnalisation-donnees-proprietaires-tendance-montante",
+        "title": "La personnalisation et les données propriétaires : la tendance montante"
+      },
+      {
+        "id": "si-ia-tuait-creativite-avant-sauver",
+        "title": "Et si l'IA tuait la créativité… avant de la sauver ?"
+      },
+      {
+        "id": "arretez-illustrer-posts-linkedin-images-sans-sens",
+        "title": "Arrêtez d'illustrer vos posts LinkedIn avec des images qui n'ont aucun sens"
+      },
+      {
+        "id": "prompts-parfaits-nexistent-pas",
+        "title": "Les prompts parfaits n'existent pas"
+      },
+      {
+        "id": "obsession-outils-probleme-pas-logiciel",
+        "title": "L'obsession des outils : pourquoi le problème n'est pas votre logiciel"
+      },
+      {
+        "id": "futur-branding-humain-augmente-remplace",
+        "title": "Le futur du branding : humain, augmenté ou remplacé ?"
+      },
+      {
+        "id": "faux-outils-ia-juste-scripts",
+        "title": "Les faux outils 'IA' qui sont juste des scripts"
+      },
+      {
+        "id": "reseaux-sociaux-ne-sont-pas-strategie",
+        "title": "Les réseaux sociaux ne sont pas une stratégie"
+      },
+      {
+        "id": "pourquoi-90-contenus-ia-se-ressemblent",
+        "title": "Pourquoi 90 % des contenus IA se ressemblent"
+      },
+      {
+        "id": "pourquoi-copier-branding-grandes-marques-erreur",
+        "title": "Pourquoi copier le branding des grandes marques est une erreur"
+      },
+      {
+        "id": "votre-logo-nest-pas-votre-marque",
+        "title": "Votre logo n'est pas votre marque"
+      },
+      {
+        "id": "ia-promesses-marketing-realite-technique",
+        "title": "IA : entre promesses marketing et réalité technique"
+      },
+      {
+        "id": "no-code-puissant-pas-magique",
+        "title": "No-code : puissant, mais pas magique"
+      },
+      {
+        "id": "ia-strategie-marque-arretez-copier-commencez-creer",
+        "title": "IA et stratégie de marque : arrêtez de copier, commencez à créer"
+      },
+      {
+        "id": "piege-tout-pour-algorithme",
+        "title": "Le piège du 'tout pour l'algorithme'"
+      },
+      {
+        "id": "arretez-vouloir-etre-partout",
+        "title": "Arrêtez de vouloir être partout"
+      },
+      {
+        "id": "tendances-graphiques-2025",
+        "title": "Les tendances graphiques… pourquoi il faut parfois les ignorer"
+      },
+      {
+        "id": "personnalisation-amazon-toutes-marques",
+        "title": "La personnalisation à la Amazon arrive pour toutes les marques"
+      }
+    ]
+  }
+}
