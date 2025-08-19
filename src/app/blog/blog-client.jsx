@@ -6,6 +6,7 @@ import { useTransition } from "@/hooks/useTransition";
 import { TRANSITION_CONFIG } from "@/config";
 import FormattedText from "@/components/FormattedText";
 import PreviewBar from "@/components/PreviewBar";
+import PageHeader from "@/components/PageHeader";
 
 import gsap from "gsap";
 import SplitText from "gsap/SplitText";
@@ -182,12 +183,11 @@ const BlogClient = ({ content: initialContent }) => {
         
         <div className="blog">
           <div className="col">
-            <h1 className="blog-header">{previewContent?.hero?.title || ''}</h1>
-            <div className="blog-description">
-              <FormattedText>
-                {previewContent?.description || "Réflexions, analyses et insights sur le design, la technologie et la stratégie digitale."}
-              </FormattedText>
-            </div>
+            <PageHeader
+              title={previewContent?.hero?.title || ''}
+              description={previewContent?.description}
+              titleClassName="blog-header"
+            />
           </div>
           <div className="col">
             <div className="blog-articles">

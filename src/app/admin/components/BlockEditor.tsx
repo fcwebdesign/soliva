@@ -40,14 +40,24 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     }
   }, [pageData]);
 
+  // Réinitialiser l'état quand on change de page
+  useEffect(() => {
+    console.log(`🔄 Changement de page détecté: ${pageKey}`);
+    setHasInitialized(false);
+    setIsUpdatingContent(false);
+    setInitialContent('');
+    setBlocks([]);
+  }, [pageKey]);
+
   // Éviter les reconversions inutiles
   const [hasInitialized, setHasInitialized] = useState(false);
   const [isUpdatingContent, setIsUpdatingContent] = useState(false);
   const [initialContent, setInitialContent] = useState<string>('');
   
-  // États pour les onglets des pages Work et Blog
+  // États pour les onglets des pages Work, Blog et Contact
   const [workActiveTab, setWorkActiveTab] = useState('content');
   const [blogActiveTab, setBlogActiveTab] = useState('content');
+  const [contactActiveTab, setContactActiveTab] = useState('content');
   
   // États pour les suggestions IA (séparés par page)
   const [workAiSuggestions, setWorkAiSuggestions] = useState<string[]>([]);
@@ -57,6 +67,9 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   
   // États pour les suggestions de description IA
   const [isLoadingDescriptionAI, setIsLoadingDescriptionAI] = useState(false);
+  
+  // États pour les suggestions de contenu de blocs IA
+  const [isLoadingBlockAI, setIsLoadingBlockAI] = useState<string | null>(null);
   
   // États pour les actions de duplication et suppression
   const [isDuplicating, setIsDuplicating] = useState<string | null>(null);
@@ -335,7 +348,10 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     }).filter(html => html && typeof html === 'string' && html.trim() !== '').join('\n');
     
     console.log('💾 Génération HTML:', {
-      blocks: newBlocks.map(b => ({ type: b.type, content: b.content?.substring(0, 50) })),
+      blocks: newBlocks.map(b => ({ 
+        type: b.type, 
+        content: typeof b.content === 'string' ? b.content.substring(0, 50) : b.content 
+      })),
       html: htmlContent.substring(0, 200)
     });
     
@@ -536,6 +552,19 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       case 'h2':
         return (
           <div className="block-editor">
+            <div className="flex items-center gap-2 mb-2">
+              <button
+                onClick={() => getBlockContentSuggestion(block.id, 'h2')}
+                disabled={isLoadingBlockAI === block.id}
+                className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
+                  isLoadingBlockAI === block.id 
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                    : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600'
+                }`}
+              >
+                {isLoadingBlockAI === block.id ? '🤖...' : '🤖 IA'}
+              </button>
+            </div>
             <input
               type="text"
               value={block.content}
@@ -549,6 +578,19 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       case 'h3':
         return (
           <div className="block-editor">
+            <div className="flex items-center gap-2 mb-2">
+              <button
+                onClick={() => getBlockContentSuggestion(block.id, 'h3')}
+                disabled={isLoadingBlockAI === block.id}
+                className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
+                  isLoadingBlockAI === block.id 
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                    : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600'
+                }`}
+              >
+                {isLoadingBlockAI === block.id ? '🤖...' : '🤖 IA'}
+              </button>
+            </div>
             <input
               type="text"
               value={block.content}
@@ -562,6 +604,19 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       case 'content':
         return (
           <div className="block-editor">
+            <div className="flex items-center gap-2 mb-2">
+              <button
+                onClick={() => getBlockContentSuggestion(block.id, 'content')}
+                disabled={isLoadingBlockAI === block.id}
+                className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
+                  isLoadingBlockAI === block.id 
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                    : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600'
+                }`}
+              >
+                {isLoadingBlockAI === block.id ? '🤖...' : '🤖 IA'}
+              </button>
+            </div>
             <WysiwygEditor
               value={block.content}
               onChange={(content) => updateBlock(block.id, { content })}
@@ -647,7 +702,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   );
 
   const getDescriptionSuggestion = async () => {
-    if (pageKey !== 'blog' && pageKey !== 'work') return;
+    if (pageKey !== 'blog' && pageKey !== 'work' && pageKey !== 'contact' && pageKey !== 'studio') return;
     
     setIsLoadingDescriptionAI(true);
     try {
@@ -655,7 +710,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          type: pageKey === 'work' ? 'work' : 'blog' 
+          type: pageKey === 'work' ? 'work' : pageKey === 'blog' ? 'blog' : pageKey === 'contact' ? 'contact' : 'studio'
         })
       });
 
@@ -677,9 +732,40 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     }
   };
 
+  const getBlockContentSuggestion = async (blockId: string, blockType: string) => {
+    setIsLoadingBlockAI(blockId);
+    try {
+      const response = await fetch('/api/admin/ai/suggest-block-content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          blockType,
+          pageKey,
+          existingBlocks: blocks,
+          context: `Bloc ${blockType} dans la page ${pageKey}`
+        })
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Erreur API');
+      }
+
+      // Appliquer la suggestion au bloc
+      updateBlock(blockId, { content: data.suggestedContent });
+      
+    } catch (error) {
+      console.error('Erreur suggestion contenu bloc IA:', error);
+      alert(`❌ Erreur: ${error.message}`);
+    } finally {
+      setIsLoadingBlockAI(null);
+    }
+  };
+
   const renderContentBlock = () => {
-    // Pour les pages blog et work, la description est directement à la racine
-    const isDirectDescription = pageKey === 'blog' || pageKey === 'work';
+    // Pour les pages blog, work, contact et studio, la description est directement à la racine
+    const isDirectDescription = pageKey === 'blog' || pageKey === 'work' || pageKey === 'contact' || pageKey === 'studio';
     const descriptionPath = isDirectDescription ? 'description' : 'content.description';
     const descriptionValue = isDirectDescription ? localData.description : localData.content?.description;
     
@@ -691,12 +777,28 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         </div>
         
         <div className="space-y-4">
+          {/* Titre pour les pages contact et studio */}
+          {(pageKey === 'contact' || pageKey === 'studio') && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Titre
+              </label>
+              <input
+                type="text"
+                value={localData.hero?.title || ''}
+                onChange={(e) => updateField('hero.title', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                placeholder={`Titre de la page ${pageKey}`}
+              />
+            </div>
+          )}
+          
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="text-sm font-medium text-gray-700">
                 Description
               </label>
-              {(pageKey === 'blog' || pageKey === 'work') && (
+              {(pageKey === 'blog' || pageKey === 'work' || pageKey === 'contact' || pageKey === 'studio') && (
                 <button
                   onClick={getDescriptionSuggestion}
                   disabled={isLoadingDescriptionAI}
@@ -717,7 +819,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             />
           </div>
         
-        {localData.content?.image && (
+        {/* Section image seulement si ce n'est pas la page contact */}
+        {pageKey !== 'contact' && localData.content?.image && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Image
@@ -1077,18 +1180,6 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       </div>
       
       <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Titre
-          </label>
-          <input
-            type="text"
-            value={localData.hero?.title || ''}
-            onChange={(e) => updateField('hero.title', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-          />
-        </div>
-        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -1140,7 +1231,18 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             />
           </div>
         </div>
-        
+      </div>
+    </div>
+  );
+
+  const renderFooterBlock = () => (
+    <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+      <div className="flex items-center space-x-2 mb-4">
+        <span className="text-2xl">🦶</span>
+        <h3 className="text-lg font-semibold text-gray-900">Footer</h3>
+      </div>
+      
+      <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Réseaux sociaux
@@ -1656,6 +1758,15 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     );
   }
 
+  // Si c'est la page footer, afficher le bloc footer
+  if (pageKey === 'footer') {
+    return (
+      <div className="space-y-6">
+        {renderFooterBlock()}
+      </div>
+    );
+  }
+
 
 
   return (
@@ -1663,7 +1774,21 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       <div className="space-y-6">
         {/* Rendu conditionnel selon le type de page */}
         {pageKey === 'home' && renderHeroBlock()}
-        {pageKey === 'contact' && renderContactBlock()}
+        {pageKey === 'contact' && (
+          <>
+            {renderContentBlock()}
+            {renderContactBlock()}
+          </>
+        )}
+        {pageKey === 'studio' && (
+          <>
+            {renderContentBlock()}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Éditeur de contenu</h3>
+              {renderDragDropEditor()}
+            </div>
+          </>
+        )}
         
         {/* Pour les projets et articles individuels, afficher l'éditeur de blocs */}
         {(pageKey === 'project' || pageKey === 'article' || pageKey.startsWith('project-') || pageKey.startsWith('article-')) && (
@@ -1674,7 +1799,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         )}
         
         {/* Pour les autres pages, afficher les blocs classiques */}
-        {!['blog', 'work', 'backup', 'project', 'article'].includes(pageKey) && !pageKey.startsWith('project-') && !pageKey.startsWith('article-') && (
+        {!['blog', 'work', 'backup', 'project', 'article', 'contact', 'studio'].includes(pageKey) && !pageKey.startsWith('project-') && !pageKey.startsWith('article-') && (
           <>
             {renderContentBlock()}
             {renderMetadataBlock()}

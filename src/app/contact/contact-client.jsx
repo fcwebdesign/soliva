@@ -5,6 +5,8 @@ import { useTransition } from "@/hooks/useTransition";
 import { TRANSITION_CONFIG } from "@/config";
 import BriefGenerator from "@/components/BriefGenerator";
 import PreviewBar from "@/components/PreviewBar";
+import FormattedText from "@/components/FormattedText";
+import PageHeader from "@/components/PageHeader";
 
 import gsap from "gsap";
 import SplitText from "gsap/SplitText";
@@ -83,7 +85,11 @@ const ContactClient = ({ content }) => {
         
         <div className="contact">
           <div className="col">
-            <h1 className="work-header">{previewContent?.hero?.title || 'Contact Us'}</h1>
+            <PageHeader
+              title={previewContent?.hero?.title || 'Contact Us'}
+              description={previewContent?.description}
+              titleClassName="work-header"
+            />
           </div>
           <div className="col">
             <div className="contact-copy">

@@ -14,6 +14,11 @@ export interface Hero {
   subtitle?: string;
 }
 
+export interface PageContent {
+  hero: Hero;
+  description?: string;
+}
+
 export interface ContactSection {
   title: string;
   email: string;

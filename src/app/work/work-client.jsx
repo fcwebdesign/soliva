@@ -6,6 +6,7 @@ import { useTransition } from "@/hooks/useTransition";
 import { TRANSITION_CONFIG } from "@/config";
 import FormattedText from "@/components/FormattedText";
 import PreviewBar from "@/components/PreviewBar";
+import PageHeader from "@/components/PageHeader";
 
 import gsap from "gsap";
 import SplitText from "gsap/SplitText";
@@ -146,7 +147,11 @@ const WorkClient = ({ content }) => {
         <div className="work">
           <div className="col">
             <div className="work-header-section sticky top-32">
-              <h1 className="work-header">{previewContent?.hero?.title || 'selected work'}</h1>
+              <PageHeader
+                title={previewContent?.hero?.title || 'selected work'}
+                description={previewContent?.description}
+                titleClassName="work-header"
+              />
               
               <div className="work-filters">
                 {(previewContent?.filters || ['All', 'Strategy', 'Brand', 'Digital', 'IA']).map((filter, index) => (
@@ -154,12 +159,6 @@ const WorkClient = ({ content }) => {
                     {filter}
                   </button>
                 ))}
-              </div>
-              
-              <div className="work-description">
-                <FormattedText>
-                  {previewContent?.description || "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."}
-                </FormattedText>
               </div>
             </div>
           </div>

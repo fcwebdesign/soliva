@@ -16,6 +16,7 @@ const PAGES = [
 const SETTINGS = [
   { id: 'nav', label: 'Navigation', path: null, icon: '🧭' },
   { id: 'metadata', label: 'Métadonnées', path: null, icon: '⚙️' },
+  { id: 'footer', label: 'Footer', path: null, icon: '🦶' },
   { id: 'backup', label: 'Sauvegarde', path: null, icon: '💾' },
 ];
 
@@ -428,7 +429,14 @@ export default function AdminPage() {
       case 'metadata':
         return content.metadata;
       default:
-        return content[currentPage as keyof Content];
+        const pageData = content[currentPage as keyof Content];
+        console.log(`🔍 Données de la page ${currentPage}:`, {
+          hasData: !!pageData,
+          keys: pageData ? Object.keys(pageData) : [],
+          hasBlocks: pageData?.blocks ? pageData.blocks.length : 0,
+          blocks: pageData?.blocks
+        });
+        return pageData;
     }
   })();
 

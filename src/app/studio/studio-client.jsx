@@ -5,6 +5,8 @@ import { useTransition } from "@/hooks/useTransition";
 import { TRANSITION_CONFIG } from "@/config";
 import FormattedText from "@/components/FormattedText";
 import PreviewBar from "@/components/PreviewBar";
+import PageHeader from "@/components/PageHeader";
+import BlockRenderer from "@/components/BlockRenderer";
 
 import gsap from "gsap";
 import SplitText from "gsap/SplitText";
@@ -106,21 +108,19 @@ const StudioClient = ({ content }) => {
         
         <div className="studio">
           <div className="col">
-            <h1 className="studio-header">{previewContent?.hero?.title || 'Le studio'}</h1>
+            <PageHeader
+              title={previewContent?.hero?.title || 'Le studio'}
+              description={previewContent?.description}
+              titleClassName="studio-header"
+            />
           </div>
           <div className="col">
-            <h2>
-              <FormattedText>
-                {previewContent?.content?.description || "At Nuvoro, we believe creativity isn't just a skill, a mindset. Born from a passion for bold ideas and beautifully crafted storytelling, we're a collective of designers, strategists, and dreamers who thrive at the intersection of art and innovation. Today, we collaborate with visionary clients around the world to shape identities,"}
-              </FormattedText>
-            </h2>
-
-            <div className="about-img">
-              <img
-                src={previewContent?.content?.image?.src || "/studio.jpg"}
-                alt={previewContent?.content?.image?.alt || "Team at work in Nuvoro's creative space"}
-              />
-            </div>
+            {/* Blocs personnalisés */}
+            {previewContent?.blocks && previewContent.blocks.length > 0 && (
+              <div className="studio-blocks">
+                <BlockRenderer blocks={previewContent.blocks} />
+              </div>
+            )}
           </div>
         </div>
       </ReactLenis>
