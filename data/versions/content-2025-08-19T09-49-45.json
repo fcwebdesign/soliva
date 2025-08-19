@@ -77,15 +77,14 @@
       "Stratégie",
       "Identité",
       "Digital",
-      "IA",
-      "Branding"
+      "IA"
     ],
     "description": "<p><strong>Découvrez notre sélection de projets</strong> qui illustrent notre approche créative et notre expertise en stratégie de marque et design digital. Chaque projet raconte une histoire unique, celle d'une collaboration fructueuse entre notre vision créative et les objectifs de nos clients. </p><p>De la conception d'identités de marque mémorables à la création d'expériences digitales innovantes, nous nous efforçons de dépasser les attentes et de créer un impact durable. fds</p>",
     "projects": [
       {
         "id": "ecotech-solutions",
         "title": "EcoTech Solutions",
-        "content": "<h3>qsdqdqqxvcvccxvvcxcvxvxc</h3>\n<img src=\"/uploads/1755556322957-c5ae9812.jpg\" alt=\"\">\n<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>\n<h2>Défis du projet</h2>\n<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>",
+        "content": "<h3>test H3</h3>\n<img src=\"/uploads/1755556322957-c5ae9812.jpg\" alt=\"\">\n<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>\n<h2>Défis du projet</h2>\n<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>",
         "slug": "ecotech-solutions",
         "status": "published",
         "publishedAt": "2024-01-15T10:00:00.000Z",
@@ -143,7 +142,7 @@
       {
         "id": "ecotech-solutions",
         "title": "EcoTech Solutions",
-        "content": "<h3>qsdqdqqxvcvccxvvcxcvxvxc</h3>\n<img src=\"/uploads/1755556322957-c5ae9812.jpg\" alt=\"\">\n<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>\n<h2>Défis du projet</h2>\n<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>",
+        "content": "<h3>test H3</h3>\n<img src=\"/uploads/1755556322957-c5ae9812.jpg\" alt=\"\">\n<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>\n<h2>Défis du projet</h2>\n<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>",
         "slug": "ecotech-solutions",
         "status": "published",
         "publishedAt": "2024-01-15T10:00:00.000Z",
@@ -156,7 +155,7 @@
           {
             "id": "block-1",
             "type": "h3",
-            "content": "qsdqdqqxvcvccxvvcxcvxvxc"
+            "content": "test H3"
           },
           {
             "id": "block-2",
@@ -231,7 +230,7 @@
       "title": "Le journal",
       "subtitle": "Nos réflexions et insights"
     },
-    "description": "<p><strong>Partageons nos réflexions,</strong> analyses et insights sur le design, la technologie et la stratégie digitale. Découvrez nos perspectives sur les tendances actuelles et les innovations qui façonnent l'avenir de la création. yep</p>",
+    "description": "<p>Découvrez des réflexions percutantes sur le monde numérique. Chaque article explore des vérités souvent ignorées : la force du relationnel en e-commerce, l'art de la sobriété design et les pièges des plateformes. Vous apprendrez pourquoi votre site peut être oublié en cinq secondes et comment l'IA redéfinit la créativité. Rejoignez-nous pour des insights qui bousculent les idées reçues et boostent votre stratégie digitale.</p>",
     "articles": [
       {
         "id": "ecommerce-retour-relationnel",
@@ -353,7 +352,7 @@
       {
         "id": "ceci-est-mon-nouveal-id",
         "title": "Nouvel article",
-        "content": "<h2>test de section vsfdgfdggdf</h2>\n<p><strong>test contenu</strong></p><p><em>ça marche pas</em></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\"><em>yepddsfd</em></a></p><p></p><ul><li><p>test</p></li></ul><ol><li><p>ok je crois que c'est bon</p></li></ol><blockquote><p>citation</p></blockquote><p></p><p>hello c'est vraiment cool ce CMS</p><p>mais aloirs très cool</p><p>wai bof</p><p>xcvvcxcvx</p><p>fsfdsfdsdfsfds</p>\n<img src=\"/uploads/1755521225223-9689ec4e.png\" alt=\"test image\">",
+        "content": "<h2>test de section</h2>\n<p><strong>test contenu</strong></p><p><em>ça marche pas</em></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\"><em>yepddsfd</em></a></p><p></p><ul><li><p>test</p></li></ul><ol><li><p>ok je crois que c'est bon</p></li></ol><blockquote><p>citation</p></blockquote><p></p><p>hello c'est vraiment cool ce CMS</p><p>mais aloirs très cool</p><p>wai bof</p><p>xcvvcxcvx</p><p>fsfdsfdsdfsfds</p>\n<img src=\"/uploads/1755521225223-9689ec4e.png\" alt=\"test image\">",
         "status": "published",
         "slug": "ceci-est-mon-nouveal-id",
         "excerpt": "wxcxwcwxc xcccfffd cv",
@@ -361,7 +360,7 @@
           {
             "id": "block-1",
             "type": "h2",
-            "content": "test de section vsfdgfdggdf"
+            "content": "test de section"
           },
           {
             "id": "block-2",
@@ -379,7 +378,42 @@
           }
         ],
         "publishedAt": "2025-08-18T13:25:59.640Z"
+      },
+      {
+        "id": "ceci-est-mon-nouveal-id-copy-1755596908147",
+        "title": "Nouvel article (copie)",
+        "content": "<h2>test de section</h2>\n<p><strong>test contenu</strong></p><p><em>ça marche pas</em></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\"><em>yepddsfd</em></a></p><p></p><ul><li><p>test</p></li></ul><ol><li><p>ok je crois que c'est bon</p></li></ol><blockquote><p>citation</p></blockquote><p></p><p>hello c'est vraiment cool ce CMS</p><p>mais aloirs très cool</p><p>wai bof</p><p>xcvvcxcvx</p><p>fsfdsfdsdfsfds</p>\n<img src=\"/uploads/1755521225223-9689ec4e.png\" alt=\"test image\">",
+        "status": "draft",
+        "slug": "ceci-est-mon-nouveal-id-copy-1755596908147",
+        "excerpt": "wxcxwcwxc xcccfffd cv",
+        "blocks": [
+          {
+            "id": "block-1",
+            "type": "h2",
+            "content": "test de section"
+          },
+          {
+            "id": "block-2",
+            "type": "content",
+            "content": "<p><strong>test contenu</strong></p><p><em>ça marche pas</em></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\"><em>yepddsfd</em></a></p><p></p><ul><li><p>test</p></li></ul><ol><li><p>ok je crois que c'est bon</p></li></ol><blockquote><p>citation</p></blockquote><p></p><p>hello c'est vraiment cool ce CMS</p><p>mais aloirs très cool</p><p>wai bof</p><p>xcvvcxcvx</p><p>fsfdsfdsdfsfds</p>"
+          },
+          {
+            "id": "block-3",
+            "type": "image",
+            "content": "",
+            "image": {
+              "src": "/uploads/1755521225223-9689ec4e.png",
+              "alt": "test image"
+            }
+          }
+        ],
+        "_lastModified": "2025-08-19T09:48:28.147Z"
       }
+    ],
+    "filters": [
+      "All",
+      "Brand",
+      "IA"
     ]
   },
   "_isPreview": true,

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useRouter } from 'next/navigation';
+import { createPortal } from 'react-dom';
 import WysiwygEditor from './WysiwygEditor';
 import MediaUploader from './MediaUploader';
 import VersionList from './VersionList';
@@ -56,6 +57,15 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   
   // États pour les suggestions de description IA
   const [isLoadingDescriptionAI, setIsLoadingDescriptionAI] = useState(false);
+  
+  // États pour les actions de duplication et suppression
+  const [isDuplicating, setIsDuplicating] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  
+  // États pour les notifications modales
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState('');
+  const [notificationType, setNotificationType] = useState<'success' | 'error'>('success');
   
   useEffect(() => {
     if (pageData && !hasInitialized && !isUpdatingContent) {
@@ -389,6 +399,134 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     setDragOverIndex(null);
   };
 
+  // Fonction pour dupliquer un contenu
+  const handleDuplicate = async (type: 'work' | 'blog', id: string) => {
+    try {
+      setIsDuplicating(id);
+      
+      const response = await fetch('/api/admin/duplicate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ type, id }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erreur lors de la duplication');
+      }
+
+      const result = await response.json();
+      
+      // Mettre à jour l'interface sans recharger la page
+      if (result.success) {
+        // Recharger le contenu depuis l'API
+        const contentResponse = await fetch('/api/admin/content');
+        if (contentResponse.ok) {
+          const newContent = await contentResponse.json();
+          
+          // Mettre à jour seulement la partie spécifique sans flash
+          setLocalData(prevData => {
+            if (type === 'work') {
+              return {
+                ...prevData,
+                adminProjects: newContent.work?.adminProjects || []
+              };
+            } else if (type === 'blog') {
+              return {
+                ...prevData,
+                articles: newContent.blog?.articles || []
+              };
+            }
+            return prevData;
+          });
+          
+          // Afficher une notification modale
+          showNotificationModal('✅ Contenu dupliqué avec succès !', 'success');
+        }
+      }
+      
+    } catch (error) {
+      console.error('Erreur duplication:', error);
+      showNotificationModal(`Erreur lors de la duplication: ${error.message}`, 'error');
+    } finally {
+      setIsDuplicating(null);
+    }
+  };
+
+  // Fonction pour afficher une notification modale
+  const showNotificationModal = (message: string, type: 'success' | 'error') => {
+    setNotificationMessage(message);
+    setNotificationType(type);
+    setShowNotification(true);
+    
+    // Fermer automatiquement après 3 secondes
+    setTimeout(() => {
+      setShowNotification(false);
+    }, 3000);
+  };
+
+  // Fonction pour supprimer un contenu
+  const handleDelete = async (type: 'work' | 'blog', id: string, title: string) => {
+    if (!confirm(`Êtes-vous sûr de vouloir supprimer "${title}" ? Cette action est irréversible.`)) {
+      return;
+    }
+
+    try {
+      setIsDeleting(id);
+      
+      const response = await fetch('/api/admin/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ type, id }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erreur lors de la suppression');
+      }
+
+      const result = await response.json();
+      
+      // Mettre à jour l'interface sans recharger la page
+      if (result.success) {
+        // Recharger le contenu depuis l'API
+        const contentResponse = await fetch('/api/admin/content');
+        if (contentResponse.ok) {
+          const newContent = await contentResponse.json();
+          
+          // Mettre à jour seulement la partie spécifique sans flash
+          setLocalData(prevData => {
+            if (type === 'work') {
+              return {
+                ...prevData,
+                adminProjects: newContent.work?.adminProjects || []
+              };
+            } else if (type === 'blog') {
+              return {
+                ...prevData,
+                articles: newContent.blog?.articles || []
+              };
+            }
+            return prevData;
+          });
+          
+          // Afficher une notification modale
+          showNotificationModal('🗑️ Contenu supprimé avec succès !', 'success');
+        }
+      }
+      
+    } catch (error) {
+      console.error('Erreur suppression:', error);
+      showNotificationModal(`Erreur lors de la suppression: ${error.message}`, 'error');
+    } finally {
+      setIsDeleting(null);
+    }
+  };
+
   const renderBlock = (block: Block, index: number) => {
     if (!block || !block.type) {
       return <div className="text-red-500">Erreur: bloc invalide</div>;
@@ -430,8 +568,6 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             />
           </div>
         );
-      
-      
       
       case 'image':
         return (
@@ -683,11 +819,29 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                   >
                     👁️ Aperçu
                   </button>
-                  <button className="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded hover:bg-orange-200 transition-colors">
-                    📋 Dupliquer
+                  <button 
+                    onClick={() => handleDuplicate('blog', article.id)}
+                    disabled={isDuplicating === article.id}
+                    className={`text-xs px-3 py-1 rounded transition-colors ${
+                      isDuplicating === article.id
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-orange-100 text-orange-700 hover:bg-orange-200'
+                    }`}
+                    title="Dupliquer cet article"
+                  >
+                    {isDuplicating === article.id ? '⏳...' : '📋 Dupliquer'}
                   </button>
-                  <button className="text-xs bg-red-100 text-red-700 px-3 py-1 rounded hover:bg-red-200 transition-colors">
-                    🗑️ Supprimer
+                  <button 
+                    onClick={() => handleDelete('blog', article.id, article.title || `Article ${index + 1}`)}
+                    disabled={isDeleting === article.id}
+                    className={`text-xs px-3 py-1 rounded transition-colors ${
+                      isDeleting === article.id
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-red-100 text-red-700 hover:bg-red-200'
+                    }`}
+                    title="Supprimer cet article"
+                  >
+                    {isDeleting === article.id ? '⏳...' : '🗑️ Supprimer'}
                   </button>
                 </div>
               </div>
@@ -799,11 +953,29 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                   >
                     👁️ Aperçu
                   </button>
-                  <button className="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded hover:bg-orange-200 transition-colors">
-                    📋 Dupliquer
+                  <button 
+                    onClick={() => handleDuplicate('work', project.id)}
+                    disabled={isDuplicating === project.id}
+                    className={`text-xs px-3 py-1 rounded transition-colors ${
+                      isDuplicating === project.id
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-orange-100 text-orange-700 hover:bg-orange-200'
+                    }`}
+                    title="Dupliquer ce projet"
+                  >
+                    {isDuplicating === project.id ? '⏳...' : '📋 Dupliquer'}
                   </button>
-                  <button className="text-xs bg-red-100 text-red-700 px-3 py-1 rounded hover:bg-red-200 transition-colors">
-                    🗑️ Supprimer
+                  <button 
+                    onClick={() => handleDelete('work', project.id, project.title || `Projet ${index + 1}`)}
+                    disabled={isDeleting === project.id}
+                    className={`text-xs px-3 py-1 rounded transition-colors ${
+                      isDeleting === project.id
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-red-100 text-red-700 hover:bg-red-200'
+                    }`}
+                    title="Supprimer ce projet"
+                  >
+                    {isDeleting === project.id ? '⏳...' : '🗑️ Supprimer'}
                   </button>
                 </div>
               </div>
@@ -1487,27 +1659,63 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
 
 
   return (
-    <div className="space-y-6">
-      {/* Rendu conditionnel selon le type de page */}
-      {pageKey === 'home' && renderHeroBlock()}
-      {pageKey === 'contact' && renderContactBlock()}
-      
-      {/* Pour les projets et articles individuels, afficher l'éditeur de blocs */}
-      {(pageKey === 'project' || pageKey === 'article' || pageKey.startsWith('project-') || pageKey.startsWith('article-')) && (
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Éditeur de contenu</h3>
-          {renderDragDropEditor()}
-        </div>
+    <>
+      <div className="space-y-6">
+        {/* Rendu conditionnel selon le type de page */}
+        {pageKey === 'home' && renderHeroBlock()}
+        {pageKey === 'contact' && renderContactBlock()}
+        
+        {/* Pour les projets et articles individuels, afficher l'éditeur de blocs */}
+        {(pageKey === 'project' || pageKey === 'article' || pageKey.startsWith('project-') || pageKey.startsWith('article-')) && (
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Éditeur de contenu</h3>
+            {renderDragDropEditor()}
+          </div>
+        )}
+        
+        {/* Pour les autres pages, afficher les blocs classiques */}
+        {!['blog', 'work', 'backup', 'project', 'article'].includes(pageKey) && !pageKey.startsWith('project-') && !pageKey.startsWith('article-') && (
+          <>
+            {renderContentBlock()}
+            {renderMetadataBlock()}
+            {renderNavBlock()}
+          </>
+        )}
+      </div>
+
+      {/* Notification modale */}
+      {showNotification && createPortal(
+        <div 
+          className="fixed inset-0 flex items-center justify-center z-[9999]"
+          style={{
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'blur(2px)'
+          }}
+        >
+          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl">
+            <div className="text-center">
+              <div className={`text-4xl mb-4 ${
+                notificationType === 'success' ? 'text-green-500' : 'text-red-500'
+              }`}>
+                {notificationType === 'success' ? '✅' : '❌'}
+              </div>
+              <h3 className="text-lg font-semibold mb-2">
+                {notificationType === 'success' ? 'Succès' : 'Erreur'}
+              </h3>
+              <p className="text-gray-600 mb-6">
+                {notificationMessage}
+              </p>
+              <button
+                onClick={() => setShowNotification(false)}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
       )}
-      
-      {/* Pour les autres pages, afficher les blocs classiques */}
-      {!['blog', 'work', 'backup', 'project', 'article'].includes(pageKey) && !pageKey.startsWith('project-') && !pageKey.startsWith('article-') && (
-        <>
-          {renderContentBlock()}
-          {renderMetadataBlock()}
-          {renderNavBlock()}
-        </>
-      )}
-    </div>
+    </>
   );
 } 
