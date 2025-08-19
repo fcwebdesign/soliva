@@ -77,10 +77,7 @@
       "Stratégie",
       "Identité",
       "Digital",
-      "IA",
-      "Branding",
-      "Print",
-      "Corporate"
+      "IA"
     ],
     "description": "<p><strong>Découvrez notre sélection de projets</strong> qui illustrent notre approche créative et notre expertise en stratégie de marque et design digital. Chaque projet raconte une histoire unique, celle d'une collaboration fructueuse entre notre vision créative et les objectifs de nos clients. </p><p>De la conception d'identités de marque mémorables à la création d'expériences digitales innovantes, nous nous efforçons de dépasser les attentes et de créer un impact durable. fds</p>",
     "projects": [
@@ -233,7 +230,7 @@
       "title": "Le journal",
       "subtitle": "Nos réflexions et insights"
     },
-    "description": "<p><strong>Partageons nos réflexions,</strong> analyses et insights sur le design, la technologie et la stratégie digitale. Découvrez nos perspectives sur les tendances actuelles et les innovations qui façonnent l'avenir de la création. yep</p>",
+    "description": "<p>Découvrez des réflexions percutantes sur le monde numérique. Chaque article explore des vérités souvent ignorées : la force du relationnel en e-commerce, l'art de la sobriété design et les pièges des plateformes. Vous apprendrez pourquoi votre site peut être oublié en cinq secondes et comment l'IA redéfinit la créativité. Rejoignez-nous pour des insights qui bousculent les idées reçues et boostent votre stratégie digitale.</p>",
     "articles": [
       {
         "id": "ecommerce-retour-relationnel",

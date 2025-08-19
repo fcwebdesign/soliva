@@ -54,6 +54,9 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   const [workIsLoadingAI, setWorkIsLoadingAI] = useState(false);
   const [blogIsLoadingAI, setBlogIsLoadingAI] = useState(false);
   
+  // États pour les suggestions de description IA
+  const [isLoadingDescriptionAI, setIsLoadingDescriptionAI] = useState(false);
+  
   useEffect(() => {
     if (pageData && !hasInitialized && !isUpdatingContent) {
       setHasInitialized(true);
@@ -507,6 +510,37 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     </div>
   );
 
+  const getDescriptionSuggestion = async () => {
+    if (pageKey !== 'blog' && pageKey !== 'work') return;
+    
+    setIsLoadingDescriptionAI(true);
+    try {
+      const response = await fetch('/api/admin/ai/suggest-description', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          type: pageKey === 'work' ? 'work' : 'blog' 
+        })
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Erreur API');
+      }
+
+      // Appliquer la suggestion
+      const descriptionPath = 'description';
+      updateField(descriptionPath, data.suggestedDescription);
+      
+    } catch (error) {
+      console.error('Erreur suggestion description IA:', error);
+      alert(`❌ Erreur: ${error.message}`);
+    } finally {
+      setIsLoadingDescriptionAI(false);
+    }
+  };
+
   const renderContentBlock = () => {
     // Pour les pages blog et work, la description est directement à la racine
     const isDirectDescription = pageKey === 'blog' || pageKey === 'work';
@@ -522,9 +556,24 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Description
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-sm font-medium text-gray-700">
+                Description
+              </label>
+              {(pageKey === 'blog' || pageKey === 'work') && (
+                <button
+                  onClick={getDescriptionSuggestion}
+                  disabled={isLoadingDescriptionAI}
+                  className={`px-3 py-1 text-xs font-medium rounded-lg transition-colors ${
+                    isLoadingDescriptionAI 
+                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                      : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600'
+                  }`}
+                >
+                  {isLoadingDescriptionAI ? '🤖 Génération...' : '🤖 Suggestion IA'}
+                </button>
+              )}
+            </div>
             <WysiwygEditor
               value={descriptionValue || ''}
               onChange={(value) => updateField(descriptionPath, value)}
