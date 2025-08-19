@@ -956,6 +956,16 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             >
               ⚙️ Paramètres
             </button>
+            <button
+              onClick={() => setBlogActiveTab('filters')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                blogActiveTab === 'filters'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              🏷️ Filtres
+            </button>
           </nav>
         </div>
 
@@ -967,6 +977,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             {renderContentBlock()}
           </div>
         )}
+        {blogActiveTab === 'filters' && renderFiltersBlock()}
       </div>
     );
   };
@@ -997,6 +1008,16 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             >
               ⚙️ Paramètres
             </button>
+            <button
+              onClick={() => setWorkActiveTab('filters')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                workActiveTab === 'filters'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              🏷️ Filtres
+            </button>
           </nav>
         </div>
 
@@ -1008,6 +1029,119 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             {renderContentBlock()}
           </div>
         )}
+        {workActiveTab === 'filters' && renderFiltersBlock()}
+      </div>
+    );
+  };
+
+  const renderFiltersBlock = () => {
+    const currentFilters = localData.filters || ['All', 'Strategy', 'Brand', 'Digital', 'IA'];
+    const suggestedCategories = [
+      'Web Design', 'Branding', 'UI/UX', 'Mobile', 'E-commerce', 
+      'Print', 'Packaging', 'Logo', 'Corporate', 'Startup',
+      'Tech', 'Healthcare', 'Finance', 'Education', 'Fashion'
+    ];
+
+    const addFilter = (filter: string) => {
+      if (!currentFilters.includes(filter)) {
+        updateField('filters', [...currentFilters, filter]);
+      }
+    };
+
+    const removeFilter = (indexToRemove: number) => {
+      const newFilters = currentFilters.filter((_, index) => index !== indexToRemove);
+      updateField('filters', newFilters);
+    };
+
+    return (
+      <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+        <div className="flex items-center space-x-2 mb-6">
+          <span className="text-2xl">🏷️</span>
+          <h3 className="text-lg font-semibold text-gray-900">Gestion des filtres</h3>
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Colonne gauche : Filtres actuels */}
+          <div>
+            <h4 className="text-sm font-medium text-gray-700 mb-3">Filtres actuels</h4>
+            <div className="space-y-2 max-h-64 overflow-y-auto">
+              {currentFilters.map((filter, index) => (
+                <div key={index} className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+                  <span className="text-blue-800 font-medium">{filter}</span>
+                  <button
+                    onClick={() => removeFilter(index)}
+                    className="text-red-500 hover:text-red-700 hover:bg-red-100 rounded p-1 transition-colors"
+                    title="Supprimer ce filtre"
+                  >
+                    🗑️
+                  </button>
+                </div>
+              ))}
+            </div>
+            
+            {currentFilters.length === 0 && (
+              <p className="text-gray-500 text-sm italic">Aucun filtre défini</p>
+            )}
+          </div>
+
+          {/* Colonne droite : Catégories suggérées */}
+          <div>
+            <h4 className="text-sm font-medium text-gray-700 mb-3">Catégories suggérées</h4>
+            <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto">
+              {suggestedCategories
+                .filter(category => !currentFilters.includes(category))
+                .map((category, index) => (
+                <button
+                  key={index}
+                  onClick={() => addFilter(category)}
+                  className="text-left px-3 py-2 text-sm bg-gray-50 hover:bg-blue-50 hover:text-blue-600 border border-gray-200 hover:border-blue-300 rounded-lg transition-colors"
+                >
+                  + {category}
+                </button>
+              ))}
+            </div>
+            
+            {suggestedCategories.filter(cat => !currentFilters.includes(cat)).length === 0 && (
+              <p className="text-gray-500 text-sm italic">Toutes les catégories sont déjà ajoutées</p>
+            )}
+          </div>
+        </div>
+
+        {/* Zone d'ajout manuel */}
+        <div className="mt-6 pt-4 border-t border-gray-200">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Ajouter un filtre personnalisé
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="Nom du filtre..."
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  const value = e.currentTarget.value.trim();
+                  if (value) {
+                    addFilter(value);
+                    e.currentTarget.value = '';
+                  }
+                }
+              }}
+            />
+            <button
+              onClick={(e) => {
+                const input = e.currentTarget.previousElementSibling as HTMLInputElement;
+                const value = input.value.trim();
+                if (value) {
+                  addFilter(value);
+                  input.value = '';
+                }
+              }}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Ajouter
+            </button>
+          </div>
+        </div>
       </div>
     );
   };
