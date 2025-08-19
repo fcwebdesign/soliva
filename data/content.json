@@ -382,6 +382,11 @@
         ],
         "publishedAt": "2025-08-18T13:25:59.640Z"
       }
+    ],
+    "filters": [
+      "All",
+      "Brand",
+      "IA"
     ]
   },
   "_isPreview": true,

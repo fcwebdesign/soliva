@@ -48,6 +48,12 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   const [workActiveTab, setWorkActiveTab] = useState('content');
   const [blogActiveTab, setBlogActiveTab] = useState('content');
   
+  // États pour les suggestions IA (séparés par page)
+  const [workAiSuggestions, setWorkAiSuggestions] = useState<string[]>([]);
+  const [blogAiSuggestions, setBlogAiSuggestions] = useState<string[]>([]);
+  const [workIsLoadingAI, setWorkIsLoadingAI] = useState(false);
+  const [blogIsLoadingAI, setBlogIsLoadingAI] = useState(false);
+  
   useEffect(() => {
     if (pageData && !hasInitialized && !isUpdatingContent) {
       setHasInitialized(true);
@@ -1036,11 +1042,10 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
 
   const renderFiltersBlock = () => {
     const currentFilters = localData.filters || ['All', 'Strategy', 'Brand', 'Digital', 'IA'];
-    const suggestedCategories = [
-      'Web Design', 'Branding', 'UI/UX', 'Mobile', 'E-commerce', 
-      'Print', 'Packaging', 'Logo', 'Corporate', 'Startup',
-      'Tech', 'Healthcare', 'Finance', 'Education', 'Fashion'
-    ];
+    const isWork = pageKey === 'work';
+    const aiSuggestions = isWork ? workAiSuggestions : blogAiSuggestions;
+    const isLoadingAI = isWork ? workIsLoadingAI : blogIsLoadingAI;
+    const setAiSuggestions = isWork ? setWorkAiSuggestions : setBlogAiSuggestions;
 
     const addFilter = (filter: string) => {
       if (!currentFilters.includes(filter)) {
@@ -1051,6 +1056,45 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     const removeFilter = (indexToRemove: number) => {
       const newFilters = currentFilters.filter((_, index) => index !== indexToRemove);
       updateField('filters', newFilters);
+    };
+
+    const getAISuggestions = async () => {
+      const isWork = pageKey === 'work';
+      const setLoading = isWork ? setWorkIsLoadingAI : setBlogIsLoadingAI;
+      const setSuggestions = isWork ? setWorkAiSuggestions : setBlogAiSuggestions;
+      
+      setLoading(true);
+      try {
+        const response = await fetch('/api/admin/ai/suggest-filters', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            type: isWork ? 'work' : 'blog' 
+          })
+        });
+
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error || 'Erreur API');
+        }
+
+        // Filtrer les suggestions qui ne sont pas déjà présentes
+        const newSuggestions = data.suggestedFilters.filter(
+          (suggestion: string) => !currentFilters.includes(suggestion)
+        );
+        
+        setSuggestions(newSuggestions);
+        
+        if (newSuggestions.length === 0) {
+          alert('🤖 L\'IA n\'a pas trouvé de nouveaux filtres à suggérer. Vos filtres actuels semblent déjà très complets !');
+        }
+      } catch (error) {
+        console.error('Erreur suggestions IA:', error);
+        alert(`❌ Erreur: ${error.message}`);
+      } finally {
+        setLoading(false);
+      }
     };
 
     return (
@@ -1084,25 +1128,44 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             )}
           </div>
 
-          {/* Colonne droite : Catégories suggérées */}
+          {/* Colonne droite : Suggestions */}
           <div>
-            <h4 className="text-sm font-medium text-gray-700 mb-3">Catégories suggérées</h4>
-            <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto">
-              {suggestedCategories
-                .filter(category => !currentFilters.includes(category))
-                .map((category, index) => (
-                <button
-                  key={index}
-                  onClick={() => addFilter(category)}
-                  className="text-left px-3 py-2 text-sm bg-gray-50 hover:bg-blue-50 hover:text-blue-600 border border-gray-200 hover:border-blue-300 rounded-lg transition-colors"
-                >
-                  + {category}
-                </button>
-              ))}
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm font-medium text-gray-700">Suggestions basées sur votre contenu</h4>
+              <button
+                onClick={getAISuggestions}
+                disabled={isLoadingAI}
+                className={`px-3 py-1 text-xs font-medium rounded-lg transition-colors ${
+                  isLoadingAI 
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                    : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600'
+                }`}
+              >
+                {isLoadingAI ? '🤖 Analyse...' : '🤖 Suggestions IA'}
+              </button>
             </div>
-            
-            {suggestedCategories.filter(cat => !currentFilters.includes(cat)).length === 0 && (
-              <p className="text-gray-500 text-sm italic">Toutes les catégories sont déjà ajoutées</p>
+
+            {/* Suggestions IA */}
+            {aiSuggestions.length > 0 ? (
+              <div className="grid grid-cols-2 gap-2">
+                {aiSuggestions.map((suggestion, index) => (
+                  <button
+                    key={`ai-${index}`}
+                    onClick={() => {
+                      addFilter(suggestion);
+                      setAiSuggestions(prev => prev.filter(s => s !== suggestion));
+                    }}
+                    className="text-left px-3 py-2 text-sm bg-gradient-to-r from-purple-50 to-blue-50 hover:from-purple-100 hover:to-blue-100 text-purple-700 border border-purple-200 hover:border-purple-300 rounded-lg transition-colors"
+                  >
+                    ✨ {suggestion}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <div className="text-4xl mb-2">🤖</div>
+                <p className="text-sm">Cliquez sur "🤖 Suggestions IA" pour obtenir des suggestions basées sur votre contenu</p>
+              </div>
             )}
           </div>
         </div>
