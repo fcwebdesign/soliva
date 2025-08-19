@@ -403,10 +403,8 @@ export default function BlogArticleEdit() {
                 </h1>
                 <button
                   onClick={() => {
-                    // Rediriger vers /admin et forcer la sélection de la page blog
-                    router.push('/admin');
-                    // Utiliser sessionStorage pour passer l'information
-                    sessionStorage.setItem('adminDefaultPage', 'blog');
+                    // Rediriger directement vers la page blog
+                    router.push('/admin?page=blog');
                   }}
                   className="text-sm text-gray-500 hover:text-gray-700"
                 >

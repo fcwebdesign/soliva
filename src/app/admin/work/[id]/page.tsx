@@ -484,10 +484,8 @@ export default function WorkProjectEdit() {
                 </h1>
                 <button
                   onClick={() => {
-                    // Rediriger vers /admin et forcer la sélection de la page work
-                    router.push('/admin');
-                    // Utiliser sessionStorage pour passer l'information
-                    sessionStorage.setItem('adminDefaultPage', 'work');
+                    // Rediriger directement vers la page work
+                    router.push('/admin?page=work');
                   }}
                   className="text-sm text-gray-500 hover:text-gray-700"
                 >
