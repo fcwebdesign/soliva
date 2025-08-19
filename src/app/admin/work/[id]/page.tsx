@@ -3,14 +3,18 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import BlockEditor from '../../components/BlockEditor';
 import Sidebar from '../../components/Sidebar';
+import MediaUploader from '../../components/MediaUploader';
 import type { Content } from '@/types/content';
 
 const PAGES = [
   { id: 'home', label: 'Accueil', path: '/', icon: '🏠' },
-  { id: 'contact', label: 'Contact', path: '/contact', icon: '📧' },
   { id: 'studio', label: 'Studio', path: '/studio', icon: '🎨' },
+  { id: 'contact', label: 'Contact', path: '/contact', icon: '📧' },
   { id: 'work', label: 'Work', path: '/work', icon: '💼' },
   { id: 'blog', label: 'Blog', path: '/blog', icon: '📝' },
+];
+
+const SETTINGS = [
   { id: 'nav', label: 'Navigation', path: null, icon: '🧭' },
   { id: 'metadata', label: 'Métadonnées', path: null, icon: '⚙️' },
   { id: 'backup', label: 'Sauvegarde', path: null, icon: '💾' },
@@ -351,19 +355,23 @@ export default function WorkProjectEdit() {
           ...projectInFrontend,
           title: cleanedProject.title,
           description: cleanedProject.description,
+          excerpt: cleanedProject.excerpt,
           content: cleanedProject.content,
           category: cleanedProject.category,
           client: cleanedProject.client,
           year: cleanedProject.year,
           featured: cleanedProject.featured,
           status: cleanedProject.status,
-          publishedAt: cleanedProject.publishedAt
+          publishedAt: cleanedProject.publishedAt,
+          image: cleanedProject.image,
+          alt: cleanedProject.alt
         };
       } else {
         // Ajouter le projet à la liste frontend
         newContent.work.projects.push({
           title: cleanedProject.title,
           description: cleanedProject.description,
+          excerpt: cleanedProject.excerpt,
           content: cleanedProject.content,
           category: cleanedProject.category,
           client: cleanedProject.client,
@@ -453,6 +461,7 @@ export default function WorkProjectEdit() {
       {/* Sidebar gauche */}
       <Sidebar 
         pages={PAGES}
+        settings={SETTINGS}
         currentPage="work"
         onPageChange={(pageId) => {
           if (pageId === 'work') {
@@ -583,6 +592,31 @@ export default function WorkProjectEdit() {
                 }}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                 placeholder="slug-du-projet"
+              />
+            </div>
+
+            {/* Extrait (description courte) */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Extrait (description courte)
+              </label>
+              <textarea
+                value={project.excerpt || ''}
+                onChange={(e) => updateProject({ excerpt: e.target.value })}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-vertical"
+                placeholder="Description courte du projet (apparaît sur la page work et dans les aperçus)..."
+                rows={3}
+              />
+            </div>
+
+            {/* Image principale */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Image principale
+              </label>
+              <MediaUploader
+                currentUrl={project.image || ''}
+                onUpload={(url) => updateProject({ image: url })}
               />
             </div>
 

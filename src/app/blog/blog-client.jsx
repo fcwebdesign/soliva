@@ -4,6 +4,7 @@ import { useGSAP } from "@gsap/react";
 import { useTransitionRouter } from "next-view-transitions";
 import { useTransition } from "@/hooks/useTransition";
 import { TRANSITION_CONFIG } from "@/config";
+import FormattedText from "@/components/FormattedText";
 import PreviewBar from "@/components/PreviewBar";
 
 import gsap from "gsap";
@@ -181,9 +182,11 @@ const BlogClient = ({ content: initialContent }) => {
         
         <div className="blog">
           <div className="col">
-            <h1 className="blog-header">{previewContent?.hero?.title || 'Journal'}</h1>
+            <h1 className="blog-header">{previewContent?.hero?.title || ''}</h1>
             <div className="blog-description">
-              <p>{previewContent?.description || "Réflexions, analyses et insights sur le design, la technologie et la stratégie digitale."}</p>
+              <FormattedText>
+                {previewContent?.description || "Réflexions, analyses et insights sur le design, la technologie et la stratégie digitale."}
+              </FormattedText>
             </div>
           </div>
           <div className="col">

@@ -7,10 +7,13 @@ import type { Content } from '@/types/content';
 
 const PAGES = [
   { id: 'home', label: 'Accueil', path: '/', icon: '🏠' },
-  { id: 'contact', label: 'Contact', path: '/contact', icon: '📧' },
   { id: 'studio', label: 'Studio', path: '/studio', icon: '🎨' },
+  { id: 'contact', label: 'Contact', path: '/contact', icon: '📧' },
   { id: 'work', label: 'Work', path: '/work', icon: '💼' },
   { id: 'blog', label: 'Blog', path: '/blog', icon: '📝' },
+];
+
+const SETTINGS = [
   { id: 'nav', label: 'Navigation', path: null, icon: '🧭' },
   { id: 'metadata', label: 'Métadonnées', path: null, icon: '⚙️' },
   { id: 'backup', label: 'Sauvegarde', path: null, icon: '💾' },
@@ -377,6 +380,7 @@ export default function BlogArticleEdit() {
       {/* Sidebar gauche */}
       <Sidebar 
         pages={PAGES}
+        settings={SETTINGS}
         currentPage="blog"
         onPageChange={(pageId) => {
           if (pageId === 'blog') {

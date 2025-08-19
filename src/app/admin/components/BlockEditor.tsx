@@ -44,6 +44,10 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   const [isUpdatingContent, setIsUpdatingContent] = useState(false);
   const [initialContent, setInitialContent] = useState<string>('');
   
+  // États pour les onglets des pages Work et Blog
+  const [workActiveTab, setWorkActiveTab] = useState('content');
+  const [blogActiveTab, setBlogActiveTab] = useState('content');
+  
   useEffect(() => {
     if (pageData && !hasInitialized && !isUpdatingContent) {
       setHasInitialized(true);
@@ -493,46 +497,34 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
           />
         </div>
-        
-        {localData?.hero?.subtitle !== undefined && (
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Sous-titre
-            </label>
-            <textarea
-              value={localData?.hero?.subtitle || ''}
-              onChange={(e) => updateField('hero.subtitle', e.target.value)}
-              placeholder="Sous-titre de la page"
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-            />
-            <p className="mt-1 text-xs text-gray-500">
-              Utilisez \n pour les retours à la ligne
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );
 
-  const renderContentBlock = () => (
-    <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-      <div className="flex items-center space-x-2 mb-4">
-        <span className="text-2xl">📝</span>
-        <h3 className="text-lg font-semibold text-gray-900">Contenu</h3>
-      </div>
-      
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Description
-          </label>
-          <WysiwygEditor
-            value={localData.content?.description || ''}
-            onChange={(value) => updateField('content.description', value)}
-            placeholder="Description de la page"
-          />
+  const renderContentBlock = () => {
+    // Pour les pages blog et work, la description est directement à la racine
+    const isDirectDescription = pageKey === 'blog' || pageKey === 'work';
+    const descriptionPath = isDirectDescription ? 'description' : 'content.description';
+    const descriptionValue = isDirectDescription ? localData.description : localData.content?.description;
+    
+    return (
+      <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+        <div className="flex items-center space-x-2 mb-4">
+          <span className="text-2xl">📝</span>
+          <h3 className="text-lg font-semibold text-gray-900">Contenu</h3>
         </div>
+        
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Description
+            </label>
+            <WysiwygEditor
+              value={descriptionValue || ''}
+              onChange={(value) => updateField(descriptionPath, value)}
+              placeholder="Description de la page"
+            />
+          </div>
         
         {localData.content?.image && (
           <div>
@@ -554,7 +546,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         )}
       </div>
     </div>
-  );
+    );
+  };
 
 
 
@@ -937,6 +930,88 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     </div>
   );
 
+  const renderBlogTabs = () => {
+    return (
+      <div className="space-y-6">
+        {/* Onglets */}
+        <div className="border-b border-gray-200">
+          <nav className="-mb-px flex space-x-8">
+            <button
+              onClick={() => setBlogActiveTab('content')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                blogActiveTab === 'content'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              📋 Contenu
+            </button>
+            <button
+              onClick={() => setBlogActiveTab('settings')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                blogActiveTab === 'settings'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              ⚙️ Paramètres
+            </button>
+          </nav>
+        </div>
+
+        {/* Contenu des onglets */}
+        {blogActiveTab === 'content' && renderArticlesBlock()}
+        {blogActiveTab === 'settings' && (
+          <div className="space-y-6">
+            {renderHeroBlock()}
+            {renderContentBlock()}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderWorkTabs = () => {
+    return (
+      <div className="space-y-6">
+        {/* Onglets */}
+        <div className="border-b border-gray-200">
+          <nav className="-mb-px flex space-x-8">
+            <button
+              onClick={() => setWorkActiveTab('content')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                workActiveTab === 'content'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              📋 Contenu
+            </button>
+            <button
+              onClick={() => setWorkActiveTab('settings')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                workActiveTab === 'settings'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              ⚙️ Paramètres
+            </button>
+          </nav>
+        </div>
+
+        {/* Contenu des onglets */}
+        {workActiveTab === 'content' && renderProjectsBlock()}
+        {workActiveTab === 'settings' && (
+          <div className="space-y-6">
+            {renderHeroBlock()}
+            {renderContentBlock()}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   // Fonction pour rendre l'éditeur drag & drop
   const renderDragDropEditor = () => (
     <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
@@ -1053,22 +1128,14 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     );
   }
   
-  // Si c'est la page blog générale, afficher la liste des articles
+  // Si c'est la page blog générale, afficher les onglets
   if (pageKey === 'blog' && localData.articles) {
-    return (
-      <div className="space-y-6">
-        {renderArticlesBlock()}
-      </div>
-    );
+    return renderBlogTabs();
   }
 
-  // Si c'est la page work générale, afficher la liste des projets
+  // Si c'est la page work générale, afficher les onglets
   if (pageKey === 'work' && localData.adminProjects) {
-    return (
-      <div className="space-y-6">
-        {renderProjectsBlock()}
-      </div>
-    );
+    return renderWorkTabs();
   }
 
   // Exposer la fonction saveBlocksContent via ref (seulement si ref existe)
@@ -1170,6 +1237,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       </div>
     );
   }
+
+
 
   return (
     <div className="space-y-6">

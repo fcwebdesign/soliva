@@ -32,7 +32,7 @@
       },
       "inquiries": {
         "title": "Demandes générales",
-        "email": "contact@soliva.studio"
+        "email": "contact@soliva.studio yep"
       }
     },
     "socials": [
@@ -60,7 +60,7 @@
       "subtitle": "Notre approche créative"
     },
     "content": {
-      "description": "<p><strong>test en gras</strong></p><p><strong><em>hello</em></strong></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\">nouveau lien</a></p><p>hello</p><p>on va voir hein hein</p><p></p><p>suis-je fort ? ou pas ?</p>",
+      "description": "<p><strong>test en gras</strong></p><p><strong><em>hello</em></strong></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\">nouveau lien</a></p><p>hello</p><p>on va voir hein hein</p><p></p><p>suis-je fort ? ou pas ? yep yep</p>",
       "image": {
         "src": "/studio.jpg",
         "alt": "L'équipe Soliva au travail dans notre espace créatif"
@@ -79,12 +79,12 @@
       "Digital",
       "IA"
     ],
-    "description": "Découvrez notre sélection de projets qui illustrent notre approche créative et notre expertise en stratégie de marque et design digital. Chaque projet raconte une histoire unique, celle d'une collaboration fructueuse entre notre vision créative et les objectifs de nos clients.\n\nDe la conception d'identités de marque mémorables à la création d'expériences digitales innovantes, nous nous efforçons de dépasser les attentes et de créer un impact durable.",
+    "description": "<p><strong>Découvrez notre sélection de projets</strong> qui illustrent notre approche créative et notre expertise en stratégie de marque et design digital. Chaque projet raconte une histoire unique, celle d'une collaboration fructueuse entre notre vision créative et les objectifs de nos clients. </p><p>De la conception d'identités de marque mémorables à la création d'expériences digitales innovantes, nous nous efforçons de dépasser les attentes et de créer un impact durable. fds</p>",
     "projects": [
       {
         "id": "ecotech-solutions",
         "title": "EcoTech Solutions",
-        "content": "<h3>qsdqdqq</h3>\n<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>\n<h2>Défis du projet</h2>\n<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>\n<img src=\"/uploads/1755556322957-c5ae9812.jpg\" alt=\"\">",
+        "content": "<h3>qsdqdqqxvcvccxvvcxcvxvxc</h3>\n<img src=\"/uploads/1755556322957-c5ae9812.jpg\" alt=\"\">\n<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>\n<h2>Défis du projet</h2>\n<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>",
         "slug": "ecotech-solutions",
         "status": "published",
         "publishedAt": "2024-01-15T10:00:00.000Z",
@@ -118,7 +118,8 @@
               "alt": ""
             }
           }
-        ]
+        ],
+        "image": "/uploads/1755561574161-96b8a35f.jpg"
       },
       {
         "title": "Art Gallery Digital",
@@ -141,7 +142,7 @@
       {
         "id": "ecotech-solutions",
         "title": "EcoTech Solutions",
-        "content": "<h3>qsdqdqq</h3>\n<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>\n<h2>Défis du projet</h2>\n<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>\n<img src=\"/uploads/1755556322957-c5ae9812.jpg\" alt=\"\">",
+        "content": "<h3>qsdqdqqxvcvccxvvcxcvxvxc</h3>\n<img src=\"/uploads/1755556322957-c5ae9812.jpg\" alt=\"\">\n<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>\n<h2>Défis du projet</h2>\n<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>",
         "slug": "ecotech-solutions",
         "status": "published",
         "publishedAt": "2024-01-15T10:00:00.000Z",
@@ -154,33 +155,34 @@
           {
             "id": "block-1",
             "type": "h3",
-            "content": "qsdqdqq"
+            "content": "qsdqdqqxvcvccxvvcxcvxvxc"
           },
           {
             "id": "block-2",
-            "type": "content",
-            "content": "<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>"
-          },
-          {
-            "id": "block-3",
-            "type": "h2",
-            "content": "Défis du projet"
-          },
-          {
-            "id": "block-4",
-            "type": "content",
-            "content": "<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>"
-          },
-          {
-            "id": "block-5",
             "type": "image",
             "content": "",
             "image": {
               "src": "/uploads/1755556322957-c5ae9812.jpg",
               "alt": ""
             }
+          },
+          {
+            "id": "block-3",
+            "type": "content",
+            "content": "<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>"
+          },
+          {
+            "id": "block-4",
+            "type": "h2",
+            "content": "Défis du projet"
+          },
+          {
+            "id": "block-5",
+            "type": "content",
+            "content": "<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>"
           }
-        ]
+        ],
+        "image": "/uploads/1755561574161-96b8a35f.jpg"
       },
       {
         "id": "art-gallery-digital",
@@ -228,7 +230,7 @@
       "title": "Journal",
       "subtitle": "Nos réflexions et insights"
     },
-    "description": "Partageons nos réflexions, analyses et insights sur le design, la technologie et la stratégie digitale. Découvrez nos perspectives sur les tendances actuelles et les innovations qui façonnent l'avenir de la création.",
+    "description": "<p>Partageons nos réflexions, analyses et insights sur le design, la technologie et la stratégie digitale. Découvrez nos perspectives sur les tendances actuelles et les innovations qui façonnent l'avenir de la création. yep</p>",
     "articles": [
       {
         "id": "ecommerce-retour-relationnel",
@@ -381,6 +383,5 @@
   },
   "_isPreview": true,
   "_previewId": "preview-1755558070217",
-  "_originalPage": "blog",
-  "_status": "published"
+  "_originalPage": "blog"
 }
