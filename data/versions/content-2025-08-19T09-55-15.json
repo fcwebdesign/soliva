@@ -87,7 +87,7 @@
         "content": "<h3>test H3</h3>\n<img src=\"/uploads/1755556322957-c5ae9812.jpg\" alt=\"\">\n<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>\n<h2>Défis du projet</h2>\n<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>",
         "slug": "ecotech-solutions",
         "status": "published",
-        "publishedAt": "2024-01-15T10:00:00.000Z",
+        "publishedAt": "2025-08-19T09:54:32.476Z",
         "excerpt": "Identité de marque complète pour une startup spécialisée dans les technologies vertes.",
         "client": "EcoTech Solutions",
         "category": "Identité",
@@ -131,11 +131,16 @@
       },
       {
         "title": "Mode Éthique Collective",
-        "description": "Stratégie de communication globale pour une marque de mode durable. Campagne multicanal intégrant storytelling, réseaux sociaux et expériences événementielles.",
         "category": "Stratégie",
-        "image": "/img3.jpg",
-        "alt": "Mode Éthique Collective - Stratégie de communication",
-        "slug": "mode-ethique-collective"
+        "slug": "mode-ethique-collective",
+        "excerpt": "Stratégie de communication globale pour une marque de mode durable.",
+        "content": "<p>Stratégie de communication globale pour une marque de mode durable. Campagne multicanal intégrant storytelling, réseaux sociaux et expériences événementielles.</p>",
+        "client": "Mode Éthique Collective",
+        "year": "2024",
+        "featured": false,
+        "status": "published",
+        "publishedAt": "2025-08-19T09:53:57.518Z",
+        "image": "/uploads/1755597298777-8b15cf89.jpg"
       }
     ],
     "adminProjects": [
@@ -145,7 +150,7 @@
         "content": "<h3>test H3</h3>\n<img src=\"/uploads/1755556322957-c5ae9812.jpg\" alt=\"\">\n<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>\n<h2>Défis du projet</h2>\n<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>",
         "slug": "ecotech-solutions",
         "status": "published",
-        "publishedAt": "2024-01-15T10:00:00.000Z",
+        "publishedAt": "2025-08-19T09:54:32.476Z",
         "excerpt": "Identité de marque complète pour une startup spécialisée dans les technologies vertes.",
         "client": "EcoTech Solutions",
         "category": "Identité",
@@ -209,7 +214,7 @@
         "title": "Mode Éthique Collective",
         "content": "<p>Stratégie de communication globale pour une marque de mode durable. Campagne multicanal intégrant storytelling, réseaux sociaux et expériences événementielles.</p>",
         "slug": "mode-ethique-collective",
-        "status": "draft",
+        "status": "published",
         "excerpt": "Stratégie de communication globale pour une marque de mode durable.",
         "client": "Mode Éthique Collective",
         "category": "Stratégie",
@@ -221,52 +226,9 @@
             "type": "content",
             "content": "<p>Stratégie de communication globale pour une marque de mode durable. Campagne multicanal intégrant storytelling, réseaux sociaux et expériences événementielles.</p>"
           }
-        ]
-      },
-      {
-        "id": "ecotech-solutions-copy-1755596571410",
-        "title": "EcoTech Solutions (copie)",
-        "content": "<h3>test H3</h3>\n<img src=\"/uploads/1755556322957-c5ae9812.jpg\" alt=\"\">\n<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>\n<h2>Défis du projet</h2>\n<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>",
-        "slug": "ecotech-solutions-copy-1755596571410",
-        "status": "draft",
-        "excerpt": "Identité de marque complète pour une startup spécialisée dans les technologies vertes.",
-        "client": "EcoTech Solutions",
-        "category": "Identité",
-        "year": "2024",
-        "featured": true,
-        "blocks": [
-          {
-            "id": "block-1",
-            "type": "h3",
-            "content": "test H3"
-          },
-          {
-            "id": "block-2",
-            "type": "image",
-            "content": "",
-            "image": {
-              "src": "/uploads/1755556322957-c5ae9812.jpg",
-              "alt": ""
-            }
-          },
-          {
-            "id": "block-3",
-            "type": "content",
-            "content": "<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>"
-          },
-          {
-            "id": "block-4",
-            "type": "h2",
-            "content": "Défis du projet"
-          },
-          {
-            "id": "block-5",
-            "type": "content",
-            "content": "<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>"
-          }
         ],
-        "image": "/uploads/1755561574161-96b8a35f.jpg",
-        "_lastModified": "2025-08-19T09:42:51.410Z"
+        "publishedAt": "2025-08-19T09:53:57.518Z",
+        "image": "/uploads/1755597298777-8b15cf89.jpg"
       }
     ]
   },
@@ -423,6 +385,36 @@
           }
         ],
         "publishedAt": "2025-08-18T13:25:59.640Z"
+      },
+      {
+        "id": "ceci-est-mon-nouveal-id-copy-1755596908147",
+        "title": "Nouvel article (copie)",
+        "content": "<h2>test de section</h2>\n<p><strong>test contenu</strong></p><p><em>ça marche pas</em></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\"><em>yepddsfd</em></a></p><p></p><ul><li><p>test</p></li></ul><ol><li><p>ok je crois que c'est bon</p></li></ol><blockquote><p>citation</p></blockquote><p></p><p>hello c'est vraiment cool ce CMS</p><p>mais aloirs très cool</p><p>wai bof</p><p>xcvvcxcvx</p><p>fsfdsfdsdfsfds</p>\n<img src=\"/uploads/1755521225223-9689ec4e.png\" alt=\"test image\">",
+        "status": "draft",
+        "slug": "ceci-est-mon-nouveal-id-copy-1755596908147",
+        "excerpt": "wxcxwcwxc xcccfffd cv",
+        "blocks": [
+          {
+            "id": "block-1",
+            "type": "h2",
+            "content": "test de section"
+          },
+          {
+            "id": "block-2",
+            "type": "content",
+            "content": "<p><strong>test contenu</strong></p><p><em>ça marche pas</em></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\"><em>yepddsfd</em></a></p><p></p><ul><li><p>test</p></li></ul><ol><li><p>ok je crois que c'est bon</p></li></ol><blockquote><p>citation</p></blockquote><p></p><p>hello c'est vraiment cool ce CMS</p><p>mais aloirs très cool</p><p>wai bof</p><p>xcvvcxcvx</p><p>fsfdsfdsdfsfds</p>"
+          },
+          {
+            "id": "block-3",
+            "type": "image",
+            "content": "",
+            "image": {
+              "src": "/uploads/1755521225223-9689ec4e.png",
+              "alt": "test image"
+            }
+          }
+        ],
+        "_lastModified": "2025-08-19T09:48:28.147Z"
       }
     ],
     "filters": [
