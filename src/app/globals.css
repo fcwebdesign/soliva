@@ -2079,6 +2079,31 @@ html.preview-mode body {
   padding-top: 48px !important;
 }
 
+/* Styles pour le drag & drop amélioré */
+.dragging {
+  cursor: grabbing !important;
+}
+
+.dragging * {
+  cursor: grabbing !important;
+}
+
+/* Animation de drop zone */
+@keyframes dropZonePulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+.drop-zone-active {
+  animation: dropZonePulse 0.6s ease-in-out;
+}
+
+/* Masquer le footer dans l'admin */
+.admin-page .footer-wrapper {
+  display: none;
+}
+
 
 
 

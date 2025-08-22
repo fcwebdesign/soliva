@@ -9,8 +9,9 @@ import VersionList from './VersionList';
 
 interface Block {
   id: string;
-  type: 'h2' | 'h3' | 'content' | 'image' | 'cta';
+  type: 'h2' | 'h3' | 'content' | 'image' | 'cta' | 'about';
   content: string;
+  title?: string;
   image?: {
     src: string;
     alt: string;
@@ -123,7 +124,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       });
       
       // Ne nettoyer que si on a des blocs invalides ET qu'on vient de charger
-      if (cleanedBlocks.length !== blocks.length && blocks.some(b => !['h2', 'h3', 'content', 'image', 'cta'].includes(b.type))) {
+              if (cleanedBlocks.length !== blocks.length && blocks.some(b => !['h2', 'h3', 'content', 'image', 'cta', 'about'].includes(b.type))) {
         console.log('🧹 Nettoyage automatique des blocs invalides');
         setBlocks(cleanedBlocks);
         updateBlocksContent(cleanedBlocks);
@@ -171,7 +172,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     let blockId = 1;
     
     // Vérifier si le contenu semble être du HTML simple (pas de structure de blocs)
-    const hasStructuredContent = tempDiv.querySelector('h2, h3, img, .cta-block');
+            const hasStructuredContent = tempDiv.querySelector('h2, h3, img, .cta-block, .about-block');
     
     if (!hasStructuredContent && tempDiv.children.length <= 1) {
       // Si c'est du contenu simple, créer un seul bloc content
@@ -244,7 +245,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
 
   // Fonction pour nettoyer les blocs invalides
   const cleanInvalidBlocks = (blocks: Block[]): Block[] => {
-    const validTypes: Block['type'][] = ['h2', 'h3', 'content', 'image', 'cta'];
+    const validTypes: Block['type'][] = ['h2', 'h3', 'content', 'image', 'cta', 'about'];
     
     const filteredBlocks = blocks.filter(block => {
       // Supprimer les blocs avec des types invalides
@@ -300,7 +301,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       type,
       content: '',
       ...(type === 'image' && { image: { src: '', alt: '' } }),
-      ...(type === 'cta' && { ctaText: '', ctaLink: '' })
+      ...(type === 'cta' && { ctaText: '', ctaLink: '' }),
+      ...(type === 'about' && { title: '', content: '' })
     };
     
     const newBlocks = [...blocks, newBlock];
@@ -342,6 +344,9 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         case 'cta':
           return (block.ctaText || block.ctaLink) ? 
             `<div class="cta-block"><p>${block.ctaText || ''}</p><a href="${block.ctaLink || ''}" class="cta-button">En savoir plus</a></div>` : '';
+        case 'about':
+          return (block.title || block.content) ? 
+            `<div class="about-block"><h2>${block.title || ''}</h2><div>${block.content || ''}</div></div>` : '';
         default:
           return '';
       }
@@ -661,6 +666,23 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
           </div>
         );
       
+      case 'about':
+        return (
+          <div className="block-editor">
+            <input
+              type="text"
+              value={block.title || ''}
+              onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+              placeholder="Titre de la section"
+              className="block-input"
+            />
+            <WysiwygEditor
+              value={block.content || ''}
+              onChange={(content) => updateBlock(block.id, { content })}
+            />
+          </div>
+        );
+      
       default:
         return null;
     }
@@ -673,6 +695,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       case 'content': return 'Contenu';
       case 'image': return 'Image';
       case 'cta': return 'CTA';
+      case 'about': return 'À propos';
       default: return type;
     }
   };
@@ -819,8 +842,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             />
           </div>
         
-        {/* Section image seulement si ce n'est pas la page contact */}
-        {pageKey !== 'contact' && localData.content?.image && (
+        {/* Section image seulement si ce n'est pas la page contact ou studio */}
+        {pageKey !== 'contact' && pageKey !== 'studio' && localData.content?.image && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Image
@@ -1558,6 +1581,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             <option value="content">Contenu</option>
             <option value="image">Image</option>
             <option value="cta">CTA</option>
+            <option value="about">À propos</option>
           </select>
         </div>
       </div>

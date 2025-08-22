@@ -4,56 +4,31 @@
     "description": "Soliva est un studio créatif spécialisé en stratégie digitale et de marque. Découvrez nos projets et notre approche unique."
   },
   "nav": {
-    "logo": "soliva",
+    "logo": "STUDIO",
+    "logoImage": "",
+    "location": "paris, le havre",
     "items": [
       "home",
       "work",
-      "studio",
-      "blog",
+      "about",
       "contact"
     ],
-    "location": "paris, le havre"
+    "pageLabels": {
+      "home": "Accueil",
+      "work": "Réalisations",
+      "about": "Studio",
+      "contact": "Contact"
+    }
   },
   "home": {
     "hero": {
       "title": "soliva",
-      "subtitle": "creative studio.\ndigitaI & brand strategy."
+      "subtitle": "creative studio.\ndigital & brand strategy."
     }
   },
   "contact": {
-    "hero": {
-      "title": "Nous contacter",
-      "subtitle": "Notre approche créative"
-    },
-    "sections": {
-      "collaborations": {
-        "title": "Collaborations",
-        "email": "hello@soliva.studio"
-      },
-      "inquiries": {
-        "title": "Demandes générales",
-        "email": "contact@soliva.studio yep"
-      }
-    },
-    "socials": [
-      "Instagram",
-      "LinkedIn",
-      "Behance"
-    ],
-    "briefGenerator": {
-      "placeholder": "Décrivez votre projet, vos objectifs et votre vision...",
-      "button": "Générer le brief",
-      "loading": "Génération en cours...",
-      "resultTitle": "Brief généré pour votre projet :"
-    },
-    "content": {
-      "description": "<p><strong>testxcvvxvcxvxcvvxcvcvxcvcx</strong></p>",
-      "image": {
-        "src": "/studio.jpg",
-        "alt": "L'équipe Soliva au travail dans notre espace créatif"
-      }
-    },
-    "description": "<p>Vous avez des questions ? Des idées à partager ? On est là. Que vous soyez à Paris ou au Havre, n’hésitez pas à nous écrire. On adore échanger, alors faites le premier pas. Votre message est le début d'une conversation qui pourrait tout changer. Allez-y, on attend de vous lire !</p>"
+    "title": "Travaillons ensemble",
+    "email": "hello@studio.fr"
   },
   "studio": {
     "hero": {
@@ -107,22 +82,48 @@
         "id": "block-1755608177084",
         "type": "content",
         "content": "<p>Mesurez, apprenez, itérez Nous suivons les KPIs clés dès le jour 1: taux de conversion, rétention, temps de chargement, SEO. Chaque mois, nous testons une hypothèse précise (A/B sur le formulaire, nouveau wording, optimisation d’image) et déployons ce qui performe. Résultat: des gains chiffrés, documentés, et un produit qui progresse sans refonte lourde.</p>"
+      },
+      {
+        "id": "block-1755609780831",
+        "type": "h2",
+        "content": "Livrez, optimisez, progressez"
+      },
+      {
+        "id": "block-1755609794221",
+        "type": "content",
+        "content": "<p>Livrez, optimisez, progressez Déploiement en sprint d’une semaine, suivi d’un check de performances à J+3: Core Web Vitals, conversions, bugs réels. À J+14, itération ciblée sur ce qui bloque (formulaire trop long, visuel peu cliquable), avec changelog et impacts mesurés pour décider du prochain sprint.</p>"
       }
     ]
   },
   "work": {
-    "hero": {
-      "title": "Nos réalisations",
-      "subtitle": "Projets sélectionnés"
-    },
-    "filters": [
-      "Tous",
-      "Stratégie",
-      "Identité",
-      "Digital",
-      "IA"
+    "title": "Travaux sélectionnés test",
+    "subtitle": "Peu de pièces, beaucoup d'impact.",
+    "items": [
+      {
+        "title": "Retail Flagship — Harrods",
+        "category": "Spatial / Digital",
+        "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=2000&auto=format&fit=crop",
+        "url": "#"
+      },
+      {
+        "title": "Pop‑up — Prada Milano",
+        "category": "Brand / Retail",
+        "image": "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=2000&auto=format&fit=crop",
+        "url": "#"
+      },
+      {
+        "title": "Hospitality — Four Seasons",
+        "category": "Experience / UX",
+        "image": "https://images.unsplash.com/photo-1516542076529-1ea3854896e1?q=80&w=2000&auto=format&fit=crop",
+        "url": "#"
+      },
+      {
+        "title": "Workplace — Editorial Hub",
+        "category": "Design System",
+        "image": "https://images.unsplash.com/photo-1513530176992-0cf39c4cbed4?q=80&w=2000&auto=format&fit=crop",
+        "url": "#"
+      }
     ],
-    "description": "<p><strong>Découvrez notre sélection de projets</strong> qui illustrent notre approche créative et notre expertise en stratégie de marque et design digital. Chaque projet raconte une histoire unique, celle d'une collaboration fructueuse entre notre vision créative et les objectifs de nos clients. </p><p>De la conception d'identités de marque mémorables à la création d'expériences digitales innovantes, nous nous efforçons de dépasser les attentes et de créer un impact durable. fds</p>",
     "projects": [
       {
         "id": "ecotech-solutions",
@@ -279,7 +280,19 @@
         "publishedAt": "2025-08-19T09:55:29.559Z",
         "image": "/uploads/1755597298777-8b15cf89.jpg"
       }
-    ]
+    ],
+    "hero": {
+      "title": "Nos réalisations",
+      "subtitle": "Projets sélectionnés"
+    },
+    "filters": [
+      "Tous",
+      "Stratégie",
+      "Identité",
+      "Digital",
+      "IA"
+    ],
+    "description": "<p><strong>Découvrez notre sélection de projets</strong> qui illustrent notre approche créative et notre expertise en stratégie de marque et design digital. Chaque projet raconte une histoire unique, celle d'une collaboration fructueuse entre notre vision créative et les objectifs de nos clients. </p><p>De la conception d'identités de marque mémorables à la création d'expériences digitales innovantes, nous nous efforçons de dépasser les attentes et de créer un impact durable. fds</p>"
   },
   "blog": {
     "hero": {
@@ -408,7 +421,7 @@
       {
         "id": "ceci-est-mon-nouveal-id",
         "title": "Nouvel article",
-        "content": "<h2>test de section</h2>\n<p><strong>test contenu</strong></p><p><em>ça marche pas</em></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\"><em>yepddsfd</em></a></p><p></p><ul><li><p>test</p></li></ul><ol><li><p>ok je crois que c'est bon</p></li></ol><blockquote><p>citation</p></blockquote><p></p><p>hello c'est vraiment cool ce CMS</p><p>mais aloirs très cool</p><p>wai bof</p><p>xcvvcxcvx</p><p>fsfdsfdsdfsfds</p>\n<img src=\"/uploads/1755521225223-9689ec4e.png\" alt=\"test image\">",
+        "content": "<h2>test de section ok</h2>\n<p><strong>test contenu</strong></p><p><em>ça marche pas</em></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\"><em>yepddsfd</em></a></p><p></p><ul><li><p>test</p></li></ul><ol><li><p>ok je crois que c'est bon</p></li></ol><blockquote><p>citation</p></blockquote><p></p><p>hello c'est vraiment cool ce CMS</p><p>mais aloirs très cool</p><p>wai bof</p><p>xcvvcxcvx</p><p>fsfdsfdsdfsfds</p>\n<img src=\"/uploads/1755521225223-9689ec4e.png\" alt=\"test image\">",
         "status": "published",
         "slug": "ceci-est-mon-nouveal-id",
         "excerpt": "wxcxwcwxc xcccfffd cv",
@@ -416,7 +429,7 @@
           {
             "id": "block-1",
             "type": "h2",
-            "content": "test de section"
+            "content": "test de section ok"
           },
           {
             "id": "block-2",
@@ -442,7 +455,50 @@
       "IA"
     ]
   },
-  "_isPreview": true,
-  "_previewId": "preview-1755558070217",
-  "_originalPage": "blog"
+  "hero": {
+    "title": "Design minimal. Impact maximal.",
+    "subtitle": "Identités, sites et produits. Sobriété, précision, résultats."
+  },
+  "featured": {
+    "image": "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=2000&auto=format&fit=crop",
+    "alt": "Projet en vedette"
+  },
+  "about": {
+    "title": "À propos",
+    "description": "Studio indépendant. Nous concevons des expériences sobres et utiles. Peu d'éléments, beaucoup d'impact. Chaque décision sert la lisibilité, la vitesse et la conversion."
+  },
+  "footer": {
+    "description": "Studio indépendant spécialisé dans le design minimaliste et l'expérience utilisateur.",
+    "socials": [
+      {
+        "platform": "LinkedIn",
+        "url": "#",
+        "target": "_blank"
+      },
+      {
+        "platform": "Instagram",
+        "url": "#",
+        "target": "_blank"
+      },
+      {
+        "platform": "X",
+        "url": "#",
+        "target": "_blank"
+      }
+    ],
+    "links": [
+      {
+        "title": "Mentions légales",
+        "url": "/legal",
+        "target": "_self"
+      },
+      {
+        "title": "Politique de confidentialité",
+        "url": "/privacy",
+        "target": "_self"
+      }
+    ]
+  },
+  "_template": "minimaliste-premium",
+  "_appliedAt": null
 }

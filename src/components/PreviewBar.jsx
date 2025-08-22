@@ -8,12 +8,15 @@ export default function PreviewBar() {
   const [previewId, setPreviewId] = useState(null);
   const [originalPage, setOriginalPage] = useState(null);
   const [pageStatus, setPageStatus] = useState('published'); // 'draft' ou 'published'
+  const [template, setTemplate] = useState(null);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const previewParam = urlParams.get('preview');
+    const templateParam = urlParams.get('template');
     setPreviewId(previewParam);
     setOriginalPage(window.location.pathname);
+    setTemplate(templateParam);
     
     // Récupérer le statut de la page depuis la révision temporaire
     if (previewParam) {
@@ -31,6 +34,15 @@ export default function PreviewBar() {
         });
     }
   }, []);
+
+  const getRedirectUrl = () => {
+    // Si on a un template, rediriger vers le template
+    if (template) {
+      return `/?template=${template}`;
+    }
+    // Sinon, rediriger vers la page normale
+    return window.location.pathname;
+  };
 
   const handlePublish = async () => {
     if (!previewId) return;
@@ -50,7 +62,7 @@ export default function PreviewBar() {
         
         // Notifier et rediriger
         alert('✅ Contenu sauvegardé avec succès !');
-        window.location.href = window.location.pathname; // Sans paramètre preview
+        window.location.href = getRedirectUrl(); // Utiliser la fonction pour l'URL
       } else {
         alert('❌ Impossible de communiquer avec l\'admin. Veuillez sauvegarder depuis l\'admin.');
       }
@@ -69,12 +81,12 @@ export default function PreviewBar() {
       await fetch(`/api/admin/preview/${previewId}`, { method: 'DELETE' });
       
       // Rediriger vers la version publique
-      window.location.href = window.location.pathname; // Sans paramètre preview
+      window.location.href = getRedirectUrl(); // Utiliser la fonction pour l'URL
       
     } catch (error) {
       console.error('Erreur lors de la sortie d\'aperçu:', error);
       // Rediriger quand même
-      window.location.href = window.location.pathname;
+      window.location.href = getRedirectUrl();
     }
   };
 

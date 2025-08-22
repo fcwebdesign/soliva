@@ -296,10 +296,13 @@ export async function readContent(): Promise<Content> {
     
     if (!cleanedContent.nav?.items || !Array.isArray(cleanedContent.nav.items)) {
       console.log('⚠️ nav.items manquant ou invalide, utilisation du seed');
+      console.log('🔍 cleanedContent.nav:', JSON.stringify(cleanedContent.nav, null, 2));
       const mergedContent = { ...SEED_DATA, ...cleanedContent };
       await fs.writeFile(DATA_FILE_PATH, JSON.stringify(mergedContent, null, 2), 'utf-8');
       return mergedContent;
     }
+    
+    console.log('✅ nav.items valide:', JSON.stringify(cleanedContent.nav.items, null, 2));
     
     console.log('✅ Validation réussie, retour du contenu');
     return cleanedContent;

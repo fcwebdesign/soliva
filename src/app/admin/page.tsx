@@ -3,6 +3,10 @@ import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Sidebar from './components/Sidebar';
 import BlockEditor from './components/BlockEditor';
+import TemplateManager from './components/TemplateManager';
+import HeaderManager from './components/HeaderManager';
+import FooterManager from './components/FooterManager';
+import MinimalisteManager from './components/MinimalisteManager';
 import type { Content } from '@/types/content';
 
 const PAGES = [
@@ -16,6 +20,7 @@ const PAGES = [
 const SETTINGS = [
   { id: 'nav', label: 'Navigation', path: null, icon: '🧭' },
   { id: 'metadata', label: 'Métadonnées', path: null, icon: '⚙️' },
+  { id: 'templates', label: 'Templates', path: null, icon: '🎨' },
   { id: 'footer', label: 'Footer', path: null, icon: '🦶' },
   { id: 'backup', label: 'Sauvegarde', path: null, icon: '💾' },
 ];
@@ -35,6 +40,7 @@ export default function AdminPage() {
   const [pageStatus, setPageStatus] = useState<'draft' | 'published'>('published'); // Nouveau état pour le statut de la page
   const [isJustSaved, setIsJustSaved] = useState(false); // Flag pour éviter les modifications juste après sauvegarde
   const [isPageLoading, setIsPageLoading] = useState(false); // Flag pour éviter les modifications pendant le chargement
+  const [headerManagerRef, setHeaderManagerRef] = useState(null); // Référence au HeaderManager
 
   // Charger le contenu initial
   useEffect(() => {
@@ -91,6 +97,24 @@ export default function AdminPage() {
   useEffect(() => {
     console.log('🔍 hasUnsavedChanges changed:', hasUnsavedChanges);
   }, [hasUnsavedChanges]);
+
+  // Écouter les changements de navigation et footer
+  useEffect(() => {
+    const handleNavigationChanged = () => {
+      setHasUnsavedChanges(true);
+    };
+
+    const handleFooterChanged = () => {
+      setHasUnsavedChanges(true);
+    };
+
+    window.addEventListener('navigation-changed', handleNavigationChanged);
+    window.addEventListener('footer-changed', handleFooterChanged);
+    return () => {
+      window.removeEventListener('navigation-changed', handleNavigationChanged);
+      window.removeEventListener('footer-changed', handleFooterChanged);
+    };
+  }, []);
 
   // Écouter les messages de publication depuis l'aperçu
   useEffect(() => {
@@ -332,7 +356,14 @@ export default function AdminPage() {
       
       // 3. Ouvrir l'URL spéciale d'aperçu
       const previewPath = [...PAGES, ...SETTINGS].find(p => p.id === currentPage)?.path || '/';
-      window.open(`${previewPath}?preview=${previewId}`, '_blank');
+      
+      // Si le template minimaliste est actif, ajouter le paramètre template
+      let previewUrl = `${previewPath}?preview=${previewId}`;
+      if (content._template === 'minimaliste-premium') {
+        previewUrl = `/?template=minimaliste-premium&preview=${previewId}`;
+      }
+      
+      window.open(previewUrl, '_blank');
       
     } catch (err) {
       console.error('Erreur aperçu:', err);
@@ -428,6 +459,8 @@ export default function AdminPage() {
         return content.navigation;
       case 'metadata':
         return content.metadata;
+      case 'templates':
+        return null; // Géré séparément
       default:
         const pageData = content[currentPage as keyof Content];
         console.log(`🔍 Données de la page ${currentPage}:`, {
@@ -517,34 +550,154 @@ export default function AdminPage() {
 
 
 
-                {/* Bouton Enregistrer brouillon */}
-                <button
-                  onClick={() => handleSaveWithStatus('draft')}
-                  disabled={saveStatus === 'saving'}
-                  className={`text-sm px-4 py-2 rounded-lg transition-colors ${
-                    saveStatus === 'saving'
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : 'bg-gray-600 text-white hover:bg-gray-700'
-                  }`}
-                  title={pageStatus === 'published' ? "Passer la page en brouillon" : "Enregistrer comme brouillon"}
-                >
-                  {pageStatus === 'published' ? '📝 Passer en brouillon' : '💾 Enregistrer brouillon'}
-                </button>
+                {/* Boutons de sauvegarde - masqués pour la navigation et footer */}
+                {currentPage !== 'nav' && currentPage !== 'footer' && (
+                  <>
+                    {/* Bouton Enregistrer brouillon */}
+                    <button
+                      onClick={() => handleSaveWithStatus('draft')}
+                      disabled={saveStatus === 'saving'}
+                      className={`text-sm px-4 py-2 rounded-lg transition-colors ${
+                        saveStatus === 'saving'
+                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : 'bg-gray-600 text-white hover:bg-gray-700'
+                      }`}
+                      title={pageStatus === 'published' ? "Passer la page en brouillon" : "Enregistrer comme brouillon"}
+                    >
+                      {pageStatus === 'published' ? '📝 Passer en brouillon' : '💾 Enregistrer brouillon'}
+                    </button>
 
-                {/* Bouton Publier */}
-                <button
-                  onClick={() => handleSaveWithStatus('published')}
-                  disabled={saveStatus === 'saving'}
-                  className={`text-sm px-4 py-2 rounded-lg transition-colors ${
-                    saveStatus === 'saving'
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : pageStatus === 'published'
-                        ? 'bg-green-600 text-white hover:bg-green-700'
-                        : 'bg-blue-600 text-white hover:bg-blue-700'
-                  }`}
-                >
-                  {pageStatus === 'published' ? '✅ Mettre à jour' : '🚀 Publier'}
-                </button>
+                    {/* Bouton Publier */}
+                    <button
+                      onClick={() => handleSaveWithStatus('published')}
+                      disabled={saveStatus === 'saving'}
+                      className={`text-sm px-4 py-2 rounded-lg transition-colors ${
+                        saveStatus === 'saving'
+                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : pageStatus === 'published'
+                            ? 'bg-green-600 text-white hover:bg-green-700'
+                            : 'bg-blue-600 text-white hover:bg-blue-700'
+                      }`}
+                    >
+                      {pageStatus === 'published' ? '✅ Mettre à jour' : '🚀 Publier'}
+                    </button>
+                  </>
+                )}
+
+                {/* Boutons Navigation et Footer - toujours visibles */}
+                {(currentPage === 'nav' || currentPage === 'footer') && (
+                  <>
+                    <button
+                      onClick={() => {
+                        // Annuler les modifications en restaurant le contenu original
+                        if (originalContent) {
+                          setContent(originalContent);
+                          setHasUnsavedChanges(false);
+                        }
+                      }}
+                      disabled={!hasUnsavedChanges}
+                      className={`text-sm px-4 py-2 rounded-lg transition-colors ${
+                        !hasUnsavedChanges
+                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : 'bg-gray-600 text-white hover:bg-gray-700'
+                      }`}
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      onClick={async () => {
+                        // Sauvegarder directement via la fonction de sauvegarde
+                        setSaveStatus('saving');
+                        try {
+                          let updatedContent = { ...content };
+
+                          // Récupérer les données selon la page
+                          if (currentPage === 'nav') {
+                            const currentHeaderData = window.getCurrentHeaderData ? window.getCurrentHeaderData() : null;
+                            
+                            if (!currentHeaderData) {
+                              throw new Error('Impossible de récupérer les données du header');
+                            }
+
+                            updatedContent.nav = {
+                              logo: currentHeaderData.logo,
+                              logoImage: currentHeaderData.logoImage,
+                              location: currentHeaderData.location,
+                              items: currentHeaderData.pages,
+                              pageLabels: currentHeaderData.pageLabels
+                            };
+                          } else if (currentPage === 'footer') {
+                            const currentFooterData = window.getCurrentFooterData ? window.getCurrentFooterData() : null;
+                            
+                            if (!currentFooterData) {
+                              throw new Error('Impossible de récupérer les données du footer');
+                            }
+
+                            updatedContent.footer = {
+                              logo: currentFooterData.logo,
+                              logoImage: currentFooterData.logoImage,
+                              description: currentFooterData.description,
+                              links: currentFooterData.links.map(link => ({
+                                title: link.title,
+                                url: link.url === 'custom' ? link.customUrl : link.url
+                              })),
+                              socialLinks: currentFooterData.socialLinks,
+                              copyright: currentFooterData.copyright
+                            };
+                          }
+
+                          const response = await fetch('/api/admin/content', {
+                            method: 'PUT',
+                            headers: {
+                              'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ content: updatedContent }),
+                          });
+
+                          if (response.ok) {
+                            const savedContent = await response.json();
+                            setContent(savedContent);
+                            setOriginalContent(savedContent);
+                            setHasUnsavedChanges(false);
+                            setSaveStatus('success');
+                            
+                            // Déclencher l'événement de mise à jour
+                            if (currentPage === 'nav') {
+                              window.dispatchEvent(new CustomEvent('content-updated', {
+                                detail: { nav: savedContent.nav }
+                              }));
+                            } else if (currentPage === 'footer') {
+                              window.dispatchEvent(new CustomEvent('content-updated', {
+                                detail: { footer: savedContent.footer }
+                              }));
+                            }
+
+                            // Notifier les autres onglets/fenêtres du site
+                            if (typeof window !== 'undefined' && window.localStorage) {
+                              localStorage.setItem(`${currentPage}-updated`, Date.now().toString());
+                            }
+                            
+                            setTimeout(() => setSaveStatus('idle'), 2000);
+                          } else {
+                            throw new Error('Erreur lors de la sauvegarde');
+                          }
+                        } catch (error) {
+                          console.error('Erreur:', error);
+                          setSaveStatus('error');
+                          setTimeout(() => setSaveStatus('idle'), 3000);
+                        }
+                      }}
+                      disabled={saveStatus === 'saving' || !hasUnsavedChanges}
+                      className={`text-sm px-4 py-2 rounded-lg transition-colors ${
+                        saveStatus === 'saving' || !hasUnsavedChanges
+                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : 'bg-blue-600 text-white hover:bg-blue-700'
+                      }`}
+                    >
+                      {saveStatus === 'saving' ? 'Sauvegarde...' : 'Sauvegarder'}
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -555,31 +708,74 @@ export default function AdminPage() {
           <div className="max-w-7xl mx-auto">
             {currentPageConfig && (
               <>
-                {/* Informations de statut */}
-                <div className="bg-gray-50 p-4 rounded-lg mb-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-sm font-medium text-gray-700">Statut :</span>
-                      <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${
-                        pageStatus === 'published' 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-yellow-100 text-yellow-800'
-                      }`}>
-                        {pageStatus === 'published' ? '✅ Publié' : '📝 Brouillon'}
-                      </span>
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      Page: {currentPageConfig.label}
+                {/* Informations de statut - masquées pour la navigation et footer */}
+                {currentPage !== 'nav' && currentPage !== 'footer' && (
+                  <div className="bg-gray-50 p-4 rounded-lg mb-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="text-sm font-medium text-gray-700">Statut :</span>
+                        <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${
+                          pageStatus === 'published' 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {pageStatus === 'published' ? '✅ Publié' : '📝 Brouillon'}
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        Page: {currentPageConfig.label}
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
-                {/* Éditeur de blocs */}
-                <BlockEditor
-                  pageData={currentPageData}
-                  pageKey={currentPage}
-                  onUpdate={(updates) => updateContent(currentPage, updates)}
-                />
+                {/* Gestionnaire de templates, header ou éditeur de blocs */}
+                {currentPage === 'templates' ? (
+                  <TemplateManager
+                    onTemplateChange={(newContent) => {
+                      setContent(newContent);
+                      setOriginalContent(newContent);
+                      setHasUnsavedChanges(false);
+                    }}
+                  />
+                ) : currentPage === 'home' && content?._template === 'minimaliste-premium' ? (
+                  <MinimalisteManager
+                    content={content}
+                    onSave={(newContent) => {
+                      setContent(newContent);
+                      setOriginalContent(newContent);
+                      setHasUnsavedChanges(false);
+                    }}
+                    onUpdate={(newContent) => {
+                      setContent(newContent);
+                      setHasUnsavedChanges(true);
+                    }}
+                  />
+                ) : currentPage === 'nav' ? (
+                  <HeaderManager
+                    content={content}
+                    onSave={(newContent) => {
+                      setContent(newContent);
+                      setOriginalContent(newContent);
+                      setHasUnsavedChanges(false);
+                    }}
+                  />
+                ) : currentPage === 'footer' ? (
+                  <FooterManager
+                    content={content}
+                    onSave={(newContent) => {
+                      setContent(newContent);
+                      setOriginalContent(newContent);
+                      setHasUnsavedChanges(false);
+                    }}
+                  />
+                ) : (
+                  <BlockEditor
+                    pageData={currentPageData}
+                    pageKey={currentPage}
+                    onUpdate={(updates) => updateContent(currentPage, updates)}
+                  />
+                )}
               </>
             )}
           </div>

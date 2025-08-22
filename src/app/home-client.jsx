@@ -4,6 +4,7 @@ import { useGSAP } from "@gsap/react";
 import { useTransition } from "@/hooks/useTransition";
 import { TRANSITION_CONFIG } from "@/config";
 import PreviewBar from "@/components/PreviewBar";
+import BlockRenderer from "@/components/BlockRenderer";
 
 import gsap from "gsap";
 import SplitText from "gsap/SplitText";
@@ -50,41 +51,42 @@ export default function HomeClient({ content }) {
   }, [content]);
 
   useGSAP(() => {
-    // Animation des caractères du h1
-    const splitTitle = SplitText.create("h1", {
-      type: "chars",
-      charsClass: "letter",
-      mask: "chars",
-    });
-  
-    gsap.set(splitTitle.chars, { y: "110%" });
-  
-    gsap.to(splitTitle.chars, {
-      y: "0%",
-      duration: 1.5,
-      stagger: 0.1,
-      delay: 1.25,
-      ease: "power4.out",
-    });
-  
-    // Animation des mots du h2 (baseline)
-    const splitBaseline = SplitText.create(".baseline", {
-      type: "words",
-      wordsClass: "word",
-      mask: "words",
-    });
-  
-    gsap.set(splitBaseline.words, { y: "110%" });
-  
-    gsap.to(splitBaseline.words, {
-      y: "0%",
-      duration: 1,
-      stagger: 0.10,
-      delay: 1.75,
-      ease: "power4.out",
-    });
+    // Animation des caractères du h1 (seulement si pas de blocs)
+    if (!previewContent?.blocks || previewContent.blocks.length === 0) {
+      const splitTitle = SplitText.create("h1", {
+        type: "chars",
+        charsClass: "letter",
+        mask: "chars",
+      });
     
-  }, {});
+      gsap.set(splitTitle.chars, { y: "110%" });
+    
+      gsap.to(splitTitle.chars, {
+        y: "0%",
+        duration: 1.5,
+        stagger: 0.1,
+        delay: 1.25,
+        ease: "power4.out",
+      });
+    
+      // Animation des mots du h2 (baseline)
+      const splitBaseline = SplitText.create(".baseline", {
+        type: "words",
+        wordsClass: "word",
+        mask: "words",
+      });
+    
+      gsap.set(splitBaseline.words, { y: "110%" });
+    
+      gsap.to(splitBaseline.words, {
+        y: "0%",
+        duration: 1,
+        stagger: 0.10,
+        delay: 1.75,
+        ease: "power4.out",
+      });
+    }
+  }, []);
   
 
   return (
@@ -96,24 +98,29 @@ export default function HomeClient({ content }) {
       {isPreviewMode && <PreviewBar />}
 
       <div className="home">
-        <div className="home-mask">
-          <div className="header">
-            <div className="container baseline absolute w-screen flex justify-end">
-              <h2 className="studio-header tracking-widest leading-snug">
-                {(previewContent?.hero?.subtitle || 'creative studio.\ndigital & brand strategy.').split('\n').map((line, index) => (
-                  <span key={index}>
-                    {line}
-                    {index < (previewContent?.hero?.subtitle || 'creative studio.\ndigital & brand strategy.').split('\n').length - 1 && <br />}
-                  </span>
-                ))}
-              </h2>
-            </div>
+        {/* Utiliser les blocs si disponibles, sinon l'ancien système */}
+        {previewContent?.blocks && previewContent.blocks.length > 0 ? (
+          <BlockRenderer blocks={previewContent.blocks} />
+        ) : (
+          <div className="home-mask">
+            <div className="header">
+              <div className="container baseline absolute w-screen flex justify-end">
+                <h2 className="studio-header tracking-widest leading-snug">
+                  {(previewContent?.hero?.subtitle || 'creative studio.\ndigital & brand strategy.').split('\n').map((line, index) => (
+                    <span key={index}>
+                      {line}
+                      {index < (previewContent?.hero?.subtitle || 'creative studio.\ndigital & brand strategy.').split('\n').length - 1 && <br />}
+                    </span>
+                  ))}
+                </h2>
+              </div>
 
-            <div className="h1-wrapper">
-              <h1 className="styled-word">{previewContent?.hero?.title || 'soliva'}</h1>
+              <div className="h1-wrapper">
+                <h1 className="styled-word">{previewContent?.hero?.title || 'soliva'}</h1>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );

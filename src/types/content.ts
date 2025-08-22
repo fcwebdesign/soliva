@@ -105,6 +105,34 @@ export interface Home {
   hero: Hero;
 }
 
+// Nouveaux types de blocs pour le template Signature
+export interface HeroSignatureBlock {
+  id: string;
+  type: 'hero-signature';
+  content: string;
+  image?: {
+    src: string;
+    alt: string;
+  };
+  ctaText?: string;
+  ctaLink?: string;
+}
+
+export interface StorytellingBlock {
+  id: string;
+  type: 'storytelling';
+  content: string;
+  steps?: Array<{
+    id: string;
+    number: string;
+    title: string;
+    description: string;
+  }>;
+}
+
+// Étendre les types de blocs existants
+export type BlockType = 'h2' | 'h3' | 'content' | 'image' | 'cta' | 'hero-signature' | 'storytelling';
+
 export interface Content {
   metadata: Metadata;
   nav: Nav;
@@ -113,4 +141,6 @@ export interface Content {
   studio: Studio;
   work: Work;
   blog: Blog;
+  _template?: string;
+  _templateVersion?: string;
 } 

@@ -11,6 +11,9 @@ const Nav = ({ content }) => {
   const pathname = usePathname();
   const logoRef = useRef();
 
+  // Debug: log des données reçues
+  console.log('🎯 Nav: Données reçues', content);
+
   const isSafari = () => {
     const ua = navigator.userAgent.toLowerCase();
     return ua.includes("safari") && !ua.includes("chrome");
@@ -23,10 +26,11 @@ const Nav = ({ content }) => {
 
   // Remplace dynamiquement le "o" par un cercle pour éviter les erreurs SSR/CSR
   useEffect(() => {
-    if (logoRef.current) {
-      logoRef.current.innerHTML = 's<span class="logo-dot" aria-hidden="true"></span>liva';
+    if (logoRef.current && !content?.logoImage) {
+      const logoText = content?.logo || 'soliva';
+      logoRef.current.innerHTML = logoText.replace('o', '<span class="logo-dot" aria-hidden="true"></span>');
     }
-  }, []);
+  }, [content?.logo, content?.logoImage]);
 
   // Crée un rideau bleu si besoin (Firefox/Safari)
   useEffect(() => {
@@ -110,29 +114,56 @@ const Nav = ({ content }) => {
     curtain.style.transform = "translateY(-100%)";
   }, [pathname]);
 
+  // Pages disponibles avec leurs labels
+  const pageLabels = {
+    'home': 'Accueil',
+    'work': 'Réalisations', 
+    'studio': 'Studio',
+    'blog': 'Journal',
+    'contact': 'Contact'
+  };
+
+  // Fonction pour obtenir le label d'une page (personnalisé ou par défaut)
+  const getPageLabel = (pageKey) => {
+    return content?.pageLabels?.[pageKey] || pageLabels[pageKey] || pageKey;
+  };
+
+  // Créer une clé unique pour forcer le re-render
+  const navKey = JSON.stringify(content);
+
   return (
-    <div className="nav">
+    <div className="nav" key={navKey}>
       <div className="col">
         <div className="nav-logo">
           <Link onClick={handleNavigation("/")} href="/">
-            <span ref={logoRef}>{content?.logo || 'soliva'}</span>
+            {content?.logoImage ? (
+              <img 
+                src={content.logoImage} 
+                alt="Logo" 
+                className="h-8 max-w-[200px] object-contain"
+              />
+            ) : (
+              <span ref={logoRef}>{content?.logo || 'soliva'}</span>
+            )}
           </Link>
         </div>
       </div>
 
       <div className="col">
         <div className="nav-items">
-          {(content?.items || ["", "work", "studio", "blog", "contact"]).map((item) => {
-            const path = item === "" ? "/" : `/${item}`;
+          {(content?.items || ['home', 'work', 'studio', 'blog', 'contact']).map((item) => {
+            const path = item === 'home' ? "/" : `/${item}`;
             const isActive = pathname === path;
+            const label = getPageLabel(item);
+            
             return (
-              <div key={item || "home"} className="nav-item">
+              <div key={item} className="nav-item">
                 <Link 
                   onClick={handleNavigation(path)} 
                   href={path}
                   className={isActive ? "active" : ""}
                 >
-                  {item === "" ? "home" : item}
+                  {label}
                 </Link>
               </div>
             );

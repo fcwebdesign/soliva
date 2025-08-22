@@ -1,0 +1,494 @@
+{
+  "metadata": {
+    "title": "Soliva - Creative Studio | Digital & Brand Strategy",
+    "description": "Soliva est un studio créatif spécialisé en stratégie digitale et de marque. Découvrez nos projets et notre approche unique."
+  },
+  "nav": {
+    "logo": "soliva",
+    "logoImage": "",
+    "location": "paris, le havre",
+    "items": [
+      "home",
+      "blog",
+      "work",
+      "studio",
+      "contact"
+    ],
+    "pageLabels": {
+      "blog": "Journal",
+      "home": "Home",
+      "studio": "Studio test"
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "soliva",
+      "subtitle": "creative studio.\ndigitaI & brand strategy."
+    }
+  },
+  "contact": {
+    "hero": {
+      "title": "Nous contacter",
+      "subtitle": "Notre approche créative"
+    },
+    "sections": {
+      "collaborations": {
+        "title": "Collaborations",
+        "email": "hello@soliva.studio"
+      },
+      "inquiries": {
+        "title": "Demandes générales",
+        "email": "contact@soliva.studio yep"
+      }
+    },
+    "socials": [
+      "Instagram",
+      "LinkedIn",
+      "Behance"
+    ],
+    "briefGenerator": {
+      "placeholder": "Décrivez votre projet, vos objectifs et votre vision...",
+      "button": "Générer le brief",
+      "loading": "Génération en cours...",
+      "resultTitle": "Brief généré pour votre projet :"
+    },
+    "content": {
+      "description": "<p><strong>testxcvvxvcxvxcvvxcvcvxcvcx</strong></p>",
+      "image": {
+        "src": "/studio.jpg",
+        "alt": "L'équipe Soliva au travail dans notre espace créatif"
+      }
+    },
+    "description": "<p>Vous avez des questions ? Des idées à partager ? On est là. Que vous soyez à Paris ou au Havre, n’hésitez pas à nous écrire. On adore échanger, alors faites le premier pas. Votre message est le début d'une conversation qui pourrait tout changer. Allez-y, on attend de vous lire !</p>"
+  },
+  "studio": {
+    "hero": {
+      "title": "Le studio",
+      "subtitle": "Notre approche créative"
+    },
+    "content": {
+      "description": "<p></p>",
+      "image": {
+        "src": "/studio.jpg",
+        "alt": "L'équipe Soliva au travail dans notre espace créatif"
+      }
+    },
+    "description": "<p>Créativité, innovation, impact. Voici ce qui définit notre studio. On ne fait pas que créer des identités visuelles ou des plateformes web. On forge des expériences qui marquent. Que ce soit pour une startup écolo ou une galerie d'art contemporain, notre approche est audacieuse et résolument moderne. Oubliez les clichés, place à l'authenticité. Chaque projet est une aventure unique, et on est là pour la rendre inoubliable.</p>",
+    "blocks": [
+      {
+        "id": "block-1",
+        "type": "image",
+        "content": "",
+        "image": {
+          "src": "/uploads/1755608058699-46d0c8ad.jpg",
+          "alt": ""
+        }
+      },
+      {
+        "id": "block-2",
+        "type": "h2",
+        "content": "Concevez, testez, impactez"
+      },
+      {
+        "id": "block-3",
+        "type": "content",
+        "content": "<p>Nous avançons par itérations courtes, avec des livrables clairs à chaque étape: wireframes testés, maquettes validées, puis développement mesurable. Chaque décision s’appuie sur des données concrètes: tests utilisateurs, analytics, retours terrain. Résultat: un produit qui charge vite, convertit mieux et reste simple à faire évoluer.</p>"
+      },
+      {
+        "id": "block-4",
+        "type": "h2",
+        "content": "Faites simple, faites mieux"
+      },
+      {
+        "id": "block-5",
+        "type": "content",
+        "content": "<p>Nous travaillons avec des objectifs clairs, des délais tenus et des métriques suivies. Par exemple: charte graphique livrée en 10 jours, prototype cliquable en 2 semaines, puis mise en ligne avec suivi des conversions et des temps de chargement. Vous obtenez un résultat propre, mesurable et prêt à évoluer.</p>"
+      },
+      {
+        "id": "block-1755608167136",
+        "type": "h2",
+        "content": "Mesurez, apprenez, itérez"
+      },
+      {
+        "id": "block-1755608177084",
+        "type": "content",
+        "content": "<p>Mesurez, apprenez, itérez Nous suivons les KPIs clés dès le jour 1: taux de conversion, rétention, temps de chargement, SEO. Chaque mois, nous testons une hypothèse précise (A/B sur le formulaire, nouveau wording, optimisation d’image) et déployons ce qui performe. Résultat: des gains chiffrés, documentés, et un produit qui progresse sans refonte lourde.</p>"
+      },
+      {
+        "id": "block-1755609780831",
+        "type": "h2",
+        "content": "Livrez, optimisez, progressez"
+      },
+      {
+        "id": "block-1755609794221",
+        "type": "content",
+        "content": "<p>Livrez, optimisez, progressez Déploiement en sprint d’une semaine, suivi d’un check de performances à J+3: Core Web Vitals, conversions, bugs réels. À J+14, itération ciblée sur ce qui bloque (formulaire trop long, visuel peu cliquable), avec changelog et impacts mesurés pour décider du prochain sprint.</p>"
+      }
+    ]
+  },
+  "work": {
+    "hero": {
+      "title": "Nos réalisations",
+      "subtitle": "Projets sélectionnés"
+    },
+    "filters": [
+      "Tous",
+      "Stratégie",
+      "Identité",
+      "Digital",
+      "IA"
+    ],
+    "description": "<p><strong>Découvrez notre sélection de projets</strong> qui illustrent notre approche créative et notre expertise en stratégie de marque et design digital. Chaque projet raconte une histoire unique, celle d'une collaboration fructueuse entre notre vision créative et les objectifs de nos clients. </p><p>De la conception d'identités de marque mémorables à la création d'expériences digitales innovantes, nous nous efforçons de dépasser les attentes et de créer un impact durable. fds</p>",
+    "projects": [
+      {
+        "id": "ecotech-solutions",
+        "title": "EcoTech Solutions",
+        "content": "<h3>test H3</h3>\n<img src=\"/uploads/1755556322957-c5ae9812.jpg\" alt=\"\">\n<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>\n<h2>Défis du projet</h2>\n<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>",
+        "slug": "ecotech-solutions",
+        "status": "published",
+        "publishedAt": "2025-08-19T09:54:32.476Z",
+        "excerpt": "Identité de marque complète pour une startup spécialisée dans les technologies vertes.",
+        "client": "EcoTech Solutions",
+        "category": "Identité",
+        "year": "2024",
+        "featured": true,
+        "blocks": [
+          {
+            "id": "block-1",
+            "type": "content",
+            "content": "<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwcxw</p>"
+          },
+          {
+            "id": "block-2",
+            "type": "h2",
+            "content": "Défis du projet"
+          },
+          {
+            "id": "block-3",
+            "type": "content",
+            "content": "<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>"
+          },
+          {
+            "id": "block-1755556319801",
+            "type": "image",
+            "content": "",
+            "image": {
+              "src": "/uploads/1755556322957-c5ae9812.jpg",
+              "alt": ""
+            }
+          }
+        ],
+        "image": "/uploads/1755561574161-96b8a35f.jpg"
+      },
+      {
+        "title": "Art Gallery Digital",
+        "category": "Digital",
+        "image": "/uploads/1755597343554-71ad1faf.jpg",
+        "slug": "art-gallery-digital",
+        "excerpt": "Plateforme web immersive pour une galerie d'art contemporain.",
+        "content": "<p>Plateforme web immersive pour une galerie d'art contemporain. Interface intuitive permettant aux visiteurs d'explorer les œuvres en 3D et de découvrir les artistes.</p>",
+        "client": "Art Gallery Digital",
+        "year": "2024",
+        "featured": false,
+        "status": "published",
+        "publishedAt": "2024-02-20T14:30:00.000Z"
+      },
+      {
+        "title": "Mode Éthique Collective",
+        "category": "Stratégie",
+        "slug": "mode-ethique-collective",
+        "excerpt": "Stratégie de communication globale pour une marque de mode durable.",
+        "content": "<p>Stratégie de communication globale pour une marque de mode durable. Campagne multicanal intégrant storytelling, réseaux sociaux et expériences événementielles.</p>",
+        "client": "Mode Éthique Collective",
+        "year": "2024",
+        "featured": false,
+        "status": "published",
+        "publishedAt": "2025-08-19T09:55:29.559Z",
+        "image": "/uploads/1755597298777-8b15cf89.jpg"
+      }
+    ],
+    "adminProjects": [
+      {
+        "id": "ecotech-solutions",
+        "title": "EcoTech Solutions",
+        "content": "<h3>test H3</h3>\n<img src=\"/uploads/1755556322957-c5ae9812.jpg\" alt=\"\">\n<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>\n<h2>Défis du projet</h2>\n<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>",
+        "slug": "ecotech-solutions",
+        "status": "published",
+        "publishedAt": "2025-08-19T09:54:32.476Z",
+        "excerpt": "Identité de marque complète pour une startup spécialisée dans les technologies vertes.",
+        "client": "EcoTech Solutions",
+        "category": "Identité",
+        "year": "2024",
+        "featured": true,
+        "blocks": [
+          {
+            "id": "block-1",
+            "type": "h3",
+            "content": "test H3"
+          },
+          {
+            "id": "block-2",
+            "type": "image",
+            "content": "",
+            "image": {
+              "src": "/uploads/1755556322957-c5ae9812.jpg",
+              "alt": ""
+            }
+          },
+          {
+            "id": "block-3",
+            "type": "content",
+            "content": "<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>"
+          },
+          {
+            "id": "block-4",
+            "type": "h2",
+            "content": "Défis du projet"
+          },
+          {
+            "id": "block-5",
+            "type": "content",
+            "content": "<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>"
+          }
+        ],
+        "image": "/uploads/1755561574161-96b8a35f.jpg"
+      },
+      {
+        "id": "art-gallery-digital",
+        "title": "Art Gallery Digital",
+        "content": "<p>Plateforme web immersive pour une galerie d'art contemporain. Interface intuitive permettant aux visiteurs d'explorer les œuvres en 3D et de découvrir les artistes.</p>",
+        "slug": "art-gallery-digital",
+        "status": "published",
+        "publishedAt": "2024-02-20T14:30:00.000Z",
+        "excerpt": "Plateforme web immersive pour une galerie d'art contemporain.",
+        "client": "Art Gallery Digital",
+        "category": "Digital",
+        "year": "2024",
+        "featured": false,
+        "blocks": [
+          {
+            "id": "block-1",
+            "type": "content",
+            "content": "<p>Plateforme web immersive pour une galerie d'art contemporain. Interface intuitive permettant aux visiteurs d'explorer les œuvres en 3D et de découvrir les artistes.</p>"
+          }
+        ],
+        "image": "/uploads/1755597343554-71ad1faf.jpg"
+      },
+      {
+        "id": "mode-ethique-collective",
+        "title": "Mode Éthique Collective",
+        "content": "<p>Stratégie de communication globale pour une marque de mode durable. Campagne multicanal intégrant storytelling, réseaux sociaux et expériences événementielles.</p>",
+        "slug": "mode-ethique-collective",
+        "status": "published",
+        "excerpt": "Stratégie de communication globale pour une marque de mode durable.",
+        "client": "Mode Éthique Collective",
+        "category": "Stratégie",
+        "year": "2024",
+        "featured": false,
+        "blocks": [
+          {
+            "id": "block-1",
+            "type": "content",
+            "content": "<p>Stratégie de communication globale pour une marque de mode durable. Campagne multicanal intégrant storytelling, réseaux sociaux et expériences événementielles.</p>"
+          }
+        ],
+        "publishedAt": "2025-08-19T09:55:29.559Z",
+        "image": "/uploads/1755597298777-8b15cf89.jpg"
+      }
+    ]
+  },
+  "blog": {
+    "hero": {
+      "title": "Le journal",
+      "subtitle": "Nos réflexions et insights"
+    },
+    "description": "<p>Découvrez des réflexions percutantes sur le monde digital. Ici, on ne fait pas dans la langue de bois. E-commerce, design, branding : chaque article bouscule les idées reçues et propose un regard frais. Pourquoi votre site ne convertit pas ? Comment sortir de la dépendance aux plateformes ? Ces questions brûlantes méritent des réponses franches. Plongez dans des analyses qui comptent et redéfinissez votre approche.</p>",
+    "articles": [
+      {
+        "id": "ecommerce-retour-relationnel",
+        "title": "E-commerce : le retour du relationnel"
+      },
+      {
+        "id": "sobriete-design-moins-plein-vue",
+        "title": "La sobriété design : l'art de faire mieux avec moins"
+      },
+      {
+        "id": "sortir-dependance-plateformes-audience-ne-vous-appartient-pas",
+        "title": "Sortir de la dépendance aux plateformes : votre audience ne vous appartient pas"
+      },
+      {
+        "id": "sites-vitrine-oublies-5-secondes",
+        "title": "Pourquoi 80 % des sites vitrine sont oubliés 5 secondes après leur visite"
+      },
+      {
+        "id": "slider-accueil-ne-sert-rien",
+        "title": "Votre slider d'accueil ne sert à rien"
+      },
+      {
+        "id": "site-lent-site-mort",
+        "title": "Un site lent est un site mort"
+      },
+      {
+        "id": "pourquoi-boutique-en-ligne-ne-vend-pas",
+        "title": "Pourquoi votre boutique en ligne ne vend pas"
+      },
+      {
+        "id": "mythe-theme-shopify-parfait",
+        "title": "Le mythe du thème Shopify parfait"
+      },
+      {
+        "id": "marques-misent-moins-mais-mieux",
+        "title": "Les marques qui misent sur moins mais mieux"
+      },
+      {
+        "id": "personnalisation-donnees-proprietaires-tendance-montante",
+        "title": "La personnalisation et les données propriétaires : la tendance montante"
+      },
+      {
+        "id": "si-ia-tuait-creativite-avant-sauver",
+        "title": "Et si l'IA tuait la créativité… avant de la sauver ?"
+      },
+      {
+        "id": "arretez-illustrer-posts-linkedin-images-sans-sens",
+        "title": "Arrêtez d'illustrer vos posts LinkedIn avec des images qui n'ont aucun sens"
+      },
+      {
+        "id": "prompts-parfaits-nexistent-pas",
+        "title": "Les prompts parfaits n'existent pas"
+      },
+      {
+        "id": "obsession-outils-probleme-pas-logiciel",
+        "title": "L'obsession des outils : pourquoi le problème n'est pas votre logiciel"
+      },
+      {
+        "id": "futur-branding-humain-augmente-remplace",
+        "title": "Le futur du branding : humain, augmenté ou remplacé ?"
+      },
+      {
+        "id": "faux-outils-ia-juste-scripts",
+        "title": "Les faux outils 'IA' qui sont juste des scripts"
+      },
+      {
+        "id": "reseaux-sociaux-ne-sont-pas-strategie",
+        "title": "Les réseaux sociaux ne sont pas une stratégie"
+      },
+      {
+        "id": "pourquoi-90-contenus-ia-se-ressemblent",
+        "title": "Pourquoi 90 % des contenus IA se ressemblent"
+      },
+      {
+        "id": "pourquoi-copier-branding-grandes-marques-erreur",
+        "title": "Pourquoi copier le branding des grandes marques est une erreur"
+      },
+      {
+        "id": "votre-logo-nest-pas-votre-marque",
+        "title": "Votre logo n'est pas votre marque"
+      },
+      {
+        "id": "ia-promesses-marketing-realite-technique",
+        "title": "IA : entre promesses marketing et réalité technique"
+      },
+      {
+        "id": "no-code-puissant-pas-magique",
+        "title": "No-code : puissant, mais pas magique",
+        "blocks": [
+          {
+            "id": "block-1",
+            "type": "content",
+            "content": "<p></p>"
+          }
+        ],
+        "status": "draft",
+        "content": "<p></p>"
+      },
+      {
+        "id": "ia-strategie-marque-arretez-copier-commencez-creer",
+        "title": "IA et stratégie de marque : arrêtez de copier, commencez à créer"
+      },
+      {
+        "id": "piege-tout-pour-algorithme",
+        "title": "Le piège du 'tout pour l'algorithme'"
+      },
+      {
+        "id": "arretez-vouloir-etre-partout",
+        "title": "Arrêtez de vouloir être partout"
+      },
+      {
+        "id": "tendances-graphiques-2025",
+        "title": "Les tendances graphiques… pourquoi il faut parfois les ignorer"
+      },
+      {
+        "id": "personnalisation-amazon-toutes-marques",
+        "title": "La personnalisation à la Amazon arrive pour toutes les marques"
+      },
+      {
+        "id": "ceci-est-mon-nouveal-id",
+        "title": "Nouvel article",
+        "content": "<h2>test de section ok</h2>\n<p><strong>test contenu</strong></p><p><em>ça marche pas</em></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\"><em>yepddsfd</em></a></p><p></p><ul><li><p>test</p></li></ul><ol><li><p>ok je crois que c'est bon</p></li></ol><blockquote><p>citation</p></blockquote><p></p><p>hello c'est vraiment cool ce CMS</p><p>mais aloirs très cool</p><p>wai bof</p><p>xcvvcxcvx</p><p>fsfdsfdsdfsfds</p>\n<img src=\"/uploads/1755521225223-9689ec4e.png\" alt=\"test image\">",
+        "status": "published",
+        "slug": "ceci-est-mon-nouveal-id",
+        "excerpt": "wxcxwcwxc xcccfffd cv",
+        "blocks": [
+          {
+            "id": "block-1",
+            "type": "h2",
+            "content": "test de section ok"
+          },
+          {
+            "id": "block-2",
+            "type": "content",
+            "content": "<p><strong>test contenu</strong></p><p><em>ça marche pas</em></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\"><em>yepddsfd</em></a></p><p></p><ul><li><p>test</p></li></ul><ol><li><p>ok je crois que c'est bon</p></li></ol><blockquote><p>citation</p></blockquote><p></p><p>hello c'est vraiment cool ce CMS</p><p>mais aloirs très cool</p><p>wai bof</p><p>xcvvcxcvx</p><p>fsfdsfdsdfsfds</p>"
+          },
+          {
+            "id": "block-3",
+            "type": "image",
+            "content": "",
+            "image": {
+              "src": "/uploads/1755521225223-9689ec4e.png",
+              "alt": "test image"
+            }
+          }
+        ],
+        "publishedAt": "2025-08-18T13:25:59.640Z"
+      }
+    ],
+    "filters": [
+      "All",
+      "Brand",
+      "IA"
+    ]
+  },
+  "_isPreview": true,
+  "_previewId": "preview-1755558070217",
+  "_originalPage": "blog",
+  "footer": {
+    "logo": "soliva",
+    "logoImage": "",
+    "description": "test",
+    "links": [
+      {
+        "title": "Journal",
+        "url": "blog"
+      },
+      {
+        "title": "Réalisations",
+        "url": "/work"
+      },
+      {
+        "title": "Studio",
+        "url": "/studio"
+      }
+    ],
+    "socialLinks": [
+      {
+        "platform": "linkedin",
+        "url": ""
+      },
+      {
+        "platform": "youtube",
+        "url": ""
+      }
+    ],
+    "copyright": "© 2024 Soliva. Tous droits réservés."
+  }
+}
