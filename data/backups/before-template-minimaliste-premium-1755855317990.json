@@ -17,7 +17,7 @@
     "pageLabels": {
       "blog": "Journal",
       "home": "Home",
-      "studio": "Studio test"
+      "studio": "Studio"
     }
   },
   "home": {
@@ -59,7 +59,7 @@
         "alt": "L'équipe Soliva au travail dans notre espace créatif"
       }
     },
-    "description": "<p>Vous avez des questions ? Des idées à partager ? On est là. Que vous soyez à Paris ou au Havre, n’hésitez pas à nous écrire. On adore échanger, alors faites le premier pas. Votre message est le début d'une conversation qui pourrait tout changer. Allez-y, on attend de vous lire !cxvc</p>"
+    "description": "<p>Vous avez des questions ? Des idées à partager ? On est là. Que vous soyez à Paris ou au Havre, n’hésitez pas à nous écrire. On adore échanger, alors faites le premier pas. Votre message est le début d'une conversation qui pourrait tout changer. Allez-y, on attend de vous lire !</p>"
   },
   "studio": {
     "hero": {

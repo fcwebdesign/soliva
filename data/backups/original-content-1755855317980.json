@@ -17,7 +17,7 @@
     "pageLabels": {
       "blog": "Journal",
       "home": "Home",
-      "studio": "Studio test"
+      "studio": "Studio"
     }
   },
   "home": {
@@ -486,5 +486,7 @@
       }
     ],
     "copyright": "© 2024 Soliva. Tous droits réservés."
-  }
+  },
+  "_originalContent": true,
+  "_savedAt": "2025-08-22T09:35:17.980Z"
 }

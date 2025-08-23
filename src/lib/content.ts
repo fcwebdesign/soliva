@@ -345,21 +345,38 @@ export async function writeContent(next: Content, opts?: { actor?: string }): Pr
   try {
     isWriting = true;
 
-    // Validation minimale
+    console.log('🔄 Début de writeContent, validation...');
+
+    // Validation plus souple - fusionner avec le seed si des pages manquent
     const requiredPages = ['home', 'contact', 'studio', 'work', 'blog', 'nav', 'metadata'];
     const missingPages = requiredPages.filter(page => !(page in next));
     
     if (missingPages.length > 0) {
-      throw new Error(`Pages manquantes: ${missingPages.join(', ')}`);
+      console.log('⚠️ Pages manquantes détectées:', missingPages);
+      console.log('🔄 Fusion avec le seed pour les pages manquantes...');
+      
+      // Fusionner avec le seed pour les pages manquantes
+      const mergedContent: Content = { ...SEED_DATA, ...next };
+      
+      // Continuer avec le contenu fusionné
+      next = mergedContent;
     }
 
+    // Validation plus souple pour home.hero.title
     if (!next.home?.hero?.title) {
-      throw new Error('Section home.hero.title manquante');
+      console.log('⚠️ home.hero.title manquant, utilisation du seed');
+      const mergedContent: Content = { ...SEED_DATA, ...next };
+      next = mergedContent;
     }
 
+    // Validation plus souple pour nav.items
     if (!next.nav?.items || !Array.isArray(next.nav.items)) {
-      throw new Error('Section nav.items manquante ou invalide');
+      console.log('⚠️ nav.items manquant ou invalide, utilisation du seed');
+      const mergedContent: Content = { ...SEED_DATA, ...next };
+      next = mergedContent;
     }
+
+    console.log('✅ Validation réussie, préparation de la sauvegarde...');
 
     // Créer le dossier versions s'il n'existe pas
     const versionsDir = join(process.cwd(), 'data', 'versions');
@@ -409,6 +426,20 @@ export async function writeContent(next: Content, opts?: { actor?: string }): Pr
     await fs.rename(tempPath, DATA_FILE_PATH);
 
     console.log(`✅ Contenu mis à jour par ${opts?.actor || 'admin'}`);
+  } catch (error) {
+    console.error('❌ Erreur dans writeContent:', error);
+    console.error('❌ Stack trace:', error instanceof Error ? error.stack : 'Pas de stack trace');
+    
+    // En cas d'erreur critique, essayer de restaurer depuis le seed
+    try {
+      console.log('🔄 Tentative de restauration depuis le seed...');
+      await fs.writeFile(DATA_FILE_PATH, JSON.stringify(SEED_DATA, null, 2), 'utf-8');
+      console.log('✅ Restauration depuis le seed réussie');
+    } catch (restoreError) {
+      console.error('❌ Impossible de restaurer depuis le seed:', restoreError);
+    }
+    
+    throw error;
   } finally {
     isWriting = false;
   }

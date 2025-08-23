@@ -28,7 +28,11 @@
   },
   "contact": {
     "title": "Travaillons ensemble",
-    "email": "hello@studio.fr"
+    "email": "hello@studio.fr",
+    "hero": {
+      "title": "Contactez-nous"
+    },
+    "description": "<p>Des questions ? Une idée à partager ? Écris-nous. On est là, prêts à échanger. Que tu sois à Paris ou au Havre, n’hésite pas à nous contacter. Chaque message compte et chaque échange peut mener à de grandes choses. Alors, qu’attends-tu ? Fais le premier pas et lançons la conversation !</p>"
   },
   "studio": {
     "hero": {
@@ -41,17 +45,17 @@
         "alt": "Team at work in Nuvoro's creative space"
       }
     },
-    "description": "<p>Des projets qui frappent fort. Chaque création ici est un coup de maître, alliant innovation et esthétique. Que ce soit une identité de marque percutante pour une startup tech, une plateforme web immersive pour l'art contemporain, ou une stratégie de communication audacieuse pour la mode durable, on ne fait pas dans la dentelle. Ici, on transforme des idées en expériences mémorables. Prêt à sortir des sentiers battus ?</p>",
+    "description": "<p>Ici, on ne fait pas dans la demi-mesure. Chaque projet est une déclaration audacieuse. De l'identité de marque percutante pour une startup tech à une plateforme web qui bouscule les codes de l'art contemporain, chaque création respire l'innovation. On ne se contente pas de suivre les tendances, on les crée. Avec nous, votre vision devient une réalité qui marque les esprits. Prêt à faire le saut ?</p>",
     "blocks": [
       {
-        "id": "block-1755911825011",
+        "id": "block-1755910838657",
         "type": "h2",
-        "content": "Ce que nous concevons, fonctionne"
+        "content": "Frappez fort dès aujourd'hui"
       },
       {
-        "id": "block-1755911833676",
+        "id": "block-1755910855203",
         "type": "content",
-        "content": "<p>Nous mesurons l’impact dès le départ: taux de conversion, temps de chargement, coût de maintenance. Exemple concret: refonte d’une page d’inscription avec parcours simplifié et micro-copies testées A/B = +22 % d’inscriptions et -18 % de tickets support en 6 semaines. Vous gagnez du temps, des utilisateurs satisfaits et des budgets mieux utilisés.</p>"
+        "content": "<p>Partez avec un brief clair, repartez avec une identité prête à déployer : logo, palette, typographies, guidelines d'usage. Besoin d'aller plus loin ? On conçoit aussi votre site vitrine ou e-commerce sous Webflow, optimisé pour le référencement et prêt à être mis en ligne en une semaine.</p>"
       }
     ]
   },
@@ -364,36 +368,21 @@
     "description": "Studio indépendant. Nous concevons des expériences sobres et utiles. Peu d'éléments, beaucoup d'impact. Chaque décision sert la lisibilité, la vitesse et la conversion."
   },
   "footer": {
+    "logo": "STUDIO",
+    "logoImage": "",
     "description": "Studio indépendant spécialisé dans le design minimaliste et l'expérience utilisateur.",
-    "socials": [
-      {
-        "platform": "LinkedIn",
-        "url": "#",
-        "target": "_blank"
-      },
-      {
-        "platform": "Instagram",
-        "url": "#",
-        "target": "_blank"
-      },
-      {
-        "platform": "X",
-        "url": "#",
-        "target": "_blank"
-      }
-    ],
     "links": [
       {
         "title": "Mentions légales",
-        "url": "/legal",
-        "target": "_self"
+        "url": "/legal"
       },
       {
         "title": "Politique de confidentialité",
-        "url": "/privacy",
-        "target": "_self"
+        "url": "/privacy"
       }
-    ]
+    ],
+    "socialLinks": [],
+    "copyright": "© 2024 Soliva. Tous droits réservés."
   },
   "_template": "minimaliste-premium",
   "_appliedAt": null

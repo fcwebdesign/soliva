@@ -44,12 +44,21 @@
     "description": "<p>Des projets qui frappent fort. Chaque création ici est un coup de maître, alliant innovation et esthétique. Que ce soit une identité de marque percutante pour une startup tech, une plateforme web immersive pour l'art contemporain, ou une stratégie de communication audacieuse pour la mode durable, on ne fait pas dans la dentelle. Ici, on transforme des idées en expériences mémorables. Prêt à sortir des sentiers battus ?</p>",
     "blocks": [
       {
-        "id": "block-1755911825011",
+        "id": "block-1",
+        "type": "image",
+        "content": "",
+        "image": {
+          "src": "/uploads/1755912116324-05f32c8c.jpg",
+          "alt": ""
+        }
+      },
+      {
+        "id": "block-2",
         "type": "h2",
         "content": "Ce que nous concevons, fonctionne"
       },
       {
-        "id": "block-1755911833676",
+        "id": "block-3",
         "type": "content",
         "content": "<p>Nous mesurons l’impact dès le départ: taux de conversion, temps de chargement, coût de maintenance. Exemple concret: refonte d’une page d’inscription avec parcours simplifié et micro-copies testées A/B = +22 % d’inscriptions et -18 % de tickets support en 6 semaines. Vous gagnez du temps, des utilisateurs satisfaits et des budgets mieux utilisés.</p>"
       }

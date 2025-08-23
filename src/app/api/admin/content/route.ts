@@ -47,8 +47,13 @@ export async function PUT(request: NextRequest) {
 
     const content: Content = body.content;
     
+    console.log('🔄 API: Tentative d\'écriture du contenu...');
+    console.log('📊 Taille du contenu:', JSON.stringify(content).length, 'caractères');
+    
     // Écrire le contenu
     await writeContent(content, { actor: 'admin-api' });
+    
+    console.log('✅ API: Contenu écrit avec succès');
     
     // Retourner le contenu mis à jour
     const updatedContent = await readContent();
@@ -61,12 +66,19 @@ export async function PUT(request: NextRequest) {
       }
     });
   } catch (error) {
-    console.error('Erreur lors de l\'écriture du contenu:', error);
+    console.error('❌ API: Erreur lors de l\'écriture du contenu:', error);
+    console.error('❌ API: Stack trace:', error instanceof Error ? error.stack : 'Pas de stack trace');
+    
+    // Retourner une erreur plus détaillée
+    const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
+    const errorDetails = error instanceof Error ? error.stack : undefined;
     
     return NextResponse.json(
       { 
         error: 'Erreur lors de l\'écriture du contenu',
-        details: error instanceof Error ? error.message : 'Erreur inconnue'
+        details: errorMessage,
+        stack: errorDetails,
+        timestamp: new Date().toISOString()
       },
       { status: 500 }
     );

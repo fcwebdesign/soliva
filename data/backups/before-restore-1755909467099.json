@@ -40,20 +40,7 @@
         "src": "/studio.jpg",
         "alt": "Team at work in Nuvoro's creative space"
       }
-    },
-    "description": "<p>Des projets qui frappent fort. Chaque création ici est un coup de maître, alliant innovation et esthétique. Que ce soit une identité de marque percutante pour une startup tech, une plateforme web immersive pour l'art contemporain, ou une stratégie de communication audacieuse pour la mode durable, on ne fait pas dans la dentelle. Ici, on transforme des idées en expériences mémorables. Prêt à sortir des sentiers battus ?</p>",
-    "blocks": [
-      {
-        "id": "block-1755911825011",
-        "type": "h2",
-        "content": "Ce que nous concevons, fonctionne"
-      },
-      {
-        "id": "block-1755911833676",
-        "type": "content",
-        "content": "<p>Nous mesurons l’impact dès le départ: taux de conversion, temps de chargement, coût de maintenance. Exemple concret: refonte d’une page d’inscription avec parcours simplifié et micro-copies testées A/B = +22 % d’inscriptions et -18 % de tickets support en 6 semaines. Vous gagnez du temps, des utilisateurs satisfaits et des budgets mieux utilisés.</p>"
-      }
-    ]
+    }
   },
   "work": {
     "title": "Travaux sélectionnés",
@@ -91,14 +78,7 @@
         "category": "Brand",
         "image": "/img1.jpg",
         "alt": "Project Alpha",
-        "slug": "project-test",
-        "excerpt": "Une identité de marque moderne pour une startup innovante dans le secteur de la technologie.",
-        "content": "Une identité de marque moderne pour une startup innovante dans le secteur de la technologie.",
-        "client": "Startup Tech",
-        "year": "2024",
-        "featured": false,
-        "status": "published",
-        "publishedAt": "2025-08-23T00:45:23.349Z"
+        "slug": "project-1"
       },
       {
         "title": "Project Beta",
@@ -106,14 +86,7 @@
         "category": "Digital",
         "image": "/img2.jpg",
         "alt": "Project Beta",
-        "slug": "project-2",
-        "excerpt": "Plateforme web interactive pour une exposition d'art contemporain.",
-        "content": "Plateforme web interactive pour une exposition d'art contemporain.",
-        "client": "Musée d'Art Contemporain",
-        "year": "2024",
-        "featured": false,
-        "status": "published",
-        "publishedAt": "2024-01-20T00:00:00.000Z"
+        "slug": "project-2"
       },
       {
         "title": "Project Gamma",
@@ -132,16 +105,19 @@
         "slug": "project-4"
       },
       {
-        "title": "Projet nouveau",
-        "content": "",
-        "category": "Branding",
-        "client": "Clarins",
-        "year": "2025",
+        "title": "Project Alpha",
+        "description": "Une identité de marque moderne pour une startup innovante dans le secteur de la technologie.",
+        "excerpt": "Une identité de marque moderne pour une startup innovante dans le secteur de la technologie.",
+        "content": "Une identité de marque moderne pour une startup innovante dans le secteur de la technologie.",
+        "category": "Brand",
+        "client": "Startup Tech",
+        "year": "2024",
         "featured": true,
         "status": "published",
-        "publishedAt": "2025-08-23T00:44:57.341Z",
-        "slug": "projet-nouveau",
-        "image": "/uploads/1755911328822-f8e64d44.jpg"
+        "publishedAt": "2024-01-15T00:00:00.000Z",
+        "slug": "project-test",
+        "image": "/img1.jpg",
+        "alt": "Project Alpha"
       }
     ],
     "adminProjects": [
@@ -155,8 +131,8 @@
         "client": "Startup Tech",
         "year": "2024",
         "status": "published",
-        "publishedAt": "2025-08-23T00:45:23.349Z",
-        "featured": false,
+        "publishedAt": "2024-01-15T00:00:00.000Z",
+        "featured": true,
         "slug": "project-test",
         "image": "/img1.jpg",
         "alt": "Project Alpha"
@@ -172,7 +148,7 @@
         "year": "2024",
         "status": "published",
         "publishedAt": "2024-01-20T00:00:00.000Z",
-        "featured": false,
+        "featured": true,
         "slug": "project-2",
         "image": "/img2.jpg",
         "alt": "Project Beta"
@@ -208,19 +184,6 @@
         "slug": "project-4",
         "image": "/img4.jpg",
         "alt": "Project Delta"
-      },
-      {
-        "id": "projet-nouveau",
-        "title": "Projet nouveau",
-        "content": "",
-        "status": "published",
-        "client": "Clarins",
-        "category": "Branding",
-        "year": "2025",
-        "featured": true,
-        "slug": "projet-nouveau",
-        "image": "/uploads/1755911328822-f8e64d44.jpg",
-        "publishedAt": "2025-08-23T00:44:57.341Z"
       }
     ],
     "hero": {
@@ -233,7 +196,7 @@
       "Digital",
       "IA"
     ],
-    "description": "<p>Découvrez des projets qui transforment des idées en succès. De l'identité de marque percutante pour une startup tech à une plateforme web immersive pour un musée d'art contemporain, chaque réalisation témoigne de notre capacité à créer un impact. Une stratégie de communication pour la mode durable ou une application mobile pour la créativité collaborative, nous faisons bouger les lignes. Résultats visibles, valeur ajoutée : c'est ça notre jeu.</p>"
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
   },
   "blog": {
     "hero": {

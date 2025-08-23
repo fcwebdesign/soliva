@@ -40,20 +40,7 @@
         "src": "/studio.jpg",
         "alt": "Team at work in Nuvoro's creative space"
       }
-    },
-    "description": "<p>Des projets qui frappent fort. Chaque création ici est un coup de maître, alliant innovation et esthétique. Que ce soit une identité de marque percutante pour une startup tech, une plateforme web immersive pour l'art contemporain, ou une stratégie de communication audacieuse pour la mode durable, on ne fait pas dans la dentelle. Ici, on transforme des idées en expériences mémorables. Prêt à sortir des sentiers battus ?</p>",
-    "blocks": [
-      {
-        "id": "block-1755911825011",
-        "type": "h2",
-        "content": "Ce que nous concevons, fonctionne"
-      },
-      {
-        "id": "block-1755911833676",
-        "type": "content",
-        "content": "<p>Nous mesurons l’impact dès le départ: taux de conversion, temps de chargement, coût de maintenance. Exemple concret: refonte d’une page d’inscription avec parcours simplifié et micro-copies testées A/B = +22 % d’inscriptions et -18 % de tickets support en 6 semaines. Vous gagnez du temps, des utilisateurs satisfaits et des budgets mieux utilisés.</p>"
-      }
-    ]
+    }
   },
   "work": {
     "title": "Travaux sélectionnés",
@@ -134,14 +121,14 @@
       {
         "title": "Projet nouveau",
         "content": "",
-        "category": "Branding",
-        "client": "Clarins",
+        "category": "",
+        "client": "",
         "year": "2025",
         "featured": true,
         "status": "published",
         "publishedAt": "2025-08-23T00:44:57.341Z",
         "slug": "projet-nouveau",
-        "image": "/uploads/1755911328822-f8e64d44.jpg"
+        "image": "/uploads/1755909894104-542268a1.jpg"
       }
     ],
     "adminProjects": [
@@ -214,12 +201,12 @@
         "title": "Projet nouveau",
         "content": "",
         "status": "published",
-        "client": "Clarins",
-        "category": "Branding",
+        "client": "",
+        "category": "",
         "year": "2025",
         "featured": true,
         "slug": "projet-nouveau",
-        "image": "/uploads/1755911328822-f8e64d44.jpg",
+        "image": "/uploads/1755909894104-542268a1.jpg",
         "publishedAt": "2025-08-23T00:44:57.341Z"
       }
     ],

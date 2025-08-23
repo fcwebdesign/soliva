@@ -51,7 +51,7 @@
       {
         "id": "block-1755911833676",
         "type": "content",
-        "content": "<p>Nous mesurons l’impact dès le départ: taux de conversion, temps de chargement, coût de maintenance. Exemple concret: refonte d’une page d’inscription avec parcours simplifié et micro-copies testées A/B = +22 % d’inscriptions et -18 % de tickets support en 6 semaines. Vous gagnez du temps, des utilisateurs satisfaits et des budgets mieux utilisés.</p>"
+        "content": "<p>Nous testons chaque concept sur des cas réels avant de le mettre en production. Exemple: un design system livré avec composants Figma, librairie de styles CSS et guide d’intégration réduit le temps de développement de 30 à 40 %. Vous obtenez des interfaces stables, rapides à maintenir et prêtes pour l’évolutif.</p>"
       }
     ]
   },

@@ -8,7 +8,10 @@
     "logoImage": "",
     "location": "paris, le havre",
     "items": [
-      "studio"
+      "home",
+      "work",
+      "about",
+      "contact"
     ],
     "pageLabels": {
       "home": "Accueil",
@@ -41,6 +44,15 @@
     },
     "description": "<p>Créativité, innovation, impact. Voici ce qui définit notre studio. On ne fait pas que créer des identités visuelles ou des plateformes web. On forge des expériences qui marquent. Que ce soit pour une startup écolo ou une galerie d'art contemporain, notre approche est audacieuse et résolument moderne. Oubliez les clichés, place à l'authenticité. Chaque projet est une aventure unique, et on est là pour la rendre inoubliable.</p>",
     "blocks": [
+      {
+        "id": "block-1",
+        "type": "image",
+        "content": "",
+        "image": {
+          "src": "/uploads/1755608058699-46d0c8ad.jpg",
+          "alt": ""
+        }
+      },
       {
         "id": "block-2",
         "type": "h2",
@@ -80,26 +92,11 @@
         "id": "block-1755609794221",
         "type": "content",
         "content": "<p>Livrez, optimisez, progressez Déploiement en sprint d’une semaine, suivi d’un check de performances à J+3: Core Web Vitals, conversions, bugs réels. À J+14, itération ciblée sur ce qui bloque (formulaire trop long, visuel peu cliquable), avec changelog et impacts mesurés pour décider du prochain sprint.</p>"
-      },
-      {
-        "id": "block-1755828171063",
-        "type": "about",
-        "content": "<p>Livrez, optimisez, progressez Déploiement en sprint d’une semaine, suivi d’un check de performances à J+3: Core Web Vitals, conversions, bugs réels. À J+14, itération ciblée sur ce qui bloque (formulaire trop long, visuel peu cliquable), avec changelog et impacts mesurés pour décider du prochain sprint.</p>",
-        "title": "test"
-      },
-      {
-        "id": "block-1755828494042",
-        "type": "image",
-        "content": "",
-        "image": {
-          "src": "/uploads/1755828498635-0cb481d8.jpg",
-          "alt": ""
-        }
       }
     ]
   },
   "work": {
-    "title": "Travaux sélectionnés",
+    "title": "Travaux sélectionnés test",
     "subtitle": "Peu de pièces, beaucoup d'impact.",
     "items": [
       {

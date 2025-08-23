@@ -71,12 +71,12 @@ const MinimalistePremiumClient = () => {
   const data = {
     nav: content?.nav?.items?.map(item => ({
       label: content?.nav?.pageLabels?.[item] || item,
-      href: `#${item}`
+      href: item === 'home' ? '/' : `/${item}`
     })) || [
-      { label: "Accueil", href: "#home" },
-      { label: "Réalisations", href: "#work" },
-      { label: "Studio", href: "#about" },
-      { label: "Contact", href: "#contact" }
+      { label: "Accueil", href: "/" },
+      { label: "Réalisations", href: "/work" },
+      { label: "Studio", href: "/studio" },
+      { label: "Contact", href: "/contact" }
     ],
     hero: {
       title: content?.hero?.title || "Design minimal. Impact maximal.",

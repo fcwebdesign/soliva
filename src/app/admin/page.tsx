@@ -242,15 +242,58 @@ export default function AdminPage() {
   };
 
   const handleSaveWithStatus = async (status: 'draft' | 'published') => {
-    if (!content) return;
-    
+    if (!content) {
+      console.error('❌ Aucun contenu à sauvegarder');
+      return;
+    }
+
     try {
-      console.log('💾 Début de la sauvegarde avec statut:', status);
+      console.log('🔄 Début de la sauvegarde avec statut:', status);
       setSaveStatus('saving');
       setPageStatus(status);
       
       // Créer une copie du contenu sans les propriétés temporaires
-      const contentToSave = cleanContent(content);
+      let contentToSave = cleanContent(content);
+      
+      // Validation avant envoi
+      console.log('🔍 Validation du contenu avant envoi...');
+      
+      // Vérifier que les sections requises existent
+      const requiredSections = ['home', 'contact', 'studio', 'work', 'blog', 'nav', 'metadata'];
+      const missingSections = requiredSections.filter(section => !contentToSave[section as keyof typeof contentToSave]);
+      
+      if (missingSections.length > 0) {
+        console.warn('⚠️ Sections manquantes détectées:', missingSections);
+        console.log('🔄 Fusion avec le contenu original pour les sections manquantes...');
+        
+        // Fusionner avec le contenu original pour les sections manquantes
+        if (originalContent) {
+          const mergedContent = { ...originalContent, ...contentToSave };
+          console.log('✅ Contenu fusionné, sections manquantes ajoutées');
+          
+          // Continuer avec le contenu fusionné
+          contentToSave = mergedContent;
+        } else {
+          console.warn('⚠️ Pas de contenu original disponible pour la fusion');
+        }
+      }
+      
+      // Vérifier que les sections critiques ont la structure attendue
+      if (!contentToSave.home?.hero?.title) {
+        console.warn('⚠️ home.hero.title manquant, utilisation du contenu original');
+        if (originalContent?.home) {
+          contentToSave.home = { ...originalContent.home, ...contentToSave.home };
+        }
+      }
+      
+      if (!contentToSave.nav?.items || !Array.isArray(contentToSave.nav.items)) {
+        console.warn('⚠️ nav.items manquant ou invalide, utilisation du contenu original');
+        if (originalContent?.nav) {
+          contentToSave.nav = { ...originalContent.nav, ...contentToSave.nav };
+        }
+      }
+      
+      console.log('✅ Validation terminée, envoi des données...');
       
       const response = await fetch('/api/admin/content', {
         method: 'PUT',

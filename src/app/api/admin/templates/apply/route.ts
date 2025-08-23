@@ -75,13 +75,60 @@ export async function POST(request: NextRequest) {
         },
         // Préserver les autres sections importantes
         blog: currentData.blog,
-        studio: currentData.studio,
+        studio: {
+          ...template.studio || {},
+          ...currentData.studio,
+          // Préserver les blocs custom créés via l'admin
+          blocks: currentData.studio?.blocks || [],
+          // Préserver la description personnalisée
+          description: currentData.studio?.description || template.studio?.description
+        },
         // Préserver les métadonnées
         metadata: currentData.metadata
       };
     } else {
-      // Pour les autres templates, appliquer normalement
-      finalContent = template;
+      // Pour les autres templates, fusion intelligente générique
+      finalContent = {
+        ...template,
+        // Préserver les sections importantes avec leurs blocs
+        work: {
+          ...template.work,
+          ...currentData.work,
+          // Préserver les projets existants
+          projects: currentData.work?.projects || template.work?.projects || [],
+          adminProjects: currentData.work?.adminProjects || template.work?.adminProjects || [],
+          // Préserver les blocs custom
+          blocks: currentData.work?.blocks || []
+        },
+        studio: {
+          ...template.studio,
+          ...currentData.studio,
+          // Préserver les blocs custom
+          blocks: currentData.studio?.blocks || []
+        },
+        blog: {
+          ...template.blog,
+          ...currentData.blog,
+          // Préserver les blocs custom
+          blocks: currentData.blog?.blocks || []
+        },
+        contact: {
+          ...template.contact,
+          ...currentData.contact,
+          // Préserver les blocs custom
+          blocks: currentData.contact?.blocks || []
+        },
+        home: {
+          ...template.home,
+          ...currentData.home,
+          // Préserver les blocs custom
+          blocks: currentData.home?.blocks || []
+        },
+        // Préserver les autres sections
+        nav: currentData.nav || template.nav,
+        metadata: currentData.metadata || template.metadata,
+        footer: currentData.footer || template.footer
+      };
     }
 
     // Appliquer le template fusionné

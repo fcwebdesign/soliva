@@ -4,7 +4,7 @@
     "description": "NextJS Page Transitions | Codegrid"
   },
   "nav": {
-    "logo": "STUDIO",
+    "logo": "Soliva",
     "logoImage": "",
     "location": "paris, le havre",
     "items": [
@@ -395,6 +395,5 @@
       }
     ]
   },
-  "_template": "minimaliste-premium",
   "_appliedAt": null
 }
