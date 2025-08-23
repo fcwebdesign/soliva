@@ -4,13 +4,13 @@
     "description": "NextJS Page Transitions | Codegrid"
   },
   "nav": {
-    "logo": "Soliva",
+    "logo": "soliva",
     "logoImage": "",
     "location": "paris, le havre",
     "items": [
       "home",
       "work",
-      "about",
+      "studio",
       "contact"
     ],
     "pageLabels": {

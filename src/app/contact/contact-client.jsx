@@ -54,6 +54,42 @@ const ContactClient = ({ content }) => {
   }, [content]);
 
   useGSAP(() => {
+    const isSafari = () => {
+      const ua = navigator.userAgent.toLowerCase();
+      return ua.includes("safari") && !ua.includes("chrome");
+    };
+
+    if (isSafari()) {
+      // ✅ Alternative simple pour Safari (pas de SplitText)
+      gsap.fromTo(
+        "h1",
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1.2,
+          delay: 0.1,
+          ease: "power4.out",
+        }
+      );
+      
+      // Animation de la description
+      gsap.fromTo(
+        ".contact-description",
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          delay: 0.3,
+          ease: "power3.out",
+        }
+      );
+      
+      return;
+    }
+
+    // ✅ Chrome / Firefox : SplitText + animation mot par mot
     const splitText = SplitText.create("h1", {
       type: "words",
       wordsClass: "word",
@@ -72,7 +108,20 @@ const ContactClient = ({ content }) => {
       delay: delay,
       ease: "power4.out",
     });
-  }, {});
+    
+    // Animation de la description après le titre
+    gsap.fromTo(
+      ".contact-description",
+      { opacity: 0, y: 20 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        delay: delay + 0.5,
+        ease: "power3.out",
+      }
+    );
+  }, []);
 
   return (
     <>
@@ -100,12 +149,6 @@ const ContactClient = ({ content }) => {
             <div className="contact-copy">
               <h2>{previewContent?.sections?.inquiries?.title || 'Inquiries'}</h2>
               <h2>{previewContent?.sections?.inquiries?.email || 'support@nuvoro.com'}</h2>
-            </div>
-
-            <div className="socials">
-              {(previewContent?.socials || ['Instagram', 'Twitter', 'LinkedIn']).map((social, index) => (
-                <p key={index}>{social}</p>
-              ))}
             </div>
 
             <BriefGenerator content={previewContent?.briefGenerator} />

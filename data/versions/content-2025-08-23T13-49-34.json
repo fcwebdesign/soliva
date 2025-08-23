@@ -4,13 +4,13 @@
     "description": "NextJS Page Transitions | Codegrid"
   },
   "nav": {
-    "logo": "STUDIO",
+    "logo": "soliva",
     "logoImage": "",
     "location": "paris, le havre",
     "items": [
       "home",
       "work",
-      "about",
+      "studio",
       "contact"
     ],
     "pageLabels": {
@@ -28,7 +28,11 @@
   },
   "contact": {
     "title": "Travaillons ensemble",
-    "email": "hello@studio.fr"
+    "email": "hello@studio.fr",
+    "description": "<p></p>",
+    "hero": {
+      "title": "Nous contacter"
+    }
   },
   "studio": {
     "hero": {

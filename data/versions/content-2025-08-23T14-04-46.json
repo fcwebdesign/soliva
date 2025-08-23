@@ -4,13 +4,13 @@
     "description": "NextJS Page Transitions | Codegrid"
   },
   "nav": {
-    "logo": "STUDIO",
+    "logo": "soliva",
     "logoImage": "",
     "location": "paris, le havre",
     "items": [
       "home",
       "work",
-      "about",
+      "studio",
       "contact"
     ],
     "pageLabels": {
@@ -28,7 +28,11 @@
   },
   "contact": {
     "title": "Travaillons ensemble",
-    "email": "hello@studio.fr"
+    "email": "hello@studio.fr",
+    "description": "<p>Besoin de nous joindre ? C'est simple et rapide. Que vous soyez à Paris ou au Havre, on est à votre écoute. Posez vos questions, partagez vos idées ou demandez un rendez-vous. On adore échanger et trouver des solutions ensemble. N'attendez plus, faites le premier pas. Votre prochain projet commence ici.</p>",
+    "hero": {
+      "title": "Nous contacter"
+    }
   },
   "studio": {
     "hero": {
@@ -41,7 +45,7 @@
         "alt": "Team at work in Nuvoro's creative space"
       }
     },
-    "description": "<p>Des projets qui frappent fort. Chaque création ici est un coup de maître, alliant innovation et esthétique. Que ce soit une identité de marque percutante pour une startup tech, une plateforme web immersive pour l'art contemporain, ou une stratégie de communication audacieuse pour la mode durable, on ne fait pas dans la dentelle. Ici, on transforme des idées en expériences mémorables. Prêt à sortir des sentiers battus ?</p>",
+    "description": "<p>Bienvenue dans notre studio, où créativité rime avec impact. Chaque projet est une aventure unique : de l'identité de marque qui fait vibrer les startups tech à la plateforme interactive qui redéfinit l'art contemporain. Nous ne faisons pas que créer, nous transformons des idées en récits puissants. Ici, l'audace rencontre la stratégie, et chaque pixel compte. Prêt à marquer les esprits ?</p>",
     "blocks": [
       {
         "id": "block-1755911825011",
@@ -56,7 +60,7 @@
     ]
   },
   "work": {
-    "title": "Projets sélectionnés",
+    "title": "Travaux sélectionnés",
     "subtitle": "Peu de pièces, beaucoup d'impact.",
     "items": [
       {
@@ -364,37 +368,30 @@
     "description": "Studio indépendant. Nous concevons des expériences sobres et utiles. Peu d'éléments, beaucoup d'impact. Chaque décision sert la lisibilité, la vitesse et la conversion."
   },
   "footer": {
+    "logo": "soliva",
+    "logoImage": "",
     "description": "Studio indépendant spécialisé dans le design minimaliste et l'expérience utilisateur.",
-    "socials": [
-      {
-        "platform": "LinkedIn",
-        "url": "#",
-        "target": "_blank"
-      },
-      {
-        "platform": "Instagram",
-        "url": "#",
-        "target": "_blank"
-      },
-      {
-        "platform": "X",
-        "url": "#",
-        "target": "_blank"
-      }
-    ],
     "links": [
       {
         "title": "Mentions légales",
-        "url": "/legal",
-        "target": "_self"
+        "url": "/legal"
       },
       {
         "title": "Politique de confidentialité",
-        "url": "/privacy",
-        "target": "_self"
+        "url": "/privacy"
       }
-    ]
+    ],
+    "socialLinks": [
+      {
+        "platform": "snapchat",
+        "url": ""
+      },
+      {
+        "platform": "tiktok",
+        "url": ""
+      }
+    ],
+    "copyright": "© 2024 Soliva. Tous droits réservés."
   },
-  "_template": "minimaliste-premium",
   "_appliedAt": null
 }

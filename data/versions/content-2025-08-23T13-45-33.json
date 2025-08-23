@@ -4,13 +4,13 @@
     "description": "NextJS Page Transitions | Codegrid"
   },
   "nav": {
-    "logo": "STUDIO",
+    "logo": "soliva",
     "logoImage": "",
     "location": "paris, le havre",
     "items": [
       "home",
+      "studio",
       "work",
-      "about",
       "contact"
     ],
     "pageLabels": {
@@ -24,15 +24,53 @@
     "hero": {
       "title": "soliva",
       "subtitle": "creative studio.\ndigital & brand strategy."
-    }
+    },
+    "blocks": [
+      {
+        "id": "block-home-1",
+        "type": "h2",
+        "content": "Design minimal. Impact maximal."
+      },
+      {
+        "id": "block-home-2",
+        "type": "content",
+        "content": "<p>Identités, sites et produits. Sobriété, précision, résultats.</p>"
+      }
+    ]
   },
   "contact": {
     "title": "Travaillons ensemble",
-    "email": "hello@studio.fr"
+    "email": "hello@studio.fr",
+    "blocks": [
+      {
+        "id": "block-contact-1",
+        "type": "h2",
+        "content": "Prêt à collaborer ?"
+      },
+      {
+        "id": "block-contact-2",
+        "type": "content",
+        "content": "<p>Discutons de votre projet et explorons ensemble les possibilités créatives qui s'offrent à vous.</p>"
+      }
+    ],
+    "description": "<p>Vous avez une question ou une idée ? Contactez-nous, c'est simple. Que vous soyez à Paris ou au Havre, on est là. Pas de blabla, juste une vraie conversation pour faire avancer vos projets. Écrivez-nous et découvrons ensemble ce que l'on peut réaliser. Ne restez pas dans l'ombre, faites le premier pas.</p>",
+    "sections": {
+      "collaborations": {
+        "title": "Lisa Lombard",
+        "email": "ls@soliva.com"
+      },
+      "inquiries": {
+        "title": "Florent Cleron",
+        "email": "fc@soliva.com"
+      }
+    },
+    "hero": {
+      "title": "Nous contatcer"
+    }
   },
   "studio": {
     "hero": {
-      "title": "Le studio"
+      "title": "Le studio test"
     },
     "content": {
       "description": "At Nuvoro, we believe creativity isn't just a skill, a mindset. Born from a passion for bold ideas and beautifully crafted storytelling, we're a collective of designers, strategists, and dreamers who thrive at the intersection of art and innovation. Today, we collaborate with visionary clients around the world to shape identities,",
@@ -394,7 +432,5 @@
         "target": "_self"
       }
     ]
-  },
-  "_template": "minimaliste-premium",
-  "_appliedAt": null
+  }
 }

@@ -9,8 +9,8 @@
     "location": "paris, le havre",
     "items": [
       "home",
+      "studio",
       "work",
-      "about",
       "contact"
     ],
     "pageLabels": {
@@ -24,15 +24,53 @@
     "hero": {
       "title": "soliva",
       "subtitle": "creative studio.\ndigital & brand strategy."
-    }
+    },
+    "blocks": [
+      {
+        "id": "block-home-1",
+        "type": "h2",
+        "content": "Design minimal. Impact maximal."
+      },
+      {
+        "id": "block-home-2",
+        "type": "content",
+        "content": "<p>Identités, sites et produits. Sobriété, précision, résultats.</p>"
+      }
+    ]
   },
   "contact": {
-    "title": "Travaillons ensemble",
-    "email": "hello@studio.fr"
+    "title": "Nous contatcer",
+    "email": "hello@studio.fr",
+    "blocks": [
+      {
+        "id": "block-contact-1",
+        "type": "h2",
+        "content": "Prêt à collaborer ?"
+      },
+      {
+        "id": "block-contact-2",
+        "type": "content",
+        "content": "<p>Discutons de votre projet et explorons ensemble les possibilités créatives qui s'offrent à vous.</p>"
+      }
+    ],
+    "description": "<p>Besoin de nous joindre ? C'est simple. Que vous soyez à Paris ou au Havre, n'hésitez pas à nous écrire. Une question, une idée, un projet ? Nous sommes à l'écoute. Contactez-nous et faisons avancer vos ambitions ensemble. Pas de chichis, juste une vraie conversation.</p>",
+    "sections": {
+      "collaborations": {
+        "title": "Lisa Lombard",
+        "email": "ls@soliva.com"
+      },
+      "inquiries": {
+        "title": "Florent Cleron",
+        "email": "fc@soliva.com"
+      }
+    },
+    "hero": {
+      "title": "Nous contatcer"
+    }
   },
   "studio": {
     "hero": {
-      "title": "Le studio"
+      "title": "Le studio test"
     },
     "content": {
       "description": "At Nuvoro, we believe creativity isn't just a skill, a mindset. Born from a passion for bold ideas and beautifully crafted storytelling, we're a collective of designers, strategists, and dreamers who thrive at the intersection of art and innovation. Today, we collaborate with visionary clients around the world to shape identities,",
@@ -394,6 +432,5 @@
         "target": "_self"
       }
     ]
-  },
-  "_appliedAt": null
+  }
 }

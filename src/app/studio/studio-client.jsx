@@ -6,6 +6,7 @@ import { TRANSITION_CONFIG } from "@/config";
 import FormattedText from "@/components/FormattedText";
 import PreviewBar from "@/components/PreviewBar";
 import BlockRenderer from "@/components/BlockRenderer";
+import PageHeader from "@/components/PageHeader";
 
 import gsap from "gsap";
 import SplitText from "gsap/SplitText";
@@ -81,7 +82,7 @@ const StudioClient = ({ content: initialContent }) => {
       
       // Animation du sous-titre
       gsap.fromTo(
-        ".studio-subtitle",
+        ".contact-description",
         { opacity: 0, y: 20 },
         {
           opacity: 1,
@@ -117,7 +118,7 @@ const StudioClient = ({ content: initialContent }) => {
     
     // Animation du sous-titre après le titre
     gsap.fromTo(
-      ".studio-subtitle",
+      ".contact-description",
       { opacity: 0, y: 20 },
       {
         opacity: 1,
@@ -141,15 +142,13 @@ const StudioClient = ({ content: initialContent }) => {
         
         <div className="studio">
           <div className="col">
-            <h1 className="studio-header">{previewContent?.hero?.title || 'Le studio'}</h1>
+            <PageHeader
+              title={previewContent?.hero?.title || 'Le studio'}
+              description={previewContent?.description || previewContent?.content?.description}
+              titleClassName="studio-header"
+            />
           </div>
           <div className="col">
-            <h2>
-              <FormattedText>
-                {previewContent?.content?.description || previewContent?.description || "At Nuvoro, we believe creativity isn't just a skill, a mindset. Born from a passion for bold ideas and beautifully crafted storytelling, we're a collective of designers, strategists, and dreamers who thrive at the intersection of art and innovation. Today, we collaborate with visionary clients around the world to shape identities,"}
-              </FormattedText>
-            </h2>
-
             {/* Blocs dynamiques dans la colonne de droite */}
             {previewContent?.blocks && previewContent.blocks.length > 0 && (
               <div className="studio-blocks">

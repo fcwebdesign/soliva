@@ -45,7 +45,7 @@
         "alt": "Team at work in Nuvoro's creative space"
       }
     },
-    "description": "<p>Bienvenue dans notre studio, où créativité rime avec impact. Chaque projet est une aventure unique : de l'identité de marque qui fait vibrer les startups tech à la plateforme interactive qui redéfinit l'art contemporain. Nous ne faisons pas que créer, nous transformons des idées en récits puissants. Ici, l'audace rencontre la stratégie, et chaque pixel compte. Prêt à marquer les esprits ?</p>",
+    "description": "<p>Des projets qui frappent fort. Chaque création ici est un coup de maître, alliant innovation et esthétique. Que ce soit une identité de marque percutante pour une startup tech, une plateforme web immersive pour l'art contemporain, ou une stratégie de communication audacieuse pour la mode durable, on ne fait pas dans la dentelle. Ici, on transforme des idées en expériences mémorables. Prêt à sortir des sentiers battus ?</p>",
     "blocks": [
       {
         "id": "block-1755911825011",
@@ -56,16 +56,6 @@
         "id": "block-1755911833676",
         "type": "content",
         "content": "<p>Nous mesurons l’impact dès le départ: taux de conversion, temps de chargement, coût de maintenance. Exemple concret: refonte d’une page d’inscription avec parcours simplifié et micro-copies testées A/B = +22 % d’inscriptions et -18 % de tickets support en 6 semaines. Vous gagnez du temps, des utilisateurs satisfaits et des budgets mieux utilisés.</p>"
-      },
-      {
-        "id": "block-1755957861441",
-        "type": "h2",
-        "content": "Transformez l’idée en résultats"
-      },
-      {
-        "id": "block-1755957871469",
-        "type": "content",
-        "content": "<p>Nous passons vite du concept au concret: cadrage de 2 semaines, prototypes cliquables, tests utilisateurs dès J10. Exemple récent: design system unifié déployé en 4 sprints, -35 % de temps de dev par feature et cohérence UI garantie sur 3 produits. Résultat: sorties plus rapides, moins d’allers-retours, un produit qui tient la route dès la mise en ligne.</p>"
       }
     ]
   },
