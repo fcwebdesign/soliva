@@ -151,6 +151,20 @@ const BlogClient = ({ content: initialContent }) => {
           ease: "power4.out",
         }
       );
+      
+      // Animation de la description
+      gsap.fromTo(
+        ".contact-description",
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          delay: 0.3,
+          ease: "power3.out",
+        }
+      );
+      
       return;
     }
   
@@ -171,6 +185,19 @@ const BlogClient = ({ content: initialContent }) => {
       delay: delay,
       ease: "power4.out",
     });
+    
+    // Animation de la description après le titre
+    gsap.fromTo(
+      ".contact-description",
+      { opacity: 0, y: 20 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        delay: delay + 0.5,
+        ease: "power3.out",
+      }
+    );
   }, []);
 
   return (

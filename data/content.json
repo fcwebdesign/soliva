@@ -11,7 +11,8 @@
       "home",
       "work",
       "studio",
-      "contact"
+      "contact",
+      "blog"
     ],
     "pageLabels": {
       "home": "Accueil",
@@ -253,7 +254,7 @@
     "hero": {
       "title": "Journal"
     },
-    "description": "Réflexions, analyses et insights sur le design, la technologie et la stratégie digitale.",
+    "description": "<p>Découvrez des réflexions percutantes sur l'e-commerce et le design. On aborde l'importance du relationnel, la sobriété visuelle, et la réalité des dépendances aux plateformes. Pourquoi votre site ne capte pas l'attention ? Comment éviter les pièges du marketing digital ? Chaque article vous pousse à repenser vos stratégies. Éveillez votre curiosité et boostez votre créativité. Ce blog n'est pas juste informatif, il est essentiel.</p>",
     "articles": [
       {
         "id": "ecommerce-retour-relationnel",
