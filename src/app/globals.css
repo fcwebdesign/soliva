@@ -158,6 +158,8 @@ p {
 .nav-items:hover a.active:not(:hover)::before {
   background-color: transparent;
 }
+/* Style pour le "o" dans "soliva" - cible spécifiquement la lettre "o" */
+.styled-word .letter:nth-child(2),
 .styled-word .letter-mask:nth-child(2) > div {
   width: 0.75em;
   height: 0.75em;
@@ -199,6 +201,7 @@ p {
   background-color: var(--bg);
   position: relative;
   transition: background-color 0.3s ease;
+  overflow-x: hidden;
 }
 
 .home-mask {
@@ -264,6 +267,7 @@ p {
   }
   
   /* Style du rond du "o" en responsive */
+  .styled-word .letter:nth-child(2),
   .styled-word .letter-mask:nth-child(2) > div {
     width: 0.75em;
     height: 0.75em;
@@ -2179,9 +2183,10 @@ html.preview-mode body {
 /* Styles pour la page d'accueil avec blocs */
 .home-content {
   padding: 4rem 1rem 2rem 1rem;
-  background-color: #fff;
+  background-color: var(--bg);
   position: relative;
   z-index: 1;
+  transition: background-color 0.3s ease;
 }
 
 

@@ -9,9 +9,10 @@
     "location": "paris, le havre",
     "items": [
       "home",
-      "studio",
       "work",
-      "contact"
+      "studio",
+      "contact",
+      "blog"
     ],
     "pageLabels": {
       "home": "Accueil",
@@ -27,33 +28,22 @@
     },
     "blocks": [
       {
-        "id": "block-home-1",
+        "id": "block-1755959139306",
         "type": "h2",
-        "content": "Design minimal. Impact maximal."
-      },
-      {
-        "id": "block-home-2",
-        "type": "content",
-        "content": "<p>Identités, sites et produits. Sobriété, précision, résultats.</p>"
-      }
-    ]
-  },
-  "contact": {
-    "title": "Nous contatcer",
-    "email": "hello@studio.fr",
-    "blocks": [
-      {
-        "id": "block-contact-1",
-        "type": "h2",
-        "content": "Prêt à collaborer ?"
-      },
-      {
-        "id": "block-contact-2",
-        "type": "content",
-        "content": "<p>Discutons de votre projet et explorons ensemble les possibilités créatives qui s'offrent à vous.</p>"
+        "content": "Agence de création web"
       }
     ],
-    "description": "<p>Vous avez une question ou une idée ? Contactez-nous, c'est simple. Que vous soyez à Paris ou au Havre, on est là. Pas de blabla, juste une vraie conversation pour faire avancer vos projets. Écrivez-nous et découvrons ensemble ce que l'on peut réaliser. Ne restez pas dans l'ombre, faites le premier pas.</p>",
+    "content": {
+      "description": "<p></p>"
+    }
+  },
+  "contact": {
+    "title": "Travaillons ensemble",
+    "email": "hello@studio.fr",
+    "description": "<p>Besoin de nous joindre ? C'est simple et rapide. Que vous soyez à Paris ou au Havre, on est à votre écoute. Posez vos questions, partagez vos idées ou demandez un rendez-vous. On adore échanger et trouver des solutions ensemble. N'attendez plus, faites le premier pas. Votre prochain projet commence ici.</p>",
+    "hero": {
+      "title": "Nous contacter"
+    },
     "sections": {
       "collaborations": {
         "title": "Lisa Lombard",
@@ -63,14 +53,11 @@
         "title": "Florent Cleron",
         "email": "fc@soliva.com"
       }
-    },
-    "hero": {
-      "title": "Nous contatcer"
     }
   },
   "studio": {
     "hero": {
-      "title": "Le studio test"
+      "title": "Le studio"
     },
     "content": {
       "description": "At Nuvoro, we believe creativity isn't just a skill, a mindset. Born from a passion for bold ideas and beautifully crafted storytelling, we're a collective of designers, strategists, and dreamers who thrive at the intersection of art and innovation. Today, we collaborate with visionary clients around the world to shape identities,",
@@ -79,7 +66,7 @@
         "alt": "Team at work in Nuvoro's creative space"
       }
     },
-    "description": "<p>Des projets qui frappent fort. Chaque création ici est un coup de maître, alliant innovation et esthétique. Que ce soit une identité de marque percutante pour une startup tech, une plateforme web immersive pour l'art contemporain, ou une stratégie de communication audacieuse pour la mode durable, on ne fait pas dans la dentelle. Ici, on transforme des idées en expériences mémorables. Prêt à sortir des sentiers battus ?</p>",
+    "description": "<p>Bienvenue dans notre studio, où créativité rime avec impact. Chaque projet est une aventure unique : de l'identité de marque qui fait vibrer les startups tech à la plateforme interactive qui redéfinit l'art contemporain. Nous ne faisons pas que créer, nous transformons des idées en récits puissants. Ici, l'audace rencontre la stratégie, et chaque pixel compte. Prêt à marquer les esprits ?</p>",
     "blocks": [
       {
         "id": "block-1755911825011",
@@ -90,6 +77,16 @@
         "id": "block-1755911833676",
         "type": "content",
         "content": "<p>Nous mesurons l’impact dès le départ: taux de conversion, temps de chargement, coût de maintenance. Exemple concret: refonte d’une page d’inscription avec parcours simplifié et micro-copies testées A/B = +22 % d’inscriptions et -18 % de tickets support en 6 semaines. Vous gagnez du temps, des utilisateurs satisfaits et des budgets mieux utilisés.</p>"
+      },
+      {
+        "id": "block-1755957861441",
+        "type": "h2",
+        "content": "Transformez l’idée en résultats"
+      },
+      {
+        "id": "block-1755957871469",
+        "type": "content",
+        "content": "<p>Nous passons vite du concept au concret: cadrage de 2 semaines, prototypes cliquables, tests utilisateurs dès J10. Exemple récent: design system unifié déployé en 4 sprints, -35 % de temps de dev par feature et cohérence UI garantie sur 3 produits. Résultat: sorties plus rapides, moins d’allers-retours, un produit qui tient la route dès la mise en ligne.</p>"
       }
     ]
   },
@@ -277,7 +274,7 @@
     "hero": {
       "title": "Journal"
     },
-    "description": "Réflexions, analyses et insights sur le design, la technologie et la stratégie digitale.",
+    "description": "<p>Découvrez des réflexions percutantes sur l'e-commerce et le design. On aborde l'importance du relationnel, la sobriété visuelle, et la réalité des dépendances aux plateformes. Pourquoi votre site ne capte pas l'attention ? Comment éviter les pièges du marketing digital ? Chaque article vous pousse à repenser vos stratégies. Éveillez votre curiosité et boostez votre créativité. Ce blog n'est pas juste informatif, il est essentiel.</p>",
     "articles": [
       {
         "id": "ecommerce-retour-relationnel",
@@ -402,35 +399,30 @@
     "description": "Studio indépendant. Nous concevons des expériences sobres et utiles. Peu d'éléments, beaucoup d'impact. Chaque décision sert la lisibilité, la vitesse et la conversion."
   },
   "footer": {
+    "logo": "soliva",
+    "logoImage": "",
     "description": "Studio indépendant spécialisé dans le design minimaliste et l'expérience utilisateur.",
-    "socials": [
-      {
-        "platform": "LinkedIn",
-        "url": "#",
-        "target": "_blank"
-      },
-      {
-        "platform": "Instagram",
-        "url": "#",
-        "target": "_blank"
-      },
-      {
-        "platform": "X",
-        "url": "#",
-        "target": "_blank"
-      }
-    ],
     "links": [
       {
         "title": "Mentions légales",
-        "url": "/legal",
-        "target": "_self"
+        "url": "/legal"
       },
       {
         "title": "Politique de confidentialité",
-        "url": "/privacy",
-        "target": "_self"
+        "url": "/privacy"
       }
-    ]
-  }
+    ],
+    "socialLinks": [
+      {
+        "platform": "snapchat",
+        "url": ""
+      },
+      {
+        "platform": "tiktok",
+        "url": ""
+      }
+    ],
+    "copyright": "© 2024 Soliva. Tous droits réservés."
+  },
+  "_appliedAt": null
 }

@@ -11,7 +11,8 @@
       "home",
       "work",
       "studio",
-      "contact"
+      "contact",
+      "blog"
     ],
     "pageLabels": {
       "home": "Accueil",
@@ -24,6 +25,10 @@
     "hero": {
       "title": "soliva",
       "subtitle": "creative studio.\ndigital & brand strategy."
+    },
+    "blocks": [],
+    "content": {
+      "description": "<p></p>"
     }
   },
   "contact": {
@@ -32,6 +37,16 @@
     "description": "<p>Besoin de nous joindre ? C'est simple et rapide. Que vous soyez à Paris ou au Havre, on est à votre écoute. Posez vos questions, partagez vos idées ou demandez un rendez-vous. On adore échanger et trouver des solutions ensemble. N'attendez plus, faites le premier pas. Votre prochain projet commence ici.</p>",
     "hero": {
       "title": "Nous contacter"
+    },
+    "sections": {
+      "collaborations": {
+        "title": "Lisa Lombard",
+        "email": "ls@soliva.com"
+      },
+      "inquiries": {
+        "title": "Florent Cleron",
+        "email": "fc@soliva.com"
+      }
     }
   },
   "studio": {
@@ -56,6 +71,16 @@
         "id": "block-1755911833676",
         "type": "content",
         "content": "<p>Nous mesurons l’impact dès le départ: taux de conversion, temps de chargement, coût de maintenance. Exemple concret: refonte d’une page d’inscription avec parcours simplifié et micro-copies testées A/B = +22 % d’inscriptions et -18 % de tickets support en 6 semaines. Vous gagnez du temps, des utilisateurs satisfaits et des budgets mieux utilisés.</p>"
+      },
+      {
+        "id": "block-1755957861441",
+        "type": "h2",
+        "content": "Transformez l’idée en résultats"
+      },
+      {
+        "id": "block-1755957871469",
+        "type": "content",
+        "content": "<p>Nous passons vite du concept au concret: cadrage de 2 semaines, prototypes cliquables, tests utilisateurs dès J10. Exemple récent: design system unifié déployé en 4 sprints, -35 % de temps de dev par feature et cohérence UI garantie sur 3 produits. Résultat: sorties plus rapides, moins d’allers-retours, un produit qui tient la route dès la mise en ligne.</p>"
       }
     ]
   },
@@ -243,7 +268,7 @@
     "hero": {
       "title": "Journal"
     },
-    "description": "Réflexions, analyses et insights sur le design, la technologie et la stratégie digitale.",
+    "description": "<p>Découvrez des réflexions percutantes sur l'e-commerce et le design. On aborde l'importance du relationnel, la sobriété visuelle, et la réalité des dépendances aux plateformes. Pourquoi votre site ne capte pas l'attention ? Comment éviter les pièges du marketing digital ? Chaque article vous pousse à repenser vos stratégies. Éveillez votre curiosité et boostez votre créativité. Ce blog n'est pas juste informatif, il est essentiel.</p>",
     "articles": [
       {
         "id": "ecommerce-retour-relationnel",

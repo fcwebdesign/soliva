@@ -8,8 +8,9 @@ import BlockRenderer from "@/components/BlockRenderer";
 
 import gsap from "gsap";
 import SplitText from "gsap/SplitText";
+import ScrollTrigger from "gsap/ScrollTrigger";
 
-gsap.registerPlugin(SplitText);
+gsap.registerPlugin(SplitText, ScrollTrigger);
 
 export default function HomeClient({ content }) {
   useTransition(); // Utilise la configuration de transition
@@ -51,11 +52,31 @@ export default function HomeClient({ content }) {
   }, [content]);
 
   useGSAP(() => {
+    // Enregistrer le temps de chargement de la page
+    window.pageLoadTime = Date.now();
+    
     // Animation des caractères du h1 (toujours active)
     const splitTitle = SplitText.create("h1", {
       type: "chars",
       charsClass: "letter",
       mask: "chars",
+    });
+  
+    // Appliquer le style du cercle à la lettre "o" 
+    splitTitle.chars.forEach((char, index) => {
+      if (char.textContent === 'o') {
+        gsap.set(char, {
+          width: "0.75em",
+          height: "0.75em",
+          backgroundColor: "var(--fg)",
+          borderRadius: "50%",
+          color: "transparent",
+          fontSize: "30vw",
+          lineHeight: 0,
+          verticalAlign: "middle",
+          transform: "translateY(0.1em)"
+        });
+      }
     });
   
     gsap.set(splitTitle.chars, { y: "110%" });
@@ -67,8 +88,10 @@ export default function HomeClient({ content }) {
       delay: 1.25,
       ease: "power4.out",
     });
+
+
   
-    // Animation des mots du h2 (baseline)
+    // Animation des mots du h2 (baseline) - animation d'arrivée normale
     const splitBaseline = SplitText.create(".baseline", {
       type: "words",
       wordsClass: "word",
@@ -84,7 +107,58 @@ export default function HomeClient({ content }) {
       delay: 1.75,
       ease: "power4.out",
     });
-  }, []);
+
+    // Effet de pin pour la section hero
+    if (previewContent?.blocks && previewContent.blocks.length > 0) {
+      ScrollTrigger.create({
+        trigger: ".home-mask",
+        start: "top top",
+        end: "bottom top",
+        pin: true,
+        pinSpacing: true, // Garder l'espace pour que les blocs arrivent en dessous
+        onUpdate: (self) => {
+          const progress = self.progress;
+          
+          // Animation du rideau : les 3 premières lettres partent à gauche, les 3 dernières à droite
+          const allLetters = document.querySelectorAll(".home .header h1 .letter");
+          allLetters.forEach((letter, index) => {
+            if (index < 3) { // s, o, l
+              gsap.set(letter, {
+                x: -progress * 100 + "%",
+                opacity: 1 - (progress * 0.3),
+                scale: 1 - (progress * 0.1)
+              });
+            } else { // i, v, a
+              gsap.set(letter, {
+                x: progress * 100 + "%",
+                opacity: 1 - (progress * 0.3),
+                scale: 1 - (progress * 0.1)
+              });
+            }
+          });
+          
+          // Animation du sous-titre - disparaît avec effet SplitText pendant le scroll
+          // Seulement après 3 secondes pour laisser l'animation d'arrivée se terminer
+          const timeSinceStart = Date.now() - window.pageLoadTime;
+          if (timeSinceStart > 3000) {
+            splitBaseline.words.forEach((word, index) => {
+              gsap.set(word, {
+                y: progress * 110 + "%" // Chaque mot descend progressivement
+              });
+            });
+          }
+        },
+        onLeave: () => {
+          // Changer le thème vers le noir quand on sort de la zone de pin
+          document.documentElement.setAttribute('data-theme', 'dark');
+        },
+        onEnterBack: () => {
+          // Remettre le thème clair quand on revient dans la zone de pin
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      });
+    }
+  }, [previewContent?.blocks]);
   
 
   // Debug: afficher les données reçues
