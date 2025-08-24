@@ -51,43 +51,49 @@ export default function HomeClient({ content }) {
   }, [content]);
 
   useGSAP(() => {
-    // Animation des caractères du h1 (seulement si pas de blocs)
-    if (!previewContent?.blocks || previewContent.blocks.length === 0) {
-      const splitTitle = SplitText.create("h1", {
-        type: "chars",
-        charsClass: "letter",
-        mask: "chars",
-      });
-    
-      gsap.set(splitTitle.chars, { y: "110%" });
-    
-      gsap.to(splitTitle.chars, {
-        y: "0%",
-        duration: 1.5,
-        stagger: 0.1,
-        delay: 1.25,
-        ease: "power4.out",
-      });
-    
-      // Animation des mots du h2 (baseline)
-      const splitBaseline = SplitText.create(".baseline", {
-        type: "words",
-        wordsClass: "word",
-        mask: "words",
-      });
-    
-      gsap.set(splitBaseline.words, { y: "110%" });
-    
-      gsap.to(splitBaseline.words, {
-        y: "0%",
-        duration: 1,
-        stagger: 0.10,
-        delay: 1.75,
-        ease: "power4.out",
-      });
-    }
+    // Animation des caractères du h1 (toujours active)
+    const splitTitle = SplitText.create("h1", {
+      type: "chars",
+      charsClass: "letter",
+      mask: "chars",
+    });
+  
+    gsap.set(splitTitle.chars, { y: "110%" });
+  
+    gsap.to(splitTitle.chars, {
+      y: "0%",
+      duration: 1.5,
+      stagger: 0.1,
+      delay: 1.25,
+      ease: "power4.out",
+    });
+  
+    // Animation des mots du h2 (baseline)
+    const splitBaseline = SplitText.create(".baseline", {
+      type: "words",
+      wordsClass: "word",
+      mask: "words",
+    });
+  
+    gsap.set(splitBaseline.words, { y: "110%" });
+  
+    gsap.to(splitBaseline.words, {
+      y: "0%",
+      duration: 1,
+      stagger: 0.10,
+      delay: 1.75,
+      ease: "power4.out",
+    });
   }, []);
   
+
+  // Debug: afficher les données reçues
+  console.log('🏠 HomeClient - Données reçues:', {
+    content: content,
+    previewContent: previewContent,
+    hasBlocks: previewContent?.blocks && previewContent.blocks.length > 0,
+    blocksCount: previewContent?.blocks?.length || 0
+  });
 
   return (
     <>
@@ -98,27 +104,30 @@ export default function HomeClient({ content }) {
       {isPreviewMode && <PreviewBar />}
 
       <div className="home">
-        {/* Utiliser les blocs si disponibles, sinon l'ancien système */}
-        {previewContent?.blocks && previewContent.blocks.length > 0 ? (
-          <BlockRenderer blocks={previewContent.blocks} />
-        ) : (
-          <div className="home-mask">
-            <div className="header">
-              <div className="container baseline absolute w-screen flex justify-end">
-                <h2 className="studio-header tracking-widest leading-snug">
-                  {(previewContent?.hero?.subtitle || 'creative studio.\ndigital & brand strategy.').split('\n').map((line, index) => (
-                    <span key={index}>
-                      {line}
-                      {index < (previewContent?.hero?.subtitle || 'creative studio.\ndigital & brand strategy.').split('\n').length - 1 && <br />}
-                    </span>
-                  ))}
-                </h2>
-              </div>
-
-              <div className="h1-wrapper">
-                <h1 className="styled-word">{previewContent?.hero?.title || 'soliva'}</h1>
-              </div>
+        {/* Section Hero - toujours affichée */}
+        <div className="home-mask">
+          <div className="header">
+            <div className="container baseline absolute w-screen flex justify-end">
+              <h2 className="studio-header tracking-widest leading-snug">
+                {(previewContent?.hero?.subtitle || 'creative studio.\ndigital & brand strategy.').split('\n').map((line, index) => (
+                  <span key={index}>
+                    {line}
+                    {index < (previewContent?.hero?.subtitle || 'creative studio.\ndigital & brand strategy.').split('\n').length - 1 && <br />}
+                  </span>
+                ))}
+              </h2>
             </div>
+
+            <div className="h1-wrapper">
+              <h1 className="styled-word">{previewContent?.hero?.title || 'soliva'}</h1>
+            </div>
+          </div>
+        </div>
+
+        {/* Section Blocs - affichée si des blocs existent */}
+        {(previewContent?.blocks && previewContent.blocks.length > 0) && (
+          <div className="home-content">
+            <BlockRenderer blocks={previewContent.blocks} />
           </div>
         )}
       </div>

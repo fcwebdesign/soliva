@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "title": "NextJS Page Transitions | Codegrid",
-    "description": "NextJS Page Transitions | Codegrid"
+    "title": "Soliva - Creative Studio | Digital & Brand Strategy",
+    "description": "Soliva est un studio créatif spécialisé en stratégie digitale et de marque. Découvrez nos projets et notre approche unique."
   },
   "nav": {
     "logo": "soliva",
@@ -9,251 +9,307 @@
     "location": "paris, le havre",
     "items": [
       "home",
-      "work",
+      "blog",
+      "contact",
       "studio",
-      "contact"
+      "work"
     ],
     "pageLabels": {
-      "home": "Accueil",
-      "work": "Réalisations",
-      "about": "Studio",
-      "contact": "Contact"
+      "blog": "Journal",
+      "home": "Home",
+      "studio": "Studio"
     }
   },
   "home": {
     "hero": {
       "title": "soliva",
-      "subtitle": "creative studio.\ndigital & brand strategy."
-    }
+      "subtitle": "creative studio.\ndigitaI & brand strategy."
+    },
+    "blocks": [
+      {
+        "id": "block-home-1",
+        "type": "h2",
+        "content": "test h2"
+      }
+    ]
   },
   "contact": {
-    "title": "Travaillons ensemble",
-    "email": "hello@studio.fr",
-    "description": "<p>Besoin de nous joindre ? C'est simple et rapide. Que vous soyez à Paris ou au Havre, on est à votre écoute. Posez vos questions, partagez vos idées ou demandez un rendez-vous. On adore échanger et trouver des solutions ensemble. N'attendez plus, faites le premier pas. Votre prochain projet commence ici.</p>",
     "hero": {
-      "title": "Nous contacter"
-    }
+      "title": "Nous contacter",
+      "subtitle": "Notre approche créative"
+    },
+    "sections": {
+      "collaborations": {
+        "title": "Collaborations",
+        "email": "hello@soliva.studio"
+      },
+      "inquiries": {
+        "title": "Demandes générales",
+        "email": "contact@soliva.studio yep"
+      }
+    },
+    "socials": [
+      "Instagram",
+      "LinkedIn",
+      "Behance"
+    ],
+    "briefGenerator": {
+      "placeholder": "Décrivez votre projet, vos objectifs et votre vision...",
+      "button": "Générer le brief",
+      "loading": "Génération en cours...",
+      "resultTitle": "Brief généré pour votre projet :"
+    },
+    "content": {
+      "description": "<p><strong>testxcvvxvcxvxcvvxcvcvxcvcx</strong></p>",
+      "image": {
+        "src": "/studio.jpg",
+        "alt": "L'équipe Soliva au travail dans notre espace créatif"
+      }
+    },
+    "description": "<p><strong>Vous avez des questions ? Des idées à partager ?</strong> </p><p>On est là. Que vous soyez à Paris ou au Havre, n’hésitez pas à nous écrire. On adore échanger, alors faites le premier pas. Votre message est le début d'une conversation qui pourrait tout changer. Allez-y, on attend de vous lire !</p>"
   },
   "studio": {
     "hero": {
-      "title": "Le studio"
+      "title": "Le studio",
+      "subtitle": "Notre approche créative"
     },
     "content": {
-      "description": "At Nuvoro, we believe creativity isn't just a skill, a mindset. Born from a passion for bold ideas and beautifully crafted storytelling, we're a collective of designers, strategists, and dreamers who thrive at the intersection of art and innovation. Today, we collaborate with visionary clients around the world to shape identities,",
+      "description": "<p></p>",
       "image": {
         "src": "/studio.jpg",
-        "alt": "Team at work in Nuvoro's creative space"
+        "alt": "L'équipe Soliva au travail dans notre espace créatif"
       }
     },
-    "description": "<p>Bienvenue dans notre studio, où créativité rime avec impact. Chaque projet est une aventure unique : de l'identité de marque qui fait vibrer les startups tech à la plateforme interactive qui redéfinit l'art contemporain. Nous ne faisons pas que créer, nous transformons des idées en récits puissants. Ici, l'audace rencontre la stratégie, et chaque pixel compte. Prêt à marquer les esprits ?</p>",
+    "description": "<p>Créativité, innovation, impact. Voici ce qui définit notre studio. On ne fait pas que créer des identités visuelles ou des plateformes web. On forge des expériences qui marquent. Que ce soit pour une startup écolo ou une galerie d'art contemporain, notre approche est audacieuse et résolument moderne. Oubliez les clichés, place à l'authenticité. Chaque projet est une aventure unique, et on est là pour la rendre inoubliable.</p>",
     "blocks": [
       {
-        "id": "block-1755911825011",
+        "id": "block-1",
+        "type": "image",
+        "content": "",
+        "image": {
+          "src": "/uploads/1755608058699-46d0c8ad.jpg",
+          "alt": ""
+        }
+      },
+      {
+        "id": "block-2",
         "type": "h2",
-        "content": "Ce que nous concevons, fonctionne"
+        "content": "Concevez, testez, impactez"
       },
       {
-        "id": "block-1755911833676",
+        "id": "block-3",
         "type": "content",
-        "content": "<p>Nous mesurons l’impact dès le départ: taux de conversion, temps de chargement, coût de maintenance. Exemple concret: refonte d’une page d’inscription avec parcours simplifié et micro-copies testées A/B = +22 % d’inscriptions et -18 % de tickets support en 6 semaines. Vous gagnez du temps, des utilisateurs satisfaits et des budgets mieux utilisés.</p>"
+        "content": "<p>Nous avançons par itérations courtes, avec des livrables clairs à chaque étape: wireframes testés, maquettes validées, puis développement mesurable. Chaque décision s’appuie sur des données concrètes: tests utilisateurs, analytics, retours terrain. Résultat: un produit qui charge vite, convertit mieux et reste simple à faire évoluer.</p>"
       },
       {
-        "id": "block-1755957861441",
+        "id": "block-4",
         "type": "h2",
-        "content": "Transformez l’idée en résultats"
+        "content": "Faites simple, faites mieux"
       },
       {
-        "id": "block-1755957871469",
+        "id": "block-5",
         "type": "content",
-        "content": "<p>Nous passons vite du concept au concret: cadrage de 2 semaines, prototypes cliquables, tests utilisateurs dès J10. Exemple récent: design system unifié déployé en 4 sprints, -35 % de temps de dev par feature et cohérence UI garantie sur 3 produits. Résultat: sorties plus rapides, moins d’allers-retours, un produit qui tient la route dès la mise en ligne.</p>"
+        "content": "<p>Nous travaillons avec des objectifs clairs, des délais tenus et des métriques suivies. Par exemple: charte graphique livrée en 10 jours, prototype cliquable en 2 semaines, puis mise en ligne avec suivi des conversions et des temps de chargement. Vous obtenez un résultat propre, mesurable et prêt à évoluer.</p>"
+      },
+      {
+        "id": "block-1755608167136",
+        "type": "h2",
+        "content": "Mesurez, apprenez, itérez"
+      },
+      {
+        "id": "block-1755608177084",
+        "type": "content",
+        "content": "<p>Mesurez, apprenez, itérez Nous suivons les KPIs clés dès le jour 1: taux de conversion, rétention, temps de chargement, SEO. Chaque mois, nous testons une hypothèse précise (A/B sur le formulaire, nouveau wording, optimisation d’image) et déployons ce qui performe. Résultat: des gains chiffrés, documentés, et un produit qui progresse sans refonte lourde.</p>"
+      },
+      {
+        "id": "block-1755609780831",
+        "type": "h2",
+        "content": "Livrez, optimisez, progressez"
+      },
+      {
+        "id": "block-1755609794221",
+        "type": "content",
+        "content": "<p>Livrez, optimisez, progressez Déploiement en sprint d’une semaine, suivi d’un check de performances à J+3: Core Web Vitals, conversions, bugs réels. À J+14, itération ciblée sur ce qui bloque (formulaire trop long, visuel peu cliquable), avec changelog et impacts mesurés pour décider du prochain sprint.</p>"
       }
     ]
   },
   "work": {
-    "title": "Travaux sélectionnés",
-    "subtitle": "Peu de pièces, beaucoup d'impact.",
-    "items": [
-      {
-        "title": "Retail Flagship — Harrods",
-        "category": "Spatial / Digital",
-        "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=2000&auto=format&fit=crop",
-        "url": "#"
-      },
-      {
-        "title": "Pop‑up — Prada Milano",
-        "category": "Brand / Retail",
-        "image": "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=2000&auto=format&fit=crop",
-        "url": "#"
-      },
-      {
-        "title": "Hospitality — Four Seasons",
-        "category": "Experience / UX",
-        "image": "https://images.unsplash.com/photo-1516542076529-1ea3854896e1?q=80&w=2000&auto=format&fit=crop",
-        "url": "#"
-      },
-      {
-        "title": "Workplace — Editorial Hub",
-        "category": "Design System",
-        "image": "https://images.unsplash.com/photo-1513530176992-0cf39c4cbed4?q=80&w=2000&auto=format&fit=crop",
-        "url": "#"
-      }
+    "hero": {
+      "title": "Nos réalisations",
+      "subtitle": "Projets sélectionnés"
+    },
+    "filters": [
+      "Tous",
+      "Stratégie",
+      "Identité",
+      "Digital",
+      "IA"
     ],
+    "description": "<p><strong>Découvrez notre sélection de projets</strong> qui illustrent notre approche créative et notre expertise en stratégie de marque et design digital. Chaque projet raconte une histoire unique, celle d'une collaboration fructueuse entre notre vision créative et les objectifs de nos clients. </p><p>De la conception d'identités de marque mémorables à la création d'expériences digitales innovantes, nous nous efforçons de dépasser les attentes et de créer un impact durable. fds</p>",
     "projects": [
       {
-        "title": "Project Alpha",
-        "description": "Une identité de marque moderne pour une startup innovante dans le secteur de la technologie.",
-        "category": "Brand",
-        "image": "/img1.jpg",
-        "alt": "Project Alpha",
-        "slug": "project-test",
-        "excerpt": "Une identité de marque moderne pour une startup innovante dans le secteur de la technologie.",
-        "content": "Une identité de marque moderne pour une startup innovante dans le secteur de la technologie.",
-        "client": "Startup Tech",
-        "year": "2024",
-        "featured": false,
+        "id": "ecotech-solutions",
+        "title": "EcoTech Solutions",
+        "content": "<h3>test H3</h3>\n<img src=\"/uploads/1755556322957-c5ae9812.jpg\" alt=\"\">\n<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>\n<h2>Défis du projet</h2>\n<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>",
+        "slug": "ecotech-solutions",
         "status": "published",
-        "publishedAt": "2025-08-23T00:45:23.349Z"
-      },
-      {
-        "title": "Project Beta",
-        "description": "Plateforme web interactive pour une exposition d'art contemporain.",
-        "category": "Digital",
-        "image": "/img2.jpg",
-        "alt": "Project Beta",
-        "slug": "project-2",
-        "excerpt": "Plateforme web interactive pour une exposition d'art contemporain.",
-        "content": "Plateforme web interactive pour une exposition d'art contemporain.",
-        "client": "Musée d'Art Contemporain",
+        "publishedAt": "2025-08-19T09:54:32.476Z",
+        "excerpt": "Identité de marque complète pour une startup spécialisée dans les technologies vertes.",
+        "client": "EcoTech Solutions",
+        "category": "Identité",
         "year": "2024",
-        "featured": false,
-        "status": "published",
-        "publishedAt": "2024-01-20T00:00:00.000Z"
-      },
-      {
-        "title": "Project Gamma",
-        "description": "Stratégie de communication globale pour une entreprise de mode durable.",
-        "category": "Strategy",
-        "image": "/img3.jpg",
-        "alt": "Project Gamma",
-        "slug": "project-3"
-      },
-      {
-        "title": "Project Delta",
-        "description": "Application mobile pour la gestion de projets créatifs et collaboratifs.",
-        "category": "Digital",
-        "image": "/img4.jpg",
-        "alt": "Project Delta",
-        "slug": "project-4"
-      },
-      {
-        "title": "Projet nouveau",
-        "content": "",
-        "category": "Branding",
-        "client": "Clarins",
-        "year": "2025",
         "featured": true,
+        "blocks": [
+          {
+            "id": "block-1",
+            "type": "content",
+            "content": "<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwcxw</p>"
+          },
+          {
+            "id": "block-2",
+            "type": "h2",
+            "content": "Défis du projet"
+          },
+          {
+            "id": "block-3",
+            "type": "content",
+            "content": "<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>"
+          },
+          {
+            "id": "block-1755556319801",
+            "type": "image",
+            "content": "",
+            "image": {
+              "src": "/uploads/1755556322957-c5ae9812.jpg",
+              "alt": ""
+            }
+          }
+        ],
+        "image": "/uploads/1755561574161-96b8a35f.jpg"
+      },
+      {
+        "title": "Art Gallery Digital",
+        "category": "Digital",
+        "image": "/uploads/1755597343554-71ad1faf.jpg",
+        "slug": "art-gallery-digital",
+        "excerpt": "Plateforme web immersive pour une galerie d'art contemporain.",
+        "content": "<p>Plateforme web immersive pour une galerie d'art contemporain. Interface intuitive permettant aux visiteurs d'explorer les œuvres en 3D et de découvrir les artistes.</p>",
+        "client": "Art Gallery Digital",
+        "year": "2024",
+        "featured": false,
         "status": "published",
-        "publishedAt": "2025-08-23T00:44:57.341Z",
-        "slug": "projet-nouveau",
-        "image": "/uploads/1755911328822-f8e64d44.jpg"
+        "publishedAt": "2024-02-20T14:30:00.000Z"
+      },
+      {
+        "title": "Mode Éthique Collective",
+        "category": "Stratégie",
+        "slug": "mode-ethique-collective",
+        "excerpt": "Stratégie de communication globale pour une marque de mode durable.",
+        "content": "<p>Stratégie de communication globale pour une marque de mode durable. Campagne multicanal intégrant storytelling, réseaux sociaux et expériences événementielles.</p>",
+        "client": "Mode Éthique Collective",
+        "year": "2024",
+        "featured": false,
+        "status": "published",
+        "publishedAt": "2025-08-19T09:55:29.559Z",
+        "image": "/uploads/1755597298777-8b15cf89.jpg"
       }
     ],
     "adminProjects": [
       {
-        "id": "project-test",
-        "title": "Project Alpha",
-        "description": "Une identité de marque moderne pour une startup innovante dans le secteur de la technologie.",
-        "excerpt": "Une identité de marque moderne pour une startup innovante dans le secteur de la technologie.",
-        "content": "Une identité de marque moderne pour une startup innovante dans le secteur de la technologie.",
-        "category": "Brand",
-        "client": "Startup Tech",
+        "id": "ecotech-solutions",
+        "title": "EcoTech Solutions",
+        "content": "<h3>test H3</h3>\n<img src=\"/uploads/1755556322957-c5ae9812.jpg\" alt=\"\">\n<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>\n<h2>Défis du projet</h2>\n<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>",
+        "slug": "ecotech-solutions",
+        "status": "published",
+        "publishedAt": "2025-08-19T09:54:32.476Z",
+        "excerpt": "Identité de marque complète pour une startup spécialisée dans les technologies vertes.",
+        "client": "EcoTech Solutions",
+        "category": "Identité",
         "year": "2024",
-        "status": "published",
-        "publishedAt": "2025-08-23T00:45:23.349Z",
-        "featured": false,
-        "slug": "project-test",
-        "image": "/img1.jpg",
-        "alt": "Project Alpha"
-      },
-      {
-        "id": "project-2",
-        "title": "Project Beta",
-        "description": "Plateforme web interactive pour une exposition d'art contemporain.",
-        "excerpt": "Plateforme web interactive pour une exposition d'art contemporain.",
-        "content": "Plateforme web interactive pour une exposition d'art contemporain.",
-        "category": "Digital",
-        "client": "Musée d'Art Contemporain",
-        "year": "2024",
-        "status": "published",
-        "publishedAt": "2024-01-20T00:00:00.000Z",
-        "featured": false,
-        "slug": "project-2",
-        "image": "/img2.jpg",
-        "alt": "Project Beta"
-      },
-      {
-        "id": "project-3",
-        "title": "Project Gamma",
-        "description": "Stratégie de communication globale pour une entreprise de mode durable.",
-        "excerpt": "Stratégie de communication globale pour une entreprise de mode durable.",
-        "content": "Stratégie de communication globale pour une entreprise de mode durable.",
-        "category": "Strategy",
-        "client": "Mode Durable Co",
-        "year": "2024",
-        "status": "published",
-        "publishedAt": "2024-01-25T00:00:00.000Z",
-        "featured": false,
-        "slug": "project-3",
-        "image": "/img3.jpg",
-        "alt": "Project Gamma"
-      },
-      {
-        "id": "project-4",
-        "title": "Project Delta",
-        "description": "Application mobile pour la gestion de projets créatifs et collaboratifs.",
-        "excerpt": "Application mobile pour la gestion de projets créatifs et collaboratifs.",
-        "content": "Application mobile pour la gestion de projets créatifs et collaboratifs.",
-        "category": "Digital",
-        "client": "Creative Team",
-        "year": "2024",
-        "status": "published",
-        "publishedAt": "2024-01-30T00:00:00.000Z",
-        "featured": false,
-        "slug": "project-4",
-        "image": "/img4.jpg",
-        "alt": "Project Delta"
-      },
-      {
-        "id": "projet-nouveau",
-        "title": "Projet nouveau",
-        "content": "",
-        "status": "published",
-        "client": "Clarins",
-        "category": "Branding",
-        "year": "2025",
         "featured": true,
-        "slug": "projet-nouveau",
-        "image": "/uploads/1755911328822-f8e64d44.jpg",
-        "publishedAt": "2025-08-23T00:44:57.341Z"
+        "blocks": [
+          {
+            "id": "block-1",
+            "type": "h3",
+            "content": "test H3"
+          },
+          {
+            "id": "block-2",
+            "type": "image",
+            "content": "",
+            "image": {
+              "src": "/uploads/1755556322957-c5ae9812.jpg",
+              "alt": ""
+            }
+          },
+          {
+            "id": "block-3",
+            "type": "content",
+            "content": "<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>"
+          },
+          {
+            "id": "block-4",
+            "type": "h2",
+            "content": "Défis du projet"
+          },
+          {
+            "id": "block-5",
+            "type": "content",
+            "content": "<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>"
+          }
+        ],
+        "image": "/uploads/1755561574161-96b8a35f.jpg"
+      },
+      {
+        "id": "art-gallery-digital",
+        "title": "Art Gallery Digital",
+        "content": "<p>Plateforme web immersive pour une galerie d'art contemporain. Interface intuitive permettant aux visiteurs d'explorer les œuvres en 3D et de découvrir les artistes.</p>",
+        "slug": "art-gallery-digital",
+        "status": "published",
+        "publishedAt": "2024-02-20T14:30:00.000Z",
+        "excerpt": "Plateforme web immersive pour une galerie d'art contemporain.",
+        "client": "Art Gallery Digital",
+        "category": "Digital",
+        "year": "2024",
+        "featured": false,
+        "blocks": [
+          {
+            "id": "block-1",
+            "type": "content",
+            "content": "<p>Plateforme web immersive pour une galerie d'art contemporain. Interface intuitive permettant aux visiteurs d'explorer les œuvres en 3D et de découvrir les artistes.</p>"
+          }
+        ],
+        "image": "/uploads/1755597343554-71ad1faf.jpg"
+      },
+      {
+        "id": "mode-ethique-collective",
+        "title": "Mode Éthique Collective",
+        "content": "<p>Stratégie de communication globale pour une marque de mode durable. Campagne multicanal intégrant storytelling, réseaux sociaux et expériences événementielles.</p>",
+        "slug": "mode-ethique-collective",
+        "status": "published",
+        "excerpt": "Stratégie de communication globale pour une marque de mode durable.",
+        "client": "Mode Éthique Collective",
+        "category": "Stratégie",
+        "year": "2024",
+        "featured": false,
+        "blocks": [
+          {
+            "id": "block-1",
+            "type": "content",
+            "content": "<p>Stratégie de communication globale pour une marque de mode durable. Campagne multicanal intégrant storytelling, réseaux sociaux et expériences événementielles.</p>"
+          }
+        ],
+        "publishedAt": "2025-08-19T09:55:29.559Z",
+        "image": "/uploads/1755597298777-8b15cf89.jpg"
       }
-    ],
-    "hero": {
-      "title": "selected work"
-    },
-    "filters": [
-      "All",
-      "Strategy",
-      "Brand",
-      "Digital",
-      "IA"
-    ],
-    "description": "<p>Découvrez des projets qui transforment des idées en succès. De l'identité de marque percutante pour une startup tech à une plateforme web immersive pour un musée d'art contemporain, chaque réalisation témoigne de notre capacité à créer un impact. Une stratégie de communication pour la mode durable ou une application mobile pour la créativité collaborative, nous faisons bouger les lignes. Résultats visibles, valeur ajoutée : c'est ça notre jeu.</p>"
+    ]
   },
   "blog": {
     "hero": {
-      "title": "Journal"
+      "title": "Le journal",
+      "subtitle": "Nos réflexions et insights"
     },
-    "description": "Réflexions, analyses et insights sur le design, la technologie et la stratégie digitale.",
+    "description": "<p>Découvrez des réflexions percutantes sur le monde digital. Ici, on ne fait pas dans la langue de bois. E-commerce, design, branding : chaque article bouscule les idées reçues et propose un regard frais. Pourquoi votre site ne convertit pas ? Comment sortir de la dépendance aux plateformes ? Ces questions brûlantes méritent des réponses franches. Plongez dans des analyses qui comptent et redéfinissez votre approche.</p>",
     "articles": [
       {
         "id": "ecommerce-retour-relationnel",
@@ -341,7 +397,16 @@
       },
       {
         "id": "no-code-puissant-pas-magique",
-        "title": "No-code : puissant, mais pas magique"
+        "title": "No-code : puissant, mais pas magique",
+        "blocks": [
+          {
+            "id": "block-1",
+            "type": "content",
+            "content": "<p></p>"
+          }
+        ],
+        "status": "draft",
+        "content": "<p></p>"
       },
       {
         "id": "ia-strategie-marque-arretez-copier-commencez-creer",
@@ -362,38 +427,64 @@
       {
         "id": "personnalisation-amazon-toutes-marques",
         "title": "La personnalisation à la Amazon arrive pour toutes les marques"
-      }
-    ]
-  },
-  "hero": {
-    "title": "Design minimal. Impact maximal.",
-    "subtitle": "Identités, sites et produits. Sobriété, précision, résultats."
-  },
-  "featured": {
-    "image": "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=2000&auto=format&fit=crop",
-    "alt": "Projet en vedette"
-  },
-  "about": {
-    "title": "À propos",
-    "description": "Studio indépendant. Nous concevons des expériences sobres et utiles. Peu d'éléments, beaucoup d'impact. Chaque décision sert la lisibilité, la vitesse et la conversion."
-  },
-  "footer": {
-    "logo": "soliva",
-    "logoImage": "",
-    "description": "Studio indépendant spécialisé dans le design minimaliste et l'expérience utilisateur.",
-    "links": [
-      {
-        "title": "Mentions légales",
-        "url": "/legal"
       },
       {
-        "title": "Politique de confidentialité",
-        "url": "/privacy"
+        "id": "ceci-est-mon-nouveal-id",
+        "title": "Nouvel article",
+        "content": "<h2>test de section ok</h2>\n<p><strong>test contenu</strong></p><p><em>ça marche pas</em></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\"><em>yepddsfd</em></a></p><p></p><ul><li><p>test</p></li></ul><ol><li><p>ok je crois que c'est bon</p></li></ol><blockquote><p>citation</p></blockquote><p></p><p>hello c'est vraiment cool ce CMS</p><p>mais aloirs très cool</p><p>wai bof</p><p>xcvvcxcvx</p><p>fsfdsfdsdfsfds</p>\n<img src=\"/uploads/1755521225223-9689ec4e.png\" alt=\"test image\">",
+        "status": "published",
+        "slug": "ceci-est-mon-nouveal-id",
+        "excerpt": "wxcxwcwxc xcccfffd cv",
+        "blocks": [
+          {
+            "id": "block-1",
+            "type": "h2",
+            "content": "test de section ok"
+          },
+          {
+            "id": "block-2",
+            "type": "content",
+            "content": "<p><strong>test contenu</strong></p><p><em>ça marche pas</em></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\"><em>yepddsfd</em></a></p><p></p><ul><li><p>test</p></li></ul><ol><li><p>ok je crois que c'est bon</p></li></ol><blockquote><p>citation</p></blockquote><p></p><p>hello c'est vraiment cool ce CMS</p><p>mais aloirs très cool</p><p>wai bof</p><p>xcvvcxcvx</p><p>fsfdsfdsdfsfds</p>"
+          },
+          {
+            "id": "block-3",
+            "type": "image",
+            "content": "",
+            "image": {
+              "src": "/uploads/1755521225223-9689ec4e.png",
+              "alt": "test image"
+            }
+          }
+        ],
+        "publishedAt": "2025-08-18T13:25:59.640Z"
+      }
+    ],
+    "filters": [
+      "All",
+      "Brand",
+      "IA"
+    ]
+  },
+  "_isPreview": true,
+  "_previewId": "preview-1755558070217",
+  "_originalPage": "blog",
+  "footer": {
+    "logo": "soliva",
+    "logoImage": "/uploads/1755821326043-3fedd842.png",
+    "description": "test du footer",
+    "links": [
+      {
+        "title": "Accueil",
+        "url": "home"
       }
     ],
     "socialLinks": [
       {
-        "platform": "snapchat",
+        "platform": "linkedin",
+        "url": ""
+      },
+      {
+        "platform": "youtube",
         "url": ""
       },
       {
@@ -402,6 +493,5 @@
       }
     ],
     "copyright": "© 2024 Soliva. Tous droits réservés."
-  },
-  "_appliedAt": null
+  }
 }

@@ -195,8 +195,7 @@ p {
 
 .home {
   width: 100vw;
-  height: 100svh;
-  overflow: hidden;
+  min-height: 100svh;
   background-color: var(--bg);
   position: relative;
   transition: background-color 0.3s ease;
@@ -204,14 +203,14 @@ p {
 
 .home-mask {
   width: 100%;
-  height: 100%;
+  height: 100vh;
   overflow: hidden; /* 💥 masque tout dépassement */
   position: relative;
 }
 
 .home .header {
   position: absolute;
-  bottom: -1vw;
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -2102,6 +2101,87 @@ html.preview-mode body {
 /* Masquer le footer dans l'admin */
 .admin-page .footer-wrapper {
   display: none;
+}
+
+/* Styles pour les blocs de contenu */
+.blocks-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.block-content {
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.block-content p {
+  margin-bottom: 1rem;
+}
+
+.block-h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 2rem 0 1rem 0;
+  color: var(--text-primary);
+}
+
+.block-h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 1.5rem 0 1rem 0;
+  color: var(--text-primary);
+}
+
+.block-image {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.block-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.block-cta {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.cta-button {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background-color: var(--accent);
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #0052a3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.block-unknown {
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  color: #6c757d;
+  text-align: center;
+}
+
+/* Styles pour la page d'accueil avec blocs */
+.home-content {
+  padding: 4rem 1rem 2rem 1rem;
+  background-color: #fff;
+  position: relative;
+  z-index: 1;
 }
 
 

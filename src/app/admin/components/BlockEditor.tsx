@@ -720,6 +720,22 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
           />
         </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Sous-titre
+          </label>
+          <textarea
+            value={localData?.hero?.subtitle || ''}
+            onChange={(e) => updateField('hero.subtitle', e.target.value)}
+            placeholder="Sous-titre de la page"
+            rows={3}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Utilisez \n pour les retours à la ligne
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -1797,7 +1813,15 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     <>
       <div className="space-y-6">
         {/* Rendu conditionnel selon le type de page */}
-        {pageKey === 'home' && renderHeroBlock()}
+        {pageKey === 'home' && (
+          <>
+            {renderHeroBlock()}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Éditeur de contenu</h3>
+              {renderDragDropEditor()}
+            </div>
+          </>
+        )}
         {pageKey === 'contact' && (
           <>
             {renderContentBlock()}
