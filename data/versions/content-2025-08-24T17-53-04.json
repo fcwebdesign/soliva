@@ -30,12 +30,12 @@
         "id": "block-1756055504174",
         "type": "services",
         "content": "",
-        "title": "",
+        "title": "Nos services",
         "offerings": [
           {
             "id": "service-1",
             "title": "Site web sur-mesure",
-            "description": "Transformez votre vision en réalité avec un site web sur-mesure, parfaitement adapté à vos besoins spécifiques. Profitez de notre procédé rigoureux de conception et de développement pour obtenir un site performant, qui génère du trafic et convertit vos visiteurs en clients fidèles.",
+            "description": "Offrez-vous une présence digitale unique et percutante. Conçu selon vos besoins précis, chaque site garantit une performance optimale et un design attrayant pour assurer votre visibilité et votre impact en ligne.",
             "icon": ""
           },
           {
@@ -61,7 +61,23 @@
             "title": "Contenu & Shooting",
             "description": "Transformez votre vision en réalité. Nous produisons du contenu web captivant et organisons des shootings photo professionnels pour donner vie à votre marque. Profitez d'un rendu visuel haut de gamme et d'un storytelling efficace pour marquer l'esprit de vos clients.",
             "icon": ""
+          },
+          {
+            "id": "service-1756056410351",
+            "title": "Maintenance & Évolutions",
+            "description": "Notre service garantit la performance continue de votre site web. Nous réalisons une veille technologique constante pour anticiper les évolutions et assurer la mise à jour régulière de vos outils. Bénéficiez d'un site toujours fonctionnel, sécurisé et à la pointe des dernières innovations.",
+            "icon": ""
           }
+        ]
+      },
+      {
+        "id": "block-1756057237607",
+        "type": "projects",
+        "content": "",
+        "title": "NOS RÉALISATIONS",
+        "maxProjects": 3,
+        "selectedProjects": [
+          "project-1"
         ]
       }
     ]

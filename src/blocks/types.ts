@@ -28,7 +28,14 @@ export type ServicesBlock = BlockBase & {
   }>;
 };
 
-export type AnyBlock = H2Block | H3Block | ContentBlock | ImageBlock | CtaBlock | AboutBlock | ServicesBlock;
+export type ProjectsBlock = BlockBase & { 
+  type: 'projects'; 
+  title?: string;
+  maxProjects?: number;
+  selectedProjects?: string[];
+};
+
+export type AnyBlock = H2Block | H3Block | ContentBlock | ImageBlock | CtaBlock | AboutBlock | ServicesBlock | ProjectsBlock;
 
 import React from 'react';
 

@@ -27,42 +27,55 @@
     },
     "blocks": [
       {
-        "id": "block-1756049329266",
-        "type": "service-offerings",
+        "id": "block-1756055504174",
+        "type": "services",
         "content": "",
-        "title": "Ce que nous faisons",
+        "title": "",
         "offerings": [
           {
-            "id": "audit-seo-tech-1",
-            "title": "Audit SEO technique",
-            "description": "Scan du site, vitesse, indexation, erreurs 4xx/5xx. Priorités d’actions livrées sous 72h.",
-            "icon": "🧭"
-          },
-          {
-            "id": "landing-pages-ux-2",
-            "title": "Landing pages qui convertissent",
-            "description": "Structure claire, preuves sociales, appels à l’action testés. Prêtes à publier en 10 jours.",
-            "icon": "🚀"
-          },
-          {
-            "id": "contenus-editoriaux-3",
-            "title": "Contenus éditoriaux SEO",
-            "description": "Articles optimisés, plans sémantiques, balisage propre. Objectif: trafic qualifié et leads.",
-            "icon": "✍️"
-          },
-          {
-            "id": "service-1756054561307",
-            "title": "",
-            "description": "",
+            "id": "service-1",
+            "title": "Site web sur-mesure",
+            "description": "Offrez-vous une présence digitale unique et percutante. Conçu selon vos besoins précis, chaque site garantit une performance optimale et un design attrayant pour assurer votre visibilité et votre impact en ligne.",
             "icon": ""
           },
           {
-            "id": "service-1756054562864",
-            "title": "",
-            "description": "",
+            "id": "service-1756055507192",
+            "title": "E-commerce",
+            "description": "Boostez vos ventes en ligne avec notre service E-commerce. Nous appliquons une méthodologie rigoureuse pour optimiser votre site, améliorer votre référencement et maximiser votre taux de conversion. Résultat : une croissance mesurable de votre chiffre d'affaires.",
+            "icon": ""
+          },
+          {
+            "id": "service-1756056290453",
+            "title": "IA appliquée",
+            "description": "L'IA appliquée démultiplie votre efficacité en automatisant les processus répétitifs, en optimisant les prises de décision et en prédisant les tendances du marché. À travers une méthodologie rigoureuse et une approche basée sur les données, nous transformons votre entreprise en une entité plus agile et réactive.",
+            "icon": ""
+          },
+          {
+            "id": "service-1756056312520",
+            "title": "Stratégie de marque",
+            "description": "La Stratégie de marque vous offre un chemin clair et mesurable pour vous démarquer dans votre secteur. Par un processus rigoureux basé sur des données spécifiques, nous façonnons une identité de marque forte et mémorable qui stimule la fidélité des clients.",
+            "icon": ""
+          },
+          {
+            "id": "service-1756056339086",
+            "title": "Contenu & Shooting",
+            "description": "Transformez votre vision en réalité. Nous produisons du contenu web captivant et organisons des shootings photo professionnels pour donner vie à votre marque. Profitez d'un rendu visuel haut de gamme et d'un storytelling efficace pour marquer l'esprit de vos clients.",
+            "icon": ""
+          },
+          {
+            "id": "service-1756056410351",
+            "title": "Maintenance & Évolutions",
+            "description": "Notre service garantit la performance continue de votre site web. Nous réalisons une veille technologique constante pour anticiper les évolutions et assurer la mise à jour régulière de vos outils. Bénéficiez d'un site toujours fonctionnel, sécurisé et à la pointe des dernières innovations.",
             "icon": ""
           }
         ]
+      },
+      {
+        "id": "block-1756057237607",
+        "type": "projects",
+        "content": "",
+        "title": "NOS RÉALISATIONS",
+        "maxProjects": 3
       }
     ]
   },

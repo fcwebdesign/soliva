@@ -8,6 +8,7 @@ import Image from './defaults/Image';
 import Cta from './defaults/Cta';
 import About from './defaults/About';
 import Services from './defaults/Services';
+import Projects from './defaults/Projects';
 
 // Minimaliste
 import H2Min from '../templates/minimaliste-premium/blocks/H2';
@@ -25,6 +26,7 @@ export const defaultRegistry: BlockRegistry = {
   cta: Cta as BlockComponent,
   about: About as BlockComponent,
   'services': Services as BlockComponent,
+  'projects': Projects as BlockComponent,
 };
 
 export const registries: Record<string, BlockRegistry> = {

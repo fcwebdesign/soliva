@@ -30,7 +30,7 @@
         "id": "block-1756055504174",
         "type": "services",
         "content": "",
-        "title": "",
+        "title": "Nos services",
         "offerings": [
           {
             "id": "service-1",
@@ -68,6 +68,18 @@
             "description": "Notre service garantit la performance continue de votre site web. Nous réalisons une veille technologique constante pour anticiper les évolutions et assurer la mise à jour régulière de vos outils. Bénéficiez d'un site toujours fonctionnel, sécurisé et à la pointe des dernières innovations.",
             "icon": ""
           }
+        ]
+      },
+      {
+        "id": "block-1756057237607",
+        "type": "projects",
+        "content": "",
+        "title": "Projets selectionnés",
+        "maxProjects": 3,
+        "selectedProjects": [
+          "project-1",
+          "project-4",
+          "project-3"
         ]
       }
     ]

@@ -9,7 +9,7 @@ import VersionList from './VersionList';
 
 interface Block {
   id: string;
-  type: 'h2' | 'h3' | 'content' | 'image' | 'cta' | 'about' | 'services';
+  type: 'h2' | 'h3' | 'content' | 'image' | 'cta' | 'about' | 'services' | 'projects';
   content: string;
   title?: string;
   description?: string;
@@ -26,6 +26,8 @@ interface Block {
     description: string;
     icon?: string;
   }>;
+  maxProjects?: number;
+  selectedProjects?: string[];
 }
 
 interface BlockEditorProps {
@@ -253,7 +255,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
 
   // Fonction pour nettoyer les blocs invalides
   const cleanInvalidBlocks = (blocks: Block[]): Block[] => {
-    const validTypes: Block['type'][] = ['h2', 'h3', 'content', 'image', 'cta', 'about', 'services'];
+    const validTypes: Block['type'][] = ['h2', 'h3', 'content', 'image', 'cta', 'about', 'services', 'projects'];
     
     const filteredBlocks = blocks.filter(block => {
       // Supprimer les blocs avec des types invalides
@@ -321,6 +323,11 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       icon: ''
     }
   ]
+}),
+...(type === 'projects' && { 
+  title: 'NOS RÉALISATIONS',
+  maxProjects: 6,
+  selectedProjects: []
 })
     };
     
@@ -385,6 +392,15 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             <div class="container mx-auto">
               ${block.title ? `<div class="mb-12"><h2 class="text-2xl md:text-3xl font-bold tracking-tight text-black">${block.title}</h2></div>` : ''}
               <div class="space-y-0">${offeringsHtml}</div>
+            </div>
+          </section>`;
+        case 'projects':
+          return `<section class="projects-section py-16">
+            <div class="container mx-auto">
+              ${block.title ? `<div class="mb-12"><h2 class="text-2xl md:text-3xl font-bold tracking-tight text-black">${block.title}</h2></div>` : ''}
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Les projets seront injectés dynamiquement -->
+              </div>
             </div>
           </section>`;
         default:
@@ -829,6 +845,130 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
           </div>
         );
       
+      case 'projects':
+        return (
+          <div className="block-editor">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Titre de la section
+                </label>
+                <input
+                  type="text"
+                  value={block.title || ''}
+                  onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                  placeholder="Ex: NOS RÉALISATIONS"
+                  className="block-input"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nombre maximum de projets
+                </label>
+                <input
+                  type="number"
+                  value={block.maxProjects || 6}
+                  onChange={(e) => updateBlock(block.id, { maxProjects: parseInt(e.target.value) || 6 })}
+                  placeholder="6"
+                  className="block-input"
+                  min="1"
+                  max="12"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Projets à afficher
+                </label>
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Colonne gauche - Projets sélectionnés */}
+                  <div className="border border-gray-200 rounded-lg p-3 bg-gray-50">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">Projets sélectionnés</h4>
+                    <div className="space-y-2 min-h-[200px]">
+                      {(() => {
+                        const allProjects = [
+                          { id: 'project-1', title: 'Project Alpha', category: 'Brand' },
+                          { id: 'project-2', title: 'Project Beta', category: 'Digital' },
+                          { id: 'project-3', title: 'Project Gamma', category: 'Strategy' },
+                          { id: 'project-4', title: 'Project Delta', category: 'Digital' }
+                        ];
+                        const selectedProjects = block.selectedProjects || [];
+                        const selectedItems = allProjects.filter(project => selectedProjects.includes(project.id));
+                        
+                        if (selectedItems.length === 0) {
+                          return (
+                            <div className="text-sm text-gray-400 text-center py-8">
+                              Aucun projet sélectionné
+                            </div>
+                          );
+                        }
+                        
+                        return selectedItems.map(project => (
+                          <div key={project.id} className="flex items-center justify-between p-2 bg-white rounded border">
+                            <div>
+                              <div className="text-sm font-medium text-gray-700">{project.title}</div>
+                              <div className="text-xs text-gray-500">{project.category}</div>
+                            </div>
+                            <button
+                              onClick={() => {
+                                const newSelected = selectedProjects.filter(id => id !== project.id);
+                                updateBlock(block.id, { selectedProjects: newSelected });
+                              }}
+                              className="text-red-500 hover:text-red-700 text-sm"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ));
+                      })()}
+                    </div>
+                  </div>
+                  
+                  {/* Colonne droite - Tous les projets disponibles */}
+                  <div className="border border-gray-200 rounded-lg p-3">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">Projets disponibles</h4>
+                    <div className="space-y-2">
+                      {[
+                        { id: 'project-1', title: 'Project Alpha', category: 'Brand' },
+                        { id: 'project-2', title: 'Project Beta', category: 'Digital' },
+                        { id: 'project-3', title: 'Project Gamma', category: 'Strategy' },
+                        { id: 'project-4', title: 'Project Delta', category: 'Digital' }
+                      ].map(project => {
+                        const isSelected = block.selectedProjects?.includes(project.id) || false;
+                        return (
+                          <div
+                            key={project.id}
+                            className={`p-2 rounded border cursor-pointer transition-colors ${
+                              isSelected 
+                                ? 'bg-blue-50 border-blue-200 text-blue-700' 
+                                : 'bg-white border-gray-200 hover:bg-gray-50'
+                            }`}
+                            onClick={() => {
+                              if (!isSelected) {
+                                const currentSelected = block.selectedProjects || [];
+                                const newSelected = [...currentSelected, project.id];
+                                updateBlock(block.id, { selectedProjects: newSelected });
+                              }
+                            }}
+                          >
+                            <div className="text-sm font-medium">{project.title}</div>
+                            <div className="text-xs text-gray-500">{project.category}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  Cliquez sur un projet pour l'ajouter/retirer. Laissez vide pour afficher tous les projets.
+                </p>
+              </div>
+              <div className="text-sm text-gray-500">
+                <p>Ce bloc affiche automatiquement les projets de la page Work en 3 colonnes.</p>
+              </div>
+            </div>
+          </div>
+        );
+      
       default:
         return null;
     }
@@ -842,7 +982,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         case 'image': return 'Image';
       case 'cta': return 'CTA';
       case 'about': return 'À propos';
-      case 'services': return 'Services';
+              case 'services': return 'Services';
+        case 'projects': return 'Projets';
       default: return type;
     }
   };
@@ -1807,6 +1948,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             <option value="cta">CTA</option>
             <option value="about">À propos</option>
                             <option value="services">Services</option>
+              <option value="projects">Projets</option>
           </select>
         </div>
       </div>
