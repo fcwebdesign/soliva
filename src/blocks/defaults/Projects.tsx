@@ -73,41 +73,127 @@ export default function Projects({ title = "NOS RÉALISATIONS", maxProjects = 6,
         )}
         
         {/* Grille des projets */}
-        <div className={(() => {
+        {(() => {
           const selectedCount = selectedProjects?.length || 0;
-          if (selectedCount === 1) {
-            return "grid grid-cols-1 gap-8"; // Fullscreen
-          } else if (selectedCount === 2) {
-            return "grid grid-cols-1 md:grid-cols-2 gap-8"; // 2 colonnes
-          } else {
-            return "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"; // 3 colonnes
-          }
-        })()}>
-          {displayedProjects.map((project, index) => (
-            <div key={project.slug || index} className="project-card">
-              {/* Image du projet */}
-              <div className="project-image mb-4">
-                <img 
-                  src={project.image || '/placeholder-project.jpg'} 
-                  alt={project.alt || project.title}
-                  className={`w-full object-cover rounded-lg ${
-                    selectedProjects?.length === 1 ? 'h-96' : 'aspect-[1/1]'
-                  }`}
-                />
+          const useCarousel = selectedCount > 3;
+          
+          if (useCarousel) {
+            // Carousel pour plus de 3 projets
+            return (
+              <div className="relative">
+                {/* Navigation du carousel - maintenant en haut à droite */}
+                <div className="flex justify-end mb-4 space-x-2">
+                  {Array.from({ length: Math.ceil(displayedProjects.length / 3) }, (_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => {
+                        const carousel = document.getElementById('carousel-projects');
+                        if (carousel) {
+                          // Calculer la translation basée sur le nombre de projets par page
+                          const projectsPerPage = 3;
+                          const translateX = -(i * (100 / projectsPerPage));
+                          carousel.style.transform = `translateX(${translateX}%)`;
+                          console.log('Carousel navigation:', { page: i + 1, translateX, projectsPerPage });
+                        }
+                      }}
+                      className="custom-carousel-dot w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 transition-all duration-300 flex items-center justify-center text-xs text-gray-500 hover:text-gray-700"
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                </div>
+                
+                <div className="overflow-hidden">
+                  <div className="flex transition-transform duration-300 ease-in-out" id="carousel-projects" style={{ transform: 'translateX(0%)' }}>
+                    {displayedProjects.map((project, index) => (
+                      <div key={project.slug || index} className="project-card flex-shrink-0 w-full md:w-1/2 lg:w-1/3 px-4">
+                        {/* Image du projet */}
+                        <div className="project-image mb-4 relative cursor-none">
+                          <img 
+                            src={project.image || '/placeholder-project.jpg'} 
+                            alt={project.alt || project.title}
+                            className="w-full object-cover rounded-lg aspect-[1/1]"
+                            onMouseEnter={(e) => {
+                              const cursor = document.createElement('div');
+                              cursor.className = 'custom-cursor';
+                              cursor.innerHTML = '→';
+                              document.body.appendChild(cursor);
+                              
+                              const updateCursor = (e: MouseEvent) => {
+                                cursor.style.left = e.clientX + 'px';
+                                cursor.style.top = e.clientY + 'px';
+                              };
+                              
+                              const handleMouseMove = (e: MouseEvent) => updateCursor(e);
+                              const handleMouseLeave = () => {
+                                if (cursor.parentNode) {
+                                  document.body.removeChild(cursor);
+                                }
+                                document.removeEventListener('mousemove', handleMouseMove);
+                              };
+                              
+                              document.addEventListener('mousemove', handleMouseMove);
+                              e.target.addEventListener('mouseleave', handleMouseLeave);
+                            }}
+                          />
+                        </div>
+                        
+                        {/* Titre du projet */}
+                        <h3 className="text-xl font-semibold mb-2">
+                          {project.title}
+                        </h3>
+                        
+                        {/* Description courte */}
+                        <p className="text-gray-600 text-sm leading-relaxed">
+                          {project.description}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
-              
-              {/* Titre du projet */}
-              <h3 className="text-xl font-semibold mb-2">
-                {project.title}
-              </h3>
-              
-              {/* Description courte */}
-              <p className="text-gray-600 text-sm leading-relaxed">
-                {project.description}
-              </p>
-            </div>
-          ))}
-        </div>
+            );
+          } else {
+            // Grille normale pour 1-3 projets
+            let gridClass;
+            if (selectedCount === 1) {
+              gridClass = "grid grid-cols-1 gap-8"; // Fullscreen
+            } else if (selectedCount === 2) {
+              gridClass = "grid grid-cols-1 md:grid-cols-2 gap-8"; // 2 colonnes
+            } else {
+              gridClass = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"; // 3 colonnes
+            }
+            
+            return (
+              <div className={gridClass}>
+                {displayedProjects.map((project, index) => (
+                  <div key={project.slug || index} className="project-card">
+                    {/* Image du projet */}
+                    <div className="project-image mb-4">
+                      <img 
+                        src={project.image || '/placeholder-project.jpg'} 
+                        alt={project.alt || project.title}
+                        className={`w-full object-cover rounded-lg ${
+                          selectedProjects?.length === 1 ? 'h-96' : 'aspect-[1/1]'
+                        }`}
+                      />
+                    </div>
+                    
+                    {/* Titre du projet */}
+                    <h3 className="text-xl font-semibold mb-2">
+                      {project.title}
+                    </h3>
+                    
+                    {/* Description courte */}
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      {project.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            );
+          }
+        })()}
       </div>
     </section>
   );

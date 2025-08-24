@@ -2277,6 +2277,50 @@ html.preview-mode body {
   transform: none;
 }
 
+/* Curseur personnalisé pour le carousel */
+.custom-cursor {
+  position: fixed;
+  width: 40px;
+  height: 40px;
+  background: var(--accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: all 0.1s ease;
+  mix-blend-mode: difference;
+}
+
+/* Styles pour les points de navigation du carousel */
+.custom-carousel-dot {
+  position: relative;
+  overflow: hidden;
+}
+
+.custom-carousel-dot::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: var(--accent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease;
+}
+
+.custom-carousel-dot:hover::before {
+  width: 100%;
+  height: 100%;
+}
+
 
 
 

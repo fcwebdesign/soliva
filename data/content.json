@@ -75,11 +75,12 @@
         "type": "projects",
         "content": "",
         "title": "Projets selectionnés",
-        "maxProjects": 3,
+        "maxProjects": 4,
         "selectedProjects": [
           "project-1",
           "project-4",
-          "project-3"
+          "project-3",
+          "project-2"
         ]
       }
     ]
