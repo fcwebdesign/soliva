@@ -27,21 +27,39 @@
     },
     "blocks": [
       {
-        "id": "block-1756049329266",
-        "type": "service-offerings",
+        "id": "block-1756055504174",
+        "type": "services",
         "content": "",
-        "title": "OUR CORE OFFERINGS",
+        "title": "",
         "offerings": [
           {
             "id": "service-1",
-            "title": "Commercial Excellence",
-            "description": "We deliver tailored commercial excellence services...",
+            "title": "Site web sur-mesure",
+            "description": "Transformez votre vision en réalité avec un site web sur-mesure, parfaitement adapté à vos besoins spécifiques. Profitez de notre procédé rigoureux de conception et de développement pour obtenir un site performant, qui génère du trafic et convertit vos visiteurs en clients fidèles.",
             "icon": ""
           },
           {
-            "id": "service-1756049336265",
-            "title": "wxxwwxc",
-            "description": "cxwxcwcwx",
+            "id": "service-1756055507192",
+            "title": "E-commerce",
+            "description": "Boostez vos ventes en ligne avec notre service E-commerce. Nous appliquons une méthodologie rigoureuse pour optimiser votre site, améliorer votre référencement et maximiser votre taux de conversion. Résultat : une croissance mesurable de votre chiffre d'affaires.",
+            "icon": ""
+          },
+          {
+            "id": "service-1756056290453",
+            "title": "IA appliquée",
+            "description": "L'IA appliquée démultiplie votre efficacité en automatisant les processus répétitifs, en optimisant les prises de décision et en prédisant les tendances du marché. À travers une méthodologie rigoureuse et une approche basée sur les données, nous transformons votre entreprise en une entité plus agile et réactive.",
+            "icon": ""
+          },
+          {
+            "id": "service-1756056312520",
+            "title": "Stratégie de marque",
+            "description": "La Stratégie de marque vous offre un chemin clair et mesurable pour vous démarquer dans votre secteur. Par un processus rigoureux basé sur des données spécifiques, nous façonnons une identité de marque forte et mémorable qui stimule la fidélité des clients.",
+            "icon": ""
+          },
+          {
+            "id": "service-1756056339086",
+            "title": "Contenu & Shooting",
+            "description": "Transformez votre vision en réalité. Nous produisons du contenu web captivant et organisons des shootings photo professionnels pour donner vie à votre marque. Profitez d'un rendu visuel haut de gamme et d'un storytelling efficace pour marquer l'esprit de vos clients.",
             "icon": ""
           }
         ]

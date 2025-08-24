@@ -1,8 +1,8 @@
 import React from 'react';
 import type { BlockBase } from '../types';
 
-interface ServiceOfferingsBlock extends BlockBase {
-  type: 'service-offerings';
+interface ServicesBlock extends BlockBase {
+  type: 'services';
   title?: string;
   offerings: Array<{
     id: string;
@@ -12,7 +12,7 @@ interface ServiceOfferingsBlock extends BlockBase {
   }>;
 }
 
-export default function ServiceOfferings({ title = "OUR CORE OFFERINGS", offerings }: ServiceOfferingsBlock) {
+export default function Services({ title = "OUR CORE OFFERINGS", offerings }: ServicesBlock) {
   return (
     <section className="service-offerings-section py-16">
       <div className="container mx-auto">

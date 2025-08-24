@@ -27,18 +27,24 @@
     },
     "blocks": [
       {
-        "id": "block-1",
-        "type": "image",
+        "id": "block-1756055504174",
+        "type": "services",
         "content": "",
-        "image": {
-          "src": "/uploads/1756041551819-8cacd6a6.jpg",
-          "alt": ""
-        }
-      },
-      {
-        "id": "block-2",
-        "type": "h2",
-        "content": "test h2"
+        "title": "",
+        "offerings": [
+          {
+            "id": "service-1",
+            "title": "Commercial Excellence",
+            "description": "We deliver tailored commercial excellence services...",
+            "icon": ""
+          },
+          {
+            "id": "service-1756055507192",
+            "title": "xvcvcx",
+            "description": "xccvxvcxvxc",
+            "icon": ""
+          }
+        ]
       }
     ]
   },

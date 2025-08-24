@@ -27,21 +27,21 @@
     },
     "blocks": [
       {
-        "id": "block-1756049329266",
-        "type": "service-offerings",
+        "id": "block-1756055504174",
+        "type": "services",
         "content": "",
         "title": "OUR CORE OFFERINGS",
         "offerings": [
           {
             "id": "service-1",
             "title": "Commercial Excellence",
-            "description": "While Salesforce is at the heart of what we do, it rarely operates in isolation. We design integration strategies, robust data models, and workflows to ensure seamless operations across systems such as SAP, Oracle, and Microsoft.",
+            "description": "We deliver tailored commercial excellence services...",
             "icon": ""
           },
           {
-            "id": "service-1756049336265",
-            "title": "wxxwwxc",
-            "description": "While Salesforce is at the heart of what we do, it rarely operates in isolation. We design integration strategies, robust data models, and workflows to ensure seamless operations across systems such as SAP, Oracle, and Microsoft.",
+            "id": "service-1756055507192",
+            "title": "xvcvcx",
+            "description": "xccvxvcxvxc",
             "icon": ""
           }
         ]

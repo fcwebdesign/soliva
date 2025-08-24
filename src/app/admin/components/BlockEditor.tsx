@@ -9,7 +9,7 @@ import VersionList from './VersionList';
 
 interface Block {
   id: string;
-  type: 'h2' | 'h3' | 'content' | 'image' | 'cta' | 'about' | 'service-offering' | 'service-offerings';
+  type: 'h2' | 'h3' | 'content' | 'image' | 'cta' | 'about' | 'services';
   content: string;
   title?: string;
   description?: string;
@@ -253,7 +253,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
 
   // Fonction pour nettoyer les blocs invalides
   const cleanInvalidBlocks = (blocks: Block[]): Block[] => {
-    const validTypes: Block['type'][] = ['h2', 'h3', 'content', 'image', 'cta', 'about', 'service-offering', 'service-offerings'];
+    const validTypes: Block['type'][] = ['h2', 'h3', 'content', 'image', 'cta', 'about', 'services'];
     
     const filteredBlocks = blocks.filter(block => {
       // Supprimer les blocs avec des types invalides
@@ -311,18 +311,17 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       ...(type === 'image' && { image: { src: '', alt: '' } }),
       ...(type === 'cta' && { ctaText: '', ctaLink: '' }),
       ...(type === 'about' && { title: '', content: '' }),
-      ...(type === 'service-offering' && { title: '', description: '', icon: '' }),
-      ...(type === 'service-offerings' && { 
-        title: 'OUR CORE OFFERINGS', 
-        offerings: [
-          {
-            id: 'service-1',
-            title: 'Commercial Excellence',
-            description: 'We deliver tailored commercial excellence services...',
-            icon: ''
-          }
-        ]
-      })
+      ...(type === 'services' && { 
+  title: 'OUR CORE OFFERINGS', 
+  offerings: [
+    {
+      id: 'service-1',
+      title: 'Commercial Excellence',
+      description: 'We deliver tailored commercial excellence services...',
+      icon: ''
+    }
+  ]
+})
     };
     
     const newBlocks = [...blocks, newBlock];
@@ -367,20 +366,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         case 'about':
           return (block.title || block.content) ? 
             `<div class="about-block"><h2>${block.title || ''}</h2><div>${block.content || ''}</div></div>` : '';
-        case 'service-offering':
-          return (block.title || block.description) ? 
-            `<div class="service-offering-block">
-              <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
-                <div class="md:col-span-7">
-                  ${block.icon ? `<div class="mb-2"><span class="text-blue-400 text-lg">${block.icon}</span></div>` : ''}
-                  <h3 class="text-2xl md:text-3xl font-bold tracking-tight text-black">${block.title || ''}</h3>
-                </div>
-                <div class="md:col-span-5 flex justify-end">
-                  <p class="max-w-[68ch]">${block.description || ''}</p>
-                </div>
-              </div>
-            </div>` : '';
-        case 'service-offerings':
+        case 'services':
           if (!block.offerings || block.offerings.length === 0) return '';
           const offeringsHtml = block.offerings.map(offering => `
             <div class="service-offering-block border-b border-black/10 py-8 last:border-b-0">
@@ -737,53 +723,10 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
           </div>
         );
       
-      case 'service-offering':
+      case 'services':
         return (
           <div className="block-editor">
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Titre du service
-                </label>
-                <input
-                  type="text"
-                  value={block.title || ''}
-                  onChange={(e) => updateBlock(block.id, { title: e.target.value })}
-                  placeholder="Ex: Commercial Excellence"
-                  className="block-input"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Description
-                </label>
-                <textarea
-                  value={block.description || ''}
-                  onChange={(e) => updateBlock(block.id, { description: e.target.value })}
-                  placeholder="Description détaillée du service..."
-                  className="block-input min-h-[100px]"
-                  rows={4}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Icône (optionnel)
-                </label>
-                <input
-                  type="text"
-                  value={block.icon || ''}
-                  onChange={(e) => updateBlock(block.id, { icon: e.target.value })}
-                  placeholder="Ex: 🏗️ ou A"
-                  className="block-input"
-                />
-              </div>
-            </div>
-          </div>
-        );
-      
-      case 'service-offerings':
-        return (
-          <div className="block-editor">
+
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -827,6 +770,20 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                         placeholder="Titre du service"
                         className="block-input mb-2"
                       />
+                      <div className="flex items-center gap-2 mb-2">
+                        <button
+                          onClick={() => getServiceDescriptionSuggestion(block.id, index, offering.title)}
+                          disabled={isLoadingBlockAI === `${block.id}-${index}` || !offering.title?.trim()}
+                          className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
+                            isLoadingBlockAI === `${block.id}-${index}` || !offering.title?.trim()
+                              ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                              : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600'
+                          }`}
+                          title={!offering.title?.trim() ? "Saisissez d'abord un titre" : "Générer la description"}
+                        >
+                          {isLoadingBlockAI === `${block.id}-${index}` ? '🤖...' : '🤖 IA'}
+                        </button>
+                      </div>
                       <textarea
                         value={offering.description}
                         onChange={(e) => {
@@ -835,7 +792,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                           updateBlock(block.id, { offerings: newOfferings });
                         }}
                         placeholder="Description du service"
-                        className="block-input mb-2 min-h-[80px]"
+                        className="block-input min-h-[80px]"
                         rows={3}
                       />
                       <input
@@ -879,14 +836,13 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
 
   const renderBlockTypeLabel = (type: Block['type']) => {
     switch (type) {
-      case 'h2': return 'Titre H2';
-      case 'h3': return 'Sous-titre H3';
-      case 'content': return 'Contenu';
-      case 'image': return 'Image';
+              case 'h2': return 'Titre H2';
+        case 'h3': return 'Sous-titre H3';
+        case 'content': return 'Contenu';
+        case 'image': return 'Image';
       case 'cta': return 'CTA';
       case 'about': return 'À propos';
-      case 'service-offering': return 'Service (simple)';
-      case 'service-offerings': return 'Services (groupe)';
+      case 'services': return 'Services';
       default: return type;
     }
   };
@@ -965,6 +921,9 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   const getBlockContentSuggestion = async (blockId: string, blockType: string) => {
     setIsLoadingBlockAI(blockId);
     try {
+      // Récupérer le bloc actuel pour avoir le titre existant
+      const currentBlock = blocks.find(block => block.id === blockId);
+      
       const response = await fetch('/api/admin/ai/suggest-block-content', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -972,6 +931,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
           blockType,
           pageKey,
           existingBlocks: blocks,
+          existingTitle: currentBlock?.title || '',
+          existingOfferings: currentBlock?.offerings || [],
           context: `Bloc ${blockType} dans la page ${pageKey}`
         })
       });
@@ -982,11 +943,67 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         throw new Error(data.error || 'Erreur API');
       }
 
-      // Appliquer la suggestion au bloc
-      updateBlock(blockId, { content: data.suggestedContent });
+      // Appliquer la suggestion au bloc selon le type
+      if (blockType === 'services') {
+        // Pour services, garder le titre existant et mettre à jour seulement les descriptions
+        const suggestion = data.suggestedContent;
+        if (suggestion.offerings && currentBlock?.offerings) {
+          // Mettre à jour seulement les descriptions des services existants
+          const updatedOfferings = currentBlock.offerings.map((offering, index) => ({
+            ...offering,
+            description: suggestion.offerings[index]?.description || offering.description
+          }));
+          updateBlock(blockId, { offerings: updatedOfferings });
+        } else if (suggestion.offerings) {
+          // Si pas d'offerings existants, utiliser les nouveaux
+          updateBlock(blockId, { offerings: suggestion.offerings });
+        }
+      } else {
+        // Pour les autres types, mettre à jour le contenu
+        updateBlock(blockId, { content: data.suggestedContent });
+      }
       
     } catch (error) {
       console.error('Erreur suggestion contenu bloc IA:', error);
+      alert(`❌ Erreur: ${error.message}`);
+    } finally {
+      setIsLoadingBlockAI(null);
+    }
+  };
+
+  const getServiceDescriptionSuggestion = async (blockId: string, serviceIndex: number, serviceTitle: string) => {
+    const loadingId = `${blockId}-${serviceIndex}`;
+    setIsLoadingBlockAI(loadingId);
+    try {
+      const response = await fetch('/api/admin/ai/suggest-service-description', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          serviceTitle,
+          pageKey,
+          context: `Description pour le service "${serviceTitle}" dans la page ${pageKey}`
+        })
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Erreur API');
+      }
+
+      // Mettre à jour seulement la description du service spécifique
+      const currentBlock = blocks.find(block => block.id === blockId);
+      if (currentBlock?.offerings) {
+        const updatedOfferings = [...currentBlock.offerings];
+        updatedOfferings[serviceIndex] = {
+          ...updatedOfferings[serviceIndex],
+          description: data.suggestedDescription
+        };
+        updateBlock(blockId, { offerings: updatedOfferings });
+      }
+      
+    } catch (error) {
+      console.error('Erreur suggestion description service IA:', error);
       alert(`❌ Erreur: ${error.message}`);
     } finally {
       setIsLoadingBlockAI(null);
@@ -1783,14 +1800,13 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="">Ajouter un bloc...</option>
-            <option value="h2">Titre H2</option>
-            <option value="h3">Sous-titre H3</option>
-            <option value="content">Contenu</option>
-            <option value="image">Image</option>
+                          <option value="h2">Titre H2</option>
+              <option value="h3">Sous-titre H3</option>
+              <option value="content">Contenu</option>
+              <option value="image">Image</option>
             <option value="cta">CTA</option>
             <option value="about">À propos</option>
-            <option value="service-offering">Service (simple)</option>
-            <option value="service-offerings">Services (groupe)</option>
+                            <option value="services">Services</option>
           </select>
         </div>
       </div>

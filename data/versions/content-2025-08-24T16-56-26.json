@@ -27,43 +27,39 @@
     },
     "blocks": [
       {
-        "id": "block-1",
-        "type": "h2",
-        "content": "test h2"
-      },
-      {
-        "id": "block-2",
-        "type": "image",
-        "content": "",
-        "image": {
-          "src": "/uploads/1756041551819-8cacd6a6.jpg",
-          "alt": ""
-        }
-      },
-      {
-        "id": "block-1756049175930",
-        "type": "service-offering",
-        "content": "",
-        "title": "Commercial excellence",
-        "description": "dsfsdfsfd",
-        "icon": ""
-      },
-      {
         "id": "block-1756049329266",
         "type": "service-offerings",
         "content": "",
-        "title": "OUR CORE OFFERINGS",
+        "title": "Ce que nous faisons",
         "offerings": [
           {
-            "id": "service-1",
-            "title": "Commercial Excellence",
-            "description": "We deliver tailored commercial excellence services...",
+            "id": "audit-seo-tech-1",
+            "title": "Audit SEO technique",
+            "description": "Scan du site, vitesse, indexation, erreurs 4xx/5xx. Priorités d’actions livrées sous 72h.",
+            "icon": "🧭"
+          },
+          {
+            "id": "landing-pages-ux-2",
+            "title": "Landing pages qui convertissent",
+            "description": "Structure claire, preuves sociales, appels à l’action testés. Prêtes à publier en 10 jours.",
+            "icon": "🚀"
+          },
+          {
+            "id": "contenus-editoriaux-3",
+            "title": "Contenus éditoriaux SEO",
+            "description": "Articles optimisés, plans sémantiques, balisage propre. Objectif: trafic qualifié et leads.",
+            "icon": "✍️"
+          },
+          {
+            "id": "service-1756054561307",
+            "title": "",
+            "description": "",
             "icon": ""
           },
           {
-            "id": "service-1756049336265",
-            "title": "wxxwwxc",
-            "description": "cxwxcwcwx",
+            "id": "service-1756054562864",
+            "title": "",
+            "description": "",
             "icon": ""
           }
         ]

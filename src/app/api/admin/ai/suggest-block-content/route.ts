@@ -3,7 +3,7 @@ import { readContent } from '@/lib/content';
 
 export async function POST(request: NextRequest) {
   try {
-    const { blockType, pageKey, context, existingBlocks } = await request.json();
+    const { blockType, pageKey, context, existingBlocks, existingTitle, existingOfferings } = await request.json();
     
     const content = await readContent();
     
@@ -58,6 +58,74 @@ export async function POST(request: NextRequest) {
         IMPORTANT: Le titre doit s'intégrer dans la structure existante.
         Style: précis, informatif, professionnel.`;
         break;
+      case 'services':
+        // Si on a des services existants avec des titres, générer seulement les descriptions
+        if (existingOfferings && existingOfferings.length > 0) {
+          const serviceTitles = existingOfferings.map((offering: any, index: number) => 
+            `${index + 1}. ${offering.title || 'Service sans titre'}`
+          ).join('\n');
+          
+          blockInstructions = `Génère UNIQUEMENT les descriptions pour les services existants au format JSON:
+          {
+            "offerings": [
+              {
+                "description": "Description pour le service 1"
+              },
+              {
+                "description": "Description pour le service 2"
+              }
+            ]
+          }
+          
+          Services existants:
+          ${serviceTitles}
+          
+          Règles pour les descriptions:
+          - 2-3 phrases maximum par description
+          - Bénéfices concrets et mesurables
+          - Processus ou méthodologie spécifique
+          - Évite le jargon marketing ("nous accompagnons", "expertise", "solutions sur-mesure")
+          - Style direct et professionnel
+          - Cohérent avec le titre du service
+          
+          IMPORTANT: Retourne uniquement le JSON avec les descriptions, sans les titres ni icônes.`;
+        } else {
+          // Si pas de services existants, générer une section complète
+          blockInstructions = `Génère une section complète d'offres de service au format JSON:
+          {
+            "title": "Titre de la section (optionnel, 3-6 mots)",
+            "offerings": [
+              {
+                "id": "unique-id-1",
+                "title": "Titre service 1",
+                "description": "Description service 1",
+                "icon": "Emoji 1"
+              },
+              {
+                "id": "unique-id-2", 
+                "title": "Titre service 2",
+                "description": "Description service 2",
+                "icon": "Emoji 2"
+              },
+              {
+                "id": "unique-id-3",
+                "title": "Titre service 3", 
+                "description": "Description service 3",
+                "icon": "Emoji 3"
+              }
+            ]
+          }
+          
+          Règles:
+          - 3-4 services maximum
+          - Titres variés et spécifiques
+          - Descriptions courtes et impactantes
+          - Icônes cohérentes avec le service
+          - Évite la répétition entre services
+          
+          IMPORTANT: Retourne uniquement le JSON valide, sans explications.`;
+        }
+        break;
       default:
         blockInstructions = `Génère du contenu clair et approprié pour ce type de bloc.`;
     }
@@ -93,6 +161,7 @@ Contraintes:
 Page: ${pageKey}
 Contexte: ${pageContext}
 Blocs existants: ${blocksContext || 'Aucun'}
+${blockType === 'services' && existingOfferings ? `Services existants: ${existingOfferings.map((offering: any, index: number) => `${index + 1}. ${offering.title || 'Service sans titre'}`).join(', ')}` : ''}
 Contexte supplémentaire: ${context || 'Aucun'}
 Timestamp: ${Date.now()}
 
@@ -137,6 +206,22 @@ Génère du contenu professionnel et direct pour ce bloc. Le contenu doit être 
     if (!suggestedContent) {
       console.error('Pas de contenu dans la réponse OpenAI:', openaiData);
       throw new Error('Pas de réponse de l\'IA');
+    }
+
+    // Pour les blocs de service, parser le JSON retourné
+    if (blockType === 'services') {
+      try {
+        const parsedContent = JSON.parse(suggestedContent.trim());
+        return NextResponse.json({
+          suggestedContent: parsedContent
+        });
+      } catch (parseError) {
+        console.error('Erreur parsing JSON pour bloc service:', parseError);
+        // Retourner le contenu brut si le parsing échoue
+        return NextResponse.json({
+          suggestedContent: suggestedContent.trim()
+        });
+      }
     }
 
     return NextResponse.json({

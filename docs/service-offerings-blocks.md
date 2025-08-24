@@ -1,111 +1,181 @@
-# Blocs de Service - Documentation
+# Bloc Services avec IA
 
 ## Vue d'ensemble
 
-Les blocs de service permettent d'afficher des offres de service avec un style "titre à gauche, description à droite", similaire à l'image de référence fournie.
+Le bloc Services permet d'afficher vos offres de services de manière structurée et professionnelle. Il est maintenant intégré avec l'IA pour générer automatiquement du contenu cohérent et impactant.
 
-## Types de blocs disponibles
+## Type de bloc disponible
 
-### 1. `service-offering` (Bloc simple)
+### Services (Groupe de services)
+Affiche une section complète avec plusieurs services.
 
-Affiche une seule offre de service.
-
-**Structure des données :**
-```javascript
+**Structure :**
+```typescript
 {
-  id: "unique-id",
-  type: "service-offering",
-  title: "Titre du service",
-  description: "Description détaillée du service...",
-  icon: "🏗️" // Optionnel
+  id: string;
+  type: 'services';
+  title?: string;
+  offerings: Array<{
+    id: string;
+    title: string;
+    description: string;
+    icon?: string;
+  }>;
 }
 ```
 
-### 2. `service-offerings` (Groupe de services)
+## Intégration IA 🤖
 
-Affiche plusieurs offres de service groupées avec un titre de section.
+### Fonctionnalités IA
 
-**Structure des données :**
-```javascript
+Le bloc Services est maintenant équipé d'un bouton IA qui permet de :
+
+- **Générer automatiquement** le contenu des services
+- **Créer des titres impactants** et mémorables
+- **Rédiger des descriptions concrètes** et professionnelles
+- **Suggérer des icônes appropriées** pour chaque service
+- **Maintenir la cohérence** avec le style de votre site
+
+### Comment utiliser l'IA
+
+1. **Dans l'interface admin** (`/admin`)
+2. **Ajoutez un nouveau bloc** de type "Services"
+3. **Cliquez sur le bouton "🤖 Suggestion IA"**
+4. **L'IA génère automatiquement** le contenu approprié
+5. **Personnalisez** selon vos besoins
+
+### Exemple de contenu généré par IA
+
+#### Services
+```json
 {
-  id: "unique-id",
-  type: "service-offerings",
-  title: "OUR CORE OFFERINGS", // Optionnel
-  offerings: [
+  "title": "NOS EXPERTISES",
+  "offerings": [
     {
-      id: "service-1",
-      title: "Commercial Excellence",
-      description: "Description du service...",
-      icon: "🏗️" // Optionnel
+      "id": "service-1",
+      "title": "Design d'Identité",
+      "description": "Logos, chartes graphiques, supports de communication. Identité visuelle cohérente et mémorable.",
+      "icon": "🎨"
     },
     {
-      id: "service-2",
-      title: "Enterprise & Integration Architecture",
-      description: "Description du service...",
-      icon: "🔧" // Optionnel
+      "id": "service-2", 
+      "title": "Développement Web",
+      "description": "Sites vitrines, e-commerce, applications sur mesure. Technologies modernes, performance optimale.",
+      "icon": "💻"
+    },
+    {
+      "id": "service-3",
+      "title": "Marketing Digital", 
+      "description": "Stratégie, SEO, réseaux sociaux, publicité ciblée. Augmentation de votre visibilité et de vos conversions.",
+      "icon": "📈"
     }
   ]
 }
 ```
 
-## Exemple d'utilisation
+## Utilisation dans le code
 
-### Dans un fichier de contenu
+### Ajout d'un bloc services
 
-```javascript
-// Exemple avec un groupe de services
-const content = {
-  blocks: [
+```jsx
+import Services from '@/blocks/defaults/Services';
+
+// Dans votre composant
+<Services
+  title="NOS EXPERTISES"
+  offerings={[
     {
-      id: "services-section",
-      type: "service-offerings",
-      title: "NOS SERVICES PRINCIPAUX",
-      offerings: [
-        {
-          id: "excellence-commerciale",
-          title: "Excellence Commerciale",
-          description: "Nous délivrons des services d'excellence commerciale sur mesure, basés sur la maturité, les capacités et les ambitions de votre organisation. Dans le contexte de ce qui est réalisable pour améliorer et implémenter, nous combinons des évaluations pratiques, des feuilles de route réalistes et des conceptions évolutives pour optimiser les processus, activer la technologie et obtenir des résultats mesurables."
-        },
-        {
-          id: "architecture-entreprise",
-          title: "Architecture d'Entreprise & Intégration",
-          description: "Bien que Salesforce soit au cœur de ce que nous faisons, il fonctionne rarement de manière isolée. Nous concevons des stratégies d'intégration, des modèles de données robustes et des workflows pour assurer des opérations transparentes à travers des systèmes tels que SAP, Oracle et Microsoft.",
-          icon: "🏗️"
-        },
-        {
-          id: "conseil-salesforce",
-          title: "Conseil Salesforce",
-          description: "Nous offrons des services de conseil spécifiques à Salesforce adaptés aux besoins spécifiques dans le cadre d'un projet plus large ou de solutions autonomes. Nos spécialistes certifiés garantissent que les ambitions sont satisfaites avec l'évolutivité et le succès à long terme à l'esprit."
-        }
-      ]
-    }
-  ]
-};
+      id: "service-1",
+      title: "Design d'Identité",
+      description: "Logos, chartes graphiques...",
+      icon: "🎨"
+    },
+    // ... autres services
+  ]}
+/>
 ```
-
-### Dans l'éditeur de blocs
-
-Pour ajouter ces blocs via l'interface d'administration, vous devrez :
-
-1. Ajouter les types `service-offering` et `service-offerings` à l'éditeur de blocs
-2. Créer les formulaires correspondants pour la saisie des données
-3. Intégrer ces blocs dans le système de rendu
 
 ## Styles CSS
 
 Les blocs utilisent les classes CSS suivantes :
 
-- `.service-offerings-section` : Conteneur principal du groupe
-- `.service-offering-block` : Bloc individuel de service
+- `.service-offering-block` : Conteneur principal d'un service
+- `.service-offerings-section` : Section contenant plusieurs services
 - `.service-offering-block h3` : Titre du service
 - `.service-offering-block p` : Description du service
 
-## Responsive Design
+### Responsive Design
 
-Les blocs sont entièrement responsifs :
-- Sur desktop : Titre à gauche (4 colonnes), description à droite (8 colonnes)
-- Sur mobile : Titre au-dessus, description en dessous
+Les blocs sont entièrement responsives :
+- **Desktop** : Layout en grille 12 colonnes
+- **Mobile** : Layout en colonne unique
+- **Tablet** : Adaptation automatique
 
-## Animations
+## Personnalisation
 
-Les blocs incluent des animations d'apparition avec un délai progressif pour chaque élément. 
+### Modifier les styles
+
+Vous pouvez personnaliser l'apparence en modifiant les classes CSS dans `src/app/globals.css` :
+
+```css
+.service-offering-block {
+  /* Vos styles personnalisés */
+}
+
+.service-offering-block h3 {
+  /* Personnalisation du titre */
+}
+
+.service-offering-block p {
+  /* Personnalisation de la description */
+}
+```
+
+### Ajouter des fonctionnalités
+
+Pour étendre les fonctionnalités, modifiez les composants dans `src/blocks/defaults/` :
+
+- `ServiceOffering.tsx` : Composant pour un service individuel
+- `ServiceOfferings.tsx` : Composant pour un groupe de services
+
+## Tests
+
+### Scripts de test disponibles
+
+```javascript
+// Test de l'IA pour service-offering
+import { testServiceOfferingIA } from '@/test-service-blocks-ia.js';
+await testServiceOfferingIA();
+
+// Test de l'IA pour service-offerings  
+import { testServiceOfferingsIA } from '@/test-service-blocks-ia.js';
+await testServiceOfferingsIA();
+```
+
+### Test dans l'interface admin
+
+1. Allez sur `/admin`
+2. Ajoutez un bloc de service
+3. Cliquez sur le bouton IA
+4. Vérifiez que le contenu est généré correctement
+
+## Avantages de l'intégration IA
+
+✅ **Gain de temps** : Génération automatique de contenu  
+✅ **Cohérence** : Style uniforme avec votre site  
+✅ **Qualité** : Contenu professionnel et impactant  
+✅ **Flexibilité** : Personnalisation possible après génération  
+✅ **Évolutivité** : Facile d'ajouter de nouveaux services  
+
+## Support
+
+Pour toute question ou problème avec les blocs de service et l'IA :
+
+1. Consultez les logs dans la console du navigateur
+2. Vérifiez que l'API OpenAI est configurée
+3. Testez avec les scripts de test fournis
+4. Contactez l'équipe de développement si nécessaire
+
+---
+
+*Dernière mise à jour : Août 2024* 
