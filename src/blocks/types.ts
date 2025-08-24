@@ -17,8 +17,24 @@ export type AboutBlock = BlockBase & {
   title: string;
   content: string;
 };
+export type ServiceOfferingBlock = BlockBase & { 
+  type: 'service-offering'; 
+  title: string;
+  description: string;
+  icon?: string;
+};
+export type ServiceOfferingsBlock = BlockBase & { 
+  type: 'service-offerings'; 
+  title?: string;
+  offerings: Array<{
+    id: string;
+    title: string;
+    description: string;
+    icon?: string;
+  }>;
+};
 
-export type AnyBlock = H2Block | H3Block | ContentBlock | ImageBlock | CtaBlock | AboutBlock;
+export type AnyBlock = H2Block | H3Block | ContentBlock | ImageBlock | CtaBlock | AboutBlock | ServiceOfferingBlock | ServiceOfferingsBlock;
 
 import React from 'react';
 

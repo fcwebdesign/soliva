@@ -158,6 +158,27 @@ export default function HomeClient({ content }) {
         }
       });
     }
+
+    // Animation des blocs de service avec IntersectionObserver
+    if (previewContent?.blocks && previewContent.blocks.length > 0) {
+      const blocks = document.querySelectorAll('.service-offering-block');
+      const observer = new window.IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target); // Pour ne l'animer qu'une fois
+            }
+          });
+        },
+        { threshold: 0.15 }
+      );
+      blocks.forEach(block => observer.observe(block));
+      
+      // Cleanup function
+      return () => observer.disconnect();
+    }
+
   }, [previewContent?.blocks]);
   
 
@@ -181,7 +202,7 @@ export default function HomeClient({ content }) {
         {/* Section Hero - toujours affichée */}
         <div className="home-mask">
           <div className="header">
-            <div className="container baseline absolute w-screen flex justify-end">
+            <div className="baseline absolute w-screen flex justify-end">
               <h2 className="studio-header tracking-widest leading-snug">
                 {(previewContent?.hero?.subtitle || 'creative studio.\ndigital & brand strategy.').split('\n').map((line, index) => (
                   <span key={index}>

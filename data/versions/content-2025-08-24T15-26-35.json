@@ -24,7 +24,23 @@
     "hero": {
       "title": "soliva",
       "subtitle": "creative studio.\ndigitaI & brand strategy."
-    }
+    },
+    "blocks": [
+      {
+        "id": "block-1",
+        "type": "h2",
+        "content": "test h2"
+      },
+      {
+        "id": "block-2",
+        "type": "image",
+        "content": "",
+        "image": {
+          "src": "/uploads/1756041551819-8cacd6a6.jpg",
+          "alt": ""
+        }
+      }
+    ]
   },
   "contact": {
     "hero": {
@@ -59,7 +75,7 @@
         "alt": "L'équipe Soliva au travail dans notre espace créatif"
       }
     },
-    "description": "<p>Vous avez des questions ? Des idées à partager ? On est là. Que vous soyez à Paris ou au Havre, n’hésitez pas à nous écrire. On adore échanger, alors faites le premier pas. Votre message est le début d'une conversation qui pourrait tout changer. Allez-y, on attend de vous lire !</p>"
+    "description": "<p><strong>Vous avez des questions ? Des idées à partager ?</strong> </p><p>On est là. Que vous soyez à Paris ou au Havre, n’hésitez pas à nous écrire. On adore échanger, alors faites le premier pas. Votre message est le début d'une conversation qui pourrait tout changer. Allez-y, on attend de vous lire !</p>"
   },
   "studio": {
     "hero": {

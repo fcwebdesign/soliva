@@ -27,36 +27,26 @@
     },
     "blocks": [
       {
-        "id": "block-1756049329266",
-        "type": "service-offerings",
+        "id": "block-1",
+        "type": "h2",
+        "content": "test h2"
+      },
+      {
+        "id": "block-2",
+        "type": "image",
         "content": "",
-        "title": "",
-        "offerings": [
-          {
-            "id": "service-1",
-            "title": "Commercial Excellence",
-            "description": "We deliver tailored commercial excellence services grounded in your organization’s maturity, capabilities, and ambitions. In the context of what is achievable to improve and implement, we combine hands-on assessments, realistic roadmaps, and scalable designs to optimize processes, enable technology, and achieve measurable results. We call it ComEx with context.",
-            "icon": ""
-          },
-          {
-            "id": "service-1756049336265",
-            "title": "Enterprise & Integration Architecture",
-            "description": "While Salesforce is at the heart of what we do, it rarely operates in isolation. We design integration strategies, robust data models, and workflows to ensure seamless operations across systems such as SAP, Oracle, and Microsoft.",
-            "icon": ""
-          },
-          {
-            "id": "service-1756052392927",
-            "title": "Salesforce Advisory",
-            "description": "We offer Salesforce-specific advisory services tailored to specific needs as part of a larger project or standalone solutions. Our certified specialists ensure ambitions are met with scalability and long-term success in mind.",
-            "icon": ""
-          },
-          {
-            "id": "service-1756052402028",
-            "title": "Salesforce Implementation",
-            "description": "We are a one-stop Salesforce implementation partner, providing all commercial and technical resources needed for a successful implementation. We deliver tailored solutions that align with unique business needs as well as dedicated support for change and adoption.",
-            "icon": ""
-          }
-        ]
+        "image": {
+          "src": "/uploads/1756041551819-8cacd6a6.jpg",
+          "alt": ""
+        }
+      },
+      {
+        "id": "block-1756049175930",
+        "type": "service-offering",
+        "content": "",
+        "title": "Commercial excellence",
+        "description": "dsfsdfsfd",
+        "icon": "A"
       }
     ]
   },

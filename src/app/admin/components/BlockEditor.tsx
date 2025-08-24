@@ -9,15 +9,23 @@ import VersionList from './VersionList';
 
 interface Block {
   id: string;
-  type: 'h2' | 'h3' | 'content' | 'image' | 'cta' | 'about';
+  type: 'h2' | 'h3' | 'content' | 'image' | 'cta' | 'about' | 'service-offering' | 'service-offerings';
   content: string;
   title?: string;
+  description?: string;
   image?: {
     src: string;
     alt: string;
   };
   ctaText?: string;
   ctaLink?: string;
+  icon?: string;
+  offerings?: Array<{
+    id: string;
+    title: string;
+    description: string;
+    icon?: string;
+  }>;
 }
 
 interface BlockEditorProps {
@@ -245,7 +253,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
 
   // Fonction pour nettoyer les blocs invalides
   const cleanInvalidBlocks = (blocks: Block[]): Block[] => {
-    const validTypes: Block['type'][] = ['h2', 'h3', 'content', 'image', 'cta', 'about'];
+    const validTypes: Block['type'][] = ['h2', 'h3', 'content', 'image', 'cta', 'about', 'service-offering', 'service-offerings'];
     
     const filteredBlocks = blocks.filter(block => {
       // Supprimer les blocs avec des types invalides
@@ -302,7 +310,19 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       content: '',
       ...(type === 'image' && { image: { src: '', alt: '' } }),
       ...(type === 'cta' && { ctaText: '', ctaLink: '' }),
-      ...(type === 'about' && { title: '', content: '' })
+      ...(type === 'about' && { title: '', content: '' }),
+      ...(type === 'service-offering' && { title: '', description: '', icon: '' }),
+      ...(type === 'service-offerings' && { 
+        title: 'OUR CORE OFFERINGS', 
+        offerings: [
+          {
+            id: 'service-1',
+            title: 'Commercial Excellence',
+            description: 'We deliver tailored commercial excellence services...',
+            icon: ''
+          }
+        ]
+      })
     };
     
     const newBlocks = [...blocks, newBlock];
@@ -347,6 +367,40 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         case 'about':
           return (block.title || block.content) ? 
             `<div class="about-block"><h2>${block.title || ''}</h2><div>${block.content || ''}</div></div>` : '';
+        case 'service-offering':
+          return (block.title || block.description) ? 
+            `<div class="service-offering-block">
+              <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                <div class="md:col-span-7">
+                  ${block.icon ? `<div class="mb-2"><span class="text-blue-400 text-lg">${block.icon}</span></div>` : ''}
+                  <h3 class="text-2xl md:text-3xl font-bold tracking-tight text-black">${block.title || ''}</h3>
+                </div>
+                <div class="md:col-span-5 flex justify-end">
+                  <p class="max-w-[68ch]">${block.description || ''}</p>
+                </div>
+              </div>
+            </div>` : '';
+        case 'service-offerings':
+          if (!block.offerings || block.offerings.length === 0) return '';
+          const offeringsHtml = block.offerings.map(offering => `
+            <div class="service-offering-block border-b border-black/10 py-8 last:border-b-0">
+              <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                                  <div class="md:col-span-7">
+                    ${offering.icon ? `<div class="mb-2"><span class="text-blue-400 text-lg">${offering.icon}</span></div>` : ''}
+                    <h3 class="text-2xl md:text-3xl font-bold tracking-tight text-black">${offering.title || ''}</h3>
+                  </div>
+                  <div class="md:col-span-5 flex justify-end">
+                    <p class="max-w-[68ch]">${offering.description || ''}</p>
+                  </div>
+              </div>
+            </div>
+          `).join('');
+          return `<section class="service-offerings-section py-16">
+            <div class="container mx-auto">
+              ${block.title ? `<div class="mb-12"><h2 class="text-2xl md:text-3xl font-bold tracking-tight text-black">${block.title}</h2></div>` : ''}
+              <div class="space-y-0">${offeringsHtml}</div>
+            </div>
+          </section>`;
         default:
           return '';
       }
@@ -683,6 +737,141 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
           </div>
         );
       
+      case 'service-offering':
+        return (
+          <div className="block-editor">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Titre du service
+                </label>
+                <input
+                  type="text"
+                  value={block.title || ''}
+                  onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                  placeholder="Ex: Commercial Excellence"
+                  className="block-input"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Description
+                </label>
+                <textarea
+                  value={block.description || ''}
+                  onChange={(e) => updateBlock(block.id, { description: e.target.value })}
+                  placeholder="Description détaillée du service..."
+                  className="block-input min-h-[100px]"
+                  rows={4}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Icône (optionnel)
+                </label>
+                <input
+                  type="text"
+                  value={block.icon || ''}
+                  onChange={(e) => updateBlock(block.id, { icon: e.target.value })}
+                  placeholder="Ex: 🏗️ ou A"
+                  className="block-input"
+                />
+              </div>
+            </div>
+          </div>
+        );
+      
+      case 'service-offerings':
+        return (
+          <div className="block-editor">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Titre de la section
+                </label>
+                <input
+                  type="text"
+                  value={block.title || ''}
+                  onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                  placeholder="Ex: OUR CORE OFFERINGS"
+                  className="block-input"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Services ({block.offerings?.length || 0})
+                </label>
+                <div className="space-y-3">
+                  {(block.offerings || []).map((offering, index) => (
+                    <div key={offering.id} className="border border-gray-200 rounded-lg p-3">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm font-medium text-gray-600">Service {index + 1}</span>
+                        <button
+                          onClick={() => {
+                            const newOfferings = block.offerings?.filter((_, i) => i !== index) || [];
+                            updateBlock(block.id, { offerings: newOfferings });
+                          }}
+                          className="text-red-500 hover:text-red-700 text-sm"
+                        >
+                          Supprimer
+                        </button>
+                      </div>
+                      <input
+                        type="text"
+                        value={offering.title}
+                        onChange={(e) => {
+                          const newOfferings = [...(block.offerings || [])];
+                          newOfferings[index] = { ...offering, title: e.target.value };
+                          updateBlock(block.id, { offerings: newOfferings });
+                        }}
+                        placeholder="Titre du service"
+                        className="block-input mb-2"
+                      />
+                      <textarea
+                        value={offering.description}
+                        onChange={(e) => {
+                          const newOfferings = [...(block.offerings || [])];
+                          newOfferings[index] = { ...offering, description: e.target.value };
+                          updateBlock(block.id, { offerings: newOfferings });
+                        }}
+                        placeholder="Description du service"
+                        className="block-input mb-2 min-h-[80px]"
+                        rows={3}
+                      />
+                      <input
+                        type="text"
+                        value={offering.icon || ''}
+                        onChange={(e) => {
+                          const newOfferings = [...(block.offerings || [])];
+                          newOfferings[index] = { ...offering, icon: e.target.value };
+                          updateBlock(block.id, { offerings: newOfferings });
+                        }}
+                        placeholder="Icône (optionnel)"
+                        className="block-input"
+                      />
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => {
+                      const newOffering = {
+                        id: `service-${Date.now()}`,
+                        title: '',
+                        description: '',
+                        icon: ''
+                      };
+                      const newOfferings = [...(block.offerings || []), newOffering];
+                      updateBlock(block.id, { offerings: newOfferings });
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 border-dashed rounded-lg text-gray-500 hover:text-gray-700 hover:border-gray-400 transition-colors"
+                  >
+                    + Ajouter un service
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      
       default:
         return null;
     }
@@ -696,6 +885,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       case 'image': return 'Image';
       case 'cta': return 'CTA';
       case 'about': return 'À propos';
+      case 'service-offering': return 'Service (simple)';
+      case 'service-offerings': return 'Services (groupe)';
       default: return type;
     }
   };
@@ -1598,6 +1789,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             <option value="image">Image</option>
             <option value="cta">CTA</option>
             <option value="about">À propos</option>
+            <option value="service-offering">Service (simple)</option>
+            <option value="service-offerings">Services (groupe)</option>
           </select>
         </div>
       </div>

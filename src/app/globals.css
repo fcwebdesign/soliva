@@ -8,11 +8,12 @@
   --surface: #f5f5f5;
   --text: #333333;
   --text-secondary: #666666;
+  --max-width: 1280px;
 }
 
 /* Thème sombre */
 [data-theme="dark"] {
-  --bg: #0a0a0a;
+  --bg: #181515;
   --fg: #ffffff;
   --accent: #0066CC;
   --surface: #1a1a1a;
@@ -32,7 +33,8 @@ strong {
 body {
   font-family: "TWK Lausanne", "Inter";
   color: var(--fg);
-  max-width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
   overflow-x: hidden;
   background-color: var(--bg);
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -69,8 +71,16 @@ h2 {
   font-size: clamp(1rem, 0.2518rem + 2.3944vw, 3.125rem);
 }
 
-a,
 p {
+  display: block;
+  color: var(--fg);
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+
+a {
   display: block;
   text-decoration: none;
   color: var(--fg);
@@ -83,8 +93,11 @@ p {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  padding: 2em;
+  right: 0;
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 2rem 1rem;
   display: flex;
   gap: 8em;
   z-index: 2;
@@ -105,6 +118,8 @@ p {
   gap: 0.25rem;
   font-size: 2rem;
   font-weight: 600;
+  margin-bottom: 0 !important;
+  line-height: 1.1;
 }
 .logo-dot {
   display: inline-block;
@@ -118,6 +133,9 @@ p {
   font-weight: 600;
   position: relative;
   transition: all 0.3s ease;
+  margin-bottom: 0 !important;
+  font-size: inherit;
+  line-height: 1.1;
 }
 
 .nav-items a:hover {
@@ -202,13 +220,17 @@ p {
   position: relative;
   transition: background-color 0.3s ease;
   overflow-x: hidden;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
 }
 
 .home-mask {
-  width: 100%;
+  width: 100vw;
   height: 100vh;
   overflow: hidden; /* 💥 masque tout dépassement */
   position: relative;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
 }
 
 .home .header {
@@ -283,6 +305,9 @@ p {
   position: absolute;
   inset: 0;
   z-index: 0;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
 }
 
 
@@ -545,7 +570,7 @@ p {
 }
 
 .contact {
-  width: 100vw;
+  width: 100%;
   height: 100%;
   min-height: 100svh;
 }
@@ -1212,7 +1237,10 @@ html.preview-mode body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
+  right: 0;
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
   height: 100svh;
   transform-origin: center top;
   background-color: var(--fg);
@@ -2109,7 +2137,7 @@ html.preview-mode body {
 
 /* Styles pour les blocs de contenu */
 .blocks-container {
-  max-width: 1200px;
+  max-width: var(--max-width);
   margin: 0 auto;
   padding: 2rem 1rem;
 }
@@ -2182,12 +2210,75 @@ html.preview-mode body {
 
 /* Styles pour la page d'accueil avec blocs */
 .home-content {
-  padding: 4rem 1rem 2rem 1rem;
+  padding: 0 0 2rem 0;
   background-color: var(--bg);
   position: relative;
   z-index: 1;
   transition: background-color 0.3s ease;
+  margin-top: -20vw;
 }
+
+/* Styles pour les blocs de service */
+.service-offerings-section {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.service-offering-block {
+  transition: all 0.3s ease;
+}
+
+.service-offering-block:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.service-offering-block h3 {
+  font-size: clamp(1.5rem, 2vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text);
+  margin: 0;
+}
+
+.service-offering-block p {
+  font-size: 1rem;
+  line-height: 1.1;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  font-weight: 300;
+}
+
+/* Responsive design pour les blocs de service */
+@media (max-width: 768px) {
+  .service-offering-block {
+    padding: 1.5rem 0;
+  }
+  
+  .service-offering-block h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .service-offerings-section {
+    padding: 2rem 0;
+  }
+}
+
+/* Animation d'apparition pour les blocs de service */
+.service-offering-block {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s cubic-bezier(.23,1.02,.32,1), transform 0.7s cubic-bezier(.23,1.02,.32,1);
+  will-change: opacity, transform;
+}
+
+.service-offering-block.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+
 
 
 

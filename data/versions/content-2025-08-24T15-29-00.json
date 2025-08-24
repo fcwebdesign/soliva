@@ -27,9 +27,26 @@
     },
     "blocks": [
       {
-        "id": "block-home-1",
+        "id": "block-1",
         "type": "h2",
         "content": "test h2"
+      },
+      {
+        "id": "block-2",
+        "type": "image",
+        "content": "",
+        "image": {
+          "src": "/uploads/1756041551819-8cacd6a6.jpg",
+          "alt": ""
+        }
+      },
+      {
+        "id": "block-1756049175930",
+        "type": "service-offering",
+        "content": "",
+        "title": "Commercial excellence",
+        "description": "dsfsdfsfd",
+        "icon": ""
       }
     ]
   },
