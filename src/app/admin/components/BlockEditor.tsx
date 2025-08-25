@@ -4,7 +4,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useRouter } from 'next/navigation';
 import { createPortal } from 'react-dom';
 import WysiwygEditor from './WysiwygEditor';
-import MediaUploader from './MediaUploader';
+import MediaUploader, { LogoUploader } from './MediaUploader';
 import VersionList from './VersionList';
 
 interface Block {
@@ -924,15 +924,27 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Logos clients
                 </label>
-                <div className="space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
                   {(block.logos || []).map((logo, index) => (
                     <div key={index} className="p-3 border border-gray-200 rounded-lg">
-                      <div className="flex items-center space-x-3 mb-3">
-                        <div className="flex-1">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-medium text-gray-600">Logo {index + 1}</span>
+                        <button
+                          onClick={() => {
+                            const newLogos = (block.logos || []).filter((_, i) => i !== index);
+                            updateBlock(block.id, { logos: newLogos });
+                          }}
+                          className="text-red-500 hover:text-red-700 text-sm"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                      <div className="space-y-2">
+                        <div>
                           <label className="block text-xs font-medium text-gray-600 mb-1">
-                            Image du logo
+                            Image
                           </label>
-                          <MediaUploader
+                          <LogoUploader
                             currentUrl={logo.src || logo.image || ''}
                             onUpload={(src) => {
                               const newLogos = [...(block.logos || [])];
@@ -941,31 +953,22 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                             }}
                           />
                         </div>
-                        <button
-                          onClick={() => {
-                            const newLogos = (block.logos || []).filter((_, i) => i !== index);
-                            updateBlock(block.id, { logos: newLogos });
-                          }}
-                          className="text-red-500 hover:text-red-700 p-1"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                      <div className="flex-1">
-                        <label className="block text-xs font-medium text-gray-600 mb-1">
-                          Nom du client
-                        </label>
-                        <input
-                          type="text"
-                          value={logo.alt || logo.name || ''}
-                          onChange={(e) => {
-                            const newLogos = [...(block.logos || [])];
-                            newLogos[index] = { ...newLogos[index], alt: e.target.value };
-                            updateBlock(block.id, { logos: newLogos });
-                          }}
-                          placeholder="Ex: Apple, Google, Microsoft..."
-                          className="block-input"
-                        />
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">
+                            Nom du client
+                          </label>
+                          <input
+                            type="text"
+                            value={logo.alt || logo.name || ''}
+                            onChange={(e) => {
+                              const newLogos = [...(block.logos || [])];
+                              newLogos[index] = { ...newLogos[index], alt: e.target.value };
+                              updateBlock(block.id, { logos: newLogos });
+                            }}
+                            placeholder="Ex: Apple"
+                            className="block-input text-sm"
+                          />
+                        </div>
                       </div>
                     </div>
                   ))}

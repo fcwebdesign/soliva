@@ -47,6 +47,14 @@ export default function AdminPage() {
     fetchContent();
   }, []);
 
+  // Ajouter la classe admin-page au body
+  useEffect(() => {
+    document.body.classList.add('admin-page');
+    return () => {
+      document.body.classList.remove('admin-page');
+    };
+  }, []);
+
   // Initialiser la page depuis l'URL (une seule fois)
   useEffect(() => {
     const pageFromUrl = searchParams.get('page');
@@ -519,7 +527,7 @@ export default function AdminPage() {
   const currentPageConfig = [...PAGES, ...SETTINGS].find(p => p.id === currentPage);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="admin-page min-h-screen bg-gray-50">
       {/* Sidebar */}
       <Sidebar 
         pages={PAGES}
@@ -748,7 +756,7 @@ export default function AdminPage() {
 
         {/* Contenu principal */}
         <main className="flex-1 p-6">
-          <div className="max-w-7xl mx-auto">
+          <div className="w-full">
             {currentPageConfig && (
               <>
                 {/* Informations de statut - masquées pour la navigation et footer */}
