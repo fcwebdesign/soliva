@@ -61,7 +61,7 @@ export default function Projects({ title = "NOS RÉALISATIONS", maxProjects = 6,
   }
 
   return (
-    <section className="projects-section py-16">
+    <section className="projects-section py-32">
       <div className="container mx-auto">
         {/* Titre de la section */}
         {title && (
@@ -112,29 +112,8 @@ export default function Projects({ title = "NOS RÉALISATIONS", maxProjects = 6,
                           <img 
                             src={project.image || '/placeholder-project.jpg'} 
                             alt={project.alt || project.title}
-                            className="w-full object-cover rounded-lg aspect-[1/1]"
-                            onMouseEnter={(e) => {
-                              const cursor = document.createElement('div');
-                              cursor.className = 'custom-cursor';
-                              cursor.innerHTML = '→';
-                              document.body.appendChild(cursor);
-                              
-                              const updateCursor = (e: MouseEvent) => {
-                                cursor.style.left = e.clientX + 'px';
-                                cursor.style.top = e.clientY + 'px';
-                              };
-                              
-                              const handleMouseMove = (e: MouseEvent) => updateCursor(e);
-                              const handleMouseLeave = () => {
-                                if (cursor.parentNode) {
-                                  document.body.removeChild(cursor);
-                                }
-                                document.removeEventListener('mousemove', handleMouseMove);
-                              };
-                              
-                              document.addEventListener('mousemove', handleMouseMove);
-                              e.target.addEventListener('mouseleave', handleMouseLeave);
-                            }}
+                                                          className="w-full object-cover rounded-lg aspect-[1/1] cursor-pointer"
+
                           />
                         </div>
                         

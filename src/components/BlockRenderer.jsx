@@ -4,6 +4,40 @@ import HeroSignature from './HeroSignature';
 import StorytellingSection from './StorytellingSection';
 
 const BlockRenderer = ({ blocks = [] }) => {
+  // Gestion du thème par bloc avec priorité sur le scroll
+  React.useEffect(() => {
+    // Observer les blocs pour détecter lequel est visible
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const blockType = entry.target.dataset.blockType;
+          const blockTheme = entry.target.dataset.blockTheme;
+          
+          // Si le bloc a un thème spécifique, l'appliquer
+          if (blockTheme && blockTheme !== 'auto') {
+            document.documentElement.setAttribute('data-theme', blockTheme);
+          } else {
+            // Sinon, appliquer le thème par défaut selon le type
+            if (blockType === 'services' || blockType === 'projects') {
+              document.documentElement.setAttribute('data-theme', 'dark');
+            } else if (blockType === 'logos') {
+              document.documentElement.setAttribute('data-theme', 'light');
+            }
+          }
+        }
+      });
+    }, { threshold: 0.3 }); // Seuil plus bas pour une détection plus rapide
+
+    // Observer tous les blocs
+    setTimeout(() => {
+      document.querySelectorAll('[data-block-type]').forEach(el => {
+        observer.observe(el);
+      });
+    }, 100);
+
+    return () => observer.disconnect();
+  }, [blocks]);
+
   const renderBlock = (block) => {
     switch (block.type) {
       case 'content':
@@ -61,7 +95,7 @@ const BlockRenderer = ({ blocks = [] }) => {
       
       case 'services':
         return (
-          <section key={block.id} className="service-offerings-section py-16">
+          <section key={block.id} className="service-offerings-section py-32" data-block-type="services" data-block-theme={block.theme || 'auto'}>
             <div className="container mx-auto">
               {/* Titre de la section */}
               {block.title && (
@@ -106,9 +140,10 @@ const BlockRenderer = ({ blocks = [] }) => {
           </section>
         );
       
+
       case 'projects':
         return (
-          <section key={block.id} className="projects-section py-16">
+          <section key={block.id} className="projects-section py-32" data-block-type="projects" data-block-theme={block.theme || 'auto'}>
             <div className="container mx-auto">
               {/* Titre de la section et navigation du carousel */}
               {(() => {
@@ -162,8 +197,9 @@ const BlockRenderer = ({ blocks = [] }) => {
                   displayedProjects = allProjects.slice(0, block.maxProjects || 6);
                 }
                 
-                // Déterminer si on utilise un carousel
+                // Déterminer si on utilise un carousel ou si on a besoin de navigation
                 const useCarousel = selectedCount > 3;
+                const needsNavigation = selectedCount > 3 || (selectedCount > 1 && selectedCount > 2);
                 
                 return (
                   <div className="mb-12 flex justify-between items-center">
@@ -173,12 +209,29 @@ const BlockRenderer = ({ blocks = [] }) => {
                       </h2>
                     )}
                     
-                    {/* Navigation du carousel - sur la même ligne que le titre */}
-                    {useCarousel && (() => {
-                      const projectsPerPage = 3;
-                      const maxPages = Math.ceil(displayedProjects.length / projectsPerPage);
+                    {/* Navigation - sur la même ligne que le titre */}
+                    {needsNavigation && (() => {
+                      // Déterminer le nombre de projets par page selon le layout et la taille d'écran
                       const [currentPage, setCurrentPage] = useState(0);
+                      const [windowWidth, setWindowWidth] = useState(0);
                       
+                      useEffect(() => {
+                        const updateWidth = () => setWindowWidth(window.innerWidth);
+                        updateWidth();
+                        window.addEventListener('resize', updateWidth);
+                        return () => window.removeEventListener('resize', updateWidth);
+                      }, []);
+                      
+                      let projectsPerPage;
+                      if (selectedCount === 1) {
+                        projectsPerPage = 1; // Fullscreen
+                      } else if (selectedCount === 2) {
+                        projectsPerPage = windowWidth < 768 ? 1 : 2; // 1 sur mobile, 2 sur desktop
+                      } else {
+                        projectsPerPage = windowWidth < 768 ? 1 : windowWidth < 1024 ? 2 : 3; // 1/2/3 selon la taille
+                      }
+                      
+                      const maxPages = Math.ceil(displayedProjects.length / projectsPerPage);
                       const isFirstPage = currentPage === 0;
                       const isLastPage = currentPage === maxPages - 1;
                       
@@ -281,44 +334,52 @@ const BlockRenderer = ({ blocks = [] }) => {
                   displayedProjects = allProjects.slice(0, block.maxProjects || 6);
                 }
                 
-                // Déterminer si on utilise un carousel
+                // Déterminer si on utilise un carousel ou si on a besoin de navigation
                 const useCarousel = selectedCount > 3;
+                const needsNavigation = selectedCount > 3 || (selectedCount > 1 && selectedCount > 2);
                 
-                if (useCarousel) {
-                  // Carousel pour plus de 3 projets
+                if (needsNavigation) {
+                  // Layout avec navigation pour plus de projets que d'espaces disponibles
+                  const [windowWidth, setWindowWidth] = useState(0);
+                  
+                  useEffect(() => {
+                    const updateWidth = () => setWindowWidth(window.innerWidth);
+                    updateWidth();
+                    window.addEventListener('resize', updateWidth);
+                    return () => window.removeEventListener('resize', updateWidth);
+                  }, []);
+                  
+                  let projectsPerPage;
+                  let gridClass;
+                  
+                  if (selectedCount === 1) {
+                    projectsPerPage = 1;
+                    gridClass = "grid grid-cols-1 gap-8";
+                  } else if (selectedCount === 2) {
+                    projectsPerPage = windowWidth < 768 ? 1 : 2;
+                    gridClass = "flex transition-transform duration-300 ease-in-out";
+                  } else {
+                    projectsPerPage = windowWidth < 768 ? 1 : windowWidth < 1024 ? 2 : 3;
+                    gridClass = "flex transition-transform duration-300 ease-in-out";
+                  }
+                  
                   return (
                     <div className="relative">
                       <div className="overflow-hidden">
-                        <div className="flex transition-transform duration-300 ease-in-out" id={`carousel-${block.id}`} style={{ transform: 'translateX(0%)' }}>
+                        <div className={gridClass} id={`carousel-${block.id}`} style={{ transform: 'translateX(0%)' }}>
                           {displayedProjects.map((project, index) => (
-                            <div key={project.id} className="project-card flex-shrink-0 w-full md:w-1/2 lg:w-1/3 px-4">
-                              <div className="project-image mb-4 relative cursor-none">
+                            <div key={project.id} className={`project-card flex-shrink-0 ${
+                              selectedCount === 1 ? 'w-full' :
+                              selectedCount === 2 ? 'w-full md:w-1/2' :
+                              'w-full md:w-1/2 lg:w-1/3'
+                            } px-4`}>
+                              <div className="project-image mb-4">
                                 <img 
                                   src={project.image} 
                                   alt={project.alt}
-                                  className="w-full object-cover rounded-lg aspect-[1/1]"
-                                  onMouseEnter={(e) => {
-                                    const cursor = document.createElement('div');
-                                    cursor.className = 'custom-cursor';
-                                    cursor.innerHTML = '→';
-                                    document.body.appendChild(cursor);
-                                    
-                                    const updateCursor = (e) => {
-                                      cursor.style.left = e.clientX + 'px';
-                                      cursor.style.top = e.clientY + 'px';
-                                    };
-                                    
-                                    const handleMouseMove = (e) => updateCursor(e);
-                                    const handleMouseLeave = () => {
-                                      if (cursor.parentNode) {
-                                        document.body.removeChild(cursor);
-                                      }
-                                      document.removeEventListener('mousemove', handleMouseMove);
-                                    };
-                                    
-                                    document.addEventListener('mousemove', handleMouseMove);
-                                    e.target.addEventListener('mouseleave', handleMouseLeave);
-                                  }}
+                                  className={`w-full object-cover rounded-lg cursor-pointer ${
+                                    selectedCount === 1 ? 'h-96' : 'aspect-[1/1]'
+                                  }`}
                                 />
                               </div>
                               <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
@@ -332,7 +393,7 @@ const BlockRenderer = ({ blocks = [] }) => {
                     </div>
                   );
                 } else {
-                  // Grille normale pour 1-3 projets
+                  // Grille normale pour 1-3 projets sans navigation
                   let gridClass;
                   if (selectedCount === 1) {
                     gridClass = "grid grid-cols-1 gap-8"; // Fullscreen
@@ -350,7 +411,7 @@ const BlockRenderer = ({ blocks = [] }) => {
                             <img 
                               src={project.image} 
                               alt={project.alt}
-                              className={`w-full object-cover rounded-lg ${
+                              className={`w-full object-cover rounded-lg cursor-pointer ${
                                 selectedCount === 1 ? 'h-96' : 'aspect-[1/1]'
                               }`}
                             />
@@ -365,6 +426,34 @@ const BlockRenderer = ({ blocks = [] }) => {
                   );
                 }
               })()}
+            </div>
+          </section>
+        );
+      
+      case 'logos':
+        return (
+          <section key={block.id} className="logos-section py-32" data-block-type="logos" data-block-theme={block.theme || 'auto'}>
+            <div className="container mx-auto">
+              {/* Titre de la section */}
+              {block.title && (
+                <div className="mb-12">
+                  <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
+                    {block.title}
+                  </h2>
+                </div>
+              )}
+
+              {/* Grille des logos clients */}
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 justify-items-center">
+                {(block.logos || []).map((logo, index) => (
+                  <div key={index} className="logo-item">
+                    <img
+                      src={logo.src || logo.image}
+                      alt={logo.alt || logo.name || `Logo client ${index + 1}`}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </section>
         );

@@ -9,7 +9,7 @@ import VersionList from './VersionList';
 
 interface Block {
   id: string;
-  type: 'h2' | 'h3' | 'content' | 'image' | 'cta' | 'about' | 'services' | 'projects';
+  type: 'h2' | 'h3' | 'content' | 'image' | 'cta' | 'about' | 'services' | 'projects' | 'logos';
   content: string;
   title?: string;
   description?: string;
@@ -28,6 +28,12 @@ interface Block {
   }>;
   maxProjects?: number;
   selectedProjects?: string[];
+  logos?: Array<{
+    src?: string;
+    image?: string;
+    alt?: string;
+    name?: string;
+  }>;
 }
 
 interface BlockEditorProps {
@@ -255,7 +261,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
 
   // Fonction pour nettoyer les blocs invalides
   const cleanInvalidBlocks = (blocks: Block[]): Block[] => {
-    const validTypes: Block['type'][] = ['h2', 'h3', 'content', 'image', 'cta', 'about', 'services', 'projects'];
+    const validTypes: Block['type'][] = ['h2', 'h3', 'content', 'image', 'cta', 'about', 'services', 'projects', 'logos'];
     
     const filteredBlocks = blocks.filter(block => {
       // Supprimer les blocs avec des types invalides
@@ -264,9 +270,9 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         return false;
       }
       
-      // Nettoyer les blocs content vides
-      if (block.type === 'content' && (!block.content || (typeof block.content === 'string' && block.content.trim() === ''))) {
-        console.warn(`🚫 Bloc content vide supprimé`);
+      // Nettoyer les blocs content vides (seulement s'ils sont vraiment vides après édition)
+      if (block.type === 'content' && block.content === null) {
+        console.warn(`🚫 Bloc content null supprimé`);
         return false;
       }
       
@@ -306,6 +312,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   };
 
   const addBlock = (type: Block['type']) => {
+    console.log('🔧 Ajout du bloc:', type);
+    
     const newBlock: Block = {
       id: `block-${Date.now()}`,
       type,
@@ -328,8 +336,14 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   title: 'NOS RÉALISATIONS',
   maxProjects: 6,
   selectedProjects: []
+}),
+...(type === 'logos' && { 
+  title: 'NOS CLIENTS',
+  logos: []
 })
     };
+    
+    console.log('🔧 Nouveau bloc créé:', newBlock);
     
     const newBlocks = [...blocks, newBlock];
     setBlocks(newBlocks);
@@ -388,18 +402,33 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
               </div>
             </div>
           `).join('');
-          return `<section class="service-offerings-section py-16">
+          return `<section class="service-offerings-section py-32">
             <div class="container mx-auto">
               ${block.title ? `<div class="mb-12"><h2 class="text-2xl md:text-3xl font-bold tracking-tight text-black">${block.title}</h2></div>` : ''}
               <div class="space-y-0">${offeringsHtml}</div>
             </div>
           </section>`;
         case 'projects':
-          return `<section class="projects-section py-16">
+          return `<section class="projects-section py-32">
             <div class="container mx-auto">
               ${block.title ? `<div class="mb-12"><h2 class="text-2xl md:text-3xl font-bold tracking-tight text-black">${block.title}</h2></div>` : ''}
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Les projets seront injectés dynamiquement -->
+              </div>
+            </div>
+          </section>`;
+        case 'logos':
+          if (!block.logos || block.logos.length === 0) return '';
+          const logosHtml = block.logos.map(logo => `
+            <div class="logo-item flex items-center justify-center">
+              <img src="${logo.src || logo.image || ''}" alt="${logo.alt || logo.name || 'Logo client'}" class="max-w-full h-12 md:h-16 object-contain grayscale hover:grayscale-0 transition-all duration-300" />
+            </div>
+          `).join('');
+          return `<section class="logos-section py-32">
+            <div class="container mx-auto">
+              ${block.title ? `<div class="mb-12"><h2 class="text-2xl md:text-3xl font-bold tracking-tight text-black">${block.title}</h2></div>` : ''}
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
+                ${logosHtml}
               </div>
             </div>
           </section>`;
@@ -605,6 +634,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   };
 
   const renderBlock = (block: Block, index: number) => {
+    console.log('🔧 Rendu du bloc:', block.type, block);
+    
     if (!block || !block.type) {
       return <div className="text-red-500">Erreur: bloc invalide</div>;
     }
@@ -758,6 +789,20 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Thème de fond
+                </label>
+                <select
+                  value={block.theme || 'auto'}
+                  onChange={(e) => updateBlock(block.id, { theme: e.target.value as 'light' | 'dark' | 'auto' })}
+                  className="block-input"
+                >
+                  <option value="auto">Automatique (suit le thème global)</option>
+                  <option value="light">Thème clair forcé</option>
+                  <option value="dark">Thème sombre forcé</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Services ({block.offerings?.length || 0})
                 </label>
                 <div className="space-y-3">
@@ -845,6 +890,100 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
           </div>
         );
       
+      case 'logos':
+        return (
+          <div className="block-editor">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Titre de la section
+                </label>
+                <input
+                  type="text"
+                  value={block.title || ''}
+                  onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                  placeholder="Ex: NOS CLIENTS"
+                  className="block-input"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Thème de fond
+                </label>
+                <select
+                  value={block.theme || 'auto'}
+                  onChange={(e) => updateBlock(block.id, { theme: e.target.value as 'light' | 'dark' | 'auto' })}
+                  className="block-input"
+                >
+                  <option value="auto">Automatique (suit le thème global)</option>
+                  <option value="light">Thème clair forcé</option>
+                  <option value="dark">Thème sombre forcé</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Logos clients
+                </label>
+                <div className="space-y-3">
+                  {(block.logos || []).map((logo, index) => (
+                    <div key={index} className="p-3 border border-gray-200 rounded-lg">
+                      <div className="flex items-center space-x-3 mb-3">
+                        <div className="flex-1">
+                          <label className="block text-xs font-medium text-gray-600 mb-1">
+                            Image du logo
+                          </label>
+                          <MediaUploader
+                            currentUrl={logo.src || logo.image || ''}
+                            onUpload={(src) => {
+                              const newLogos = [...(block.logos || [])];
+                              newLogos[index] = { ...newLogos[index], src };
+                              updateBlock(block.id, { logos: newLogos });
+                            }}
+                          />
+                        </div>
+                        <button
+                          onClick={() => {
+                            const newLogos = (block.logos || []).filter((_, i) => i !== index);
+                            updateBlock(block.id, { logos: newLogos });
+                          }}
+                          className="text-red-500 hover:text-red-700 p-1"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                      <div className="flex-1">
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Nom du client
+                        </label>
+                        <input
+                          type="text"
+                          value={logo.alt || logo.name || ''}
+                          onChange={(e) => {
+                            const newLogos = [...(block.logos || [])];
+                            newLogos[index] = { ...newLogos[index], alt: e.target.value };
+                            updateBlock(block.id, { logos: newLogos });
+                          }}
+                          placeholder="Ex: Apple, Google, Microsoft..."
+                          className="block-input"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => {
+                      const newLogos = [...(block.logos || []), { src: '', alt: '' }];
+                      updateBlock(block.id, { logos: newLogos });
+                    }}
+                    className="w-full py-2 px-3 border border-gray-300 border-dashed rounded-lg text-gray-500 hover:text-gray-700 hover:border-gray-400 transition-colors"
+                  >
+                    + Ajouter un logo
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      
       case 'projects':
         return (
           <div className="block-editor">
@@ -874,6 +1013,20 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                   min="1"
                   max="12"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Thème de fond
+                </label>
+                <select
+                  value={block.theme || 'auto'}
+                  onChange={(e) => updateBlock(block.id, { theme: e.target.value as 'light' | 'dark' | 'auto' })}
+                  className="block-input"
+                >
+                  <option value="auto">Automatique (suit le thème global)</option>
+                  <option value="light">Thème clair forcé</option>
+                  <option value="dark">Thème sombre forcé</option>
+                </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -984,6 +1137,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       case 'about': return 'À propos';
               case 'services': return 'Services';
         case 'projects': return 'Projets';
+      case 'logos': return 'Logos clients';
       default: return type;
     }
   };
@@ -1947,8 +2101,9 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
               <option value="image">Image</option>
             <option value="cta">CTA</option>
             <option value="about">À propos</option>
-                            <option value="services">Services</option>
-              <option value="projects">Projets</option>
+            <option value="services">Services</option>
+            <option value="projects">Projets</option>
+            <option value="logos">Logos clients</option>
           </select>
         </div>
       </div>

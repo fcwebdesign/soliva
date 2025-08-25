@@ -27,7 +27,17 @@
     },
     "blocks": [
       {
-        "id": "block-1756055504174",
+        "id": "block-1",
+        "type": "h2",
+        "content": "Présentation du studio"
+      },
+      {
+        "id": "block-2",
+        "type": "content",
+        "content": "<p>Nous concevons des sites rapides, accessibles et simples à gérer. Vous recevez un design adapté à votre activité, un back‑office clair, et une base technique propre pour évoluer sans dépendances. Hébergement, sauvegardes automatiques et sécurité de base sont mis en place dès la livraison.</p>"
+      },
+      {
+        "id": "block-3",
         "type": "services",
         "content": "",
         "title": "Nos services",
@@ -67,20 +77,69 @@
             "title": "Maintenance & Évolutions",
             "description": "Notre service garantit la performance continue de votre site web. Nous réalisons une veille technologique constante pour anticiper les évolutions et assurer la mise à jour régulière de vos outils. Bénéficiez d'un site toujours fonctionnel, sécurisé et à la pointe des dernières innovations.",
             "icon": ""
+          },
+          {
+            "id": "service-1756065515509",
+            "title": "Social media",
+            "description": "Boostez votre visibilité en ligne. Nous créons du contenu engageant, optimisé pour l'interaction et le partage. Profitez d'une croissance significative de votre audience et de votre portée organique.",
+            "icon": ""
           }
         ]
       },
       {
-        "id": "block-1756057237607",
+        "id": "block-4",
         "type": "projects",
         "content": "",
-        "title": "NOS RÉALISATIONS",
-        "maxProjects": 3,
+        "title": "Projets selectionnés",
+        "maxProjects": 4,
         "selectedProjects": [
           "project-1",
-          "project-2",
-          "project-4"
-        ]
+          "project-3",
+          "project-4",
+          "project-2"
+        ],
+        "theme": "auto"
+      },
+      {
+        "id": "block-5",
+        "type": "logos",
+        "content": "",
+        "title": "NOS CLIENTS",
+        "logos": [
+          {
+            "src": "/uploads/1756076765287-dc6eeb82.png",
+            "alt": "The calling"
+          },
+          {
+            "src": "/uploads/1756072135761-2c9ef869.svg",
+            "alt": ""
+          },
+          {
+            "src": "/uploads/1756072160316-3a03b769.png",
+            "alt": ""
+          },
+          {
+            "src": "/uploads/1756072189918-f916ae8d.png",
+            "alt": ""
+          },
+          {
+            "src": "/uploads/1756072340655-7219b8d5.png",
+            "alt": ""
+          },
+          {
+            "src": "/uploads/1756077077137-5e13dd8e.svg",
+            "alt": ""
+          },
+          {
+            "src": "/uploads/1756077271103-771afa9a.png",
+            "alt": ""
+          },
+          {
+            "src": "/uploads/1756079435705-625c9f30.svg",
+            "alt": ""
+          }
+        ],
+        "theme": "auto"
       }
     ]
   },

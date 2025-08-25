@@ -1368,6 +1368,56 @@ html.preview-mode body {
   filter: brightness(0.9) contrast(1.1);
 }
 
+/* Styles pour les logos clients avec adaptation au thème */
+.logo-item {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80px;
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.2);      /* noir à 20% */
+}
+
+/* Adaptation au thème sombre pour les bordures des logos */
+[data-theme="dark"] .logo-item {
+  border: 1px solid rgba(255, 255, 255, 0.2);  /* blanc à 20% */
+}
+
+.logo-item img {
+  filter: grayscale(100%);
+  transition: all 0.3s ease;
+  max-width: 65%;
+  max-height: 65%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.logo-item img:hover {
+  filter: grayscale(0%);
+}
+
+/* Adaptation au thème clair pour les logos */
+[data-theme="light"] .logo-item img {
+  filter: grayscale(100%) brightness(0) contrast(1);
+}
+
+[data-theme="light"] .logo-item img:hover {
+  filter: grayscale(0%) brightness(0) contrast(1);
+}
+
+/* Adaptation au thème sombre pour les logos */
+[data-theme="dark"] .logo-item img {
+  filter: grayscale(100%) brightness(0) contrast(0) invert(1);
+}
+
+[data-theme="dark"] .logo-item img:hover {
+  filter: grayscale(0%) brightness(1) contrast(1) invert(0);
+}
+
+
+
 /* Styles pour les liens en dark mode */
 [data-theme="dark"] a {
   color: var(--text);
@@ -2277,25 +2327,7 @@ html.preview-mode body {
   transform: none;
 }
 
-/* Curseur personnalisé pour le carousel */
-.custom-cursor {
-  position: fixed;
-  width: 40px;
-  height: 40px;
-  background: var(--accent);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 18px;
-  font-weight: bold;
-  pointer-events: none;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-  transition: all 0.1s ease;
-  mix-blend-mode: difference;
-}
+
 
 /* Styles pour les points de navigation du carousel */
 .custom-carousel-dot {

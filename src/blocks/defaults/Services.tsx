@@ -14,7 +14,7 @@ interface ServicesBlock extends BlockBase {
 
 export default function Services({ title = "OUR CORE OFFERINGS", offerings }: ServicesBlock) {
   return (
-    <section className="service-offerings-section py-16">
+    <section className="service-offerings-section py-32">
       <div className="container mx-auto">
         {/* Titre de la section */}
         {title && (

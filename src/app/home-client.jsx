@@ -147,7 +147,7 @@ export default function HomeClient({ content }) {
               });
             });
           }
-        },
+                },
         onLeave: () => {
           // Changer le thème vers le noir quand on sort de la zone de pin
           document.documentElement.setAttribute('data-theme', 'dark');

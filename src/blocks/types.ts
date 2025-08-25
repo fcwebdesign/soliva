@@ -1,4 +1,8 @@
-export type BlockBase = { id: string; type: string };
+export type BlockBase = { 
+  id: string; 
+  type: string; 
+  theme?: 'light' | 'dark' | 'auto'; // auto = suit le thème global
+};
 
 export type H2Block = BlockBase & { type: 'h2'; content: string };
 export type H3Block = BlockBase & { type: 'h3'; content: string };
@@ -35,7 +39,18 @@ export type ProjectsBlock = BlockBase & {
   selectedProjects?: string[];
 };
 
-export type AnyBlock = H2Block | H3Block | ContentBlock | ImageBlock | CtaBlock | AboutBlock | ServicesBlock | ProjectsBlock;
+export type LogosBlock = BlockBase & { 
+  type: 'logos'; 
+  title?: string;
+  logos: Array<{
+    src?: string;
+    image?: string;
+    alt?: string;
+    name?: string;
+  }>;
+};
+
+export type AnyBlock = H2Block | H3Block | ContentBlock | ImageBlock | CtaBlock | AboutBlock | ServicesBlock | ProjectsBlock | LogosBlock;
 
 import React from 'react';
 
