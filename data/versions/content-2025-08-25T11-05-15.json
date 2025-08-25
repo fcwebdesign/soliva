@@ -27,7 +27,17 @@
     },
     "blocks": [
       {
-        "id": "block-1756055504174",
+        "id": "block-1",
+        "type": "h2",
+        "content": "Le studio"
+      },
+      {
+        "id": "block-2",
+        "type": "content",
+        "content": "<p>Nous concevons des sites rapides, accessibles et simples à gérer. Vous recevez un design adapté à votre activité, un back‑office clair, et une base technique propre pour évoluer sans dépendances. Hébergement, sauvegardes automatiques et sécurité de base sont mis en place dès la livraison.</p>"
+      },
+      {
+        "id": "block-3",
         "type": "services",
         "content": "",
         "title": "Nos services",
@@ -74,11 +84,10 @@
             "description": "Boostez votre visibilité en ligne. Nous créons du contenu engageant, optimisé pour l'interaction et le partage. Profitez d'une croissance significative de votre audience et de votre portée organique.",
             "icon": ""
           }
-        ],
-        "theme": "dark"
+        ]
       },
       {
-        "id": "block-1756057237607",
+        "id": "block-4",
         "type": "projects",
         "content": "",
         "title": "Projets selectionnés",
@@ -89,10 +98,10 @@
           "project-4",
           "project-2"
         ],
-        "theme": "dark"
+        "theme": "auto"
       },
       {
-        "id": "block-1756071889912",
+        "id": "block-5",
         "type": "logos",
         "content": "",
         "title": "NOS CLIENTS",
@@ -124,9 +133,13 @@
           {
             "src": "/uploads/1756077271103-771afa9a.png",
             "alt": ""
+          },
+          {
+            "src": "/uploads/1756079435705-625c9f30.svg",
+            "alt": ""
           }
         ],
-        "theme": "light"
+        "theme": "auto"
       }
     ]
   },

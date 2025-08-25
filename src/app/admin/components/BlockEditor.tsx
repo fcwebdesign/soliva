@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useRouter } from 'next/navigation';
 import { createPortal } from 'react-dom';
 import WysiwygEditor from './WysiwygEditor';
@@ -48,6 +47,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [draggedLogoIndex, setDraggedLogoIndex] = useState<number | null>(null);
+  const [dragOverLogoIndex, setDragOverLogoIndex] = useState<number | null>(null);
   const [backupLoading, setBackupLoading] = useState(false);
   
   // Synchroniser localData avec pageData quand pageData change
@@ -473,6 +474,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     updateBlocksContent(items);
   };
 
+
+
   // Drag & drop natif
   const handleDragStart = (e: React.DragEvent, index: number) => {
     setDraggedIndex(index);
@@ -503,6 +506,64 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   const handleDragEndNative = () => {
     setDraggedIndex(null);
     setDragOverIndex(null);
+  };
+
+  // Drag & drop natif pour les logos - Version améliorée
+  const handleLogoDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedLogoIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', index.toString());
+    
+    // Ajouter la classe dragging au body
+    document.body.classList.add('dragging');
+    
+    // Ajouter une classe à l'élément dragué pour le style
+    const target = e.currentTarget as HTMLElement;
+    target.classList.add('dragging');
+  };
+
+  const handleLogoDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    
+    // Ne mettre en surbrillance que si on drag un élément différent
+    if (draggedLogoIndex !== null && draggedLogoIndex !== index) {
+      setDragOverLogoIndex(index);
+    }
+  };
+
+  const handleLogoDrop = (e: React.DragEvent, dropIndex: number, blockId: string) => {
+    e.preventDefault();
+    if (draggedLogoIndex === null || draggedLogoIndex === dropIndex) return;
+
+    const block = blocks.find(b => b.id === blockId);
+    if (!block || !block.logos) return;
+
+    const newLogos = [...block.logos];
+    const [draggedLogo] = newLogos.splice(draggedLogoIndex, 1);
+    newLogos.splice(dropIndex, 0, draggedLogo);
+    
+    const updatedBlock = { ...block, logos: newLogos };
+    const updatedBlocks = blocks.map(b => b.id === blockId ? updatedBlock : b);
+    
+    setBlocks(updatedBlocks);
+    updateBlocksContent(updatedBlocks);
+    
+    // Réinitialiser les états
+    setDraggedLogoIndex(null);
+    setDragOverLogoIndex(null);
+    document.body.classList.remove('dragging');
+  };
+
+  const handleLogoDragEnd = () => {
+    // Retirer la classe dragging de tous les éléments
+    document.querySelectorAll('.logo-drag-item.dragging').forEach(el => {
+      el.classList.remove('dragging');
+    });
+    
+    setDraggedLogoIndex(null);
+    setDragOverLogoIndex(null);
+    document.body.classList.remove('dragging');
   };
 
   // Fonction pour dupliquer un contenu
@@ -926,18 +987,50 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
                   {(block.logos || []).map((logo, index) => (
-                    <div key={index} className="p-3 border border-gray-200 rounded-lg">
+                    <div 
+                      key={index} 
+                      data-logo-index={index}
+                      className={`logo-drop-zone p-3 border border-gray-200 rounded-lg transition-all duration-200 ${
+                        draggedLogoIndex === index ? 'dragging' : ''
+                      } ${
+                        dragOverLogoIndex === index && draggedLogoIndex !== index 
+                          ? 'drag-over' 
+                          : ''
+                      }`}
+                      onDragOver={(e) => handleLogoDragOver(e, index)}
+                      onDrop={(e) => handleLogoDrop(e, index, block.id)}
+                      onDragLeave={(e) => {
+                        // S'assurer que la zone de drop se désactive quand on quitte
+                        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                          setDragOverLogoIndex(null);
+                        }
+                      }}
+                    >
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-medium text-gray-600">Logo {index + 1}</span>
+                        <div 
+                          className="logo-drag-item flex items-center gap-2"
+                          draggable
+                          onDragStart={(e) => handleLogoDragStart(e, index)}
+                          onDragEnd={handleLogoDragEnd}
+                        >
+                          <span className="logo-drag-handle text-xs">⋮⋮</span>
+                          <span className="text-xs font-medium text-gray-600">Logo {index + 1}</span>
+                        </div>
                         <button
                           onClick={() => {
                             const newLogos = (block.logos || []).filter((_, i) => i !== index);
                             updateBlock(block.id, { logos: newLogos });
                           }}
-                          className="text-red-500 hover:text-red-700 text-sm"
+                          className="text-red-500 hover:text-red-700 text-sm transition-colors"
+                          title="Supprimer ce logo"
                         >
                           ✕
                         </button>
+                      </div>
+                      
+                      {/* Indicateur de drop */}
+                      <div className="logo-drop-indicator">
+                        Déposer ici
                       </div>
                       <div className="space-y-2">
                         <div>
@@ -976,8 +1069,16 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                     onClick={() => {
                       const newLogos = [...(block.logos || []), { src: '', alt: '' }];
                       updateBlock(block.id, { logos: newLogos });
+                      
+                      // Ajouter une animation d'apparition au nouveau logo
+                      setTimeout(() => {
+                        const newLogoElement = document.querySelector(`[data-logo-index="${newLogos.length - 1}"]`);
+                        if (newLogoElement) {
+                          newLogoElement.classList.add('logo-item-enter');
+                        }
+                      }, 100);
                     }}
-                    className="w-full py-2 px-3 border border-gray-300 border-dashed rounded-lg text-gray-500 hover:text-gray-700 hover:border-gray-400 transition-colors"
+                    className="w-full py-2 px-3 border border-gray-300 border-dashed rounded-lg text-gray-500 hover:text-gray-700 hover:border-gray-400 transition-colors hover:bg-gray-50"
                   >
                     + Ajouter un logo
                   </button>

@@ -107,36 +107,36 @@
         "title": "NOS CLIENTS",
         "logos": [
           {
+            "src": "/uploads/1756079435705-625c9f30.svg",
+            "alt": "FFPAPF"
+          },
+          {
+            "src": "/uploads/1756072340655-7219b8d5.png",
+            "alt": "EDF"
+          },
+          {
+            "src": "/uploads/1756077271103-771afa9a.png",
+            "alt": "Nelly rody"
+          },
+          {
+            "src": "/uploads/1756077077137-5e13dd8e.svg",
+            "alt": "Four seasons"
+          },
+          {
             "src": "/uploads/1756076765287-dc6eeb82.png",
             "alt": "The calling"
           },
           {
+            "src": "/uploads/1756072189918-f916ae8d.png",
+            "alt": "veritone"
+          },
+          {
             "src": "/uploads/1756072135761-2c9ef869.svg",
-            "alt": ""
+            "alt": "samsung"
           },
           {
             "src": "/uploads/1756072160316-3a03b769.png",
-            "alt": ""
-          },
-          {
-            "src": "/uploads/1756072189918-f916ae8d.png",
-            "alt": ""
-          },
-          {
-            "src": "/uploads/1756072340655-7219b8d5.png",
-            "alt": ""
-          },
-          {
-            "src": "/uploads/1756077077137-5e13dd8e.svg",
-            "alt": ""
-          },
-          {
-            "src": "/uploads/1756077271103-771afa9a.png",
-            "alt": ""
-          },
-          {
-            "src": "/uploads/1756079435705-625c9f30.svg",
-            "alt": ""
+            "alt": "Nexora"
           }
         ],
         "theme": "auto"

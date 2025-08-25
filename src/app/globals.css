@@ -2225,6 +2225,108 @@ html.preview-mode body {
   animation: dropZonePulse 0.6s ease-in-out;
 }
 
+/* Styles spécifiques pour le drag & drop des logos */
+.logo-drag-item {
+  transition: all 0.2s ease;
+  cursor: grab;
+}
+
+.logo-drag-item:active {
+  cursor: grabbing;
+}
+
+.logo-drag-item.dragging {
+  opacity: 0.5;
+  transform: rotate(5deg) scale(0.95);
+  z-index: 1000;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Supprimer la classe drag-over du logo-drag-item car elle ne doit s'appliquer qu'aux zones de drop */
+
+.logo-drag-handle {
+  cursor: grab;
+  color: #6b7280;
+  transition: color 0.2s ease;
+}
+
+.logo-drag-handle:hover {
+  color: var(--accent);
+}
+
+.logo-drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Animation d'apparition pour les nouveaux logos */
+.logo-item-enter {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: logoItemEnter 0.3s ease forwards;
+}
+
+@keyframes logoItemEnter {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Styles pour les zones de drop */
+.logo-drop-zone {
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.logo-drop-zone::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 2px dashed transparent;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.logo-drop-zone.drag-over::before {
+  border-color: var(--accent);
+  background-color: rgba(0, 102, 204, 0.05);
+}
+
+/* Style spécifique pour la zone de drop active */
+.logo-drop-zone.drag-over {
+  border-color: var(--accent) !important;
+  background-color: rgba(0, 102, 204, 0.05) !important;
+  transform: scale(1.02);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* Indicateur visuel pour la zone de drop */
+.logo-drop-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--accent);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.logo-drop-zone.drag-over .logo-drop-indicator {
+  opacity: 1;
+}
+
 /* Masquer le footer dans l'admin */
 .admin-page .footer-wrapper {
   display: none;
