@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import FormattedText from './FormattedText';
 import HeroSignature from './HeroSignature';
 import StorytellingSection from './StorytellingSection';
+import TwoColumns from '../blocks/defaults/TwoColumns';
 
 const BlockRenderer = ({ blocks = [] }) => {
   // Gestion du thème par bloc avec priorité sur le scroll
@@ -13,8 +14,11 @@ const BlockRenderer = ({ blocks = [] }) => {
           const blockType = entry.target.dataset.blockType;
           const blockTheme = entry.target.dataset.blockTheme;
           
+          console.log('👁️ IntersectionObserver - Bloc détecté:', { blockType, blockTheme });
+          
           // Si le bloc a un thème spécifique, l'appliquer
           if (blockTheme && blockTheme !== 'auto') {
+            console.log('🎨 Application du thème:', blockTheme);
             document.documentElement.setAttribute('data-theme', blockTheme);
           } else {
             // Sinon, appliquer le thème par défaut selon le type
@@ -22,6 +26,11 @@ const BlockRenderer = ({ blocks = [] }) => {
               document.documentElement.setAttribute('data-theme', 'dark');
             } else if (blockType === 'logos') {
               document.documentElement.setAttribute('data-theme', 'light');
+            } else if (blockType === 'two-columns') {
+              // Pour two-columns avec thème auto, utiliser le thème global actuel
+              const currentTheme = localStorage.getItem('theme') || 'light';
+              console.log('🎨 TwoColumns avec thème auto - utilisation du thème global:', currentTheme);
+              document.documentElement.setAttribute('data-theme', currentTheme);
             }
           }
         }
@@ -456,6 +465,11 @@ const BlockRenderer = ({ blocks = [] }) => {
               </div>
             </div>
           </section>
+        );
+      
+      case 'two-columns':
+        return (
+          <TwoColumns key={block.id} {...block} />
         );
       
       default:

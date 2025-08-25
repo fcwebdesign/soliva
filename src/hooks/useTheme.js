@@ -22,10 +22,18 @@ export const useTheme = () => {
       }
     };
 
+    // Écouter les changements de thème dans le même onglet
+    const handleThemeChange = () => {
+      const theme = localStorage.getItem('theme') || 'light';
+      setCurrentTheme(theme);
+    };
+
     window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('themeChange', handleThemeChange);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('themeChange', handleThemeChange);
     };
   }, []);
 
@@ -34,6 +42,9 @@ export const useTheme = () => {
     setCurrentTheme(newTheme);
     localStorage.setItem('theme', newTheme);
     document.documentElement.setAttribute('data-theme', newTheme);
+    
+    // Déclencher un événement personnalisé pour synchroniser tous les composants
+    window.dispatchEvent(new CustomEvent('themeChange', { detail: { theme: newTheme } }));
   };
 
   const changeTheme = (theme) => {
@@ -41,6 +52,9 @@ export const useTheme = () => {
       setCurrentTheme(theme);
       localStorage.setItem('theme', theme);
       document.documentElement.setAttribute('data-theme', theme);
+      
+      // Déclencher un événement personnalisé pour synchroniser tous les composants
+      window.dispatchEvent(new CustomEvent('themeChange', { detail: { theme } }));
     }
   };
 

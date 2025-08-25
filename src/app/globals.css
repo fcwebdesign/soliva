@@ -2407,7 +2407,7 @@ html.preview-mode body {
 }
 
 .block-image {
-  margin: 2rem 0;
+  margin-bottom: 2rem;
   text-align: center;
 }
 
@@ -2415,7 +2415,6 @@ html.preview-mode body {
   max-width: 100%;
   height: auto;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .block-cta {
@@ -2456,13 +2455,12 @@ html.preview-mode body {
   position: relative;
   z-index: 1;
   transition: background-color 0.3s ease;
-  margin-top: -20vw;
+  margin-top: -10vw;
 }
 
 /* Styles pour les blocs de service */
 .service-offerings-section {
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border: none;
 }
 
 .service-offering-block {
@@ -2519,30 +2517,22 @@ html.preview-mode body {
   transform: none;
 }
 
-
-
-/* Styles pour les points de navigation du carousel */
-.custom-carousel-dot {
-  position: relative;
-  overflow: hidden;
-}
-
-.custom-carousel-dot::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  background: var(--accent);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
+/* Styles pour le bouton de toggle dans TwoColumns */
+.two-columns-section .theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
   transition: all 0.3s ease;
+  color: var(--text);
+  margin-top: -0.15rem;
 }
 
-.custom-carousel-dot:hover::before {
-  width: 100%;
-  height: 100%;
+.two-columns-section .theme-toggle:hover {
+  color: var(--accent);
 }
 
 

@@ -5,10 +5,11 @@ import { createPortal } from 'react-dom';
 import WysiwygEditor from './WysiwygEditor';
 import MediaUploader, { LogoUploader } from './MediaUploader';
 import VersionList from './VersionList';
+import TwoColumnsEditor from './TwoColumnsEditor';
 
 interface Block {
   id: string;
-  type: 'h2' | 'h3' | 'content' | 'image' | 'cta' | 'about' | 'services' | 'projects' | 'logos';
+  type: 'h2' | 'h3' | 'content' | 'image' | 'cta' | 'about' | 'services' | 'projects' | 'logos' | 'two-columns';
   content: string;
   title?: string;
   description?: string;
@@ -33,6 +34,11 @@ interface Block {
     alt?: string;
     name?: string;
   }>;
+  leftColumn?: any[];
+  rightColumn?: any[];
+  layout?: 'left-right' | 'right-left' | 'stacked-mobile';
+  gap?: 'small' | 'medium' | 'large';
+  alignment?: 'top' | 'center' | 'bottom';
 }
 
 interface BlockEditorProps {
@@ -262,7 +268,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
 
   // Fonction pour nettoyer les blocs invalides
   const cleanInvalidBlocks = (blocks: Block[]): Block[] => {
-    const validTypes: Block['type'][] = ['h2', 'h3', 'content', 'image', 'cta', 'about', 'services', 'projects', 'logos'];
+    const validTypes: Block['type'][] = ['h2', 'h3', 'content', 'image', 'cta', 'about', 'services', 'projects', 'logos', 'two-columns'];
     
     const filteredBlocks = blocks.filter(block => {
       // Supprimer les blocs avec des types invalides
@@ -341,6 +347,13 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
 ...(type === 'logos' && { 
   title: 'NOS CLIENTS',
   logos: []
+}),
+...(type === 'two-columns' && { 
+  leftColumn: [],
+  rightColumn: [],
+  layout: 'left-right',
+  gap: 'medium',
+  alignment: 'top'
 })
     };
     
@@ -433,6 +446,51 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
               </div>
             </div>
           </section>`;
+        case 'two-columns':
+          const gapClasses = {
+            small: 'gap-4',
+            medium: 'gap-8',
+            large: 'gap-12'
+          };
+          const alignmentClasses = {
+            top: 'items-start',
+            center: 'items-center',
+            bottom: 'items-end'
+          };
+          const layoutClasses = {
+            'left-right': 'grid-cols-1 md:grid-cols-2',
+            'right-left': 'grid-cols-1 md:grid-cols-2',
+            'stacked-mobile': 'grid-cols-1 lg:grid-cols-2'
+          };
+          
+          const leftColumnHtml = (block.leftColumn || []).map((subBlock: any) => {
+            switch (subBlock.type) {
+              case 'h2': return subBlock.content ? `<h2>${subBlock.content}</h2>` : '';
+              case 'h3': return subBlock.content ? `<h3>${subBlock.content}</h3>` : '';
+              case 'content': return subBlock.content || '';
+              case 'image': return subBlock.image?.src ? `<img src="${subBlock.image.src}" alt="${subBlock.image.alt || ''}" />` : '';
+              case 'cta': return (subBlock.ctaText || subBlock.ctaLink) ? 
+                `<div class="cta-block"><p>${subBlock.ctaText || ''}</p><a href="${subBlock.ctaLink || ''}" class="cta-button">En savoir plus</a></div>` : '';
+              default: return '';
+            }
+          }).join('');
+          
+          const rightColumnHtml = (block.rightColumn || []).map((subBlock: any) => {
+            switch (subBlock.type) {
+              case 'h2': return subBlock.content ? `<h2>${subBlock.content}</h2>` : '';
+              case 'h3': return subBlock.content ? `<h3>${subBlock.content}</h3>` : '';
+              case 'content': return subBlock.content || '';
+              case 'image': return subBlock.image?.src ? `<img src="${subBlock.image.src}" alt="${subBlock.image.alt || ''}" />` : '';
+              case 'cta': return (subBlock.ctaText || subBlock.ctaLink) ? 
+                `<div class="cta-block"><p>${subBlock.ctaText || ''}</p><a href="${subBlock.ctaLink || ''}" class="cta-button">En savoir plus</a></div>` : '';
+              default: return '';
+            }
+          }).join('');
+          
+          return `<div class="grid ${layoutClasses[block.layout || 'left-right']} ${gapClasses[block.gap || 'medium']} ${alignmentClasses[block.alignment || 'top']}">
+            <div class="space-y-4">${leftColumnHtml}</div>
+            <div class="space-y-4">${rightColumnHtml}</div>
+          </div>`;
         default:
           return '';
       }
@@ -1231,6 +1289,16 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
           </div>
         );
       
+      case 'two-columns':
+        return (
+          <div className="block-editor">
+            <TwoColumnsEditor
+              block={block}
+              onUpdate={(updates) => updateBlock(block.id, updates)}
+            />
+          </div>
+        );
+      
       default:
         return null;
     }
@@ -1247,6 +1315,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
               case 'services': return 'Services';
         case 'projects': return 'Projets';
       case 'logos': return 'Logos clients';
+      case 'two-columns': return 'Deux colonnes';
       default: return type;
     }
   };
@@ -2213,6 +2282,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             <option value="services">Services</option>
             <option value="projects">Projets</option>
             <option value="logos">Logos clients</option>
+            <option value="two-columns">Deux colonnes</option>
           </select>
         </div>
       </div>

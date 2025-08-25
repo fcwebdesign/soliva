@@ -10,6 +10,9 @@ import About from './defaults/About';
 import Services from './defaults/Services';
 import Projects from './defaults/Projects';
 import Logos from './defaults/Logos';
+import TwoColumns from './defaults/TwoColumns';
+
+
 
 // Minimaliste
 import H2Min from '../templates/minimaliste-premium/blocks/H2';
@@ -29,7 +32,10 @@ export const defaultRegistry: BlockRegistry = {
   'services': Services as BlockComponent,
   'projects': Projects as BlockComponent,
   'logos': Logos as BlockComponent,
+  'two-columns': TwoColumns as BlockComponent,
 };
+
+
 
 export const registries: Record<string, BlockRegistry> = {
   default: defaultRegistry,

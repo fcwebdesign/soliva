@@ -50,7 +50,16 @@ export type LogosBlock = BlockBase & {
   }>;
 };
 
-export type AnyBlock = H2Block | H3Block | ContentBlock | ImageBlock | CtaBlock | AboutBlock | ServicesBlock | ProjectsBlock | LogosBlock;
+export type TwoColumnsBlock = BlockBase & { 
+  type: 'two-columns'; 
+  leftColumn: Array<H2Block | H3Block | ContentBlock | ImageBlock | CtaBlock | AboutBlock | ServicesBlock | ProjectsBlock | LogosBlock>;
+  rightColumn: Array<H2Block | H3Block | ContentBlock | ImageBlock | CtaBlock | AboutBlock | ServicesBlock | ProjectsBlock | LogosBlock>;
+  layout?: 'left-right' | 'right-left' | 'stacked-mobile';
+  gap?: 'small' | 'medium' | 'large';
+  alignment?: 'top' | 'center' | 'bottom';
+};
+
+export type AnyBlock = H2Block | H3Block | ContentBlock | ImageBlock | CtaBlock | AboutBlock | ServicesBlock | ProjectsBlock | LogosBlock | TwoColumnsBlock;
 
 import React from 'react';
 
