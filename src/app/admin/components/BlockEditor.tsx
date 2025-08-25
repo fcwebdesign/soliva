@@ -510,6 +510,9 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
 
   // Drag & drop natif pour les logos - Version améliorée
   const handleLogoDragStart = (e: React.DragEvent, index: number) => {
+    // Empêcher la propagation vers les éléments parents
+    e.stopPropagation();
+    
     setDraggedLogoIndex(index);
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/plain', index.toString());
@@ -524,6 +527,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
 
   const handleLogoDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault();
+    e.stopPropagation();
     e.dataTransfer.dropEffect = 'move';
     
     // Ne mettre en surbrillance que si on drag un élément différent
@@ -534,6 +538,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
 
   const handleLogoDrop = (e: React.DragEvent, dropIndex: number, blockId: string) => {
     e.preventDefault();
+    e.stopPropagation();
     if (draggedLogoIndex === null || draggedLogoIndex === dropIndex) return;
 
     const block = blocks.find(b => b.id === blockId);
@@ -985,7 +990,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Logos clients
                 </label>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
+                <div className="logos-grid-container grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
                   {(block.logos || []).map((logo, index) => (
                     <div 
                       key={index} 
