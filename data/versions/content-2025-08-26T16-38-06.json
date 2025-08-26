@@ -16,7 +16,7 @@
     ],
     "pageLabels": {
       "blog": "Journal",
-      "home": "Home",
+      "home": "home",
       "studio": "Studio"
     }
   },
@@ -32,15 +32,15 @@
         "content": "",
         "leftColumn": [
           {
-            "id": "block-1756225138704-0.6647304993283114",
+            "id": "block-1756225439361-0.9107021052170442",
             "type": "content",
-            "content": "<p><strong>Chez Soliva </strong>nous travaillons en cycles courts, avec un planning partagé et des points hebdomadaires. <br>Vous validez chaque étape clé: arborescence, maquettes, intégration, mise en ligne. À la sortie, vous recevez un site optimisé Core Web Vitals, conforme RGAA, avec analytics et monitoring activés.</p>"
+            "content": "<p>Le studio réunit une équipe compacte de designers et développeurs basée au Hevre. Nous livrons des sites rapides, accessibles et faciles à maintenir, avec des délais clairs et un budget maîtrisé. Exemples récents: refonte e‑commerce (+28% de conversion) et site vitrine B2B chargé en moins de 1,2 s.</p>"
           }
         ],
         "rightColumn": [],
         "layout": "right-left",
         "gap": "large",
-        "alignment": "top",
+        "alignment": "bottom",
         "theme": "dark"
       },
       {
@@ -52,43 +52,43 @@
           {
             "id": "service-1",
             "title": "Site web sur-mesure",
-            "description": "Offrez-vous une présence digitale unique et percutante. \nConçu selon vos besoins précis, chaque site garantit une performance optimale et un design attrayant pour assurer votre visibilité et votre impact en ligne.",
+            "description": "<p>Bénéficiez d'un site web sur-mesure, conçu pour captiver votre audience et booster vos conversions. <br>Grâce à une méthodologie rigoureuse, nous créons un design unique et une navigation intuitive, maximisant ainsi la visibilité de votre marque et votre taux de retour sur investissement.</p>",
             "icon": ""
           },
           {
             "id": "service-1756055507192",
             "title": "E-commerce",
-            "description": "Boostez vos ventes en ligne avec notre service E-commerce. \nNous appliquons une méthodologie rigoureuse pour optimiser votre site, améliorer votre référencement et maximiser votre taux de conversion. Résultat : une croissance mesurable de votre chiffre d'affaires.",
+            "description": "<p>Boostez vos ventes en ligne avec notre service E-commerce. <br>Nous appliquons une méthodologie rigoureuse pour optimiser votre site, améliorer votre référencement et maximiser votre taux de conversion. Résultat : une croissance mesurable de votre chiffre d'affaires.</p>",
             "icon": ""
           },
           {
             "id": "service-1756056290453",
             "title": "IA appliquée",
-            "description": "L'IA appliquée démultiplie votre efficacité en automatisant les processus répétitifs, en optimisant les prises de décision et en prédisant les tendances du marché. À travers une méthodologie rigoureuse et une approche basée sur les données, nous transformons votre entreprise en une entité plus agile et réactive.",
+            "description": "<p><em>L'IA appliquée démultiplie votre efficacité </em>en automatisant les processus répétitifs, en optimisant les prises de décision et en prédisant les tendances du marché. <br>À travers une méthodologie rigoureuse et une approche basée sur les données, nous transformons votre entreprise en une entité plus agile et réactive.</p>",
             "icon": ""
           },
           {
             "id": "service-1756056312520",
             "title": "Stratégie de marque",
-            "description": "La Stratégie de marque vous offre un chemin clair et mesurable pour vous démarquer dans votre secteur. Par un processus rigoureux basé sur des données spécifiques, nous façonnons une identité de marque forte et mémorable qui stimule la fidélité des clients.",
+            "description": "<p>La Stratégie de marque vous offre un chemin clair et mesurable pour vous démarquer dans votre secteur. <br>Par un processus rigoureux basé sur des données spécifiques, nous façonnons une identité de marque forte et mémorable qui stimule la fidélité des clients.</p>",
             "icon": ""
           },
           {
             "id": "service-1756056339086",
             "title": "Contenu & Shooting",
-            "description": "Transformez votre vision en réalité. Nous produisons du contenu web captivant et organisons des shootings photo professionnels pour donner vie à votre marque. Profitez d'un rendu visuel haut de gamme et d'un storytelling efficace pour marquer l'esprit de vos clients.",
+            "description": "<p>Transformez votre vision en réalité. <br>Nous produisons du contenu web captivant et organisons des shootings photo professionnels pour donner vie à votre marque. <br>Profitez d'un rendu visuel haut de gamme et d'un storytelling efficace pour marquer l'esprit de vos clients.</p>",
             "icon": ""
           },
           {
             "id": "service-1756056410351",
             "title": "Maintenance & Évolutions",
-            "description": "Notre service garantit la performance continue de votre site web. Nous réalisons une veille technologique constante pour anticiper les évolutions et assurer la mise à jour régulière de vos outils. Bénéficiez d'un site toujours fonctionnel, sécurisé et à la pointe des dernières innovations.",
+            "description": "<p>Notre service garantit la performance continue de votre site web. <br>Nous réalisons une veille technologique constante pour anticiper les évolutions et assurer la mise à jour régulière de vos outils. <br>Bénéficiez d'un site toujours fonctionnel, sécurisé et à la pointe des dernières innovations.</p>",
             "icon": ""
           },
           {
             "id": "service-1756065515509",
             "title": "Social media",
-            "description": "Boostez votre visibilité en ligne. \nNous créons du contenu engageant, optimisé pour l'interaction et le partage. Profitez d'une croissance significative de votre audience et de votre portée organique.",
+            "description": "<p>Boostez votre visibilité en ligne. Nous créons du contenu engageant, optimisé pour l'interaction et le partage. <br>Profitez d'une croissance significative de votre audience et de votre portée organique.</p>",
             "icon": ""
           }
         ],
@@ -198,7 +198,7 @@
         "alt": "L'équipe Soliva au travail dans notre espace créatif"
       }
     },
-    "description": "<p>Créativité, innovation, impact. Voici ce qui définit notre studio. On ne fait pas que créer des identités visuelles ou des plateformes web. On forge des expériences qui marquent. Que ce soit pour une startup écolo ou une galerie d'art contemporain, notre approche est audacieuse et résolument moderne. Oubliez les clichés, place à l'authenticité. Chaque projet est une aventure unique, et on est là pour la rendre inoubliable.</p>",
+    "description": "<p>Créativité, innovation, impact. <br>Voici ce qui définit notre studio. On ne fait pas que créer des identités visuelles ou des plateformes web. <br>On forge des expériences qui marquent. Que ce soit pour une startup écolo ou une galerie d'art contemporain, notre approche est audacieuse et résolument moderne. Oubliez les clichés, place à l'authenticité. <br>Chaque projet est une aventure unique, et on est là pour la rendre inoubliable.</p>",
     "blocks": [
       {
         "id": "block-1",

@@ -220,9 +220,9 @@ const WorkClient = ({ content }) => {
                     </div>
                     <div>
                       <h3>{project.title}</h3>
-                      <p className="project-description">
+                      <div className="project-description">
                         <FormattedText>{project.excerpt || project.description}</FormattedText>
-                      </p>
+                      </div>
                       <span className="project-category">{project.category}</span>
                     </div>
                   </div>

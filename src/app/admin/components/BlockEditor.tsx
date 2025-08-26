@@ -99,6 +99,16 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   const [isDuplicating, setIsDuplicating] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   
+  // État pour gérer la visibilité des blocs
+  const [collapsedBlocks, setCollapsedBlocks] = useState<Set<string>>(() => {
+    // Charger l'état depuis localStorage au démarrage
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(`collapsed-blocks-${pageKey}`);
+      return saved ? new Set(JSON.parse(saved)) : new Set();
+    }
+    return new Set();
+  });
+  
   // États pour les notifications modales
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
@@ -379,6 +389,21 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     setBlocks(newBlocks);
     // Mettre à jour le contenu après suppression
     updateBlocksContent(newBlocks);
+  };
+
+  const toggleBlockVisibility = (blockId: string) => {
+    const newCollapsedBlocks = new Set(collapsedBlocks);
+    if (newCollapsedBlocks.has(blockId)) {
+      newCollapsedBlocks.delete(blockId);
+    } else {
+      newCollapsedBlocks.add(blockId);
+    }
+    setCollapsedBlocks(newCollapsedBlocks);
+    
+    // Sauvegarder dans localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`collapsed-blocks-${pageKey}`, JSON.stringify(Array.from(newCollapsedBlocks)));
+    }
   };
 
   const updateBlocksContent = (newBlocks: Block[]) => {
@@ -2341,13 +2366,26 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                 </div>
                 <span className="block-type">{renderBlockTypeLabel(block.type)}</span>
                 <button
+                  onClick={() => toggleBlockVisibility(block.id)}
+                  className="toggle-block mr-2"
+                  title={collapsedBlocks.has(block.id) ? "Afficher le contenu" : "Masquer le contenu"}
+                >
+                  {collapsedBlocks.has(block.id) ? "Afficher" : "Masquer"}
+                </button>
+                <button
                   onClick={() => removeBlock(block.id)}
                   className="remove-block"
                 >
                   ×
                 </button>
               </div>
-              {renderBlock(block, index)}
+              {!collapsedBlocks.has(block.id) && renderBlock(block, index)}
+              {collapsedBlocks.has(block.id) && (
+                <div className="block-collapsed-indicator p-4 text-center text-gray-400 bg-gray-50 border-t border-gray-200">
+                  <div className="text-sm">📝 Contenu masqué</div>
+                  <div className="text-xs mt-1">Cliquez sur "Afficher" pour voir le contenu</div>
+                </div>
+              )}
             </div>
           ))
         )}

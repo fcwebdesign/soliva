@@ -795,6 +795,30 @@ a {
   background: #dc2626;
 }
 
+.toggle-block {
+  background: none;
+  color: #6b7280;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+}
+
+.toggle-block:hover {
+  color: #374151;
+  background-color: #f3f4f6;
+}
+
+.block-collapsed-indicator {
+  border-radius: 0 0 0.375rem 0.375rem;
+}
+
 /* Zone de contenu sélectionnable */
 .block-editor {
   padding: 1rem;
