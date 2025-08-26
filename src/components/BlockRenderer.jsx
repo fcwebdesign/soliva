@@ -137,9 +137,10 @@ const BlockRenderer = ({ blocks = [] }) => {
                       
                       {/* Colonne de droite - Description */}
                       <div className="md:col-span-5 flex justify-end">
-                        <p className="max-w-[68ch]">
-                          {offering.description}
-                        </p>
+                        <div 
+                          className="max-w-[68ch]"
+                          dangerouslySetInnerHTML={{ __html: offering.description || '' }}
+                        />
                       </div>
                     </div>
                   </div>

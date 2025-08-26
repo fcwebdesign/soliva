@@ -1,5 +1,5 @@
 import React from 'react';
-import type { BlockBase } from '../types';
+import { BlockBase } from '../types';
 
 interface ServicesBlock extends BlockBase {
   type: 'services';
@@ -47,9 +47,10 @@ export default function Services({ title = "OUR CORE OFFERINGS", offerings }: Se
                 
                 {/* Colonne de droite - Description */}
                 <div className="md:col-span-5 flex justify-end">
-                  <p className="max-w-[68ch]">
-                    {offering.description}
-                  </p>
+                  <div 
+                    className="max-w-[68ch]"
+                    dangerouslySetInnerHTML={{ __html: offering.description || '' }}
+                  />
                 </div>
               </div>
             </div>

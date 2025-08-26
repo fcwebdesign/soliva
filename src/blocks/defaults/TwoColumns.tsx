@@ -135,7 +135,10 @@ function TwoColumns(block: TwoColumnsBlock) {
                 {(subBlock.offerings || []).map((offering: any) => (
                   <div key={offering.id} className="service-offering-block">
                     <h3 className="text-xl font-semibold mb-4">{offering.title}</h3>
-                    <p className="text-gray-600 leading-relaxed">{offering.description}</p>
+                    <div 
+                      className="text-gray-600 leading-relaxed"
+                      dangerouslySetInnerHTML={{ __html: offering.description || '' }}
+                    />
                   </div>
                 ))}
               </div>

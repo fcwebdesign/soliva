@@ -340,16 +340,14 @@ function SimpleBlockEditor({
                         placeholder="Titre du service"
                         className="block-input mb-2"
                       />
-                      <textarea
-                        value={offering.description}
-                        onChange={(e) => {
+                      <WysiwygEditor
+                        value={offering.description || ''}
+                        onChange={(content: string) => {
                           const newOfferings = [...(block.offerings || [])];
-                          newOfferings[index] = { ...offering, description: e.target.value };
+                          newOfferings[index] = { ...offering, description: content };
                           updateBlock(block.id, { offerings: newOfferings });
                         }}
                         placeholder="Description du service"
-                        className="block-input min-h-[80px]"
-                        rows={3}
                       />
                       <input
                         type="text"

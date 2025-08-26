@@ -41,7 +41,8 @@ export async function POST(request: NextRequest) {
         blockInstructions = `Génère un paragraphe de contenu clair et direct (2-3 phrases).
         Évite les métaphores poétiques, les formulations vagues, et le jargon marketing.
         Utilise des faits concrets, des exemples pratiques, ou des bénéfices tangibles.
-        IMPORTANT: Le contenu doit être cohérent avec les titres H2 existants.
+        IMPORTANT: Le contenu doit être cohérent avec le titre existant et les titres H2 existants.
+        Si un titre existe, le contenu doit l'expliquer, le développer ou le compléter.
         Style: professionnel, direct, authentique.`;
         break;
       case 'h2':
@@ -161,6 +162,7 @@ Contraintes:
 Page: ${pageKey}
 Contexte: ${pageContext}
 Blocs existants: ${blocksContext || 'Aucun'}
+${existingTitle ? `Titre existant: ${existingTitle}` : ''}
 ${blockType === 'services' && existingOfferings ? `Services existants: ${existingOfferings.map((offering: any, index: number) => `${index + 1}. ${offering.title || 'Service sans titre'}`).join(', ')}` : ''}
 Contexte supplémentaire: ${context || 'Aucun'}
 Timestamp: ${Date.now()}

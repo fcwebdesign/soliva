@@ -32,25 +32,15 @@
         "content": "",
         "leftColumn": [
           {
-            "id": "block-1756160863559-0.46759485023134695",
-            "type": "content",
-            "content": "<p>Vous savez où vous allez dès le départ: planning clair, jalons hebdomadaires, démonstrations fréquentes. Nous migrons vos contenus, configurons les formulaires et mesurons les performances dès la mise en ligne. Vous gardez la main avec une courte session de prise en main et une documentation simple.</p>"
+            "id": "block-1756225414779-0.7119923074671279",
+            "type": "h2",
+            "content": "Le studio"
           }
         ],
-        "rightColumn": [
-          {
-            "id": "block-1756163100764-0.2406237929300058",
-            "type": "image",
-            "content": "",
-            "image": {
-              "src": "/uploads/1756163104409-6b5c94d0.jpg",
-              "alt": ""
-            }
-          }
-        ],
-        "layout": "left-right",
+        "rightColumn": [],
+        "layout": "right-left",
         "gap": "large",
-        "alignment": "bottom",
+        "alignment": "top",
         "theme": "dark"
       },
       {
@@ -62,13 +52,13 @@
           {
             "id": "service-1",
             "title": "Site web sur-mesure",
-            "description": "Offrez-vous une présence digitale unique et percutante. Conçu selon vos besoins précis, chaque site garantit une performance optimale et un design attrayant pour assurer votre visibilité et votre impact en ligne.",
+            "description": "Offrez-vous une présence digitale unique et percutante. \nConçu selon vos besoins précis, chaque site garantit une performance optimale et un design attrayant pour assurer votre visibilité et votre impact en ligne.",
             "icon": ""
           },
           {
             "id": "service-1756055507192",
             "title": "E-commerce",
-            "description": "Boostez vos ventes en ligne avec notre service E-commerce. Nous appliquons une méthodologie rigoureuse pour optimiser votre site, améliorer votre référencement et maximiser votre taux de conversion. Résultat : une croissance mesurable de votre chiffre d'affaires.",
+            "description": "<p>Boostez vos ventes en ligne avec notre service E-commerce. Nous appliquons une méthodologie rigoureuse pour optimiser votre site, améliorer votre référencement et maximiser votre taux de conversion. Résultat : une croissance mesurable de votre chiffre d'affaires.</p>",
             "icon": ""
           },
           {
@@ -98,7 +88,7 @@
           {
             "id": "service-1756065515509",
             "title": "Social media",
-            "description": "Boostez votre visibilité en ligne. Nous créons du contenu engageant, optimisé pour l'interaction et le partage. Profitez d'une croissance significative de votre audience et de votre portée organique.",
+            "description": "Boostez votre visibilité en ligne. \nNous créons du contenu engageant, optimisé pour l'interaction et le partage. Profitez d'une croissance significative de votre audience et de votre portée organique.",
             "icon": ""
           }
         ],

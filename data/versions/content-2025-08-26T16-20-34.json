@@ -32,14 +32,9 @@
         "content": "",
         "leftColumn": [
           {
-            "id": "block-1756223720078-0.8014688832605635",
-            "type": "h2",
-            "content": "Gérez vos demandes sans friction"
-          },
-          {
-            "id": "block-1756160863559-0.46759485023134695",
+            "id": "block-1756225138704-0.6647304993283114",
             "type": "content",
-            "content": "<p>Vous avez un interlocuteur unique et joignable, pas de tickets anonymes. Chaque demande est cadrée avec un brief court, une estimation claire et une date de livraison. Les retours sont intégrés en 24 à 72 h selon la complexité, avec historique des versions accessible à tout moment.</p>"
+            "content": "<p>Chez Soliva nous travaillons en cycles courts, avec un planning partagé et des points hebdomadaires. Vous validez chaque étape clé: arborescence, maquettes, intégration, mise en ligne. À la sortie, vous recevez un site optimisé Core Web Vitals, conforme RGAA, avec analytics et monitoring activés.</p>"
           }
         ],
         "rightColumn": [],
@@ -57,13 +52,13 @@
           {
             "id": "service-1",
             "title": "Site web sur-mesure",
-            "description": "Offrez-vous une présence digitale unique et percutante. Conçu selon vos besoins précis, chaque site garantit une performance optimale et un design attrayant pour assurer votre visibilité et votre impact en ligne.",
+            "description": "Offrez-vous une présence digitale unique et percutante. \nConçu selon vos besoins précis, chaque site garantit une performance optimale et un design attrayant pour assurer votre visibilité et votre impact en ligne.",
             "icon": ""
           },
           {
             "id": "service-1756055507192",
             "title": "E-commerce",
-            "description": "Boostez vos ventes en ligne avec notre service E-commerce. Nous appliquons une méthodologie rigoureuse pour optimiser votre site, améliorer votre référencement et maximiser votre taux de conversion. Résultat : une croissance mesurable de votre chiffre d'affaires.",
+            "description": "Boostez vos ventes en ligne avec notre service E-commerce. \nNous appliquons une méthodologie rigoureuse pour optimiser votre site, améliorer votre référencement et maximiser votre taux de conversion. Résultat : une croissance mesurable de votre chiffre d'affaires.",
             "icon": ""
           },
           {

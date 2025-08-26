@@ -969,17 +969,17 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                           {isLoadingBlockAI === `${block.id}-${index}` ? '🤖...' : '🤖 IA'}
                         </button>
                       </div>
-                      <textarea
-                        value={offering.description}
-                        onChange={(e) => {
-                          const newOfferings = [...(block.offerings || [])];
-                          newOfferings[index] = { ...offering, description: e.target.value };
-                          updateBlock(block.id, { offerings: newOfferings });
-                        }}
-                        placeholder="Description du service"
-                        className="block-input min-h-[80px]"
-                        rows={3}
-                      />
+                      <div className="mb-2">
+                        <WysiwygEditor
+                          value={offering.description || ''}
+                          onChange={(description) => {
+                            const newOfferings = [...(block.offerings || [])];
+                            newOfferings[index] = { ...offering, description };
+                            updateBlock(block.id, { offerings: newOfferings });
+                          }}
+                          placeholder="Description du service"
+                        />
+                      </div>
                       <input
                         type="text"
                         value={offering.icon || ''}
