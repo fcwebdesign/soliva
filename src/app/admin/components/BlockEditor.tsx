@@ -405,7 +405,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
           if (!block.offerings || block.offerings.length === 0) return '';
           const offeringsHtml = block.offerings.map(offering => `
             <div class="service-offering-block border-b border-black/10 py-8 last:border-b-0">
-              <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+              <div class="grid grid-cols-1 md:grid-cols-11 gap-6 items-start">
                                   <div class="md:col-span-7">
                     ${offering.icon ? `<div class="mb-2"><span class="text-blue-400 text-lg">${offering.icon}</span></div>` : ''}
                     <h3 class="text-2xl md:text-3xl font-bold tracking-tight text-black">${offering.title || ''}</h3>

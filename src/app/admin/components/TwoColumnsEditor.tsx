@@ -20,6 +20,44 @@ function SimpleBlockEditor({
 }) {
   const [localBlocks, setLocalBlocks] = React.useState(blocks || []);
   const [isLoadingBlockAI, setIsLoadingBlockAI] = React.useState<string | null>(null);
+  const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = React.useState<number | null>(null);
+
+  // Synchroniser localBlocks avec blocks quand ils changent
+  React.useEffect(() => {
+    setLocalBlocks(blocks || []);
+  }, [blocks]);
+
+  // Drag & drop natif
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverIndex(index);
+  };
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === dropIndex) return;
+
+    const newBlocks = [...localBlocks];
+    const [draggedBlock] = newBlocks.splice(draggedIndex, 1);
+    newBlocks.splice(dropIndex, 0, draggedBlock);
+    
+    setLocalBlocks(newBlocks);
+    onUpdate({ blocks: newBlocks });
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
 
   const addBlock = (type: string) => {
     const newBlock = {
@@ -92,7 +130,7 @@ function SimpleBlockEditor({
       const data = await response.json();
       
       if (!response.ok) {
-        throw new Error(data.error || 'Erreur API');
+        throw new Error((data as any).error || 'Erreur API');
       }
 
       // Appliquer la suggestion au bloc selon le type
@@ -195,7 +233,7 @@ function SimpleBlockEditor({
             </div>
             <WysiwygEditor
               value={block.content || ''}
-              onChange={(content) => updateBlock(block.id, { content })}
+              onChange={(content: string) => updateBlock(block.id, { content })}
               placeholder="Contenu du paragraphe"
             />
           </div>
@@ -250,7 +288,7 @@ function SimpleBlockEditor({
             />
             <WysiwygEditor
               value={block.content || ''}
-              onChange={(content) => updateBlock(block.id, { content })}
+              onChange={(content: string) => updateBlock(block.id, { content })}
               placeholder="Contenu de la section"
             />
           </div>
@@ -600,31 +638,41 @@ function SimpleBlockEditor({
             <p className="text-xs text-gray-400 mt-1">Utilisez le menu ci-dessus pour ajouter votre premier bloc</p>
           </div>
         ) : (
-          localBlocks.map((block, index) => (
-            <div key={block.id} className="block-container">
-              <div className="block-header">
-                <div className="drag-handle">⋮⋮</div>
-                <span className="block-type">
-                  {block.type === 'h2' ? 'Titre H2' :
-                   block.type === 'h3' ? 'Sous-titre H3' :
-                   block.type === 'content' ? 'Contenu' :
-                   block.type === 'image' ? 'Image' :
-                   block.type === 'cta' ? 'CTA' :
-                   block.type === 'about' ? 'À propos' :
-                   block.type === 'services' ? 'Services' :
-                   block.type === 'projects' ? 'Projets' :
-                   block.type === 'logos' ? 'Logos clients' : block.type}
-                </span>
-                <button
-                  onClick={() => removeBlock(block.id)}
-                  className="remove-block"
-                >
-                  ×
-                </button>
+          <div className="space-y-4">
+            {localBlocks.map((block, index) => (
+              <div
+                key={block.id}
+                className={`block-container ${draggedIndex === index ? 'dragged' : ''} ${dragOverIndex === index ? 'drag-over' : ''}`}
+                draggable={true}
+                onDragStart={(e) => handleDragStart(e, index)}
+                onDragOver={(e) => handleDragOver(e, index)}
+                onDrop={(e) => handleDrop(e, index)}
+                onDragEnd={handleDragEnd}
+              >
+                <div className="block-header">
+                  <div className="drag-handle">⋮⋮</div>
+                  <span className="block-type">
+                    {block.type === 'h2' ? 'Titre H2' :
+                     block.type === 'h3' ? 'Sous-titre H3' :
+                     block.type === 'content' ? 'Contenu' :
+                     block.type === 'image' ? 'Image' :
+                     block.type === 'cta' ? 'CTA' :
+                     block.type === 'about' ? 'À propos' :
+                     block.type === 'services' ? 'Services' :
+                     block.type === 'projects' ? 'Projets' :
+                     block.type === 'logos' ? 'Logos clients' : block.type}
+                  </span>
+                  <button
+                    onClick={() => removeBlock(block.id)}
+                    className="remove-block"
+                  >
+                    ×
+                  </button>
+                </div>
+                {renderBlock(block, index)}
               </div>
-              {renderBlock(block, index)}
-            </div>
-          ))
+            ))}
+          </div>
         )}
       </div>
     </div>

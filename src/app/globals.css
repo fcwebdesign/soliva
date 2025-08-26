@@ -2486,6 +2486,7 @@ html.preview-mode body {
   color: var(--text-secondary);
   margin-bottom: 1rem;
   font-weight: 300;
+  text-wrap: balance;
 }
 
 /* Responsive design pour les blocs de service */
@@ -2533,6 +2534,44 @@ html.preview-mode body {
 
 .two-columns-section .theme-toggle:hover {
   color: var(--accent);
+}
+
+/* Styles pour le drag & drop des blocs dans TwoColumns */
+.block-container.dragged {
+  opacity: 0.5;
+  transform: rotate(2deg) scale(0.98);
+  z-index: 1000;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.block-container.drag-over {
+  border-color: var(--accent);
+  background-color: rgba(0, 102, 204, 0.05);
+  transform: scale(1.02);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+.block-container {
+  transition: all 0.2s ease;
+  cursor: grab;
+}
+
+.block-container:active {
+  cursor: grabbing;
+}
+
+.block-container .drag-handle {
+  cursor: grab;
+  color: #6b7280;
+  transition: color 0.2s ease;
+}
+
+.block-container .drag-handle:hover {
+  color: var(--accent);
+}
+
+.block-container:active .drag-handle {
+  cursor: grabbing;
 }
 
 

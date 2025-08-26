@@ -34,14 +34,14 @@
           {
             "id": "block-1756160863559-0.46759485023134695",
             "type": "content",
-            "content": "<p>Nous concevons des sites rapides, accessibles et simples à gérer. Vous recevez un design adapté à votre activité, un back‑office clair, et une base technique propre pour évoluer sans dépendances. Hébergement, sauvegardes automatiques et sécurité de base sont mis en place dès la livraison.</p>"
+            "content": "<p>Vous avez un interlocuteur unique et joignable, pas de tickets anonymes. Chaque demande est cadrée avec un brief court, une estimation claire et une date de livraison. Les retours sont intégrés en 24 à 72 h selon la complexité, avec historique des versions accessible à tout moment.</p>"
           }
         ],
         "rightColumn": [],
-        "layout": "left-right",
+        "layout": "right-left",
         "gap": "large",
-        "alignment": "bottom",
-        "theme": "light"
+        "alignment": "top",
+        "theme": "dark"
       },
       {
         "id": "block-2",
@@ -88,10 +88,11 @@
           {
             "id": "service-1756065515509",
             "title": "Social media",
-            "description": "Boostez votre visibilité en ligne. Nous créons du contenu engageant, optimisé pour l'interaction et le partage. Profitez d'une croissance significative de votre audience et de votre portée organique.",
+            "description": "Boostez votre visibilité en ligne. \nNous créons du contenu engageant, optimisé pour l'interaction et le partage. Profitez d'une croissance significative de votre audience et de votre portée organique.",
             "icon": ""
           }
-        ]
+        ],
+        "theme": "dark"
       },
       {
         "id": "block-3",
@@ -114,16 +115,16 @@
         "title": "Nos clients",
         "logos": [
           {
+            "src": "/uploads/1756077271103-771afa9a.png",
+            "alt": "Nelly rody"
+          },
+          {
             "src": "/uploads/1756079435705-625c9f30.svg",
             "alt": "FFPAPF"
           },
           {
             "src": "/uploads/1756072189918-f916ae8d.png",
             "alt": "veritone"
-          },
-          {
-            "src": "/uploads/1756077271103-771afa9a.png",
-            "alt": "Nelly rody"
           },
           {
             "src": "/uploads/1756077077137-5e13dd8e.svg",
