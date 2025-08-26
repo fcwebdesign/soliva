@@ -155,7 +155,8 @@
         "content": "",
         "title": "Would you like to see a demo?",
         "ctaText": "Yes, sign me up",
-        "ctaLink": "https://google.com"
+        "ctaLink": "https://google.com",
+        "theme": "auto"
       }
     ]
   },

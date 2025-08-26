@@ -148,6 +148,15 @@
           }
         ],
         "theme": "auto"
+      },
+      {
+        "id": "block-1756229013394",
+        "type": "contact",
+        "content": "",
+        "title": "Would you like to see a demo?",
+        "ctaText": "Yes, sign me up",
+        "ctaLink": "https://google.com",
+        "theme": "dark"
       }
     ]
   },

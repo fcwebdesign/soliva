@@ -475,7 +475,12 @@ const BlockRenderer = ({ blocks = [] }) => {
       
       case 'contact':
         return (
-          <section key={block.id} className="contact-section py-32" data-block-type="contact" data-block-theme={block.theme || 'auto'}>
+          <section 
+            key={block.id} 
+            className="contact-section py-32" 
+            data-block-type="contact" 
+            data-block-theme={block.theme || 'auto'}
+          >
             <div className="container mx-auto border border-black/20 p-8">
               <div className="flex justify-between items-center">
                 {/* Titre de la section */}

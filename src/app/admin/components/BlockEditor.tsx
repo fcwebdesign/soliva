@@ -20,6 +20,7 @@ interface Block {
   ctaText?: string;
   ctaLink?: string;
   icon?: string;
+  theme?: 'light' | 'dark' | 'auto';
   offerings?: Array<{
     id: string;
     title: string;
@@ -337,7 +338,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       content: '',
       ...(type === 'image' && { image: { src: '', alt: '' } }),
       ...(type === 'cta' && { ctaText: '', ctaLink: '' }),
-      ...(type === 'contact' && { title: '', ctaText: '', ctaLink: '' }),
+      ...(type === 'contact' && { title: '', ctaText: '', ctaLink: '', theme: 'auto' }),
       ...(type === 'about' && { title: '', content: '' }),
       ...(type === 'services' && { 
   title: 'OUR CORE OFFERINGS', 
@@ -979,6 +980,20 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                   placeholder="Ex: /contact ou https://..."
                   className="block-input"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Thème de fond
+                </label>
+                <select
+                  value={block.theme || 'auto'}
+                  onChange={(e) => updateBlock(block.id, { theme: e.target.value as 'light' | 'dark' | 'auto' })}
+                  className="block-input"
+                >
+                  <option value="auto">Automatique (suit le thème global)</option>
+                  <option value="light">Thème clair forcé</option>
+                  <option value="dark">Thème sombre forcé</option>
+                </select>
               </div>
             </div>
           </div>
