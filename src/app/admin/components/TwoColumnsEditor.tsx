@@ -66,6 +66,7 @@ function SimpleBlockEditor({
       content: '',
       ...(type === 'image' && { image: { src: '', alt: '' } }),
       ...(type === 'cta' && { ctaText: '', ctaLink: '' }),
+      ...(type === 'contact' && { title: '', ctaText: '', ctaLink: '' }),
       ...(type === 'about' && { title: '', content: '' }),
       ...(type === 'services' && { 
         title: 'OUR CORE OFFERINGS', 
@@ -273,6 +274,50 @@ function SimpleBlockEditor({
               placeholder="Lien du CTA"
               className="block-input"
             />
+          </div>
+        );
+      
+      case 'contact':
+        return (
+          <div className="block-editor">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Question/Titre
+                </label>
+                <input
+                  type="text"
+                  value={block.title || ''}
+                  onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                  placeholder="Ex: Would you like to see a demo?"
+                  className="block-input"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Texte du bouton
+                </label>
+                <input
+                  type="text"
+                  value={block.ctaText || ''}
+                  onChange={(e) => updateBlock(block.id, { ctaText: e.target.value })}
+                  placeholder="Ex: Yes, sign me up"
+                  className="block-input"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Lien du bouton
+                </label>
+                <input
+                  type="text"
+                  value={block.ctaLink || ''}
+                  onChange={(e) => updateBlock(block.id, { ctaLink: e.target.value })}
+                  placeholder="Ex: /contact ou https://..."
+                  className="block-input"
+                />
+              </div>
+            </div>
           </div>
         );
       
@@ -595,7 +640,7 @@ function SimpleBlockEditor({
     }
   };
 
-  const availableBlockTypes = ['h2', 'h3', 'content', 'image', 'cta', 'about', 'services', 'projects', 'logos'];
+  const availableBlockTypes = ['h2', 'h3', 'content', 'image', 'cta', 'contact', 'about', 'services', 'projects', 'logos'];
 
   return (
     <div className="space-y-4">
@@ -618,6 +663,7 @@ function SimpleBlockEditor({
                type === 'content' ? 'Contenu' :
                type === 'image' ? 'Image' :
                type === 'cta' ? 'CTA' :
+               type === 'contact' ? 'Contact' :
                type === 'about' ? 'À propos' :
                type === 'services' ? 'Services' :
                type === 'projects' ? 'Projets' :
@@ -655,6 +701,7 @@ function SimpleBlockEditor({
                      block.type === 'content' ? 'Contenu' :
                      block.type === 'image' ? 'Image' :
                      block.type === 'cta' ? 'CTA' :
+                     block.type === 'contact' ? 'Contact' :
                      block.type === 'about' ? 'À propos' :
                      block.type === 'services' ? 'Services' :
                      block.type === 'projects' ? 'Projets' :

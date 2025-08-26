@@ -64,7 +64,7 @@
           {
             "id": "service-1756056290453",
             "title": "IA appliquée",
-            "description": "<p><em>L'IA appliquée démultiplie votre efficacité </em>en automatisant les processus répétitifs, en optimisant les prises de décision et en prédisant les tendances du marché. <br>À travers une méthodologie rigoureuse et une approche basée sur les données, nous transformons votre entreprise en une entité plus agile et réactive.</p>",
+            "description": "<p>L'IA appliquée démultiplie votre efficacité en automatisant les processus répétitifs, en optimisant les prises de décision et en prédisant les tendances du marché. <br>À travers une méthodologie rigoureuse et une approche basée sur les données, nous transformons votre entreprise en une entité plus agile et réactive.</p>",
             "icon": ""
           },
           {
@@ -148,6 +148,14 @@
           }
         ],
         "theme": "auto"
+      },
+      {
+        "id": "block-1756228679880",
+        "type": "contact",
+        "content": "",
+        "title": "test",
+        "ctaText": "Yes ok",
+        "ctaLink": ""
       }
     ]
   },

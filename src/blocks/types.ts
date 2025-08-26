@@ -16,6 +16,12 @@ export type CtaBlock = BlockBase & {
   ctaText?: string; 
   ctaLink?: string;
 };
+export type ContactBlock = BlockBase & { 
+  type: 'contact'; 
+  title?: string;
+  ctaText?: string; 
+  ctaLink?: string;
+};
 export type AboutBlock = BlockBase & { 
   type: 'about'; 
   title: string;
@@ -52,14 +58,14 @@ export type LogosBlock = BlockBase & {
 
 export type TwoColumnsBlock = BlockBase & { 
   type: 'two-columns'; 
-  leftColumn: Array<H2Block | H3Block | ContentBlock | ImageBlock | CtaBlock | AboutBlock | ServicesBlock | ProjectsBlock | LogosBlock>;
-  rightColumn: Array<H2Block | H3Block | ContentBlock | ImageBlock | CtaBlock | AboutBlock | ServicesBlock | ProjectsBlock | LogosBlock>;
+  leftColumn: Array<H2Block | H3Block | ContentBlock | ImageBlock | CtaBlock | ContactBlock | AboutBlock | ServicesBlock | ProjectsBlock | LogosBlock>;
+  rightColumn: Array<H2Block | H3Block | ContentBlock | ImageBlock | CtaBlock | ContactBlock | AboutBlock | ServicesBlock | ProjectsBlock | LogosBlock>;
   layout?: 'left-right' | 'right-left' | 'stacked-mobile';
   gap?: 'small' | 'medium' | 'large';
   alignment?: 'top' | 'center' | 'bottom';
 };
 
-export type AnyBlock = H2Block | H3Block | ContentBlock | ImageBlock | CtaBlock | AboutBlock | ServicesBlock | ProjectsBlock | LogosBlock | TwoColumnsBlock;
+export type AnyBlock = H2Block | H3Block | ContentBlock | ImageBlock | CtaBlock | ContactBlock | AboutBlock | ServicesBlock | ProjectsBlock | LogosBlock | TwoColumnsBlock;
 
 import React from 'react';
 

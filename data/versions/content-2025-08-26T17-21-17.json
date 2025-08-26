@@ -37,16 +37,10 @@
             "content": "<p>Le studio réunit une équipe compacte de designers et développeurs basée au Hevre. Nous livrons des sites rapides, accessibles et faciles à maintenir, avec des délais clairs et un budget maîtrisé. Exemples récents: refonte e‑commerce (+28% de conversion) et site vitrine B2B chargé en moins de 1,2 s.</p>"
           }
         ],
-        "rightColumn": [
-          {
-            "id": "block-1756226190546-0.6514792503592717",
-            "type": "h3",
-            "content": "Indicateurs clés 2025"
-          }
-        ],
+        "rightColumn": [],
         "layout": "right-left",
         "gap": "large",
-        "alignment": "center",
+        "alignment": "bottom",
         "theme": "dark"
       },
       {
@@ -154,6 +148,14 @@
           }
         ],
         "theme": "auto"
+      },
+      {
+        "id": "block-1756228679880",
+        "type": "contact",
+        "content": "",
+        "title": "test",
+        "ctaText": "Yes ok",
+        "ctaLink": ""
       }
     ]
   },

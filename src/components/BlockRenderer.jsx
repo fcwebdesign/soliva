@@ -473,6 +473,35 @@ const BlockRenderer = ({ blocks = [] }) => {
           <TwoColumns key={block.id} {...block} />
         );
       
+      case 'contact':
+        return (
+          <section key={block.id} className="contact-section py-32" data-block-type="contact" data-block-theme={block.theme || 'auto'}>
+            <div className="container mx-auto border border-black/20 p-8">
+              <div className="flex justify-between items-center">
+                {/* Titre de la section */}
+                {block.title && (
+                  <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
+                    {block.title}
+                  </h2>
+                )}
+                
+                {/* Bouton CTA */}
+                {block.ctaText && block.ctaLink && (
+                  <a 
+                    href={block.ctaLink}
+                    className="inline-flex items-center px-6 py-3 bg-black text-white font-medium text-sm hover:bg-gray-800 transition-all duration-300"
+                  >
+                    {block.ctaText}
+                    <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </a>
+                )}
+              </div>
+            </div>
+          </section>
+        );
+      
       default:
         return (
           <div key={block.id} className="block-unknown">

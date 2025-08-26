@@ -148,6 +148,14 @@
           }
         ],
         "theme": "auto"
+      },
+      {
+        "id": "block-1756228679880",
+        "type": "contact",
+        "content": "",
+        "title": "test",
+        "ctaText": "Yes ok",
+        "ctaLink": ""
       }
     ]
   },

@@ -9,7 +9,7 @@ import TwoColumnsEditor from './TwoColumnsEditor';
 
 interface Block {
   id: string;
-  type: 'h2' | 'h3' | 'content' | 'image' | 'cta' | 'about' | 'services' | 'projects' | 'logos' | 'two-columns';
+  type: 'h2' | 'h3' | 'content' | 'image' | 'cta' | 'contact' | 'about' | 'services' | 'projects' | 'logos' | 'two-columns';
   content: string;
   title?: string;
   description?: string;
@@ -278,7 +278,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
 
   // Fonction pour nettoyer les blocs invalides
   const cleanInvalidBlocks = (blocks: Block[]): Block[] => {
-    const validTypes: Block['type'][] = ['h2', 'h3', 'content', 'image', 'cta', 'about', 'services', 'projects', 'logos', 'two-columns'];
+    const validTypes: Block['type'][] = ['h2', 'h3', 'content', 'image', 'cta', 'contact', 'about', 'services', 'projects', 'logos', 'two-columns'];
     
     const filteredBlocks = blocks.filter(block => {
       // Supprimer les blocs avec des types invalides
@@ -337,6 +337,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       content: '',
       ...(type === 'image' && { image: { src: '', alt: '' } }),
       ...(type === 'cta' && { ctaText: '', ctaLink: '' }),
+      ...(type === 'contact' && { title: '', ctaText: '', ctaLink: '' }),
       ...(type === 'about' && { title: '', content: '' }),
       ...(type === 'services' && { 
   title: 'OUR CORE OFFERINGS', 
@@ -423,6 +424,19 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         case 'cta':
           return (block.ctaText || block.ctaLink) ? 
             `<div class="cta-block"><p>${block.ctaText || ''}</p><a href="${block.ctaLink || ''}" class="cta-button">En savoir plus</a></div>` : '';
+        case 'contact':
+          return (block.title || block.ctaText || block.ctaLink) ? 
+            `<div class="contact-block bg-gray-50 rounded-lg p-6 shadow-sm">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <div class="w-2 h-8 bg-black mr-4"></div>
+                  <h3 class="text-lg font-medium text-black">${block.title || ''}</h3>
+                </div>
+                <a href="${block.ctaLink || '#'}" class="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors">
+                  ${block.ctaText || 'Contact'}
+                </a>
+              </div>
+            </div>` : '';
         case 'about':
           return (block.title || block.content) ? 
             `<div class="about-block"><h2>${block.title || ''}</h2><div>${block.content || ''}</div></div>` : '';
@@ -496,6 +510,18 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
               case 'image': return subBlock.image?.src ? `<img src="${subBlock.image.src}" alt="${subBlock.image.alt || ''}" />` : '';
               case 'cta': return (subBlock.ctaText || subBlock.ctaLink) ? 
                 `<div class="cta-block"><p>${subBlock.ctaText || ''}</p><a href="${subBlock.ctaLink || ''}" class="cta-button">En savoir plus</a></div>` : '';
+              case 'contact': return (subBlock.title || subBlock.ctaText || subBlock.ctaLink) ? 
+                `<div class="contact-block bg-gray-50 rounded-lg p-6 shadow-sm">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <div class="w-2 h-8 bg-black mr-4"></div>
+                      <h3 class="text-lg font-medium text-black">${subBlock.title || ''}</h3>
+                    </div>
+                    <a href="${subBlock.ctaLink || '#'}" class="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors">
+                      ${subBlock.ctaText || 'Contact'}
+                    </a>
+                  </div>
+                </div>` : '';
               default: return '';
             }
           }).join('');
@@ -508,6 +534,18 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
               case 'image': return subBlock.image?.src ? `<img src="${subBlock.image.src}" alt="${subBlock.image.alt || ''}" />` : '';
               case 'cta': return (subBlock.ctaText || subBlock.ctaLink) ? 
                 `<div class="cta-block"><p>${subBlock.ctaText || ''}</p><a href="${subBlock.ctaLink || ''}" class="cta-button">En savoir plus</a></div>` : '';
+              case 'contact': return (subBlock.title || subBlock.ctaText || subBlock.ctaLink) ? 
+                `<div class="contact-block bg-gray-50 rounded-lg p-6 shadow-sm">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <div class="w-2 h-8 bg-black mr-4"></div>
+                      <h3 class="text-lg font-medium text-black">${subBlock.title || ''}</h3>
+                    </div>
+                    <a href="${subBlock.ctaLink || '#'}" class="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors">
+                      ${subBlock.ctaText || 'Contact'}
+                    </a>
+                  </div>
+                </div>` : '';
               default: return '';
             }
           }).join('');
@@ -899,6 +937,50 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
               placeholder="Lien du CTA"
               className="block-input"
             />
+          </div>
+        );
+      
+      case 'contact':
+        return (
+          <div className="block-editor">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Question/Titre
+                </label>
+                <input
+                  type="text"
+                  value={block.title || ''}
+                  onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                  placeholder="Ex: Would you like to see a demo?"
+                  className="block-input"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Texte du bouton
+                </label>
+                <input
+                  type="text"
+                  value={block.ctaText || ''}
+                  onChange={(e) => updateBlock(block.id, { ctaText: e.target.value })}
+                  placeholder="Ex: Yes, sign me up"
+                  className="block-input"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Lien du bouton
+                </label>
+                <input
+                  type="text"
+                  value={block.ctaLink || ''}
+                  onChange={(e) => updateBlock(block.id, { ctaLink: e.target.value })}
+                  placeholder="Ex: /contact ou https://..."
+                  className="block-input"
+                />
+              </div>
+            </div>
           </div>
         );
       
@@ -1336,6 +1418,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         case 'content': return 'Contenu';
         case 'image': return 'Image';
       case 'cta': return 'CTA';
+      case 'contact': return 'Contact';
       case 'about': return 'À propos';
               case 'services': return 'Services';
         case 'projects': return 'Projets';
@@ -2303,6 +2386,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
               <option value="content">Contenu</option>
               <option value="image">Image</option>
             <option value="cta">CTA</option>
+            <option value="contact">Contact</option>
             <option value="about">À propos</option>
             <option value="services">Services</option>
             <option value="projects">Projets</option>
