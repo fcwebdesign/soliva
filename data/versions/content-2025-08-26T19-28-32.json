@@ -150,12 +150,13 @@
         "theme": "auto"
       },
       {
-        "id": "block-1756228679880",
+        "id": "block-1756229013394",
         "type": "contact",
         "content": "",
-        "title": "test",
-        "ctaText": "Yes ok",
-        "ctaLink": ""
+        "title": "Would you like to see a demo?",
+        "ctaText": "Yes, sign me up",
+        "ctaLink": "https://google.com",
+        "theme": "light"
       }
     ]
   },

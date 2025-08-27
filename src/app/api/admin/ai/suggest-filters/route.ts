@@ -19,13 +19,13 @@ export async function POST(request: NextRequest) {
 
     // Préparer le contenu pour l'IA
     const contentForAnalysis = items
-      .filter(item => item.status === 'published' || !item.status)
+      .filter(item => (item as any).status === 'published' || !(item as any).status)
       .map(item => ({
         title: item.title,
-        excerpt: item.excerpt || item.description,
-        content: item.content?.substring(0, 500), // Limiter pour éviter les tokens
-        category: item.category,
-        client: item.client
+        excerpt: (item as any).excerpt || (item as any).description,
+        content: (item as any).content?.substring(0, 500), // Limiter pour éviter les tokens
+        category: (item as any).category,
+        client: (item as any).client
       }))
       .slice(0, 20); // Limiter à 20 items max
 

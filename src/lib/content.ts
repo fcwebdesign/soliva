@@ -8,7 +8,7 @@ export const runtime = "nodejs";
 const DATA_FILE_PATH = join(process.cwd(), 'data', 'content.json');
 
 // Seed data pour recréer le fichier si nécessaire
-const SEED_DATA: Content = {
+export const SEED_DATA: Content = {
   "metadata": {
     "title": "NextJS Page Transitions | Codegrid",
     "description": "NextJS Page Transitions | Codegrid"

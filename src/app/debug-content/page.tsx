@@ -1,15 +1,38 @@
-import { readContent } from '@/lib/content';
+"use client";
 
-export const runtime = "nodejs";
+import { useEffect, useState } from 'react';
 
-export default async function DebugContent() {
-  let content;
-  let error;
+export default function DebugContent() {
+  const [content, setContent] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  try {
-    content = await readContent();
-  } catch (err) {
-    error = err instanceof Error ? err.message : 'Erreur inconnue';
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        const response = await fetch('/api/public');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setContent(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Erreur inconnue');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContent();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="debug-page">
+        <h1>Debug Content</h1>
+        <div>Chargement...</div>
+      </div>
+    );
   }
 
   if (error) {
@@ -20,6 +43,15 @@ export default async function DebugContent() {
           <h2>Erreur lors de la lecture du contenu :</h2>
           <pre>{error}</pre>
         </div>
+      </div>
+    );
+  }
+
+  if (!content) {
+    return (
+      <div className="debug-page">
+        <h1>Debug Content</h1>
+        <div>Aucun contenu disponible</div>
       </div>
     );
   }

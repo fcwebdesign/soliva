@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     const content = await readContent();
     
     // Contexte simple pour le test
-    const pageContext = `Page: Studio créatif Soliva. ${content.studio?.hero?.title || 'Le studio'}. ${content.studio?.description || ''}`;
+    const pageContext = `Page: Studio créatif Soliva. ${content.studio?.hero?.title || 'Le studio'}. ${(content.studio as any)?.description || ''}`;
 
     // Déterminer le bon paramètre selon le modèle
     const isGpt5 = model.startsWith('gpt-5');
@@ -38,12 +38,12 @@ export async function POST(request: NextRequest) {
     // Utiliser le bon paramètre selon le modèle
     if (isGpt5) {
       // GPT-5 : Réduire drastiquement l'effort de raisonnement
-      requestBody.max_completion_tokens = 200;
-      requestBody.reasoning_effort = "minimal";
+      (requestBody as any).max_completion_tokens = 200;
+      (requestBody as any).reasoning_effort = "minimal";
       console.log('🔧 Configuration GPT-5:', JSON.stringify(requestBody, null, 2));
     } else {
-      requestBody.max_tokens = 100;
-      requestBody.temperature = 0.7;
+      (requestBody as any).max_tokens = 100;
+      (requestBody as any).temperature = 0.7;
       console.log('🔧 Configuration GPT-4:', JSON.stringify(requestBody, null, 2));
     }
 

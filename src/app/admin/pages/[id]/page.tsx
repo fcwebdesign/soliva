@@ -182,7 +182,12 @@ export default function PageEdit() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      <Sidebar />
+      <Sidebar 
+        pages={[]}
+        settings={[]}
+        currentPage=""
+        onPageChange={() => {}}
+      />
       
       <div className="flex-1 flex flex-col">
         {/* Header */}

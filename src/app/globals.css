@@ -1497,6 +1497,39 @@ html.preview-mode body {
   color: var(--accent);
 }
 
+/* Styles spécifiques pour les boutons de contact */
+.contact-button {
+  background-color: black !important;
+  color: white !important;
+}
+
+[data-theme="dark"] .contact-button {
+  background-color: white !important;
+  color: black !important;
+}
+
+/* Styles pour les boutons de contact dans l'admin - toujours noir avec texte blanc */
+.admin-page .contact-section .contact-button,
+.admin-page .contact-block .contact-button {
+  background-color: black !important;
+  color: white !important;
+}
+
+[data-theme="dark"] .admin-page .contact-section .contact-button,
+[data-theme="dark"] .admin-page .contact-block .contact-button {
+  background-color: black !important;
+  color: white !important;
+}
+
+/* Styles pour le texte de la section contact */
+.contact-section h2 {
+  color: black !important;
+}
+
+[data-theme="dark"] .contact-section h2 {
+  color: white !important;
+}
+
 /* Styles pour le générateur de brief */
 .brief-generator {
   margin-top: 3rem;

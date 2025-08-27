@@ -41,7 +41,7 @@ const StorytellingSection = ({ block }) => {
 
   return (
     <section ref={sectionRef} className="relative border-t border-white/10 bg-[rgb(8,8,10)] text-white">
-      <div className="container mx-auto px-5 py-24 md:py-32 max-w-6xl">
+      <div className="container mx-auto px-5 py-24 md:py-28 max-w-6xl">
         <div className="grid md:grid-cols-12 gap-10 items-start">
           {/* Titre sticky */}
           <div className="md:col-span-4 sticky top-24 self-start">

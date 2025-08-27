@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
       // Pour contact, on utilise les informations de contact existantes
       items = [{
         title: content.contact?.hero?.title || 'Contact',
-        description: content.contact?.description || '',
+        description: (content.contact as any)?.description || '',
         sections: content.contact?.sections || {},
         socials: content.contact?.socials || []
       }];
@@ -25,11 +25,11 @@ export async function POST(request: NextRequest) {
       items = [];
       
       // Ajouter le contenu de toutes les pages
-      if (content.home?.description) {
+      if ((content.home as any)?.description) {
         items.push({
           title: 'Accueil',
-          description: content.home.description,
-          content: content.home.content || ''
+          description: (content.home as any).description,
+          content: (content.home as any).content || ''
         });
       }
       
@@ -167,8 +167,7 @@ Contraintes:
 
   } catch (error) {
     console.error('Erreur suggestions description IA:', error);
-    console.error('Type:', type);
-    console.error('Items:', items);
+    console.error('Erreur lors de la génération de la description');
     return NextResponse.json({ 
       error: 'Erreur lors de la génération de la description',
       details: error.message 

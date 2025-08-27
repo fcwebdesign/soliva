@@ -61,7 +61,7 @@ export default function Projects({ title = "NOS RÉALISATIONS", maxProjects = 6,
   }
 
   return (
-    <section className="projects-section py-32">
+    <section className="projects-section py-28">
       <div className="container mx-auto">
         {/* Titre de la section */}
         {title && (

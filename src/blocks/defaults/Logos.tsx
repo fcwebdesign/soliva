@@ -14,7 +14,7 @@ interface LogosBlock extends BlockBase {
 
 export default function Logos({ title = "NOS CLIENTS", logos = [] }: LogosBlock) {
   return (
-    <section className="logos-section py-32">
+    <section className="logos-section py-28">
       <div className="container mx-auto">
         {/* Titre de la section */}
         {title && (

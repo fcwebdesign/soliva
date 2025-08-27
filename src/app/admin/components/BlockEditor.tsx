@@ -427,13 +427,13 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             `<div class="cta-block"><p>${block.ctaText || ''}</p><a href="${block.ctaLink || ''}" class="cta-button">En savoir plus</a></div>` : '';
         case 'contact':
           return (block.title || block.ctaText || block.ctaLink) ? 
-            `<div class="contact-block bg-gray-50 rounded-lg p-6 shadow-sm">
+            `<div class="contact-block bg-gray-50 dark:bg-gray-800 rounded-lg p-6 shadow-sm">
               <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                  <div class="w-2 h-8 bg-black mr-4"></div>
-                  <h3 class="text-lg font-medium text-black">${block.title || ''}</h3>
+                  <div class="w-2 h-8 bg-black dark:bg-white mr-4"></div>
+                  <h3 class="text-lg font-medium text-black dark:text-white">${block.title || ''}</h3>
                 </div>
-                <a href="${block.ctaLink || '#'}" class="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors">
+                <a href="${block.ctaLink || '#'}" class="bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors">
                   ${block.ctaText || 'Contact'}
                 </a>
               </div>
@@ -456,14 +456,14 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
               </div>
             </div>
           `).join('');
-          return `<section class="service-offerings-section py-32">
+          return `<section class="service-offerings-section py-28">
             <div class="container mx-auto">
               ${block.title ? `<div class="mb-12"><h2 class="text-2xl md:text-3xl font-bold tracking-tight text-black">${block.title}</h2></div>` : ''}
               <div class="space-y-0">${offeringsHtml}</div>
             </div>
           </section>`;
         case 'projects':
-          return `<section class="projects-section py-32">
+          return `<section class="projects-section py-28">
             <div class="container mx-auto">
               ${block.title ? `<div class="mb-12"><h2 class="text-2xl md:text-3xl font-bold tracking-tight text-black">${block.title}</h2></div>` : ''}
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -478,7 +478,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
               <img src="${logo.src || logo.image || ''}" alt="${logo.alt || logo.name || 'Logo client'}" class="max-w-full h-12 md:h-16 object-contain grayscale hover:grayscale-0 transition-all duration-300" />
             </div>
           `).join('');
-          return `<section class="logos-section py-32">
+          return `<section class="logos-section py-28">
             <div class="container mx-auto">
               ${block.title ? `<div class="mb-12"><h2 class="text-2xl md:text-3xl font-bold tracking-tight text-black">${block.title}</h2></div>` : ''}
               <div class="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
@@ -512,13 +512,13 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
               case 'cta': return (subBlock.ctaText || subBlock.ctaLink) ? 
                 `<div class="cta-block"><p>${subBlock.ctaText || ''}</p><a href="${subBlock.ctaLink || ''}" class="cta-button">En savoir plus</a></div>` : '';
               case 'contact': return (subBlock.title || subBlock.ctaText || subBlock.ctaLink) ? 
-                `<div class="contact-block bg-gray-50 rounded-lg p-6 shadow-sm">
+                `<div class="contact-block bg-gray-50 dark:bg-gray-800 rounded-lg p-6 shadow-sm">
                   <div class="flex items-center justify-between">
                     <div class="flex items-center">
-                      <div class="w-2 h-8 bg-black mr-4"></div>
-                      <h3 class="text-lg font-medium text-black">${subBlock.title || ''}</h3>
+                      <div class="w-2 h-8 bg-black dark:bg-white mr-4"></div>
+                      <h3 class="text-lg font-medium text-black dark:text-white">${subBlock.title || ''}</h3>
                     </div>
-                    <a href="${subBlock.ctaLink || '#'}" class="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors">
+                    <a href="${subBlock.ctaLink || '#'}" class="bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors">
                       ${subBlock.ctaText || 'Contact'}
                     </a>
                   </div>
@@ -536,13 +536,13 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
               case 'cta': return (subBlock.ctaText || subBlock.ctaLink) ? 
                 `<div class="cta-block"><p>${subBlock.ctaText || ''}</p><a href="${subBlock.ctaLink || ''}" class="cta-button">En savoir plus</a></div>` : '';
               case 'contact': return (subBlock.title || subBlock.ctaText || subBlock.ctaLink) ? 
-                `<div class="contact-block bg-gray-50 rounded-lg p-6 shadow-sm">
+                `<div class="contact-block bg-gray-50 dark:bg-gray-800 rounded-lg p-6 shadow-sm">
                   <div class="flex items-center justify-between">
                     <div class="flex items-center">
-                      <div class="w-2 h-8 bg-black mr-4"></div>
-                      <h3 class="text-lg font-medium text-black">${subBlock.title || ''}</h3>
+                      <div class="w-2 h-8 bg-black dark:bg-white mr-4"></div>
+                      <h3 class="text-lg font-medium text-black dark:text-white">${subBlock.title || ''}</h3>
                     </div>
-                    <a href="${subBlock.ctaLink || '#'}" class="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors">
+                    <a href="${subBlock.ctaLink || '#'}" class="bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors">
                       ${subBlock.ctaText || 'Contact'}
                     </a>
                   </div>
@@ -721,7 +721,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
           const newContent = await contentResponse.json();
           
           // Mettre à jour seulement la partie spécifique sans flash
-          setLocalData(prevData => {
+          setLocalData((prevData: any) => {
             if (type === 'work') {
               return {
                 ...prevData,
@@ -743,7 +743,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       
     } catch (error) {
       console.error('Erreur duplication:', error);
-      showNotificationModal(`Erreur lors de la duplication: ${error.message}`, 'error');
+      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
+      showNotificationModal(`Erreur lors de la duplication: ${errorMessage}`, 'error');
     } finally {
       setIsDuplicating(null);
     }
@@ -793,7 +794,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
           const newContent = await contentResponse.json();
           
           // Mettre à jour seulement la partie spécifique sans flash
-          setLocalData(prevData => {
+          setLocalData((prevData: any) => {
             if (type === 'work') {
               return {
                 ...prevData,
@@ -815,7 +816,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       
     } catch (error) {
       console.error('Erreur suppression:', error);
-      showNotificationModal(`Erreur lors de la suppression: ${error.message}`, 'error');
+      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
+      showNotificationModal(`Erreur lors de la suppression: ${errorMessage}`, 'error');
     } finally {
       setIsDeleting(null);
     }
@@ -899,7 +901,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             </div>
             <WysiwygEditor
               value={block.content}
-              onChange={(content) => updateBlock(block.id, { content })}
+              onChange={(content: any) => updateBlock(block.id, { content })}
+              placeholder="Saisissez votre contenu ici..."
             />
           </div>
         );
@@ -1012,6 +1015,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             <WysiwygEditor
               value={block.content || ''}
               onChange={(content) => updateBlock(block.id, { content })}
+              placeholder="Saisissez votre contenu ici..."
             />
           </div>
         );
@@ -1415,7 +1419,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         return (
           <div className="block-editor">
             <TwoColumnsEditor
-              block={block}
+              block={block as any}
               onUpdate={(updates) => updateBlock(block.id, updates)}
             />
           </div>

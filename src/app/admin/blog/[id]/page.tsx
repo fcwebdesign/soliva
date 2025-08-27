@@ -89,7 +89,8 @@ export default function BlogArticleEdit() {
   };
 
   const updateArticle = (updates: Partial<Article>) => {
-    const updatedArticle = { ...article, ...updates };
+    if (!article) return;
+    const updatedArticle = { ...article, ...updates } as Article;
     setArticle(updatedArticle);
     setHasUnsavedChanges(true);
   };

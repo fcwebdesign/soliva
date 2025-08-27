@@ -354,8 +354,8 @@ export default function WorkProjectEdit() {
         newContent.work.projects[projectFrontendIndex] = {
           ...projectInFrontend,
           title: cleanedProject.title,
-          description: cleanedProject.description,
-          excerpt: cleanedProject.excerpt,
+          description: (cleanedProject as any).description,
+          excerpt: (cleanedProject as any).excerpt,
           content: cleanedProject.content,
           category: cleanedProject.category,
           client: cleanedProject.client,
@@ -363,15 +363,15 @@ export default function WorkProjectEdit() {
           featured: cleanedProject.featured,
           status: cleanedProject.status,
           publishedAt: cleanedProject.publishedAt,
-          image: cleanedProject.image,
-          alt: cleanedProject.alt
-        };
+          image: (cleanedProject as any).image,
+          alt: (cleanedProject as any).alt
+        } as any;
       } else {
         // Ajouter le projet à la liste frontend
         newContent.work.projects.push({
           title: cleanedProject.title,
-          description: cleanedProject.description,
-          excerpt: cleanedProject.excerpt,
+          description: (cleanedProject as any).description,
+          excerpt: (cleanedProject as any).excerpt,
           content: cleanedProject.content,
           category: cleanedProject.category,
           client: cleanedProject.client,
@@ -380,9 +380,9 @@ export default function WorkProjectEdit() {
           status: cleanedProject.status,
           publishedAt: cleanedProject.publishedAt,
           slug: cleanedProject.slug,
-          image: cleanedProject.image,
-          alt: cleanedProject.alt
-        });
+          image: (cleanedProject as any).image,
+          alt: (cleanedProject as any).alt
+        } as any);
       }
       
       console.log('💾 Contenu après sauvegarde:', JSON.stringify(newContent.work.adminProjects, null, 2));
@@ -613,8 +613,8 @@ export default function WorkProjectEdit() {
                 Image principale
               </label>
               <MediaUploader
-                currentUrl={project.image || ''}
-                onUpload={(url) => updateProject({ image: url })}
+                currentUrl={(project as any).image || ''}
+                onUpload={(url) => updateProject({ image: url } as any)}
               />
             </div>
 

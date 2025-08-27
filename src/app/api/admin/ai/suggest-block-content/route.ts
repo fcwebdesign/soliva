@@ -10,9 +10,9 @@ export async function POST(request: NextRequest) {
     // Contexte spécifique selon la page avec plus de détails
     let pageContext = '';
     if (pageKey === 'studio') {
-      const studioBlocks = content.studio?.blocks || [];
+      const studioBlocks = (content.studio as any)?.blocks || [];
       const existingContent = studioBlocks.map(b => b.content).join(' ');
-      pageContext = `Page: Studio créatif Soliva. ${content.studio?.hero?.title || 'Le studio'}. ${content.studio?.description || ''}. Contenu existant: ${existingContent}`;
+      pageContext = `Page: Studio créatif Soliva. ${content.studio?.hero?.title || 'Le studio'}. ${(content.studio as any)?.description || ''}. Contenu existant: ${existingContent}`;
     } else if (pageKey === 'work') {
       const projects = content.work?.projects || [];
       const projectTitles = projects.map(p => p.title).join(', ');
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       const articleTitles = articles.map(a => a.title).join(', ');
       pageContext = `Page: Le journal. ${content.blog?.hero?.title || 'Le journal'}. ${content.blog?.description || ''}. Articles: ${articleTitles}`;
     } else if (pageKey === 'contact') {
-      pageContext = `Page: Contact. ${content.contact?.hero?.title || 'Contact'}. ${content.contact?.description || ''}. Sections: ${JSON.stringify(content.contact?.sections || {})}`;
+      pageContext = `Page: Contact. ${content.contact?.hero?.title || 'Contact'}. ${(content.contact as any)?.description || ''}. Sections: ${JSON.stringify(content.contact?.sections || {})}`;
     }
 
     // Analyser les blocs existants pour la cohérence
@@ -175,12 +175,12 @@ Génère du contenu professionnel et direct pour ce bloc. Le contenu doit être 
     // Utiliser le bon paramètre selon le modèle
     if (isGpt5) {
       // GPT-5 : Réduire drastiquement l'effort de raisonnement
-      requestBody.max_completion_tokens = 300;
-      requestBody.reasoning_effort = "minimal";
+      (requestBody as any).max_completion_tokens = 300;
+      (requestBody as any).reasoning_effort = "minimal";
       console.log('🔧 Configuration GPT-5 pour bloc:', JSON.stringify(requestBody, null, 2));
     } else {
-      requestBody.max_tokens = 200;
-      requestBody.temperature = 0.7;
+      (requestBody as any).max_tokens = 200;
+      (requestBody as any).temperature = 0.7;
       console.log('🔧 Configuration GPT-4 pour bloc:', JSON.stringify(requestBody, null, 2));
     }
 

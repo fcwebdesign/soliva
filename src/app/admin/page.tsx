@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Sidebar from './components/Sidebar';
 import BlockEditor from './components/BlockEditor';
@@ -25,7 +25,7 @@ const SETTINGS = [
   { id: 'backup', label: 'Sauvegarde', path: null, icon: '💾' },
 ];
 
-export default function AdminPage() {
+function AdminPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -99,7 +99,7 @@ export default function AdminPage() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [hasUnsavedChanges]);
 
   // Debug: surveiller les changements de hasUnsavedChanges
   useEffect(() => {
@@ -452,11 +452,11 @@ export default function AdminPage() {
     const newContent = { ...content };
     
     if (pageKey === 'nav') {
-      newContent.navigation = { ...newContent.navigation, ...updates };
+      newContent.nav = { ...newContent.nav, ...updates };
     } else if (pageKey === 'metadata') {
       newContent.metadata = { ...newContent.metadata, ...updates };
     } else {
-      newContent[pageKey as keyof Content] = { ...newContent[pageKey as keyof Content], ...updates };
+      (newContent as any)[pageKey] = { ...(newContent as any)[pageKey], ...updates };
     }
     
     setContent(newContent);
@@ -507,7 +507,7 @@ export default function AdminPage() {
   const currentPageData = (() => {
     switch (currentPage) {
       case 'nav':
-        return content.navigation;
+        return content.nav;
       case 'metadata':
         return content.metadata;
       case 'templates':
@@ -517,8 +517,8 @@ export default function AdminPage() {
         console.log(`🔍 Données de la page ${currentPage}:`, {
           hasData: !!pageData,
           keys: pageData ? Object.keys(pageData) : [],
-          hasBlocks: pageData?.blocks ? pageData.blocks.length : 0,
-          blocks: pageData?.blocks
+          hasBlocks: (pageData as any)?.blocks ? (pageData as any).blocks.length : 0,
+          blocks: (pageData as any)?.blocks
         });
         return pageData;
     }
@@ -664,27 +664,27 @@ export default function AdminPage() {
 
                           // Récupérer les données selon la page
                           if (currentPage === 'nav') {
-                            const currentHeaderData = window.getCurrentHeaderData ? window.getCurrentHeaderData() : null;
+                            const currentHeaderData = (window as any).getCurrentHeaderData ? (window as any).getCurrentHeaderData() : null;
                             
                             if (!currentHeaderData) {
                               throw new Error('Impossible de récupérer les données du header');
                             }
 
-                            updatedContent.nav = {
+                            (updatedContent as any).nav = {
                               logo: currentHeaderData.logo,
-                              logoImage: currentHeaderData.logoImage,
+                              logoImage: (currentHeaderData as any).logoImage,
                               location: currentHeaderData.location,
                               items: currentHeaderData.pages,
                               pageLabels: currentHeaderData.pageLabels
                             };
                           } else if (currentPage === 'footer') {
-                            const currentFooterData = window.getCurrentFooterData ? window.getCurrentFooterData() : null;
+                            const currentFooterData = (window as any).getCurrentFooterData ? (window as any).getCurrentFooterData() : null;
                             
                             if (!currentFooterData) {
                               throw new Error('Impossible de récupérer les données du footer');
                             }
 
-                            updatedContent.footer = {
+                            (updatedContent as any).footer = {
                               logo: currentFooterData.logo,
                               logoImage: currentFooterData.logoImage,
                               description: currentFooterData.description,
@@ -833,5 +833,13 @@ export default function AdminPage() {
         </main>
       </div>
     </div>
+  );
+}
+
+export default function AdminPage() {
+  return (
+    <Suspense fallback={<div>Chargement...</div>}>
+      <AdminPageContent />
+    </Suspense>
   );
 } 
