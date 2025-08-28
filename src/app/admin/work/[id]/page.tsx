@@ -468,16 +468,7 @@ export default function WorkProjectEdit() {
     <div className="min-h-screen bg-gray-50 grid grid-cols-1 xl:grid-cols-[256px_1fr]">
       {/* Sidebar gauche */}
       <Sidebar 
-        pages={PAGES}
-        settings={SETTINGS}
         currentPage="work"
-        onPageChange={(pageId) => {
-          if (pageId === 'work') {
-            router.push('/admin');
-          } else {
-            router.push(`/admin?page=${pageId}`);
-          }
-        }}
       />
 
       {/* Zone principale */}

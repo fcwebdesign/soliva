@@ -60,7 +60,12 @@ export default function PageEdit() {
     }
   };
 
-  const currentPage = pageConfigs[pageId as keyof typeof pageConfigs];
+  const currentPage = pageId === 'new' ? {
+    title: 'Nouvelle page',
+    icon: '📄',
+    description: 'Page personnalisée',
+    dataPath: 'custom'
+  } : pageConfigs[pageId as keyof typeof pageConfigs];
 
   useEffect(() => {
     if (!currentPage) {
@@ -69,6 +74,14 @@ export default function PageEdit() {
     }
     fetchContent();
   }, [pageId]);
+
+  // Ajouter la classe admin-page au body
+  useEffect(() => {
+    document.body.classList.add('admin-page');
+    return () => {
+      document.body.classList.remove('admin-page');
+    };
+  }, []);
 
   const fetchContent = async () => {
     try {
@@ -183,10 +196,7 @@ export default function PageEdit() {
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <Sidebar 
-        pages={[]}
-        settings={[]}
-        currentPage=""
-        onPageChange={() => {}}
+        currentPage="pages"
       />
       
       <div className="flex-1 flex flex-col">

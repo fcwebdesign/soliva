@@ -9,25 +9,44 @@ import FooterManager from './components/FooterManager';
 import MinimalisteManager from './components/MinimalisteManager';
 import type { Content } from '@/types/content';
 
-const PAGES = [
-  { id: 'home', label: 'Accueil', path: '/', icon: '🏠' },
-  { id: 'studio', label: 'Studio', path: '/studio', icon: '🎨' },
-  { id: 'contact', label: 'Contact', path: '/contact', icon: '📧' },
-  { id: 'work', label: 'Portfolio', path: '/work', icon: '💼' },
-  { id: 'blog', label: 'Blog', path: '/blog', icon: '📝' },
-];
 
-const SETTINGS = [
-  { id: 'nav', label: 'Navigation', path: null, icon: '🧭' },
-  { id: 'metadata', label: 'Métadonnées', path: null, icon: '⚙️' },
-  { id: 'templates', label: 'Templates', path: null, icon: '🎨' },
-  { id: 'footer', label: 'Footer', path: null, icon: '🦶' },
-  { id: 'backup', label: 'Sauvegarde', path: null, icon: '💾' },
-];
 
 function AdminPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  
+  // Fonction helper pour obtenir le chemin d'une page
+  const getPagePath = (pageId: string) => {
+    const pageConfigs = {
+      home: '/',
+      studio: '/studio',
+      contact: '/contact',
+      work: '/work',
+      blog: '/blog',
+      nav: null,
+      metadata: null,
+      templates: null,
+      footer: null,
+      backup: null
+    };
+    return pageConfigs[pageId as keyof typeof pageConfigs] || '/';
+  };
+  
+  const getPageConfig = (pageId: string) => {
+    const pageConfigs = {
+      home: { label: 'Accueil', path: '/', icon: '🏠' },
+      studio: { label: 'Studio', path: '/studio', icon: '🎨' },
+      contact: { label: 'Contact', path: '/contact', icon: '📧' },
+      work: { label: 'Portfolio', path: '/work', icon: '💼' },
+      blog: { label: 'Blog', path: '/blog', icon: '📝' },
+      nav: { label: 'Navigation', path: null, icon: '🧭' },
+      metadata: { label: 'Métadonnées', path: null, icon: '⚙️' },
+      templates: { label: 'Templates', path: null, icon: '🎨' },
+      footer: { label: 'Footer', path: null, icon: '🦶' },
+      backup: { label: 'Sauvegarde', path: null, icon: '💾' }
+    };
+    return pageConfigs[pageId as keyof typeof pageConfigs];
+  };
   
   const [content, setContent] = useState<Content | null>(null);
   const [originalContent, setOriginalContent] = useState<Content | null>(null); // Contenu original pour comparaison
@@ -58,7 +77,7 @@ function AdminPageContent() {
   // Initialiser la page depuis l'URL (une seule fois)
   useEffect(() => {
     const pageFromUrl = searchParams.get('page');
-    if (pageFromUrl && [...PAGES, ...SETTINGS].find(p => p.id === pageFromUrl)) {
+    if (pageFromUrl && ['home', 'studio', 'contact', 'work', 'blog', 'nav', 'metadata', 'templates', 'footer', 'backup'].includes(pageFromUrl)) {
       setCurrentPage(pageFromUrl);
     } else {
       // Vérifier s'il y a une page par défaut à afficher
@@ -165,7 +184,7 @@ function AdminPageContent() {
   // Détecter les changements d'URL (boutons précédent/suivant du navigateur)
   useEffect(() => {
     const pageFromUrl = searchParams.get('page') || 'home';
-          if (pageFromUrl !== currentPage && [...PAGES, ...SETTINGS].find(p => p.id === pageFromUrl)) {
+          if (pageFromUrl !== currentPage && ['home', 'studio', 'contact', 'work', 'blog', 'nav', 'metadata', 'templates', 'footer', 'backup'].includes(pageFromUrl)) {
       if (hasUnsavedChanges) {
         const confirmLeave = window.confirm(
           'Vous avez des modifications non enregistrées.\n\nÊtes-vous sûr de vouloir quitter cette page sans enregistrer ?'
@@ -406,7 +425,7 @@ function AdminPageContent() {
       }
       
       // 3. Ouvrir l'URL spéciale d'aperçu
-      const previewPath = [...PAGES, ...SETTINGS].find(p => p.id === currentPage)?.path || '/';
+      const previewPath = getPagePath(currentPage);
       
       // Si le template minimaliste est actif, ajouter le paramètre template
       let previewUrl = `${previewPath}?preview=${previewId}`;
@@ -524,16 +543,13 @@ function AdminPageContent() {
     }
   })();
 
-  const currentPageConfig = [...PAGES, ...SETTINGS].find(p => p.id === currentPage);
+      const currentPageConfig = getPageConfig(currentPage);
 
   return (
     <div className="admin-page min-h-screen bg-gray-50">
       {/* Sidebar */}
       <Sidebar 
-        pages={PAGES}
-        settings={SETTINGS}
         currentPage={currentPage}
-        onPageChange={handlePageChange}
       />
 
       {/* Zone principale */}

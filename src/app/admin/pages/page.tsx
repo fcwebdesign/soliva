@@ -99,8 +99,8 @@ export default function PagesAdmin() {
   };
 
   const handleNewPage = () => {
-    // Logique pour créer une nouvelle page
-    console.log('Créer une nouvelle page');
+    // Rediriger vers une page d'édition vide
+    router.push('/admin/pages/new');
   };
 
   const getPageStats = () => {
@@ -113,36 +113,14 @@ export default function PagesAdmin() {
 
   const stats = getPageStats();
 
-  // Données pour la sidebar (comme dans la page principale)
-  const PAGES = [
-    { id: 'home', label: 'Accueil', path: '/', icon: '🏠' },
-    { id: 'studio', label: 'Studio', path: '/studio', icon: '🎨' },
-    { id: 'contact', label: 'Contact', path: '/contact', icon: '📧' },
-    { id: 'work', label: 'Portfolio', path: '/work', icon: '💼' },
-    { id: 'blog', label: 'Blog', path: '/blog', icon: '📝' },
-  ];
 
-  const SETTINGS = [
-    { id: 'nav', label: 'Navigation', path: null, icon: '🧭' },
-    { id: 'metadata', label: 'Métadonnées', path: null, icon: '⚙️' },
-    { id: 'templates', label: 'Templates', path: null, icon: '🎨' },
-    { id: 'footer', label: 'Footer', path: null, icon: '🦶' },
-    { id: 'backup', label: 'Sauvegarde', path: null, icon: '💾' },
-  ];
-
-  const handlePageChange = (pageId: string) => {
-    router.push(`/admin?page=${pageId}`);
-  };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 admin-page">
         <div className="flex">
           <Sidebar 
-            pages={PAGES} 
-            settings={SETTINGS} 
             currentPage="pages" 
-            onPageChange={handlePageChange} 
           />
           <div className="flex-1 p-6">
             <div className="animate-pulse">
@@ -164,10 +142,7 @@ export default function PagesAdmin() {
     <div className="min-h-screen bg-gray-50 admin-page">
       <div className="flex">
         <Sidebar 
-          pages={PAGES} 
-          settings={SETTINGS} 
           currentPage="pages" 
-          onPageChange={handlePageChange} 
         />
         
         <div className="flex-1">
@@ -181,12 +156,9 @@ export default function PagesAdmin() {
                   </h1>
                   <p className="text-sm text-gray-500">Page: /pages</p>
                 </div>
-
               </div>
             </div>
           </header>
-
-
 
           {/* Content */}
           <div className="p-6">
@@ -216,113 +188,114 @@ export default function PagesAdmin() {
                   </button>
                 </nav>
               </div>
-            {activeTab === 'content' && (
-              <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-2xl">📄</span>
-                      <h3 className="text-lg font-semibold text-gray-900">Pages ({stats.total})</h3>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
-                        ✅ {stats.published} publié{stats.published !== 1 ? 's' : ''}
-                      </span>
-                      {stats.drafts > 0 && (
-                        <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">
-                          📝 {stats.drafts} brouillon{stats.drafts !== 1 ? 's' : ''}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <button
-                    onClick={handleNewPage}
-                    className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    ➕ Nouvelle page
-                  </button>
-                </div>
 
-                <div className="space-y-3">
-                  {pages.map((page, index) => (
-                    <div key={page.id} className="bg-gray-50 rounded-lg border border-gray-200 p-4 hover:border-gray-300 transition-colors">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center space-x-3">
-                            <h4 className="text-md font-semibold text-gray-900 truncate">
-                              {page.title}
-                            </h4>
-                            <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                              page.status === 'published' 
-                                ? 'bg-green-100 text-green-800' 
-                                : 'bg-yellow-100 text-yellow-800'
-                            }`}>
-                              {page.status === 'published' ? '✅ Publié' : '📝 Brouillon'}
-                            </span>
-                          </div>
-                          <div className="flex items-center space-x-4 mt-1">
-                            <p className="text-sm text-gray-500">
-                              ID: {page.id}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              {page.description}
-                            </p>
-                            {page.lastModified && (
-                              <p className="text-sm text-gray-500">
-                                Modifié: {page.lastModified}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                        
-                        <div className="flex space-x-2 ml-4">
-                          <button
-                            onClick={() => handleEditPage(page.id)}
-                            className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200 transition-colors"
-                            title="Éditer la page"
-                          >
-                            ✏️ Éditer
-                          </button>
-                          <button
-                            onClick={() => handlePreviewPage(page.id)}
-                            className="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 transition-colors"
-                            title="Aperçu de la page"
-                          >
-                            👁️ Aperçu
-                          </button>
-                          <button
-                            onClick={() => handleDuplicatePage(page.id)}
-                            className="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded hover:bg-orange-200 transition-colors"
-                            title="Dupliquer cette page"
-                          >
-                            📋 Dupliquer
-                          </button>
-                          <button
-                            onClick={() => handleDeletePage(page.id)}
-                            className="text-xs bg-red-100 text-red-700 px-3 py-1 rounded hover:bg-red-200 transition-colors"
-                            title="Supprimer cette page"
-                          >
-                            🗑️ Supprimer
-                          </button>
-                        </div>
+              {activeTab === 'content' && (
+                <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-2xl">📄</span>
+                        <h3 className="text-lg font-semibold text-gray-900">Pages ({stats.total})</h3>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                          ✅ {stats.published} publié{stats.published !== 1 ? 's' : ''}
+                        </span>
+                        {stats.drafts > 0 && (
+                          <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">
+                            📝 {stats.drafts} brouillon{stats.drafts !== 1 ? 's' : ''}
+                          </span>
+                        )}
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'settings' && (
-              <div className="space-y-6">
-                <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-                  <div className="flex items-center space-x-2 mb-4">
-                    <span className="text-2xl">⚙️</span>
-                    <h3 className="text-lg font-semibold text-gray-900">Paramètres des pages</h3>
+                    <button
+                      onClick={handleNewPage}
+                      className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                      ➕ Nouvelle page
+                    </button>
                   </div>
-                  <p className="text-gray-500">Configuration des paramètres généraux des pages.</p>
+
+                  <div className="space-y-3">
+                    {pages.map((page, index) => (
+                      <div key={page.id} className="bg-gray-50 rounded-lg border border-gray-200 p-4 hover:border-gray-300 transition-colors">
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center space-x-3">
+                              <h4 className="text-md font-semibold text-gray-900 truncate">
+                                {page.title}
+                              </h4>
+                              <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                                page.status === 'published' 
+                                  ? 'bg-green-100 text-green-800' 
+                                  : 'bg-yellow-100 text-yellow-800'
+                              }`}>
+                                {page.status === 'published' ? '✅ Publié' : '📝 Brouillon'}
+                              </span>
+                            </div>
+                            <div className="flex items-center space-x-4 mt-1">
+                              <p className="text-sm text-gray-500">
+                                ID: {page.id}
+                              </p>
+                              <p className="text-sm text-gray-500">
+                                {page.description}
+                              </p>
+                              {page.lastModified && (
+                                <p className="text-sm text-gray-500">
+                                  Modifié: {page.lastModified}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="flex space-x-2 ml-4">
+                            <button
+                              onClick={() => handleEditPage(page.id)}
+                              className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200 transition-colors"
+                              title="Éditer la page"
+                            >
+                              ✏️ Éditer
+                            </button>
+                            <button
+                              onClick={() => handlePreviewPage(page.id)}
+                              className="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 transition-colors"
+                              title="Aperçu de la page"
+                            >
+                              👁️ Aperçu
+                            </button>
+                            <button
+                              onClick={() => handleDuplicatePage(page.id)}
+                              className="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded hover:bg-orange-200 transition-colors"
+                              title="Dupliquer cette page"
+                            >
+                              📋 Dupliquer
+                            </button>
+                            <button
+                              onClick={() => handleDeletePage(page.id)}
+                              className="text-xs bg-red-100 text-red-700 px-3 py-1 rounded hover:bg-red-200 transition-colors"
+                              title="Supprimer cette page"
+                            >
+                              🗑️ Supprimer
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+
+              {activeTab === 'settings' && (
+                <div className="space-y-6">
+                  <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+                    <div className="flex items-center space-x-2 mb-4">
+                      <span className="text-2xl">⚙️</span>
+                      <h3 className="text-lg font-semibold text-gray-900">Paramètres des pages</h3>
+                    </div>
+                    <p className="text-gray-500">Configuration des paramètres généraux des pages.</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

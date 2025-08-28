@@ -10,25 +10,43 @@ interface Page {
 }
 
 interface SidebarProps {
-  pages: Page[];
-  settings: Page[];
   currentPage: string;
-  onPageChange: (pageId: string) => void;
 }
 
-export default function Sidebar({ pages, settings, currentPage, onPageChange }: SidebarProps) {
+export default function Sidebar({ currentPage }: SidebarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const router = useRouter();
 
-  // Séparer les pages en groupes
-  const pageGroupPages = pages.filter(page => ['home', 'studio', 'contact'].includes(page.id));
-  const otherPages = pages.filter(page => !['home', 'studio', 'contact'].includes(page.id));
+  // Pages unifiées pour tout l'admin
+  const PAGES = [
+    { id: 'home', label: 'Accueil', path: '/', icon: '🏠' },
+    { id: 'studio', label: 'Studio', path: '/studio', icon: '🎨' },
+    { id: 'contact', label: 'Contact', path: '/contact', icon: '📧' },
+    { id: 'work', label: 'Portfolio', path: '/work', icon: '💼' },
+    { id: 'blog', label: 'Blog', path: '/blog', icon: '📝' },
+  ];
+
+  const SETTINGS = [
+    { id: 'nav', label: 'Navigation', path: null, icon: '🧭' },
+    { id: 'metadata', label: 'Métadonnées', path: null, icon: '⚙️' },
+    { id: 'templates', label: 'Templates', path: null, icon: '🎨' },
+    { id: 'footer', label: 'Footer', path: null, icon: '🦶' },
+    { id: 'backup', label: 'Sauvegarde', path: null, icon: '💾' },
+  ];
+
+  const handlePageChange = (pageId: string) => {
+    if (pageId === 'pages') {
+      router.push('/admin/pages');
+    } else {
+      router.push(`/admin?page=${pageId}`);
+    }
+  };
 
   const renderPageItem = (page: Page, isMobile = false) => (
     <li key={page.id}> 
       <button
         onClick={() => {
-          onPageChange(page.id);
+          handlePageChange(page.id);
           if (isMobile) setIsMobileMenuOpen(false);
         }}
         className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
@@ -81,14 +99,14 @@ export default function Sidebar({ pages, settings, currentPage, onPageChange }: 
             </button>
           </div>
           
-          {/* Autres pages */}
-          {otherPages.length > 0 && (
+          {/* Pages */}
+          {PAGES.length > 0 && (
             <div className="mb-4">
               <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                Autres
+                Pages
               </h3>
               <ul className="space-y-1">
-                {otherPages.map((page) => renderPageItem(page))}
+                {PAGES.map((page) => renderPageItem(page))}
               </ul>
             </div>
           )}
@@ -98,10 +116,10 @@ export default function Sidebar({ pages, settings, currentPage, onPageChange }: 
               Paramètres
             </h3>
             <ul className="space-y-1">
-              {settings.map((setting) => (
+              {SETTINGS.map((setting) => (
                 <li key={setting.id}> 
                   <button
-                    onClick={() => onPageChange(setting.id)}
+                    onClick={() => handlePageChange(setting.id)}
                     className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                       currentPage === setting.id
                         ? 'bg-blue-50 text-blue-700 border border-blue-200'
@@ -205,14 +223,14 @@ export default function Sidebar({ pages, settings, currentPage, onPageChange }: 
                 </button>
               </div>
               
-              {/* Autres pages mobile */}
-              {otherPages.length > 0 && (
+              {/* Pages mobile */}
+              {PAGES.length > 0 && (
                 <div className="mb-4">
                   <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                    Autres
+                    Pages
                   </h3>
                   <ul className="space-y-1">
-                    {otherPages.map((page) => renderPageItem(page, true))}
+                    {PAGES.map((page) => renderPageItem(page, true))}
                   </ul>
                 </div>
               )}
@@ -222,11 +240,11 @@ export default function Sidebar({ pages, settings, currentPage, onPageChange }: 
                   Paramètres
                 </h3>
                 <ul className="space-y-1">
-                  {settings.map((setting) => (
+                  {SETTINGS.map((setting) => (
                     <li key={setting.id}>
                       <button
                         onClick={() => {
-                          onPageChange(setting.id);
+                          handlePageChange(setting.id);
                           setIsMobileMenuOpen(false);
                         }}
                         className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
