@@ -9,7 +9,9 @@ const FooterManager = ({ content, onSave }) => {
     description: content?.footer?.description || '',
     links: content?.footer?.links || [],
     socialLinks: content?.footer?.socialLinks || [],
-    copyright: content?.footer?.copyright || '© 2024 Soliva. Tous droits réservés.'
+    copyright: content?.footer?.copyright || '© 2024 Soliva. Tous droits réservés.',
+    bottomLinks: content?.footer?.bottomLinks || [],
+    legalPageLabels: content?.footer?.legalPageLabels || {}
   });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -17,6 +19,7 @@ const FooterManager = ({ content, onSave }) => {
   const [dragOverIndex, setDragOverIndex] = useState(null);
   const [logoType, setLogoType] = useState(content?.footer?.logoImage ? 'image' : 'text');
   const [editingLink, setEditingLink] = useState(null);
+  const [editingLegalPage, setEditingLegalPage] = useState(null);
 
 
   // Exposer les données actuelles via une fonction globale
@@ -35,7 +38,9 @@ const FooterManager = ({ content, onSave }) => {
       description: content?.footer?.description || '',
       links: content?.footer?.links || [],
       socialLinks: content?.footer?.socialLinks || [],
-      copyright: content?.footer?.copyright || '© 2024 Soliva. Tous droits réservés.'
+      copyright: content?.footer?.copyright || '© 2024 Soliva. Tous droits réservés.',
+      bottomLinks: content?.footer?.bottomLinks || [],
+      legalPageLabels: content?.footer?.legalPageLabels || {}
     });
     setLogoType(content?.footer?.logoImage ? 'image' : 'text');
     // Réinitialiser l'état d'édition après sauvegarde
@@ -51,6 +56,21 @@ const FooterManager = ({ content, onSave }) => {
     { key: 'studio', label: 'Studio', path: 'studio' },
     { key: 'blog', label: 'Journal', path: 'blog' },
     { key: 'contact', label: 'Contact', path: 'contact' }
+  ];
+
+  // Pages disponibles pour les liens légaux (même que navigation)
+  const availableLegalPages = [
+    { key: 'home', label: 'Accueil', path: '/' },
+    { key: 'work', label: 'Réalisations', path: '/work' },
+    { key: 'studio', label: 'Studio', path: '/studio' },
+    { key: 'blog', label: 'Journal', path: '/blog' },
+    { key: 'contact', label: 'Contact', path: '/contact' },
+    { key: 'mentions-legales', label: 'Mentions légales', path: '/mentions-legales' },
+    { key: 'politique-confidentialite', label: 'Politique de confidentialité', path: '/politique-confidentialite' },
+    { key: 'cgu', label: 'Conditions générales d\'utilisation', path: '/cgu' },
+    { key: 'cookies', label: 'Politique des cookies', path: '/cookies' },
+    { key: 'rgpd', label: 'RGPD', path: '/rgpd' },
+    { key: 'mentions-obligatoires', label: 'Mentions obligatoires', path: '/mentions-obligatoires' }
   ];
 
   // Réseaux sociaux disponibles
@@ -190,6 +210,78 @@ const FooterManager = ({ content, onSave }) => {
     window.dispatchEvent(new CustomEvent('footer-changed'));
   };
 
+  // Fonctions pour les liens légaux (bottomLinks)
+  const addBottomLink = () => {
+    setFooterData(prev => ({
+      ...prev,
+      bottomLinks: [...prev.bottomLinks, { title: 'Nouveau lien légal', url: '' }]
+    }));
+    window.dispatchEvent(new CustomEvent('footer-changed'));
+  };
+
+  const updateBottomLink = (index, field, value) => {
+    setFooterData(prev => {
+      const newBottomLinks = [...prev.bottomLinks];
+      newBottomLinks[index] = { ...newBottomLinks[index], [field]: value };
+      return { ...prev, bottomLinks: newBottomLinks };
+    });
+    window.dispatchEvent(new CustomEvent('footer-changed'));
+  };
+
+  const removeBottomLink = (pageKey) => {
+    setFooterData(prev => ({
+      ...prev,
+      bottomLinks: prev.bottomLinks.filter(p => p !== pageKey)
+    }));
+    window.dispatchEvent(new CustomEvent('footer-changed'));
+  };
+
+  const toggleLegalPage = (pageKey) => {
+    setFooterData(prev => {
+      const newBottomLinks = prev.bottomLinks.includes(pageKey)
+        ? prev.bottomLinks.filter(p => p !== pageKey)
+        : [...prev.bottomLinks, pageKey];
+      console.log('🔄 FooterManager: Liens légaux mis à jour:', newBottomLinks);
+      return {
+        ...prev,
+        bottomLinks: newBottomLinks
+      };
+    });
+    // Déclencher hasUnsavedChanges
+    window.dispatchEvent(new CustomEvent('footer-changed'));
+  };
+
+  const moveBottomLink = (fromIndex, toIndex) => {
+    const newBottomLinks = [...footerData.bottomLinks];
+    const [movedPage] = newBottomLinks.splice(fromIndex, 1);
+    newBottomLinks.splice(toIndex, 0, movedPage);
+    console.log('🔄 FooterManager: Liens légaux réorganisés:', newBottomLinks);
+    setFooterData(prev => ({ ...prev, bottomLinks: newBottomLinks }));
+    // Déclencher hasUnsavedChanges
+    window.dispatchEvent(new CustomEvent('footer-changed'));
+  };
+
+  const getLegalPageLabel = (pageKey) => {
+    const defaultLabel = availableLegalPages.find(p => p.key === pageKey)?.label || pageKey;
+    return footerData.legalPageLabels?.[pageKey] || defaultLabel;
+  };
+
+  const updateLegalPageLabel = (pageKey, newLabel) => {
+    setFooterData(prev => {
+      const newLegalPageLabels = {
+        ...prev.legalPageLabels,
+        [pageKey]: newLabel
+      };
+      console.log('🔄 FooterManager: Labels légaux mis à jour:', newLegalPageLabels);
+      return {
+        ...prev,
+        legalPageLabels: newLegalPageLabels
+      };
+    });
+    // Déclencher hasUnsavedChanges
+    window.dispatchEvent(new CustomEvent('footer-changed'));
+  };
+
   // Drag & Drop handlers pour les liens
   const handleDragStart = (e, index) => {
     setDraggedItem(index);
@@ -209,7 +301,15 @@ const FooterManager = ({ content, onSave }) => {
   const handleDrop = (e, dropIndex) => {
     e.preventDefault();
     if (draggedItem !== null && draggedItem !== dropIndex) {
-      moveLink(draggedItem, dropIndex);
+      if (draggedItem.startsWith('bottom-')) {
+        // Gestion des liens légaux
+        const draggedIndex = parseInt(draggedItem.replace('bottom-', ''));
+        const dropIndexNum = parseInt(dropIndex.replace('bottom-', ''));
+        moveBottomLink(draggedIndex, dropIndexNum);
+      } else {
+        // Gestion des liens normaux
+        moveLink(draggedItem, dropIndex);
+      }
     }
     setDraggedItem(null);
     setDragOverIndex(null);
@@ -569,20 +669,152 @@ const FooterManager = ({ content, onSave }) => {
               ⚖️ Légal
             </h3>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Copyright
-              </label>
-              <input
-                type="text"
-                value={footerData.copyright}
-                onChange={(e) => {
-                  setFooterData(prev => ({ ...prev, copyright: e.target.value }));
-                  window.dispatchEvent(new CustomEvent('footer-changed'));
-                }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="© 2024 Soliva. Tous droits réservés."
-              />
+            <div className="space-y-6">
+              {/* Copyright */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Copyright
+                </label>
+                <input
+                  type="text"
+                  value={footerData.copyright}
+                  onChange={(e) => {
+                    setFooterData(prev => ({ ...prev, copyright: e.target.value }));
+                    window.dispatchEvent(new CustomEvent('footer-changed'));
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="© 2024 Soliva. Tous droits réservés."
+                />
+              </div>
+
+              {/* Liens légaux */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Liens légaux
+                </label>
+                <p className="text-sm text-gray-600 mb-3">Ces liens apparaîtront dans la colonne de droite du copyright</p>
+                
+                {/* Liens sélectionnés (ordre) */}
+                <div className="mb-4">
+                  <h4 className="text-sm font-medium text-gray-600 mb-2">Ordre d'affichage :</h4>
+                  <div className="space-y-2">
+                    {footerData.bottomLinks.map((pageKey, index) => {
+                      const page = availableLegalPages.find(p => p.key === pageKey);
+                      const isDragging = draggedItem === `bottom-${index}`;
+                      const isDragOver = dragOverIndex === `bottom-${index}`;
+                      
+                      return (
+                        <div 
+                          key={pageKey} 
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, `bottom-${index}`)}
+                          onDragOver={(e) => handleDragOver(e, `bottom-${index}`)}
+                          onDrop={(e) => handleDrop(e, `bottom-${index}`)}
+                          onDragEnd={handleDragEnd}
+                          className={`
+                            flex items-center gap-2 p-3 rounded-lg border-2 transition-all duration-200 cursor-move
+                            ${isDragging 
+                              ? 'border-blue-500 bg-blue-50 shadow-lg scale-105 opacity-75' 
+                              : isDragOver 
+                                ? 'border-green-400 bg-green-50 border-dashed' 
+                                : 'border-gray-200 bg-gray-50 hover:bg-gray-100'
+                            }
+                          `}
+                        >
+                          <div className="flex items-center gap-2 flex-1">
+                            <span className="text-xs text-gray-500 w-6">{index + 1}</span>
+                            <div className="flex-1 flex items-center gap-2">
+                              {editingLegalPage === pageKey ? (
+                                <div className="flex-1 flex items-center gap-2">
+                                  <input
+                                    type="text"
+                                    value={getLegalPageLabel(pageKey)}
+                                    onChange={(e) => updateLegalPageLabel(pageKey, e.target.value)}
+                                    className="flex-1 text-sm font-medium bg-white border border-blue-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder={page?.label || pageKey}
+                                    autoFocus
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter') {
+                                        setEditingLegalPage(null);
+                                      } else if (e.key === 'Escape') {
+                                        setEditingLegalPage(null);
+                                      }
+                                    }}
+                                    onBlur={() => setEditingLegalPage(null)}
+                                  />
+                                </div>
+                              ) : (
+                                <>
+                                  <span className="flex-1 text-sm font-medium text-gray-700">
+                                    {getLegalPageLabel(pageKey)}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() => setEditingLegalPage(pageKey)}
+                                    className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                                  >
+                                    Modifier
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs text-gray-400">Glisser-déposer</span>
+                              {isDragging && <span className="text-xs text-blue-600 font-medium">En cours...</span>}
+                              {isDragOver && <span className="text-xs text-green-600 font-medium">Déposer ici</span>}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() => removeBottomLink(pageKey)}
+                              className="text-red-500 hover:text-red-700 text-sm px-2 py-1 rounded hover:bg-red-50"
+                              title="Retirer cette page"
+                            >
+                              ✕
+                            </button>
+                            {index > 0 && (
+                              <button
+                                onClick={() => moveBottomLink(index, index - 1)}
+                                className="text-gray-500 hover:text-gray-700 px-2 py-1 rounded hover:bg-gray-200"
+                                title="Déplacer vers le haut"
+                              >
+                                ↑
+                              </button>
+                            )}
+                            {index < footerData.bottomLinks.length - 1 && (
+                              <button
+                                onClick={() => moveBottomLink(index, index + 1)}
+                                className="text-gray-500 hover:text-gray-700 px-2 py-1 rounded hover:bg-gray-200"
+                                title="Déplacer vers le bas"
+                              >
+                                ↓
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Pages disponibles */}
+                <div>
+                  <h4 className="text-sm font-medium text-gray-600 mb-2">Pages disponibles :</h4>
+                  <div className="grid grid-cols-2 gap-2">
+                    {availableLegalPages.map((page) => (
+                      <label key={page.key} className="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={footerData.bottomLinks.includes(page.key)}
+                          onChange={() => toggleLegalPage(page.key)}
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="text-sm">{page.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -612,6 +844,13 @@ const FooterManager = ({ content, onSave }) => {
                 </div>
               )}
               <div className="text-xs text-gray-500">{footerData.copyright}</div>
+              {footerData.bottomLinks.length > 0 && (
+                <div className="flex items-center gap-4 text-xs text-gray-500">
+                  {footerData.bottomLinks.map((pageKey, index) => (
+                    <span key={index}>{getLegalPageLabel(pageKey)}</span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
@@ -621,6 +860,7 @@ const FooterManager = ({ content, onSave }) => {
             <p><strong>Description :</strong> {footerData.description || 'Aucune'}</p>
             <p><strong>Liens :</strong> {footerData.links.length} lien(s)</p>
             <p><strong>Réseaux sociaux :</strong> {footerData.socialLinks.length} réseau(x)</p>
+            <p><strong>Liens légaux :</strong> {footerData.bottomLinks.length} lien(s)</p>
           </div>
         </div>
       )}

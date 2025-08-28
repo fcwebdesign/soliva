@@ -38,39 +38,21 @@ const Footer = ({ content }) => {
     return null;
   }
 
-  const getSocialIcon = (platform) => {
-    const icons = {
-      linkedin: '💼',
-      twitter: '🐦',
-      instagram: '📸',
-      facebook: '📘',
-      youtube: '📺',
-      tiktok: '🎵',
-      behance: '🎨',
-      dribbble: '🏀',
-      github: '💻',
-      medium: '📝',
-      pinterest: '📌',
-      snapchat: '👻',
-      twitch: '🎮',
-      discord: '💬',
-      telegram: '📱',
-      whatsapp: '💚',
-      spotify: '🎵',
-      'apple-music': '🍎',
-      soundcloud: '🎧',
-      vimeo: '🎬'
-    };
-    return icons[platform] || '🔗';
-  };
+  console.log('🔍 Footer Debug:', {
+    bottomLinks: footerContent.bottomLinks,
+    legalPageLabels: footerContent.legalPageLabels,
+    footerContent
+  });
+
+
 
   return (
-    <footer className="bg-gray-900 text-white py-12">
+    <footer className="py-12">
       <div className="max-w-7xl mx-auto px-4 lg:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Logo et Description */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Logo et Description - Colonne gauche */}
           <div className="space-y-4">
-            <div className="font-semibold text-xl">
+            <div className="font-semibold text-xl" style={{ color: 'var(--fg)' }}>
               {footerContent.logoImage ? (
                 <img 
                   src={footerContent.logoImage} 
@@ -82,58 +64,108 @@ const Footer = ({ content }) => {
               )}
             </div>
             {footerContent.description && (
-              <p className="text-gray-300 text-sm leading-relaxed">
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--fg)' }}>
                 {footerContent.description}
               </p>
             )}
           </div>
 
-          {/* Liens */}
-          {footerContent.links && footerContent.links.length > 0 && (
-            <div className="space-y-4">
-              <h3 className="font-semibold text-lg">Liens</h3>
-              <ul className="space-y-2">
-                {footerContent.links.map((link, index) => (
-                  <li key={index}>
-                    <Link 
-                      href={link.url || '#'} 
-                      className="text-gray-300 hover:text-white transition-colors text-sm"
-                    >
-                      {link.title}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Réseaux sociaux */}
-          {footerContent.socialLinks && footerContent.socialLinks.length > 0 && (
-            <div className="space-y-4">
-              <h3 className="font-semibold text-lg">Suivez-nous</h3>
-              <div className="flex space-x-4">
-                {footerContent.socialLinks.map((social, index) => (
-                  <a
-                    key={index}
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gray-300 hover:text-white transition-colors text-2xl"
-                    title={social.platform}
-                  >
-                    {getSocialIcon(social.platform)}
-                  </a>
-                ))}
+          {/* Liens et Réseaux sociaux - Colonne droite */}
+          <div className="flex flex-col md:flex-row md:justify-end gap-48">
+            {/* Liens */}
+            {footerContent.links && footerContent.links.length > 0 && (
+              <div className="space-y-4">
+                <ul className="space-y-1 text-left">
+                  {footerContent.links.map((link, index) => (
+                    <li key={index}>
+                      <Link 
+                        href={link.url || '#'} 
+                        className="transition-colors text-sm hover:opacity-80 leading-tight"
+                        style={{ color: 'var(--fg)' }}
+                      >
+                        {link.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </div>
-          )}
+            )}
+
+            {/* Réseaux sociaux */}
+            {footerContent.socialLinks && footerContent.socialLinks.length > 0 && (
+              <div className="space-y-4">
+                <ul className="space-y-1 text-left">
+                  {footerContent.socialLinks.map((social, index) => (
+                    <li key={index}>
+                      <a
+                        href={social.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="transition-colors text-sm hover:opacity-80 leading-tight"
+                        style={{ color: 'var(--fg)' }}
+                      >
+                        {social.platform}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Copyright */}
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-          <p className="text-gray-400 text-sm">
-            {footerContent.copyright || '© 2024 Soliva. Tous droits réservés.'}
-          </p>
+        <div className="border-t mt-8 pt-8 footer-copyright-border">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+            {/* Copyright - Colonne gauche */}
+            <div className="text-left">
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                {footerContent.copyright || '© 2024 Soliva. Tous droits réservés.'}
+              </p>
+            </div>
+            
+            {/* Liens du site - Colonne droite */}
+            {footerContent.bottomLinks && footerContent.bottomLinks.length > 0 && (
+              <div className="text-right">
+                <ul className="flex flex-wrap justify-end gap-4 text-sm">
+                  {footerContent.bottomLinks.map((pageKey, index) => {
+                    // Trouver la page correspondante
+                    const availablePages = [
+                      { key: 'home', label: 'Accueil', path: '/' },
+                      { key: 'work', label: 'Réalisations', path: '/work' },
+                      { key: 'studio', label: 'Studio', path: '/studio' },
+                      { key: 'blog', label: 'Journal', path: '/blog' },
+                      { key: 'contact', label: 'Contact', path: '/contact' },
+                      { key: 'mentions-legales', label: 'Mentions légales', path: '/mentions-legales' },
+                      { key: 'politique-confidentialite', label: 'Politique de confidentialité', path: '/politique-confidentialite' },
+                      { key: 'cgu', label: 'Conditions générales d\'utilisation', path: '/cgu' },
+                      { key: 'cookies', label: 'Politique des cookies', path: '/cookies' },
+                      { key: 'rgpd', label: 'RGPD', path: '/rgpd' },
+                      { key: 'mentions-obligatoires', label: 'Mentions obligatoires', path: '/mentions-obligatoires' }
+                    ];
+                    
+                    const page = availablePages.find(p => p.key === pageKey);
+                    const defaultLabel = page?.label || pageKey;
+                    const customLabel = footerContent.legalPageLabels?.[pageKey];
+                    const displayLabel = customLabel || defaultLabel;
+                    const url = page?.path || '#';
+                    
+                    return (
+                      <li key={index}>
+                        <Link 
+                          href={url} 
+                          className="transition-colors hover:opacity-80 leading-tight"
+                          style={{ color: 'var(--text-secondary)' }}
+                        >
+                          {displayLabel}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </footer>

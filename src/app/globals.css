@@ -1486,6 +1486,21 @@ html.preview-mode body {
   filter: grayscale(0%) brightness(1) contrast(1) invert(0);
 }
 
+/* Styles pour la bordure du footer copyright - identique aux logos clients */
+.footer-copyright-border {
+  border-color: rgba(0, 0, 0, 0.2) !important; /* noir à 20% */
+}
+
+/* Adaptation au thème sombre pour la bordure du footer */
+[data-theme="dark"] .footer-copyright-border {
+  border-color: rgba(255, 255, 255, 0.2) !important; /* blanc à 20% */
+}
+
+/* Réduction du padding-bottom du bloc contact quand il est le dernier avant le footer */
+.contact-block-last [data-block-type="contact"] {
+  padding-bottom: 0 !important;
+}
+
 
 
 /* Styles pour les liens en dark mode */

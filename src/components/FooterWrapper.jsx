@@ -4,6 +4,7 @@ import Footer from './Footer';
 
 const FooterWrapper = ({ initialContent }) => {
   const [footerContent, setFooterContent] = useState(initialContent);
+  const [hasContactBlockLast, setHasContactBlockLast] = useState(false);
 
   useEffect(() => {
     const handleContentUpdate = (event) => {
@@ -20,12 +21,36 @@ const FooterWrapper = ({ initialContent }) => {
       }
     };
 
+    // Détecter si le dernier bloc est un bloc contact
+    const detectLastContactBlock = () => {
+      const blocks = document.querySelectorAll('[data-block-type]');
+      if (blocks.length > 0) {
+        const lastBlock = blocks[blocks.length - 1];
+        const isLastBlockContact = lastBlock.getAttribute('data-block-type') === 'contact';
+        setHasContactBlockLast(isLastBlockContact);
+        console.log('🔍 FooterWrapper: Dernier bloc est contact:', isLastBlockContact);
+        
+        // Ajouter/supprimer la classe CSS au body
+        if (isLastBlockContact) {
+          document.body.classList.add('contact-block-last');
+        } else {
+          document.body.classList.remove('contact-block-last');
+        }
+      }
+    };
+
+    // Détecter immédiatement et après un délai pour les blocs qui se chargent
+    detectLastContactBlock();
+    const timeoutId = setTimeout(detectLastContactBlock, 1000);
+
     window.addEventListener('content-updated', handleContentUpdate);
     window.addEventListener('storage', handleStorageChange);
     
     return () => {
       window.removeEventListener('content-updated', handleContentUpdate);
       window.removeEventListener('storage', handleStorageChange);
+      clearTimeout(timeoutId);
+      document.body.classList.remove('contact-block-last');
     };
   }, [initialContent]);
 

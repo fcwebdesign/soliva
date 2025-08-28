@@ -693,7 +693,9 @@ function AdminPageContent() {
                                 url: link.url === 'custom' ? link.customUrl : link.url
                               })),
                               socialLinks: currentFooterData.socialLinks,
-                              copyright: currentFooterData.copyright
+                              copyright: currentFooterData.copyright,
+                              bottomLinks: currentFooterData.bottomLinks,
+                              legalPageLabels: currentFooterData.legalPageLabels
                             };
                           }
 

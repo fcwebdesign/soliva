@@ -150,12 +150,13 @@
         "theme": "auto"
       },
       {
-        "id": "block-1756229013394",
+        "id": "block-5",
         "type": "contact",
         "content": "",
-        "title": "on test le contact",
-        "ctaText": "ssdfsfdsok",
-        "ctaLink": "https://google.com"
+        "title": "Would you like to see a demo?",
+        "ctaText": "Yes, sign me up",
+        "ctaLink": "https://google.com",
+        "theme": "auto"
       }
     ]
   },
@@ -596,12 +597,28 @@
   "_originalPage": "blog",
   "footer": {
     "logo": "soliva",
-    "logoImage": "/uploads/1755821326043-3fedd842.png",
-    "description": "test du footer",
+    "logoImage": "",
+    "description": "AI-Native Studio",
     "links": [
       {
-        "title": "Accueil",
-        "url": "home"
+        "title": "Get in touch",
+        "url": "contact"
+      },
+      {
+        "title": "Le studio",
+        "url": "studio"
+      },
+      {
+        "title": "Réalisations",
+        "url": "work"
+      },
+      {
+        "title": "Le blog",
+        "url": "blog"
+      },
+      {
+        "title": "Kodza",
+        "url": ""
       }
     ],
     "socialLinks": [
@@ -610,14 +627,18 @@
         "url": ""
       },
       {
-        "platform": "youtube",
+        "platform": "medium",
         "url": ""
       },
       {
-        "platform": "tiktok",
+        "platform": "instagram",
+        "url": ""
+      },
+      {
+        "platform": "twitter",
         "url": ""
       }
     ],
-    "copyright": "© 2024 Soliva. Tous droits réservés."
+    "copyright": "© 2025 Soliva"
   }
 }
