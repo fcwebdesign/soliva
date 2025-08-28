@@ -194,156 +194,133 @@ export default function PagesAdmin() {
             <div className="px-6 py-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">Pages</h1>
+                  <h1 className="text-2xl lg:text-4xl font-semibold text-gray-900 mb-2" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.25rem)' }}>
+                    Pages
+                  </h1>
                   <p className="text-sm text-gray-500">Page: /pages</p>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <button
-                    onClick={() => window.open('/pages', '_blank')}
-                    className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <span>🔗</span>
-                    <span>Voir la page</span>
-                  </button>
-                  <button
-                    onClick={() => console.log('Passer en brouillon')}
-                    className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <span>📄</span>
-                    <span>Passer en brouillon</span>
-                  </button>
-                  <button
-                    onClick={() => console.log('Mettre à jour')}
-                    className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors"
-                  >
-                    <span>✅</span>
-                    <span>Mettre à jour</span>
-                  </button>
-                </div>
+
               </div>
             </div>
           </header>
 
-          {/* Status */}
-          <div className="bg-gray-50 px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <span className="text-sm font-medium text-gray-700">Statut :</span>
-                <span className="ml-2 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  ✅ Publié
-                </span>
-              </div>
-              <div className="text-sm text-gray-500">
-                Page: Pages
-              </div>
-            </div>
-          </div>
 
-          {/* Tabs */}
-          <div className="bg-white border-b border-gray-200">
-            <div className="px-6">
-              <nav className="flex space-x-8">
-                {[
-                  { id: 'content', label: 'Contenu' },
-                  { id: 'settings', label: 'Paramètres' },
-                  { id: 'filters', label: 'Filtres' }
-                ].map(tab => (
+
+          {/* Content */}
+          <div className="p-6">
+            <div className="space-y-6">
+              {/* Tabs */}
+              <div className="border-b border-gray-200">
+                <nav className="-mb-px flex space-x-8">
                   <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                      activeTab === tab.id
+                    onClick={() => setActiveTab('content')}
+                    className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                      activeTab === 'content'
                         ? 'border-blue-500 text-blue-600'
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                     }`}
                   >
-                    {tab.label}
+                    📋 Contenu
                   </button>
-                ))}
-              </nav>
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className="p-6">
+                  <button
+                    onClick={() => setActiveTab('settings')}
+                    className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                      activeTab === 'settings'
+                        ? 'border-blue-500 text-blue-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    }`}
+                  >
+                    ⚙️ Paramètres
+                  </button>
+                </nav>
+              </div>
             {activeTab === 'content' && (
-              <div>
-                {/* Section Header */}
+              <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h2 className="text-lg font-semibold text-gray-900 flex items-center">
-                      <span className="mr-2">📄</span>
-                      Pages ({stats.total})
-                    </h2>
-                    <div className="flex items-center space-x-4 mt-2">
-                      <span className="text-sm text-green-600">✅ {stats.published} publié{stats.published > 1 ? 's' : ''}</span>
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-2xl">📄</span>
+                      <h3 className="text-lg font-semibold text-gray-900">Pages ({stats.total})</h3>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                        ✅ {stats.published} publié{stats.published !== 1 ? 's' : ''}
+                      </span>
                       {stats.drafts > 0 && (
-                        <span className="text-sm text-yellow-600">{stats.drafts} brouillon{stats.drafts > 1 ? 's' : ''}</span>
+                        <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">
+                          📝 {stats.drafts} brouillon{stats.drafts !== 1 ? 's' : ''}
+                        </span>
                       )}
                     </div>
                   </div>
                   <button
                     onClick={handleNewPage}
-                    className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                    className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                   >
-                    <span>➕</span>
-                    <span>Nouvelle page</span>
+                    ➕ Nouvelle page
                   </button>
                 </div>
 
-                {/* Pages List */}
-                <div className="space-y-4">
-                  {pages.map(page => (
-                    <div key={page.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div className="space-y-3">
+                  {pages.map((page, index) => (
+                    <div key={page.id} className="bg-gray-50 rounded-lg border border-gray-200 p-4 hover:border-gray-300 transition-colors">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <div className="text-2xl">{page.icon}</div>
-                          <div>
-                            <div className="flex items-center space-x-2">
-                              <h3 className="text-lg font-medium text-gray-900">{page.title}</h3>
-                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                page.status === 'published' 
-                                  ? 'bg-green-100 text-green-800' 
-                                  : 'bg-yellow-100 text-yellow-800'
-                              }`}>
-                                {page.status === 'published' ? '✅ Publié' : '📄 Brouillon'}
-                              </span>
-                            </div>
-                            <p className="text-sm text-gray-500 mt-1">{page.description}</p>
-                            <p className="text-xs text-gray-400 mt-1">ID: {page.id}</p>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center space-x-3">
+                            <h4 className="text-md font-semibold text-gray-900 truncate">
+                              {page.title}
+                            </h4>
+                            <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                              page.status === 'published' 
+                                ? 'bg-green-100 text-green-800' 
+                                : 'bg-yellow-100 text-yellow-800'
+                            }`}>
+                              {page.status === 'published' ? '✅ Publié' : '📝 Brouillon'}
+                            </span>
+                          </div>
+                          <div className="flex items-center space-x-4 mt-1">
+                            <p className="text-sm text-gray-500">
+                              ID: {page.id}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              {page.description}
+                            </p>
                             {page.lastModified && (
-                              <p className="text-xs text-gray-400">Modifié le: {page.lastModified}</p>
+                              <p className="text-sm text-gray-500">
+                                Modifié: {page.lastModified}
+                              </p>
                             )}
                           </div>
                         </div>
-                        <div className="flex items-center space-x-2">
+                        
+                        <div className="flex space-x-2 ml-4">
                           <button
                             onClick={() => handleEditPage(page.id)}
-                            className="flex items-center space-x-1 px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors"
+                            className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200 transition-colors"
+                            title="Éditer la page"
                           >
-                            <span>✏️</span>
-                            <span>Éditer</span>
+                            ✏️ Éditer
                           </button>
                           <button
                             onClick={() => handlePreviewPage(page.id)}
-                            className="flex items-center space-x-1 px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors"
+                            className="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 transition-colors"
+                            title="Aperçu de la page"
                           >
-                            <span>👁️</span>
-                            <span>Aperçu</span>
+                            👁️ Aperçu
                           </button>
                           <button
                             onClick={() => handleDuplicatePage(page.id)}
-                            className="flex items-center space-x-1 px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors"
+                            className="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded hover:bg-orange-200 transition-colors"
+                            title="Dupliquer cette page"
                           >
-                            <span>📄</span>
-                            <span>Dupliquer</span>
+                            📋 Dupliquer
                           </button>
                           <button
                             onClick={() => handleDeletePage(page.id)}
-                            className="flex items-center space-x-1 px-3 py-1 text-sm text-red-700 hover:bg-red-50 rounded transition-colors"
+                            className="text-xs bg-red-100 text-red-700 px-3 py-1 rounded hover:bg-red-200 transition-colors"
+                            title="Supprimer cette page"
                           >
-                            <span>🗑️</span>
-                            <span>Supprimer</span>
+                            🗑️ Supprimer
                           </button>
                         </div>
                       </div>
@@ -354,18 +331,17 @@ export default function PagesAdmin() {
             )}
 
             {activeTab === 'settings' && (
-              <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Paramètres des pages</h3>
-                <p className="text-gray-500">Configuration des paramètres généraux des pages.</p>
+              <div className="space-y-6">
+                <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <span className="text-2xl">⚙️</span>
+                    <h3 className="text-lg font-semibold text-gray-900">Paramètres des pages</h3>
+                  </div>
+                  <p className="text-gray-500">Configuration des paramètres généraux des pages.</p>
+                </div>
               </div>
             )}
-
-            {activeTab === 'filters' && (
-              <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Filtres</h3>
-                <p className="text-gray-500">Gestion des filtres et de la recherche.</p>
-              </div>
-            )}
+            </div>
           </div>
         </div>
       </div>

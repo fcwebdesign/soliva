@@ -56,6 +56,27 @@ body.admin-page,
   max-width: none !important;
 }
 
+/* Forcer les couleurs pour l'admin - approche plus ciblée */
+.admin-page {
+  --fg: #0a0a0a !important;
+  --bg: #ffffff !important;
+  --text: #333333 !important;
+  --text-secondary: #666666 !important;
+}
+
+/* Cibler seulement les éléments qui utilisent var(--fg) et qui sont blancs */
+.admin-page p:not([class*="text-"]),
+.admin-page h1:not([class*="text-"]),
+.admin-page h2:not([class*="text-"]),
+.admin-page h3:not([class*="text-"]),
+.admin-page h4:not([class*="text-"]),
+.admin-page h5:not([class*="text-"]),
+.admin-page h6:not([class*="text-"]),
+.admin-page span:not([class*="text-"]),
+.admin-page div:not([class*="text-"]) {
+  color: var(--text) !important;
+}
+
 /* Styles pour les logos dans l'admin - carrés uniformes */
 /* Cibler spécifiquement la section logos */
 .admin-page .block-editor .space-y-2 > div:first-child .MediaUploader {

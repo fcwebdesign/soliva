@@ -585,7 +585,7 @@ function AdminPageContent() {
                 )}
 
                 {/* Bouton Aperçu */}
-                {currentPageConfig?.path && (
+                {currentPageConfig?.path && currentPage !== 'pages' && (
                   <button
                     onClick={hasUnsavedChanges ? handlePreview : () => window.open(currentPageConfig.path!, '_blank')}
                     className={`text-sm px-4 py-2 rounded-lg transition-colors ${
@@ -601,8 +601,8 @@ function AdminPageContent() {
 
 
 
-                {/* Boutons de sauvegarde - masqués pour la navigation et footer */}
-                {currentPage !== 'nav' && currentPage !== 'footer' && (
+                {/* Boutons de sauvegarde - masqués pour la navigation, footer et pages */}
+                {currentPage !== 'nav' && currentPage !== 'footer' && currentPage !== 'pages' && (
                   <>
                     {/* Bouton Enregistrer brouillon */}
                     <button
@@ -761,8 +761,8 @@ function AdminPageContent() {
           <div className="w-full">
             {currentPageConfig && (
               <>
-                {/* Informations de statut - masquées pour la navigation et footer */}
-                {currentPage !== 'nav' && currentPage !== 'footer' && (
+                {/* Informations de statut - masquées pour la navigation, footer et pages */}
+                {currentPage !== 'nav' && currentPage !== 'footer' && currentPage !== 'pages' && (
                   <div className="bg-gray-50 p-4 rounded-lg mb-6">
                     <div className="flex items-center justify-between">
                       <div>
