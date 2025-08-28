@@ -1409,7 +1409,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                 </p>
               </div>
               <div className="text-sm text-gray-500">
-                <p>Ce bloc affiche automatiquement les projets de la page Work en 3 colonnes.</p>
+                <p>Ce bloc affiche automatiquement les projets de la page Portfolio en 3 colonnes.</p>
               </div>
             </div>
           </div>

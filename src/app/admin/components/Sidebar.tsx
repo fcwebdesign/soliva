@@ -70,7 +70,11 @@ export default function Sidebar({ pages, settings, currentPage, onPageChange }: 
           <div className="mb-4">
             <button
               onClick={() => handlePagesClick()}
-              className="w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
+              className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                currentPage === 'pages'
+                  ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                  : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+              }`}
             >
               <span className="text-lg">📄</span>
               <span>Pages</span>
@@ -190,7 +194,11 @@ export default function Sidebar({ pages, settings, currentPage, onPageChange }: 
               <div className="mb-4">
                 <button
                   onClick={() => handlePagesClick(true)}
-                  className="w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
+                  className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    currentPage === 'pages'
+                      ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                      : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                  }`}
                 >
                   <span className="text-lg">📄</span>
                   <span>Pages</span>

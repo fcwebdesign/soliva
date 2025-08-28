@@ -47,24 +47,6 @@ export default function PagesAdmin() {
       icon: '🎨',
       status: 'published',
       lastModified: '2024-01-12'
-    },
-    {
-      id: 'work',
-      title: 'Travaux',
-      description: 'Portfolio et projets',
-      type: 'work',
-      icon: '💼',
-      status: 'published',
-      lastModified: '2024-01-08'
-    },
-    {
-      id: 'blog',
-      title: 'Journal',
-      description: 'Articles et actualités',
-      type: 'blog',
-      icon: '📝',
-      status: 'published',
-      lastModified: '2024-01-14'
     }
   ];
 
@@ -136,7 +118,7 @@ export default function PagesAdmin() {
     { id: 'home', label: 'Accueil', path: '/', icon: '🏠' },
     { id: 'studio', label: 'Studio', path: '/studio', icon: '🎨' },
     { id: 'contact', label: 'Contact', path: '/contact', icon: '📧' },
-    { id: 'work', label: 'Work', path: '/work', icon: '💼' },
+    { id: 'work', label: 'Portfolio', path: '/work', icon: '💼' },
     { id: 'blog', label: 'Blog', path: '/blog', icon: '📝' },
   ];
 

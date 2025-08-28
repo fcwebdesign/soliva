@@ -9,7 +9,7 @@ const PAGES = [
   { id: 'home', label: 'Accueil', path: '/', icon: '🏠' },
   { id: 'studio', label: 'Studio', path: '/studio', icon: '🎨' },
   { id: 'contact', label: 'Contact', path: '/contact', icon: '📧' },
-  { id: 'work', label: 'Work', path: '/work', icon: '💼' },
+  { id: 'work', label: 'Portfolio', path: '/work', icon: '💼' },
   { id: 'blog', label: 'Blog', path: '/blog', icon: '📝' },
 ];
 
@@ -44,6 +44,14 @@ export default function BlogArticleEdit() {
   // Charger le contenu et trouver l'article
   useEffect(() => {
     fetchContent();
+  }, []);
+
+  // Ajouter la classe admin-page au body
+  useEffect(() => {
+    document.body.classList.add('admin-page');
+    return () => {
+      document.body.classList.remove('admin-page');
+    };
   }, []);
 
   const fetchContent = async () => {
