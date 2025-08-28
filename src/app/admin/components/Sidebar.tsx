@@ -1,5 +1,6 @@
 "use client";
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface Page {
   id: string;
@@ -17,6 +18,35 @@ interface SidebarProps {
 
 export default function Sidebar({ pages, settings, currentPage, onPageChange }: SidebarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const router = useRouter();
+
+  // Séparer les pages en groupes
+  const pageGroupPages = pages.filter(page => ['home', 'studio', 'contact'].includes(page.id));
+  const otherPages = pages.filter(page => !['home', 'studio', 'contact'].includes(page.id));
+
+  const renderPageItem = (page: Page, isMobile = false) => (
+    <li key={page.id}> 
+      <button
+        onClick={() => {
+          onPageChange(page.id);
+          if (isMobile) setIsMobileMenuOpen(false);
+        }}
+        className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+          currentPage === page.id
+            ? 'bg-blue-50 text-blue-700 border border-blue-200'
+            : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+        }`}
+      >
+        <span className="text-lg">{page.icon}</span>
+        <span>{page.label}</span>
+      </button>
+    </li>
+  );
+
+  const handlePagesClick = (isMobile = false) => {
+    router.push('/admin/pages');
+    if (isMobile) setIsMobileMenuOpen(false);
+  };
 
   return (
     <>
@@ -36,28 +66,28 @@ export default function Sidebar({ pages, settings, currentPage, onPageChange }: 
 
         {/* Navigation */}
         <nav className="flex-1 px-4 py-6 space-y-2">
+          {/* Bouton Pages */}
           <div className="mb-4">
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-              Pages
-            </h3>
-            <ul className="space-y-1">
-              {pages.map((page) => (
-                <li key={page.id}> 
-                  <button
-                    onClick={() => onPageChange(page.id)}
-                    className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                      currentPage === page.id
-                        ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                    }`}
-                  >
-                    <span className="text-lg">{page.icon}</span>
-                    <span>{page.label}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <button
+              onClick={() => handlePagesClick()}
+              className="w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
+            >
+              <span className="text-lg">📄</span>
+              <span>Pages</span>
+            </button>
           </div>
+          
+          {/* Autres pages */}
+          {otherPages.length > 0 && (
+            <div className="mb-4">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                Autres
+              </h3>
+              <ul className="space-y-1">
+                {otherPages.map((page) => renderPageItem(page))}
+              </ul>
+            </div>
+          )}
           
           <div className="mb-4">
             <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
@@ -156,31 +186,28 @@ export default function Sidebar({ pages, settings, currentPage, onPageChange }: 
 
             {/* Navigation mobile */}
             <nav className="flex-1 px-4 py-6 space-y-2">
+              {/* Bouton Pages mobile */}
               <div className="mb-4">
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                  Pages
-                </h3>
-                <ul className="space-y-1">
-                  {pages.map((page) => (
-                    <li key={page.id}>
-                      <button
-                        onClick={() => {
-                          onPageChange(page.id);
-                          setIsMobileMenuOpen(false);
-                        }}
-                        className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                          currentPage === page.id
-                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                            : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                        }`}
-                      >
-                        <span className="text-lg">{page.icon}</span>
-                        <span>{page.label}</span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
+                <button
+                  onClick={() => handlePagesClick(true)}
+                  className="w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
+                >
+                  <span className="text-lg">📄</span>
+                  <span>Pages</span>
+                </button>
               </div>
+              
+              {/* Autres pages mobile */}
+              {otherPages.length > 0 && (
+                <div className="mb-4">
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                    Autres
+                  </h3>
+                  <ul className="space-y-1">
+                    {otherPages.map((page) => renderPageItem(page, true))}
+                  </ul>
+                </div>
+              )}
               
               <div className="mb-4">
                 <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">

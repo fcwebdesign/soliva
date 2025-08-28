@@ -639,6 +639,11 @@
         "url": ""
       }
     ],
-    "copyright": "© 2025 Soliva"
+    "copyright": "© 2025 Soliva",
+    "bottomLinks": [
+      "home",
+      "studio"
+    ],
+    "legalPageLabels": {}
   }
 }

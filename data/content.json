@@ -139,10 +139,6 @@
             "alt": "samsung"
           },
           {
-            "src": "/uploads/1756072160316-3a03b769.png",
-            "alt": "Nexora"
-          },
-          {
             "src": "/uploads/1756072340655-7219b8d5.png",
             "alt": "EDF"
           }
@@ -641,8 +637,7 @@
     ],
     "copyright": "© 2025 Soliva",
     "bottomLinks": [
-      "home",
-      "studio"
+      "home"
     ],
     "legalPageLabels": {}
   }
