@@ -64,13 +64,7 @@ const FooterManager = ({ content, onSave }) => {
     { key: 'work', label: 'Réalisations', path: '/work' },
     { key: 'studio', label: 'Studio', path: '/studio' },
     { key: 'blog', label: 'Journal', path: '/blog' },
-    { key: 'contact', label: 'Contact', path: '/contact' },
-    { key: 'mentions-legales', label: 'Mentions légales', path: '/mentions-legales' },
-    { key: 'politique-confidentialite', label: 'Politique de confidentialité', path: '/politique-confidentialite' },
-    { key: 'cgu', label: 'Conditions générales d\'utilisation', path: '/cgu' },
-    { key: 'cookies', label: 'Politique des cookies', path: '/cookies' },
-    { key: 'rgpd', label: 'RGPD', path: '/rgpd' },
-    { key: 'mentions-obligatoires', label: 'Mentions obligatoires', path: '/mentions-obligatoires' }
+    { key: 'contact', label: 'Contact', path: '/contact' }
   ];
 
   // Réseaux sociaux disponibles
