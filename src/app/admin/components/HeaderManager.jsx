@@ -31,7 +31,14 @@ const HeaderManager = ({ content, onSave }) => {
     { key: 'work', label: 'Réalisations', path: '/work' },
     { key: 'studio', label: 'Studio', path: '/studio' },
     { key: 'blog', label: 'Journal', path: '/blog' },
-    { key: 'contact', label: 'Contact', path: '/contact' }
+    { key: 'contact', label: 'Contact', path: '/contact' },
+    // Ajouter automatiquement les pages personnalisées
+    ...(content?.pages?.pages || []).map(page => ({
+      key: page.slug || page.id,
+      label: page.title || 'Page personnalisée',
+      path: `/${page.slug || page.id}`,
+      isCustom: true
+    }))
   ];
 
   // Mettre à jour les données quand le contenu change

@@ -8,7 +8,7 @@
   --surface: #f5f5f5;
   --text: #333333;
   --text-secondary: #666666;
-  --max-width: 1280px;
+  --max-width: 1440px;
 }
 
 /* Thème sombre */
@@ -111,6 +111,7 @@ img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 8px;
 }
 
 h1 {
@@ -166,7 +167,7 @@ a {
   margin: 0 auto;
   padding: 2rem 1rem;
   display: flex;
-  gap: 8em;
+  gap: 4em;
   z-index: 2;
   background-color: var(--bg);
   color: var(--text);
@@ -265,7 +266,7 @@ a {
 }
 
 .nav .col:nth-child(2) {
-  flex: 2;
+  flex: 1.5;
   display: flex;
   justify-content: space-between;
 }
@@ -378,17 +379,10 @@ a {
 }
 
 
-.work {
-  padding: 20em 2em;
-  display: flex;
-  gap: 8em;
-  background-color: var(--bg);
-  color: var(--text);
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
+
 
 .work .col:nth-child(1) {
-  flex: 1;
+  flex: 1.5;
 }
 
 .work .col:nth-child(2) {
@@ -414,7 +408,7 @@ a {
 
 /* Section sticky de la page work */
 .work-header-section {
-  z-index: 10;
+  z-index: 9;
 }
 
 /* Filtres de la page work */
@@ -555,10 +549,7 @@ a {
 }
 
 .project-description p {
-  font-size: 1rem;
-  line-height: 1.6;
   color: var(--fg);
-  margin-bottom: 3em;
 }
 
 /* Styles pour les métadonnées du projet */
@@ -609,22 +600,26 @@ a {
 }
 
 .studio,
-.contact {
-  padding: 20em 2em;
+.contact,
+.work,
+.blog {
+  padding: 20em 1em;
   display: flex;
-  gap: 8em;
+  gap: 0;
   background-color: var(--bg);
   color: var(--text);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .studio .col:nth-child(1),
-.contact .col:nth-child(1) {
-  flex: 1;
+.contact .col:nth-child(1),
+.blog .col:nth-child(1) {
+  flex: 1.5;
 }
 
 .studio .col:nth-child(2),
-.contact .col:nth-child(2) {
+.contact .col:nth-child(2),
+.blog .col:nth-child(2) {
   flex: 2;
   display: flex;
   flex-direction: column;
@@ -648,33 +643,43 @@ a {
   gap: 8em;
 }
 
-/* Description de la page contact */
-.contact-description {
+/* Descriptions des pages */
+.contact-description,
+.work-description,
+.blog-description {
   margin-top: 2rem;
   margin-bottom: 4rem;
   max-width: 600px;
 }
 
-.contact-description p {
+@media (min-width: 768px) {
+  .contact-description {
+    margin-right: 5rem;
+    text-wrap: balance;
+  }
+  
+  .studio-header,
+  .work-header,
+  .blog-header,
+  .article-header {
+    margin-right: 5rem;
+    text-wrap: balance;
+  }
+}
+
+.contact-description p,
+.work-description p,
+.blog-description p {
   font-size: 1rem;
-  line-height: 1;
+  line-height: 1.1;
   color: var(--fg);
   margin-bottom: 1rem;
 }
 
 /* Styles pour la page blog */
-.blog {
-  padding: 20em 2em;
-  display: flex;
-  gap: 8em;
-  background-color: var(--bg);
-  color: var(--text);
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
 
-.blog .col:nth-child(1) {
-  flex: 1;
-}
+
+
 
 .blog .col:nth-child(2) {
   flex: 2;
@@ -685,16 +690,16 @@ a {
 
 /* Styles pour les articles individuels */
 .blog-article {
-  padding: 20em 2em;
+  padding: 20em 1em;
   display: flex;
-  gap: 8em;
+  gap: 0;
   background-color: var(--bg);
   color: var(--text);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .blog-article .col:nth-child(1) {
-  flex: 1;
+  flex: 1.5;
 }
 
 .blog-article .col:nth-child(2) {
@@ -1040,9 +1045,9 @@ a {
 
 /* Styles pour la page d'article individuel */
 .blog-article-page {
-  padding: 20em 2em;
+  padding: 20em 1em;
   display: flex;
-  gap: 8em;
+  gap: 0;
   background-color: var(--bg);
   color: var(--text);
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -1055,7 +1060,7 @@ a {
 }
 
 .blog-article-page .col:nth-child(1) {
-  flex: 1;
+  flex: 1.5;
 }
 
 .blog-article-page .col:nth-child(2) {
@@ -1234,7 +1239,9 @@ a {
 }
 
 /* Styles pour les images dans le contenu */
-.blog-section img {
+.blog-section img,
+.blog-article img,
+.blog img {
   max-width: 100%;
   height: auto;
   display: block;
@@ -1244,7 +1251,9 @@ a {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.blog-section img:hover {
+.blog-section img:hover,
+.blog-article img:hover,
+.blog img:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
@@ -2473,7 +2482,6 @@ html.preview-mode body {
 .blocks-container {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 2rem 1rem;
 }
 
 .block-content {

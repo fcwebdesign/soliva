@@ -34,7 +34,7 @@ export default function Services({ title = "OUR CORE OFFERINGS", offerings }: Se
             >
               <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
                 {/* Colonne de gauche - Titre */}
-                <div className="md:col-span-7">
+                <div className="md:col-span-5">
                   {offering.icon && (
                     <div className="mb-2">
                       <span className="text-blue-400 text-lg">{offering.icon}</span>

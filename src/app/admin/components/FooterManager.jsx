@@ -49,13 +49,20 @@ const FooterManager = ({ content, onSave }) => {
     }
   }, [content]);
 
-  // Pages disponibles pour sélection
+  // Pages disponibles pour sélection (mise à jour dynamiquement)
   const availablePages = [
     { key: 'home', label: 'Accueil', path: 'home' },
     { key: 'work', label: 'Réalisations', path: 'work' },
     { key: 'studio', label: 'Studio', path: 'studio' },
     { key: 'blog', label: 'Journal', path: 'blog' },
-    { key: 'contact', label: 'Contact', path: 'contact' }
+    { key: 'contact', label: 'Contact', path: 'contact' },
+    // Ajouter automatiquement les pages personnalisées
+    ...(content?.pages?.pages || []).map(page => ({
+      key: page.slug || page.id,
+      label: page.title || 'Page personnalisée',
+      path: page.slug || page.id,
+      isCustom: true
+    }))
   ];
 
   // Pages disponibles pour les liens légaux (même que navigation)
@@ -64,7 +71,14 @@ const FooterManager = ({ content, onSave }) => {
     { key: 'work', label: 'Réalisations', path: '/work' },
     { key: 'studio', label: 'Studio', path: '/studio' },
     { key: 'blog', label: 'Journal', path: '/blog' },
-    { key: 'contact', label: 'Contact', path: '/contact' }
+    { key: 'contact', label: 'Contact', path: '/contact' },
+    // Ajouter automatiquement les pages personnalisées
+    ...(content?.pages?.pages || []).map(page => ({
+      key: page.slug || page.id,
+      label: page.title || 'Page personnalisée',
+      path: `/${page.slug || page.id}`,
+      isCustom: true
+    }))
   ];
 
   // Réseaux sociaux disponibles

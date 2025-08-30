@@ -8,16 +8,19 @@
     "logoImage": "",
     "location": "paris, le havre",
     "items": [
-      "home",
-      "blog",
-      "contact",
+      "hello-test",
       "studio",
-      "work"
+      "work",
+      "blog",
+      "contact"
     ],
     "pageLabels": {
-      "blog": "Journal",
+      "blog": "le blog",
       "home": "home",
-      "studio": "Studio"
+      "studio": "le studio",
+      "contact": "contact",
+      "hello-test": "test",
+      "work": "réalisations"
     }
   },
   "home": {
@@ -195,56 +198,111 @@
         "alt": "L'équipe Soliva au travail dans notre espace créatif"
       }
     },
-    "description": "<p>Créativité, innovation, impact. <br>Voici ce qui définit notre studio. On ne fait pas que créer des identités visuelles ou des plateformes web. <br>On forge des expériences qui marquent. Que ce soit pour une startup écolo ou une galerie d'art contemporain, notre approche est audacieuse et résolument moderne. Oubliez les clichés, place à l'authenticité. <br>Chaque projet est une aventure unique, et on est là pour la rendre inoubliable.</p>",
+    "description": "<p></p>",
     "blocks": [
       {
         "id": "block-1",
+        "type": "content",
+        "content": "<p>Bienvenue dans notre studio, où créativité et impact se rencontrent. <br>Chaque projet est une aventure unique, qu'il s'agisse de donner vie à une identité de marque écoresponsable ou de concevoir une plateforme immersive pour l'art. Ici, on ne se contente pas de créer, on provoque des émotions et des réactions. Prêt à transformer vos idées en réalité palpable ? On s'y met ensemble.</p>"
+      },
+      {
+        "id": "block-2",
         "type": "image",
         "content": "",
         "image": {
-          "src": "/uploads/1755608058699-46d0c8ad.jpg",
+          "src": "/uploads/1756481613960-30ee05ee.jpg",
           "alt": ""
         }
       },
       {
-        "id": "block-2",
+        "id": "block-3",
         "type": "h2",
         "content": "Concevez, testez, impactez"
       },
       {
-        "id": "block-3",
+        "id": "block-4",
         "type": "content",
         "content": "<p>Nous avançons par itérations courtes, avec des livrables clairs à chaque étape: wireframes testés, maquettes validées, puis développement mesurable. Chaque décision s’appuie sur des données concrètes: tests utilisateurs, analytics, retours terrain. Résultat: un produit qui charge vite, convertit mieux et reste simple à faire évoluer.</p>"
       },
       {
-        "id": "block-4",
+        "id": "block-5",
         "type": "h2",
         "content": "Faites simple, faites mieux"
       },
       {
-        "id": "block-5",
+        "id": "block-6",
         "type": "content",
         "content": "<p>Nous travaillons avec des objectifs clairs, des délais tenus et des métriques suivies. Par exemple: charte graphique livrée en 10 jours, prototype cliquable en 2 semaines, puis mise en ligne avec suivi des conversions et des temps de chargement. Vous obtenez un résultat propre, mesurable et prêt à évoluer.</p>"
       },
       {
-        "id": "block-1755608167136",
+        "id": "block-7",
         "type": "h2",
         "content": "Mesurez, apprenez, itérez"
       },
       {
-        "id": "block-1755608177084",
+        "id": "block-8",
         "type": "content",
         "content": "<p>Mesurez, apprenez, itérez Nous suivons les KPIs clés dès le jour 1: taux de conversion, rétention, temps de chargement, SEO. Chaque mois, nous testons une hypothèse précise (A/B sur le formulaire, nouveau wording, optimisation d’image) et déployons ce qui performe. Résultat: des gains chiffrés, documentés, et un produit qui progresse sans refonte lourde.</p>"
       },
       {
-        "id": "block-1755609780831",
+        "id": "block-9",
         "type": "h2",
         "content": "Livrez, optimisez, progressez"
       },
       {
-        "id": "block-1755609794221",
+        "id": "block-10",
         "type": "content",
         "content": "<p>Livrez, optimisez, progressez Déploiement en sprint d’une semaine, suivi d’un check de performances à J+3: Core Web Vitals, conversions, bugs réels. À J+14, itération ciblée sur ce qui bloque (formulaire trop long, visuel peu cliquable), avec changelog et impacts mesurés pour décider du prochain sprint.</p>"
+      },
+      {
+        "id": "block-11",
+        "type": "two-columns",
+        "content": "",
+        "leftColumn": [
+          {
+            "id": "block-1756480744101-0.9759858553497809",
+            "type": "image",
+            "content": "",
+            "image": {
+              "src": "/uploads/1756480758926-52818ca6.png",
+              "alt": ""
+            }
+          },
+          {
+            "id": "block-1756481724646-0.42236443879098884",
+            "type": "h3",
+            "content": "Lisa Lombard"
+          },
+          {
+            "id": "block-1756481774304-0.08598438704230948",
+            "type": "content",
+            "content": "<p>Poste</p>"
+          }
+        ],
+        "rightColumn": [
+          {
+            "id": "block-1756480761132-0.64442277832819",
+            "type": "image",
+            "content": "",
+            "image": {
+              "src": "/uploads/1756480764062-769f0b02.png",
+              "alt": ""
+            }
+          },
+          {
+            "id": "block-1756481745127-0.16814001516551214",
+            "type": "h3",
+            "content": "Florent Cleron"
+          },
+          {
+            "id": "block-1756481800400-0.2609483852161575",
+            "type": "content",
+            "content": "<p>Poste</p>"
+          }
+        ],
+        "layout": "left-right",
+        "gap": "medium",
+        "alignment": "top"
       }
     ]
   },
@@ -572,6 +630,21 @@
           }
         ],
         "publishedAt": "2025-08-18T13:25:59.640Z"
+      },
+      {
+        "id": "recette",
+        "title": "recette",
+        "content": "<p>Découvrez l’essentiel du sujet en 2 minutes. Points clés, exemples concrets, et actions à mettre en place dès aujourd’hui. Pas de théorie inutile, uniquement ce qui vous aide à avancer.</p>",
+        "status": "published",
+        "slug": "recette",
+        "publishedAt": "2025-08-28T13:57:02.113Z",
+        "blocks": [
+          {
+            "id": "block-1",
+            "type": "content",
+            "content": "<p>Découvrez l’essentiel du sujet en 2 minutes. Points clés, exemples concrets, et actions à mettre en place dès aujourd’hui. Pas de théorie inutile, uniquement ce qui vous aide à avancer.</p>"
+          }
+        ]
       }
     ],
     "filters": [
@@ -607,6 +680,10 @@
       {
         "title": "Kodza",
         "url": ""
+      },
+      {
+        "title": "Hello",
+        "url": "hello-test"
       }
     ],
     "socialLinks": [
@@ -629,8 +706,180 @@
     ],
     "copyright": "© 2025 Soliva",
     "bottomLinks": [
-      "home"
+      "home",
+      "hello-test"
     ],
     "legalPageLabels": {}
+  },
+  "custom": [
+    {
+      "id": "nouvelle-page",
+      "title": "Nouvelle page",
+      "slug": "nouvelle-page",
+      "description": "",
+      "content": "",
+      "blocks": [
+        {
+          "id": "block-1756390279798",
+          "type": "content",
+          "content": "",
+          "title": "Description"
+        }
+      ]
+    },
+    {
+      "id": "test-page",
+      "title": "Test Page",
+      "slug": "test-page",
+      "description": "",
+      "content": "",
+      "blocks": [
+        {
+          "id": "block-1756390279798",
+          "type": "content",
+          "content": "",
+          "title": "Description"
+        }
+      ],
+      "hero": {
+        "title": "test de page"
+      }
+    },
+    {
+      "id": "test-page-new",
+      "title": "Test Page",
+      "slug": "test-page-new",
+      "description": "",
+      "content": "",
+      "blocks": [
+        {
+          "id": "block-1756390279798",
+          "type": "content",
+          "content": "",
+          "title": "Description"
+        }
+      ],
+      "hero": {
+        "title": "test de page"
+      }
+    }
+  ],
+  "pages": {
+    "pages": [
+      {
+        "id": "hello-test",
+        "title": "Hello",
+        "content": "<h2>Recette de cuisine</h2>\n<p>Ce guide présente une recette simple avec des étapes claires, des temps de cuisson précis et une liste d’ingrédients courte. Vous trouverez les quantités exactes, les ustensiles nécessaires et des variantes pour adapter la recette en 20 minutes, même en semaine.</p>",
+        "slug": "hello-test",
+        "status": "published",
+        "description": "<p></p>",
+        "blocks": [
+          {
+            "id": "block-1",
+            "type": "h2",
+            "content": "Recette de cuisine"
+          },
+          {
+            "id": "block-2",
+            "type": "content",
+            "content": "<p>Ce guide présente une recette simple avec des étapes claires, des temps de cuisson précis et une liste d’ingrédients courte. Vous trouverez les quantités exactes, les ustensiles nécessaires et des variantes pour adapter la recette en 20 minutes, même en semaine.</p>",
+            "title": "Description"
+          },
+          {
+            "id": "block-1756392134898",
+            "type": "projects",
+            "content": "",
+            "title": "NOS RÉALISATIONS",
+            "maxProjects": 6,
+            "selectedProjects": [
+              "project-1",
+              "project-2",
+              "project-3",
+              "project-4"
+            ],
+            "theme": "light"
+          },
+          {
+            "id": "block-1756392480232",
+            "type": "two-columns",
+            "content": "",
+            "leftColumn": [
+              {
+                "id": "block-1756392484040-0.09886361847597935",
+                "type": "h2",
+                "content": "Accélérez vos résultats aujourd’hui"
+              },
+              {
+                "id": "block-1756393044999-0.9073500461618058",
+                "type": "content",
+                "content": "<p>Réservez un créneau de 20 minutes et repartez avec un plan d’action clair pour les 30 prochains jours. Nous identifions trois priorités mesurables, les ressources nécessaires et un calendrier précis. Résultat attendu: premiers gains visibles sous deux semaines.</p>"
+              }
+            ],
+            "rightColumn": [
+              {
+                "id": "block-1756392508564-0.350207173272053",
+                "type": "image",
+                "content": "",
+                "image": {
+                  "src": "/uploads/1756392512213-97c1ffbf.jpg",
+                  "alt": ""
+                }
+              }
+            ],
+            "layout": "left-right",
+            "gap": "medium",
+            "alignment": "top"
+          },
+          {
+            "id": "block-1756392538443",
+            "type": "logos",
+            "content": "",
+            "title": "NOS CLIENTS",
+            "logos": [
+              {
+                "src": "/uploads/1756392549258-1fb6ed81.png",
+                "alt": ""
+              },
+              {
+                "src": "/uploads/1756392552871-2950fd71.png",
+                "alt": ""
+              },
+              {
+                "src": "/uploads/1756392583920-73c8d2a0.png",
+                "alt": ""
+              }
+            ]
+          },
+          {
+            "id": "block-1756392615686",
+            "type": "contact",
+            "content": "",
+            "title": "contactez-nous",
+            "ctaText": "Yep !",
+            "ctaLink": "https://google.com",
+            "theme": "auto"
+          },
+          {
+            "id": "block-1756392735016",
+            "type": "services",
+            "content": "",
+            "title": "Test services",
+            "offerings": [
+              {
+                "id": "service-1",
+                "title": "test service 1",
+                "description": "<p>\"Test Service 1\" propulse votre contenu en ligne en boostant la visibilité et l'engagement. Grâce à notre analyse de données précise en temps réel, nous optimisons votre performance web, vous permettant de surpasser vos concurrents.</p>",
+                "icon": ""
+              }
+            ],
+            "theme": "light"
+          }
+        ],
+        "publishedAt": "2025-08-28T14:25:16.756Z",
+        "hero": {
+          "title": ""
+        }
+      }
+    ]
   }
 }

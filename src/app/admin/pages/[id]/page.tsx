@@ -1,12 +1,19 @@
 "use client";
-
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Sidebar from '../../components/Sidebar';
 import BlockEditor from '../../components/BlockEditor';
+import Sidebar from '../../components/Sidebar';
+import type { Content } from '@/types/content';
 
-interface PageData {
-  [key: string]: any;
+interface Page {
+  id: string;
+  title: string;
+  content?: string;
+  slug?: string;
+  status?: 'draft' | 'published';
+  publishedAt?: string;
+  description?: string;
+  blocks?: any[];
 }
 
 export default function PageEdit() {
@@ -14,66 +21,16 @@ export default function PageEdit() {
   const router = useRouter();
   const pageId = params.id as string;
   
+  const [content, setContent] = useState<Content | null>(null);
+  const [page, setPage] = useState<Page | null>(null);
   const [loading, setLoading] = useState(true);
-  const [content, setContent] = useState<any>(null);
-  const [pageData, setPageData] = useState<PageData>({});
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
-  // Configuration des pages
-  const pageConfigs = {
-    home: {
-      title: 'Accueil',
-      icon: '🏠',
-      description: 'Page d\'accueil du site',
-      dataPath: 'home'
-    },
-    contact: {
-      title: 'Contact', 
-      icon: '📧',
-      description: 'Page de contact et coordonnées',
-      dataPath: 'contact'
-    },
-    studio: {
-      title: 'Studio',
-      icon: '🎨', 
-      description: 'Présentation du studio',
-      dataPath: 'studio'
-    },
-    work: {
-      title: 'Travaux',
-      icon: '💼',
-      description: 'Portfolio et projets - Configuration générale',
-      dataPath: 'work'
-    },
-    blog: {
-      title: 'Journal',
-      icon: '📝',
-      description: 'Articles et actualités - Configuration générale', 
-      dataPath: 'blog'
-    },
-    settings: {
-      title: 'Paramètres',
-      icon: '⚙️',
-      description: 'Configuration générale du site',
-      dataPath: 'nav'
-    }
-  };
-
-  const currentPage = pageId === 'new' ? {
-    title: 'Nouvelle page',
-    icon: '📄',
-    description: 'Page personnalisée',
-    dataPath: 'custom'
-  } : pageConfigs[pageId as keyof typeof pageConfigs];
-
+  // Charger le contenu et trouver la page
   useEffect(() => {
-    if (!currentPage) {
-      router.push('/admin/pages');
-      return;
-    }
     fetchContent();
-  }, [pageId]);
+  }, []);
 
   // Ajouter la classe admin-page au body
   useEffect(() => {
@@ -87,13 +44,42 @@ export default function PageEdit() {
     try {
       setLoading(true);
       const response = await fetch('/api/admin/content');
+      
+      if (!response.ok) {
+        throw new Error('Erreur lors du chargement');
+      }
+      
       const data = await response.json();
       setContent(data);
       
-      // Extraire les données de la page spécifique
-      const specificPageData = data[currentPage.dataPath] || {};
-      setPageData(specificPageData);
-      
+      // Trouver la page par ID
+      const foundPage = (data as any).pages?.pages?.find((p: Page) => p.id === pageId);
+      if (foundPage) {
+        setPage(foundPage);
+      } else if (pageId === 'new') {
+        // Créer une nouvelle page (ne pas l'ajouter au contenu tout de suite)
+        const newPage = {
+          id: 'nouvelle-page',
+          title: 'Nouvelle page',
+          content: '',
+          slug: 'nouvelle-page',
+          status: 'draft' as const,
+          description: '',
+          blocks: [
+            {
+              id: `block-${Date.now()}`,
+              type: 'content',
+              content: '',
+              title: 'Description'
+            }
+          ]
+        };
+        setPage(newPage);
+      } else {
+        // Page non trouvée
+        router.push('/admin/pages');
+        return;
+      }
     } catch (err) {
       console.error('Erreur:', err);
     } finally {
@@ -101,92 +87,277 @@ export default function PageEdit() {
     }
   };
 
-  const updatePageData = (updates: any) => {
-    const updatedPageData = { ...pageData, ...updates };
-    setPageData(updatedPageData);
+  const updatePage = (updates: Partial<Page>) => {
+    if (!page) return;
+    const updatedPage = { ...page, ...updates } as Page;
+    
+    // Si le slug change, mettre à jour l'ID aussi (comme dans le blog)
+    if (updates.slug && updates.slug !== page.slug) {
+      updatedPage.id = updates.slug;
+    }
+    
+    setPage(updatedPage);
     setHasUnsavedChanges(true);
   };
 
-  const handleSave = async () => {
-    if (!content || !currentPage) return;
+  const handleSaveWithStatus = async (status: 'draft' | 'published') => {
+    if (!page || !content) return;
+    
+    // Mettre à jour le statut et la date de publication si nécessaire
+    const updatedPage = {
+      ...page,
+      status,
+      ...(status === 'published' && page.status !== 'published' && {
+        publishedAt: new Date().toISOString()
+      })
+    };
+    
+    // Mettre à jour l'état local avant la sauvegarde
+    setPage(updatedPage);
+    
+    // Utiliser la logique de sauvegarde existante
+    await handleSaveInternal(updatedPage);
+  };
+
+  const handleSave = () => handleSaveWithStatus(page?.status || 'draft');
+
+  const handleSaveInternal = async (pageToSave: Page = page!) => {
+    if (!pageToSave || !content) return;
     
     try {
       setSaveStatus('saving');
       
-      // Créer le nouveau contenu avec les modifications
-      const newContent = {
-        ...content,
-        [currentPage.dataPath]: pageData
+      // Forcer la génération du HTML à partir des blocs s'ils existent
+      let finalContent = pageToSave.content || '';
+      
+      if (pageToSave.blocks && Array.isArray(pageToSave.blocks) && pageToSave.blocks.length > 0) {
+        console.log('🔄 Génération du HTML à partir des blocs pour sauvegarde');
+        finalContent = pageToSave.blocks.map(block => {
+          switch (block.type) {
+            case 'h2':
+              return block.content ? `<h2>${block.content}</h2>` : '';
+            case 'h3':
+              return block.content ? `<h3>${block.content}</h3>` : '';
+            case 'content':
+              return block.content || '';
+            case 'image':
+              return block.image?.src ? `<img src="${block.image.src}" alt="${block.image.alt || ''}" />` : '';
+            case 'cta':
+              return (block.ctaText || block.ctaLink) ? 
+                `<div class="cta-block"><p>${block.ctaText || ''}</p><a href="${block.ctaLink || ''}" class="cta-button">En savoir plus</a></div>` : '';
+            default:
+              return '';
+          }
+        }).filter(html => html.trim() !== '').join('\n');
+      }
+      
+      // Nettoyer le contenu de la page avant sauvegarde
+      const cleanPageContent = (content: string) => {
+        if (!content) return '';
+        
+        // Supprimer les anciens blocs invalides du contenu HTML
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = content;
+        
+        // Supprimer les éléments qui correspondent aux anciens blocs
+        const invalidElements = tempDiv.querySelectorAll('[data-block-type="list"], [data-block-type="quote"]');
+        invalidElements.forEach(el => el.remove());
+        
+        return tempDiv.innerHTML;
       };
       
+      // Nettoyer le contenu de la page
+      const cleanedPage = {
+        ...pageToSave,
+        content: cleanPageContent(finalContent)
+      };
+      
+      console.log('💾 Page à sauvegarder:', {
+        id: cleanedPage.id,
+        title: cleanedPage.title,
+        status: cleanedPage.status,
+        publishedAt: cleanedPage.publishedAt,
+        contentLength: cleanedPage.content?.length || 0,
+        contentPreview: cleanedPage.content?.substring(0, 100),
+        hasBlocks: !!cleanedPage.blocks,
+        blocksCount: cleanedPage.blocks?.length || 0
+      });
+      
+      // Mettre à jour la page dans le contenu
+      const newContent = { ...content };
+      
+      // Initialiser la structure pages si elle n'existe pas
+      if (!(newContent as any).pages) (newContent as any).pages = { pages: [] };
+      if (!(newContent as any).pages.pages) (newContent as any).pages.pages = [];
+      
+      const pageIndex = (newContent as any).pages.pages.findIndex((p: Page) => p.id === pageId);
+      
+      console.log('💾 Sauvegarde page:', { pageId, cleanedPage, pageIndex });
+      console.log('💾 Contenu avant sauvegarde:', JSON.stringify((newContent as any).pages.pages, null, 2));
+      
+      if (pageIndex >= 0) {
+        // Mettre à jour la page existante
+        (newContent as any).pages.pages[pageIndex] = cleanedPage;
+      } else {
+        // Ajouter une nouvelle page
+        (newContent as any).pages.pages.push(cleanedPage);
+      }
+      
+      console.log('💾 Contenu après sauvegarde:', JSON.stringify((newContent as any).pages.pages, null, 2));
+      
+      // Sauvegarder
       const response = await fetch('/api/admin/content', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: newContent })
+        body: JSON.stringify({ content: newContent }),
       });
       
       if (!response.ok) {
-        throw new Error('Erreur lors de la sauvegarde');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`Erreur ${response.status}: ${errorData.error || response.statusText}`);
       }
       
       setContent(newContent);
+      setPage(cleanedPage);
       setHasUnsavedChanges(false);
       setSaveStatus('success');
-      setTimeout(() => setSaveStatus('idle'), 3000);
       
+      // Rediriger vers la liste des pages après sauvegarde
+      setTimeout(() => {
+        router.push('/admin/pages');
+      }, 1000);
     } catch (err) {
-      console.error('Erreur sauvegarde:', err);
+      console.error('Erreur:', err);
       setSaveStatus('error');
-      setTimeout(() => setSaveStatus('idle'), 3000);
     }
   };
 
-  const handlePreview = () => {
-    let previewUrl = '/';
-    switch (pageId) {
-      case 'home':
-        previewUrl = '/';
-        break;
-      case 'contact':
-        previewUrl = '/contact';
-        break;
-      case 'studio':
-        previewUrl = '/studio';
-        break;
-      case 'work':
-        previewUrl = '/work';
-        break;
-      case 'blog':
-        previewUrl = '/blog';
-        break;
-      default:
-        previewUrl = '/';
+  const handlePreview = async () => {
+    if (!page) return;
+    
+    try {
+      // 1. Créer une révision temporaire avec les modifications actuelles
+      const previewId = `preview-${Date.now()}`;
+      console.log('📝 Création aperçu page:', {
+        pageId: page.id,
+        slug: page.slug,
+        hasUnsavedChanges,
+        blocksCount: page.blocks?.length || 0,
+        blocks: page.blocks?.map(b => ({ type: b.type, content: b.content?.substring(0, 50) })),
+        pageContent: page.content?.substring(0, 100)
+      });
+      
+      // 2. Générer le HTML à partir des blocs pour l'aperçu
+      let previewContent = page.content || '';
+      
+      if (page.blocks && Array.isArray(page.blocks) && page.blocks.length > 0) {
+        previewContent = page.blocks.map(block => {
+          switch (block.type) {
+            case 'h2':
+              return block.content ? `<h2>${block.content}</h2>` : '';
+            case 'h3':
+              return block.content ? `<h3>${block.content}</h3>` : '';
+            case 'content':
+              return block.content || '';
+            case 'image':
+              return block.image?.src ? `<img src="${block.image.src}" alt="${block.image.alt || ''}" />` : '';
+            case 'cta':
+              return (block.ctaText || block.ctaLink) ? 
+                `<div class="cta-block"><p>${block.ctaText || ''}</p><a href="${block.ctaLink || ''}" class="cta-button">En savoir plus</a></div>` : '';
+            default:
+              return '';
+          }
+        }).filter(html => html.trim() !== '').join('\n');
+      }
+      
+      if (!previewContent || previewContent.trim() === '') {
+        previewContent = `<p>Contenu de la page en cours de rédaction...</p>`;
+      }
+      
+      // 3. Créer la page avec le contenu généré
+      const previewPage = {
+        ...page,
+        content: previewContent
+      };
+      
+      // 4. Récupérer le contenu complet pour mettre à jour la section pages
+      const contentResponse = await fetch('/api/content');
+      const fullContent = await contentResponse.json();
+      
+      // 5. Mettre à jour la page dans la liste des pages
+      console.log('🔍 Recherche de la page dans la liste:', {
+        pageId: page.id,
+        pageSlug: page.slug,
+        existingPages: fullContent.pages?.pages?.map((p: any) => ({ id: p.id, slug: p.slug, title: p.title })) || []
+      });
+      
+      const updatedPages = fullContent.pages?.pages?.map((p: any) => 
+        (p.id === page.id || p.slug === page.slug) ? previewPage : p
+      ) || [];
+      
+      console.log('✅ Page mise à jour dans l\'aperçu:', {
+        updatedPagesCount: updatedPages.length,
+        previewPage: {
+          title: previewPage.title,
+          slug: previewPage.slug,
+          hasContent: !!previewPage.content,
+          contentLength: previewPage.content?.length || 0
+        }
+      });
+      
+      const previewContentData = {
+        ...fullContent,
+        pages: {
+          ...fullContent.pages,
+          pages: updatedPages
+        },
+        _isPreview: true,
+        _previewId: previewId,
+        _originalPage: 'pages'
+      };
+      
+      // 6. Sauvegarder la révision temporaire
+      const response = await fetch('/api/admin/preview/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          previewId,
+          content: previewContentData,
+          page: 'pages'
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Erreur lors de la création de l\'aperçu');
+      }
+      
+      // 7. Ouvrir l'URL spéciale d'aperçu
+      window.open(`/pages/${page.slug || page.id}?preview=${previewId}`, '_blank');
+      
+    } catch (err) {
+      console.error('Erreur aperçu page:', err);
+      alert('Erreur lors de la création de l\'aperçu');
     }
-    window.open(previewUrl, '_blank');
   };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Chargement...</p>
-        </div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
-  if (!currentPage) {
+  if (!page) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Page non trouvée</h2>
-          <p className="text-gray-600 mb-4">La page demandée n'existe pas.</p>
-          <button
+          <h1 className="text-xl font-semibold text-gray-900 mb-2">Page non trouvée</h1>
+          <button 
             onClick={() => router.push('/admin/pages')}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="text-blue-600 hover:text-blue-700"
           >
-            Retour aux pages
+            Retour à la liste
           </button>
         </div>
       </div>
@@ -194,81 +365,131 @@ export default function PageEdit() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gray-50 grid grid-cols-1 xl:grid-cols-[256px_1fr]">
+      {/* Sidebar gauche */}
       <Sidebar 
         currentPage="pages"
       />
-      
-      <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => router.push('/admin/pages')}
-                className="text-gray-500 hover:text-gray-700 transition-colors"
-              >
-                ← Retour
-              </button>
-              <div className="flex items-center space-x-3">
-                <span className="text-2xl">{currentPage.icon}</span>
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-900">{currentPage.title}</h1>
-                  <p className="text-sm text-gray-600">{currentPage.description}</p>
+
+      {/* Zone principale */}
+      <div className="flex flex-col">
+        {/* Header avec SaveBar sticky */}
+        <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-6 py-4">
+            <div className="flex items-start justify-between">
+              {/* Titre et navigation */}
+              <div className="flex items-center space-x-4">
+                <button
+                  onClick={() => router.push('/admin/pages')}
+                  className="text-gray-500 hover:text-gray-700 transition-colors"
+                >
+                  ← Retour aux pages
+                </button>
+                <div className="flex items-center space-x-3">
+                  <span className="text-2xl">📄</span>
+                  <div>
+                    <h1 className="text-2xl font-bold text-gray-900">
+                      {pageId === 'new' ? 'Nouvelle page' : page.title}
+                    </h1>
+                    <p className="text-sm text-gray-600">
+                      {pageId === 'new' ? 'Créer une nouvelle page' : 'Modifier la page'}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="flex items-center space-x-3">
-              {hasUnsavedChanges && (
-                <span className="text-sm text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
-                  ⚠️ Modifications non sauvegardées
-                </span>
-              )}
               
-              {saveStatus === 'saving' && (
-                <span className="text-sm text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
-                  💾 Sauvegarde...
-                </span>
-              )}
-              
-              {saveStatus === 'success' && (
-                <span className="text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full">
-                  ✅ Sauvegardé
-                </span>
-              )}
-              
-              {saveStatus === 'error' && (
-                <span className="text-sm text-red-600 bg-red-50 px-3 py-1 rounded-full">
-                  ❌ Erreur
-                </span>
-              )}
-              
-              <button
-                onClick={handlePreview}
-                className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
-              >
-                👁️ Aperçu
-              </button>
-              
-              <button
-                onClick={handleSave}
-                disabled={!hasUnsavedChanges || saveStatus === 'saving'}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-              >
-                {saveStatus === 'saving' ? 'Sauvegarde...' : '💾 Sauvegarder'}
-              </button>
+              {/* Actions */}
+              <div className="flex items-center space-x-3">
+                {hasUnsavedChanges && (
+                  <span className="text-sm text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
+                    ⚠️ Modifications non sauvegardées
+                  </span>
+                )}
+                
+                {saveStatus === 'saving' && (
+                  <span className="text-sm text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                    💾 Sauvegarde...
+                  </span>
+                )}
+                
+                {saveStatus === 'success' && (
+                  <span className="text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                    ✅ Sauvegardé
+                  </span>
+                )}
+                
+                {saveStatus === 'error' && (
+                  <span className="text-sm text-red-600 bg-red-50 px-3 py-1 rounded-full">
+                    ❌ Erreur
+                  </span>
+                )}
+                
+                <button
+                  onClick={handlePreview}
+                  className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  👁️ Aperçu
+                </button>
+                
+                <button
+                  onClick={() => handleSaveWithStatus('draft')}
+                  disabled={!hasUnsavedChanges || saveStatus === 'saving'}
+                  className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                >
+                  Brouillon
+                </button>
+                
+                <button
+                  onClick={() => handleSaveWithStatus('published')}
+                  disabled={!hasUnsavedChanges || saveStatus === 'saving'}
+                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                >
+                  {saveStatus === 'saving' ? 'Sauvegarde...' : '💾 Publier'}
+                </button>
+              </div>
             </div>
           </div>
         </header>
 
         {/* Contenu principal */}
         <main className="flex-1 p-6">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-7xl mx-auto space-y-6">
+            {/* Titre */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Titre de la page
+              </label>
+              <input
+                type="text"
+                value={page.title || ''}
+                onChange={(e) => updatePage({ title: e.target.value })}
+                className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                placeholder="Titre de la page..."
+              />
+            </div>
+
+            {/* Slug */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Slug (URL)
+              </label>
+              <input
+                type="text"
+                value={page.slug || ''}
+                onChange={(e) => updatePage({ slug: e.target.value })}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                placeholder="url-de-la-page"
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                L'URL sera : /{page.slug || 'url-de-la-page'}
+              </p>
+            </div>
+
+            {/* Éditeur de blocs avec IA intégrée */}
             <BlockEditor
-              pageData={pageData}
-              pageKey={pageId}
-              onUpdate={updatePageData}
+              pageData={page}
+              pageKey="custom"
+              onUpdate={updatePage}
             />
           </div>
         </main>

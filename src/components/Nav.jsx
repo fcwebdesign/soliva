@@ -123,13 +123,43 @@ const Nav = ({ content }) => {
     'contact': 'Contact'
   };
 
-  // Fonction pour obtenir le label d'une page (personnalisé ou par défaut)
+  // Fonction pour obtenir le label d'une page (personnalisée ou par défaut)
   const getPageLabel = (pageKey) => {
+    // Vérifier d'abord les pages personnalisées
+    const customPage = content?.pages?.pages?.find(page => 
+      (page.slug || page.id) === pageKey
+    );
+    if (customPage) {
+      return customPage.title || 'Page personnalisée';
+    }
+    
+    // Sinon utiliser les labels par défaut
     return content?.pageLabels?.[pageKey] || pageLabels[pageKey] || pageKey;
   };
 
   // Créer une clé unique pour forcer le re-render
   const navKey = JSON.stringify(content);
+
+  // Construire la liste des pages de navigation
+  const getNavigationItems = () => {
+    const defaultItems = content?.items || ['home', 'work', 'studio', 'blog', 'contact'];
+    
+    // Ajouter automatiquement les pages personnalisées qui ne sont pas déjà dans la liste
+    const customPages = content?.pages?.pages || [];
+    const customPageKeys = customPages.map(page => page.slug || page.id);
+    
+    // Filtrer pour éviter les doublons
+    const uniqueItems = [...defaultItems];
+    customPageKeys.forEach(key => {
+      if (!uniqueItems.includes(key)) {
+        uniqueItems.push(key);
+      }
+    });
+    
+    return uniqueItems;
+  };
+
+  const navigationItems = getNavigationItems();
 
   return (
     <div className="nav" key={navKey}>
@@ -151,7 +181,7 @@ const Nav = ({ content }) => {
 
       <div className="col">
         <div className="nav-items">
-          {(content?.items || ['home', 'work', 'studio', 'blog', 'contact']).map((item) => {
+          {navigationItems.map((item) => {
             const path = item === 'home' ? "/" : `/${item}`;
             const isActive = pathname === path;
             const label = getPageLabel(item);

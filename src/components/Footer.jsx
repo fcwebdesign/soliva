@@ -48,7 +48,7 @@ const Footer = ({ content }) => {
 
   return (
     <footer className="py-12">
-      <div className="max-w-7xl mx-auto px-4 lg:px-6">
+      <div className="mx-auto px-4 lg:px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Logo et Description - Colonne gauche */}
           <div className="space-y-4">
@@ -141,7 +141,13 @@ const Footer = ({ content }) => {
                       { key: 'cgu', label: 'Conditions générales d\'utilisation', path: '/cgu' },
                       { key: 'cookies', label: 'Politique des cookies', path: '/cookies' },
                       { key: 'rgpd', label: 'RGPD', path: '/rgpd' },
-                      { key: 'mentions-obligatoires', label: 'Mentions obligatoires', path: '/mentions-obligatoires' }
+                      { key: 'mentions-obligatoires', label: 'Mentions obligatoires', path: '/mentions-obligatoires' },
+                      // Ajouter automatiquement les pages personnalisées
+                      ...(content?.pages?.pages || []).map(page => ({
+                        key: page.slug || page.id,
+                        label: page.title || 'Page personnalisée',
+                        path: `/${page.slug || page.id}`
+                      }))
                     ];
                     
                     const page = availablePages.find(p => p.key === pageKey);

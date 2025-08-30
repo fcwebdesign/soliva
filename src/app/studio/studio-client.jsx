@@ -142,11 +142,15 @@ const StudioClient = ({ content: initialContent }) => {
         
         <div className="studio">
           <div className="col">
-            <PageHeader
-              title={previewContent?.hero?.title || 'Le studio'}
-              description={previewContent?.description || previewContent?.content?.description}
-              titleClassName="studio-header"
-            />
+            <div className="work-header-section sticky top-32">
+              <PageHeader
+                title={previewContent?.hero?.title || 'Le studio'}
+                description={previewContent?.description || previewContent?.content?.description}
+                titleClassName="studio-header"
+              />
+              
+
+            </div>
           </div>
           <div className="col">
             {/* Blocs dynamiques dans la colonne de droite */}

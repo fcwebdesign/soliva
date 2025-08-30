@@ -3,7 +3,7 @@ import { readContent } from '@/lib/content';
 
 export async function POST(request: NextRequest) {
   try {
-    const { type } = await request.json();
+    const { type, title } = await request.json();
     
     const content = await readContent();
     let items = [];
@@ -75,6 +75,61 @@ export async function POST(request: NextRequest) {
       }
       
       console.log('Studio items (crawled):', items);
+    } else if (type === 'custom') {
+      // Pour les pages personnalisées, analyser tout le contenu du site pour générer une description cohérente
+      items = [];
+      
+      // Ajouter le contenu de toutes les pages
+      if ((content.home as any)?.description) {
+        items.push({
+          title: 'Accueil',
+          description: (content.home as any).description,
+          content: (content.home as any).content || ''
+        });
+      }
+      
+      if (content.work?.adminProjects && content.work.adminProjects.length > 0) {
+        // Prendre les 3 premiers projets publiés
+        const publishedProjects = content.work.adminProjects
+          .filter((p: any) => p.status === 'published')
+          .slice(0, 3);
+        
+        publishedProjects.forEach((project: any) => {
+          items.push({
+            title: project.title,
+            description: project.description || project.excerpt,
+            content: project.content?.substring(0, 200) || '',
+            category: project.category,
+            client: project.client
+          });
+        });
+      }
+      
+      if (content.blog?.articles && content.blog.articles.length > 0) {
+        // Prendre les 2 premiers articles publiés
+        const publishedArticles = content.blog.articles
+          .filter((a: any) => a.status === 'published')
+          .slice(0, 2);
+        
+        publishedArticles.forEach((article: any) => {
+          items.push({
+            title: article.title,
+            description: article.description || article.excerpt,
+            content: article.content?.substring(0, 200) || ''
+          });
+        });
+      }
+      
+      // Si pas assez de contenu, ajouter des infos de base
+      if (items.length === 0) {
+        items = [{
+          title: title || 'Page personnalisée',
+          description: 'Contenu créatif et innovant',
+          content: 'Nous créons des expériences uniques et mémorables'
+        }];
+      }
+      
+      console.log('Custom page items (crawled):', items);
 
     }
 
@@ -86,8 +141,8 @@ export async function POST(request: NextRequest) {
 
     const contentForAnalysis = items
       .filter(item => {
-        // Pour studio et contact, on accepte tous les items (pas de status)
-        if (type === 'studio' || type === 'contact') return true;
+        // Pour studio, contact et custom, on accepte tous les items (pas de status)
+        if (type === 'studio' || type === 'contact' || type === 'custom') return true;
         // Pour work et blog, on filtre par status
         return item.status === 'published' || !item.status;
       })
@@ -132,6 +187,7 @@ Spécificités selon le type:
 - studio → Positionnement clair: ce qui nous distingue (ton, méthode, approche).
 - blog → Angle éditorial: ce qu'on partage + pourquoi ça compte.
 - contact → Invitation simple, directe, proximité (Paris / Le Havre si utile).
+- custom → Description adaptée au titre de la page, cohérente avec le style du site.
 
 Contraintes:
 - Phrases courtes (max 12 mots).
@@ -140,7 +196,7 @@ Contraintes:
           },
           {
             role: 'user',
-            content: `type=${type}\n\nAnalyse ce contenu et rédige une description engageante:\n\n${JSON.stringify(contentForAnalysis, null, 2)}`
+            content: `type=${type}${title ? `\ntitle=${title}` : ''}\n\nAnalyse ce contenu et rédige une description engageante:\n\n${JSON.stringify(contentForAnalysis, null, 2)}`
           }
         ],
         max_tokens: 150,

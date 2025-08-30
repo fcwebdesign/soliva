@@ -8,7 +8,7 @@ interface Page {
   id: string;
   title: string;
   description: string;
-  type: 'home' | 'contact' | 'studio' | 'work' | 'blog' | 'settings';
+  type: 'home' | 'contact' | 'studio' | 'work' | 'blog' | 'settings' | 'custom';
   icon: string;
   lastModified?: string;
   status: 'published' | 'draft';
@@ -20,35 +20,59 @@ export default function PagesAdmin() {
   const [content, setContent] = useState<any>(null);
   const [activeTab, setActiveTab] = useState('content');
 
-  const pages: Page[] = [
-    {
-      id: 'home',
-      title: 'Accueil',
-      description: 'Page d\'accueil du site',
-      type: 'home',
-      icon: '🏠',
-      status: 'published',
-      lastModified: '2024-01-15'
-    },
-    {
-      id: 'contact',
-      title: 'Contact',
-      description: 'Page de contact et coordonnées',
-      type: 'contact',
-      icon: '📧',
-      status: 'published',
-      lastModified: '2024-01-10'
-    },
-    {
-      id: 'studio',
-      title: 'Studio',
-      description: 'Présentation du studio',
-      type: 'studio',
-      icon: '🎨',
-      status: 'published',
-      lastModified: '2024-01-12'
+  const [pages, setPages] = useState<Page[]>([]);
+
+  // Fonction pour générer la liste des pages dynamiquement
+  const generatePagesList = (content: any): Page[] => {
+    const pagesList: Page[] = [
+      {
+        id: 'home',
+        title: 'Accueil',
+        description: 'Page d\'accueil du site',
+        type: 'home',
+        icon: '🏠',
+        status: 'published',
+        lastModified: '2024-01-15'
+      },
+      {
+        id: 'contact',
+        title: 'Contact',
+        description: 'Page de contact et coordonnées',
+        type: 'contact',
+        icon: '📧',
+        status: 'published',
+        lastModified: '2024-01-10'
+      },
+      {
+        id: 'studio',
+        title: 'Studio',
+        description: 'Présentation du studio',
+        type: 'studio',
+        icon: '🎨',
+        status: 'published',
+        lastModified: '2024-01-12'
+      }
+    ];
+
+    // Ajouter les pages personnalisées depuis le contenu
+    if (content.pages?.pages && Array.isArray(content.pages.pages)) {
+      content.pages.pages.forEach((customPage: any) => {
+        if (customPage && typeof customPage === 'object') {
+          pagesList.push({
+            id: customPage.id,
+            title: customPage.title || 'Page personnalisée',
+            description: customPage.description || 'Page personnalisée',
+            type: 'custom',
+            icon: '📄',
+            status: customPage.status || 'published',
+            lastModified: customPage.publishedAt ? new Date(customPage.publishedAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
+          });
+        }
+      });
     }
-  ];
+
+    return pagesList;
+  };
 
   useEffect(() => {
     fetchContent();
@@ -68,6 +92,10 @@ export default function PagesAdmin() {
       const response = await fetch('/api/admin/content');
       const data = await response.json();
       setContent(data);
+      
+      // Générer la liste des pages dynamiquement
+      const pagesList = generatePagesList(data);
+      setPages(pagesList);
     } catch (err) {
       console.error('Erreur:', err);
     } finally {
@@ -76,7 +104,12 @@ export default function PagesAdmin() {
   };
 
   const handleEditPage = (pageId: string) => {
-    router.push(`/admin?page=${pageId}`);
+    if (pageId === 'home' || pageId === 'contact' || pageId === 'studio') {
+      router.push(`/admin?page=${pageId}`);
+    } else {
+      // Pour les pages personnalisées, rediriger vers l'éditeur avec le slug
+      router.push(`/admin/pages/${pageId}`);
+    }
   };
 
   const handlePreviewPage = (pageId: string) => {
@@ -86,15 +119,98 @@ export default function PagesAdmin() {
     }
   };
 
-  const handleDuplicatePage = (pageId: string) => {
-    // Logique pour dupliquer une page
-    console.log('Dupliquer la page:', pageId);
+  const handleDuplicatePage = async (pageId: string) => {
+    try {
+      // Trouver la page à dupliquer
+      const pageToDuplicate = content.pages?.pages?.find((page: any) => 
+        page.id === pageId
+      );
+      
+      if (!pageToDuplicate) {
+        alert('Page non trouvée');
+        return;
+      }
+      
+              // Créer une copie avec un nouveau slug
+        const duplicatedPage = {
+          ...pageToDuplicate,
+          id: `page-${Date.now()}`,
+          slug: `${pageToDuplicate.slug}-copy`,
+          title: `${pageToDuplicate.title} (copie)`,
+          status: 'draft'
+        };
+        
+        // Ajouter la page dupliquée au contenu
+        const newContent = { ...content };
+        if (!newContent.pages) newContent.pages = { pages: [] };
+        if (!newContent.pages.pages) newContent.pages.pages = [];
+        newContent.pages.pages.push(duplicatedPage);
+      
+      // Sauvegarder
+      const response = await fetch('/api/admin/content', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: newContent })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Erreur lors de la duplication');
+      }
+      
+      // Mettre à jour l'état local
+      setContent(newContent);
+      const updatedPagesList = generatePagesList(newContent);
+      setPages(updatedPagesList);
+      
+      alert('Page dupliquée avec succès !');
+      
+    } catch (err) {
+      console.error('Erreur duplication:', err);
+      alert('Erreur lors de la duplication de la page');
+    }
   };
 
-  const handleDeletePage = (pageId: string) => {
+  const handleDeletePage = async (pageId: string) => {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette page ?')) {
-      // Logique pour supprimer une page
-      console.log('Supprimer la page:', pageId);
+      try {
+        // Supprimer la page du contenu
+        const newContent = { ...content };
+        
+        if (pageId === 'home' || pageId === 'contact' || pageId === 'studio') {
+          // Ne pas permettre la suppression des pages système
+          alert('Impossible de supprimer une page système.');
+          return;
+        }
+        
+        // Supprimer la page personnalisée
+        if (newContent.pages?.pages && Array.isArray(newContent.pages.pages)) {
+          newContent.pages.pages = newContent.pages.pages.filter((page: any) => 
+            page.id !== pageId
+          );
+        }
+        
+        // Sauvegarder les modifications
+        const response = await fetch('/api/admin/content', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: newContent })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Erreur lors de la suppression');
+        }
+        
+        // Mettre à jour l'état local
+        setContent(newContent);
+        const updatedPagesList = generatePagesList(newContent);
+        setPages(updatedPagesList);
+        
+        alert('Page supprimée avec succès !');
+        
+      } catch (err) {
+        console.error('Erreur suppression:', err);
+        alert('Erreur lors de la suppression de la page');
+      }
     }
   };
 
@@ -218,7 +334,7 @@ export default function PagesAdmin() {
 
                   <div className="space-y-3">
                     {pages.map((page, index) => (
-                      <div key={page.id} className="bg-gray-50 rounded-lg border border-gray-200 p-4 hover:border-gray-300 transition-colors">
+                      <div key={`${page.id}-${index}`} className="bg-gray-50 rounded-lg border border-gray-200 p-4 hover:border-gray-300 transition-colors">
                         <div className="flex items-center justify-between">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center space-x-3">

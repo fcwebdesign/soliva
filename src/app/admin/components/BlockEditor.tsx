@@ -1488,7 +1488,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   );
 
   const getDescriptionSuggestion = async () => {
-    if (pageKey !== 'blog' && pageKey !== 'work' && pageKey !== 'contact' && pageKey !== 'studio') return;
+    if (pageKey !== 'blog' && pageKey !== 'work' && pageKey !== 'contact' && pageKey !== 'studio' && pageKey !== 'custom') return;
     
     setIsLoadingDescriptionAI(true);
     try {
@@ -1496,7 +1496,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          type: pageKey === 'work' ? 'work' : pageKey === 'blog' ? 'blog' : pageKey === 'contact' ? 'contact' : 'studio'
+          type: pageKey === 'work' ? 'work' : pageKey === 'blog' ? 'blog' : pageKey === 'contact' ? 'contact' : pageKey === 'custom' ? 'custom' : 'studio',
+          title: pageKey === 'custom' ? localData.title : undefined
         })
       });
 
@@ -1611,8 +1612,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   };
 
   const renderContentBlock = () => {
-    // Pour les pages blog, work, contact et studio, la description est directement à la racine
-    const isDirectDescription = pageKey === 'blog' || pageKey === 'work' || pageKey === 'contact' || pageKey === 'studio';
+    // Pour les pages blog, work, contact, studio et custom, la description est directement à la racine
+    const isDirectDescription = pageKey === 'blog' || pageKey === 'work' || pageKey === 'contact' || pageKey === 'studio' || pageKey === 'custom';
     const descriptionPath = isDirectDescription ? 'description' : 'content.description';
     const descriptionValue = isDirectDescription ? localData.description : localData.content?.description;
     
@@ -1624,8 +1625,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         </div>
         
         <div className="space-y-4">
-          {/* Titre pour les pages contact et studio */}
-          {(pageKey === 'contact' || pageKey === 'studio') && (
+          {/* Titre pour les pages contact, studio et custom */}
+          {(pageKey === 'contact' || pageKey === 'studio' || pageKey === 'custom') && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Titre
@@ -1645,7 +1646,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
               <label className="text-sm font-medium text-gray-700">
                 Description
               </label>
-              {(pageKey === 'blog' || pageKey === 'work' || pageKey === 'contact' || pageKey === 'studio') && (
+              {(pageKey === 'blog' || pageKey === 'work' || pageKey === 'contact' || pageKey === 'studio' || pageKey === 'custom') && (
                 <button
                   onClick={getDescriptionSuggestion}
                   disabled={isLoadingDescriptionAI}
@@ -2672,8 +2673,19 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
           </div>
         )}
         
+        {/* Pour les nouvelles pages personnalisées, afficher l'éditeur de blocs */}
+        {pageKey === 'custom' && (
+          <>
+            {renderContentBlock()}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Éditeur de contenu</h3>
+              {renderDragDropEditor()}
+            </div>
+          </>
+        )}
+        
         {/* Pour les autres pages, afficher les blocs classiques */}
-        {!['blog', 'work', 'backup', 'project', 'article', 'contact', 'studio'].includes(pageKey) && !pageKey.startsWith('project-') && !pageKey.startsWith('article-') && (
+        {!['blog', 'work', 'backup', 'project', 'article', 'contact', 'studio', 'custom'].includes(pageKey) && !pageKey.startsWith('project-') && !pageKey.startsWith('article-') && (
           <>
             {renderContentBlock()}
             {renderMetadataBlock()}
