@@ -38,28 +38,9 @@
             "id": "block-1756225439361-0.9107021052170442",
             "type": "content",
             "content": "<p>Le studio réunit une équipe compacte de designers et développeurs basée au Hevre. Nous livrons des sites rapides, accessibles et faciles à maintenir, avec des délais clairs et un budget maîtrisé. Exemples récents: refonte e‑commerce (+28% de conversion) et site vitrine B2B chargé en moins de 1,2 s.</p>"
-          },
-          {
-            "id": "h2-1756738088196",
-            "type": "h2",
-            "content": "Accélérez votre croissance maintenant"
           }
         ],
-        "rightColumn": [
-          {
-            "id": "",
-            "type": "image",
-            "image": {
-              "src": "/uploads/1756738070243-d3e7510d.png",
-              "alt": ""
-            }
-          },
-          {
-            "id": "content-1756738115140",
-            "type": "content",
-            "content": "<p>Contenu clair, utile et facile à lire. Nous présentons l’information essentielle en quelques lignes, avec des exemples concrets et des actions immédiates à entreprendre. Objectif: vous permettre de comprendre vite et d’agir sans perdre de temps.</p>"
-          }
-        ],
+        "rightColumn": [],
         "layout": "right-left",
         "gap": "large",
         "alignment": "bottom",
@@ -172,6 +153,15 @@
         "title": "Would you like to see a demo?",
         "ctaText": "Yes, sign me up",
         "ctaLink": "https://google.com",
+        "theme": "auto"
+      },
+      {
+        "id": "block-1756751776596",
+        "type": "contact",
+        "content": "",
+        "title": "",
+        "ctaText": "",
+        "ctaLink": "",
         "theme": "auto"
       }
     ]

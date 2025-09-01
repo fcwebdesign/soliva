@@ -9,6 +9,7 @@ import './H3Block';
 import './ImageBlock';
 import './LogosBlock';
 import './ProjectsBlock';
+import './QuoteBlock';
 import './ServicesBlock';
 import './TwoColumnsBlock';
 

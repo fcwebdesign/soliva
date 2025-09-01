@@ -6,41 +6,12 @@ import WysiwygEditor from './WysiwygEditor';
 import MediaUploader, { LogoUploader } from './MediaUploader';
 import VersionList from './VersionList';
 import { renderAutoBlockEditor } from "@/app/admin/components/AutoBlockIntegration";
-import { getAutoDeclaredBlock } from '@/blocks/auto-declared/registry';
+import { getAutoDeclaredBlock, getBlockMetadata, getAvailableBlockTypes, createAutoBlockInstance } from '@/blocks/auto-declared/registry';
 
 interface Block {
   id: string;
-  type: 'h2' | 'h3' | 'content' | 'image' | 'cta' | 'contact' | 'about' | 'services' | 'projects' | 'logos' | 'two-columns';
-  content: string;
-  title?: string;
-  description?: string;
-  image?: {
-    src: string;
-    alt: string;
-  };
-  ctaText?: string;
-  ctaLink?: string;
-  icon?: string;
-  theme?: 'light' | 'dark' | 'auto';
-  offerings?: Array<{
-    id: string;
-    title: string;
-    description: string;
-    icon?: string;
-  }>;
-  maxProjects?: number;
-  selectedProjects?: string[];
-  logos?: Array<{
-    src?: string;
-    image?: string;
-    alt?: string;
-    name?: string;
-  }>;
-  leftColumn?: any[];
-  rightColumn?: any[];
-  layout?: 'left-right' | 'right-left' | 'stacked-mobile';
-  gap?: 'small' | 'medium' | 'large';
-  alignment?: 'top' | 'center' | 'bottom';
+  type: string; // Plus de union type fixe !
+  [key: string]: any; // Accepte n'importe quelle propriété
 }
 
 interface BlockEditorProps {
@@ -280,7 +251,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
 
   // Fonction pour nettoyer les blocs invalides
   const cleanInvalidBlocks = (blocks: Block[]): Block[] => {
-    const validTypes: Block['type'][] = ['h2', 'h3', 'content', 'image', 'cta', 'contact', 'about', 'services', 'projects', 'logos', 'two-columns'];
+    const validTypes = getAvailableBlockTypes(); // Récupère automatiquement depuis le registre
     
     const filteredBlocks = blocks.filter(block => {
       // Supprimer les blocs avec des types invalides
@@ -330,52 +301,32 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     onUpdate(newData);
   };
 
-  const addBlock = (type: Block['type']) => {
+  const addBlock = (type: string) => {
     console.log('🔧 Ajout du bloc:', type);
     
-    const newBlock: Block = {
-      id: `block-${Date.now()}`,
-      type,
-      content: '',
-      ...(type === 'image' && { image: { src: '', alt: '' } }),
-      ...(type === 'cta' && { ctaText: '', ctaLink: '' }),
-      ...(type === 'contact' && { title: '', ctaText: '', ctaLink: '', theme: 'auto' }),
-      ...(type === 'about' && { title: '', content: '' }),
-      ...(type === 'services' && { 
-  title: 'OUR CORE OFFERINGS', 
-  offerings: [
-    {
-      id: 'service-1',
-      title: 'Commercial Excellence',
-      description: 'We deliver tailored commercial excellence services...',
-      icon: ''
+    try {
+      // Créer automatiquement le bloc avec les bonnes données depuis le registre
+      const newBlock = createAutoBlockInstance(type);
+      
+      console.log('🔧 Nouveau bloc créé:', newBlock);
+      
+      const newBlocks = [...blocks, newBlock];
+      setBlocks(newBlocks);
+      // Mettre à jour le contenu après ajout
+      updateBlocksContent(newBlocks);
+    } catch (error) {
+      console.error('❌ Erreur lors de la création du bloc:', error);
+      // Fallback : créer un bloc basique
+      const fallbackBlock: Block = {
+        id: `block-${Date.now()}`,
+        type,
+        content: ''
+      };
+      
+      const newBlocks = [...blocks, fallbackBlock];
+      setBlocks(newBlocks);
+      updateBlocksContent(newBlocks);
     }
-  ]
-}),
-...(type === 'projects' && { 
-  title: 'NOS RÉALISATIONS',
-  maxProjects: 6,
-  selectedProjects: []
-}),
-...(type === 'logos' && { 
-  title: 'NOS CLIENTS',
-  logos: []
-}),
-...(type === 'two-columns' && { 
-  leftColumn: [],
-  rightColumn: [],
-  layout: 'left-right',
-  gap: 'medium',
-  alignment: 'top'
-})
-    };
-    
-    console.log('🔧 Nouveau bloc créé:', newBlock);
-    
-    const newBlocks = [...blocks, newBlock];
-    setBlocks(newBlocks);
-    // Mettre à jour le contenu après ajout
-    updateBlocksContent(newBlocks);
   };
 
   const updateBlock = (blockId: string, updates: Partial<Block>) => {
@@ -631,7 +582,6 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
               />
             );
           }
-          // Plus de fallback - le bloc scalable est obligatoire
           return null;
         default:
           return '';
@@ -908,639 +858,14 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       return <div className="text-red-500">Erreur: bloc invalide</div>;
     }
     
-    switch (block.type) {
-      case 'h2':
-        return (
-          <div className="block-editor">
-            <div className="flex items-center gap-2 mb-2">
-              <button
-                onClick={() => getBlockContentSuggestion(block.id, 'h2')}
-                disabled={isLoadingBlockAI === block.id}
-                className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
-                  isLoadingBlockAI === block.id 
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                    : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600'
-                }`}
-              >
-                {isLoadingBlockAI === block.id ? '🤖...' : '🤖 IA'}
-              </button>
-            </div>
-            <input
-              type="text"
-              value={block.content}
-              onChange={(e) => updateBlock(block.id, { content: e.target.value })}
-              placeholder="Titre de section (H2)"
-              className="block-input h2-input"
-            />
-          </div>
-        );
-      
-      case 'h3':
-        return (
-          <div className="block-editor">
-            <div className="flex items-center gap-2 mb-2">
-              <button
-                onClick={() => getBlockContentSuggestion(block.id, 'h3')}
-                disabled={isLoadingBlockAI === block.id}
-                className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
-                  isLoadingBlockAI === block.id 
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                    : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600'
-                }`}
-              >
-                {isLoadingBlockAI === block.id ? '🤖...' : '🤖 IA'}
-              </button>
-            </div>
-            <input
-              type="text"
-              value={block.content}
-              onChange={(e) => updateBlock(block.id, { content: e.target.value })}
-              placeholder="Sous-titre (H3)"
-              className="block-input h3-input"
-            />
-          </div>
-        );
-      
-      case 'content':
-        const contentBlockEditor = renderAutoBlockEditor(block, (updates) => updateBlock(block.id, updates));
-        if (contentBlockEditor) {
-          return contentBlockEditor;
-        }
-        // Fallback vers l'ancien système si le scalable n'est pas disponible
-        return (
-          <div className="block-editor">
-            <div className="flex items-center gap-2 mb-2">
-              <button
-                onClick={() => getBlockContentSuggestion(block.id, 'content')}
-                disabled={isLoadingBlockAI === block.id}
-                className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
-                  isLoadingBlockAI === block.id 
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                    : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600'
-                }`}
-              >
-                {isLoadingBlockAI === block.id ? '🤖...' : '🤖 IA'}
-              </button>
-            </div>
-            <WysiwygEditor
-              value={block.content}
-              onChange={(content: any) => updateBlock(block.id, { content })}
-              placeholder="Saisissez votre contenu ici..."
-            />
-          </div>
-        );
-      
-      case 'image':
-      case 'image':
-        // Utiliser le système auto-déclaré pour le bloc image
-        const imageBlockEditor = renderAutoBlockEditor(block, (updates) => updateBlock(block.id, updates));
-        if (imageBlockEditor) {
-          return imageBlockEditor;
-        }
-        // Fallback vers l'ancienne logique si le bloc auto-déclaré n'est pas trouvé
-        return (
-          <div className="block-editor">
-            <MediaUploader
-              currentUrl={block.image?.src || ''}
-              onUpload={(src) => updateBlock(block.id, { image: { ...block.image, src } })}
-            />
-            <input
-              type="text"
-              value={block.image?.alt || ''}
-              onChange={(e) => updateBlock(block.id, { image: { ...block.image, alt: e.target.value } })}
-              placeholder="Description de l'image (alt text)"
-              className="block-input"
-            />
-          </div>
-        );      
-      case 'cta':
-        return (
-          <div className="block-editor">
-            <input
-              type="text"
-              value={block.ctaText || ''}
-              onChange={(e) => updateBlock(block.id, { ctaText: e.target.value })}
-              placeholder="Texte du CTA"
-              className="block-input"
-            />
-            <input
-              type="text"
-              value={block.ctaLink || ''}
-              onChange={(e) => updateBlock(block.id, { ctaLink: e.target.value })}
-              placeholder="Lien du CTA"
-              className="block-input"
-            />
-          </div>
-        );
-      
-      case 'contact':
-        const contactBlockEditor = renderAutoBlockEditor(block, (updates) => updateBlock(block.id, updates));
-        if (contactBlockEditor) {
-          return contactBlockEditor;
-        }
-        // Fallback vers l'ancien système si le scalable n'est pas disponible
-        return (
-          <div className="block-editor">
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Question/Titre
-                </label>
-                <input
-                  type="text"
-                  value={block.title || ''}
-                  onChange={(e) => updateBlock(block.id, { title: e.target.value })}
-                  placeholder="Ex: Would you like to see a demo?"
-                  className="block-input"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Texte du bouton
-                </label>
-                <input
-                  type="text"
-                  value={block.ctaText || ''}
-                  onChange={(e) => updateBlock(block.id, { ctaText: e.target.value })}
-                  placeholder="Ex: Yes, sign me up"
-                  className="block-input"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Lien du bouton
-                </label>
-                <input
-                  type="text"
-                  value={block.ctaLink || ''}
-                  onChange={(e) => updateBlock(block.id, { ctaLink: e.target.value })}
-                  placeholder="Ex: /contact ou https://..."
-                  className="block-input"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Thème de fond
-                </label>
-                <select
-                  value={block.theme || 'auto'}
-                  onChange={(e) => updateBlock(block.id, { theme: e.target.value as 'light' | 'dark' | 'auto' })}
-                  className="block-input"
-                >
-                  <option value="auto">Automatique (suit le thème global)</option>
-                  <option value="light">Thème clair forcé</option>
-                  <option value="dark">Thème sombre forcé</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        );
-      
-      case 'about':
-        return (
-          <div className="block-editor">
-            <input
-              type="text"
-              value={block.title || ''}
-              onChange={(e) => updateBlock(block.id, { title: e.target.value })}
-              placeholder="Titre de la section"
-              className="block-input"
-            />
-            <WysiwygEditor
-              value={block.content || ''}
-              onChange={(content) => updateBlock(block.id, { content })}
-              placeholder="Saisissez votre contenu ici..."
-            />
-          </div>
-        );
-      
-      case 'services':
-        const servicesBlockEditor = renderAutoBlockEditor(block, (updates) => updateBlock(block.id, updates));
-        if (servicesBlockEditor) {
-          return servicesBlockEditor;
-        }
-        // Fallback vers l'ancien système si le scalable n'est pas disponible
-        return (
-          <div className="block-editor">
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Titre de la section
-                </label>
-                <input
-                  type="text"
-                  value={block.title || ''}
-                  onChange={(e) => updateBlock(block.id, { title: e.target.value })}
-                  placeholder="Ex: OUR CORE OFFERINGS"
-                  className="block-input"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Thème de fond
-                </label>
-                <select
-                  value={block.theme || 'auto'}
-                  onChange={(e) => updateBlock(block.id, { theme: e.target.value as 'light' | 'dark' | 'auto' })}
-                  className="block-input"
-                >
-                  <option value="auto">Automatique (suit le thème global)</option>
-                  <option value="light">Thème clair forcé</option>
-                  <option value="dark">Thème sombre forcé</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Services ({block.offerings?.length || 0})
-                </label>
-                <div className="space-y-3">
-                  {(block.offerings || []).map((offering, index) => (
-                    <div key={offering.id} className="border border-gray-200 rounded-lg p-3">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-sm font-medium text-gray-600">Service {index + 1}</span>
-                        <button
-                          onClick={() => {
-                            const newOfferings = block.offerings?.filter((_, i) => i !== index) || [];
-                            updateBlock(block.id, { offerings: newOfferings });
-                          }}
-                          className="text-red-500 hover:text-red-700 text-sm"
-                        >
-                          Supprimer
-                        </button>
-                      </div>
-                      <input
-                        type="text"
-                        value={offering.title}
-                        onChange={(e) => {
-                          const newOfferings = [...(block.offerings || [])];
-                          newOfferings[index] = { ...offering, title: e.target.value };
-                          updateBlock(block.id, { offerings: newOfferings });
-                        }}
-                        placeholder="Titre du service"
-                        className="block-input mb-2"
-                      />
-                      <div className="flex items-center gap-2 mb-2">
-                        <button
-                          onClick={() => getServiceDescriptionSuggestion(block.id, index, offering.title)}
-                          disabled={isLoadingBlockAI === `${block.id}-${index}` || !offering.title?.trim()}
-                          className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
-                            isLoadingBlockAI === `${block.id}-${index}` || !offering.title?.trim()
-                              ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                              : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600'
-                          }`}
-                          title={!offering.title?.trim() ? "Saisissez d'abord un titre" : "Générer la description"}
-                        >
-                          {isLoadingBlockAI === `${block.id}-${index}` ? '🤖...' : '🤖 IA'}
-                        </button>
-                      </div>
-                      <div className="mb-2">
-                        <WysiwygEditor
-                          value={offering.description || ''}
-                          onChange={(description) => {
-                            const newOfferings = [...(block.offerings || [])];
-                            newOfferings[index] = { ...offering, description };
-                            updateBlock(block.id, { offerings: newOfferings });
-                          }}
-                          placeholder="Description du service"
-                        />
-                      </div>
-                      <input
-                        type="text"
-                        value={offering.icon || ''}
-                        onChange={(e) => {
-                          const newOfferings = [...(block.offerings || [])];
-                          newOfferings[index] = { ...offering, icon: e.target.value };
-                          updateBlock(block.id, { offerings: newOfferings });
-                        }}
-                        placeholder="Icône (optionnel)"
-                        className="block-input"
-                      />
-                    </div>
-                  ))}
-                  <button
-                    onClick={() => {
-                      const newOffering = {
-                        id: `service-${Date.now()}`,
-                        title: '',
-                        description: '',
-                        icon: ''
-                      };
-                      const newOfferings = [...(block.offerings || []), newOffering];
-                      updateBlock(block.id, { offerings: newOfferings });
-                    }}
-                    className="w-full px-3 py-2 border border-gray-300 border-dashed rounded-lg text-gray-500 hover:text-gray-700 hover:border-gray-400 transition-colors"
-                  >
-                    + Ajouter un service
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      
-      case 'logos':
-        return (
-          <div className="block-editor">
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Titre de la section
-                </label>
-                <input
-                  type="text"
-                  value={block.title || ''}
-                  onChange={(e) => updateBlock(block.id, { title: e.target.value })}
-                  placeholder="Ex: NOS CLIENTS"
-                  className="block-input"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Thème de fond
-                </label>
-                <select
-                  value={block.theme || 'auto'}
-                  onChange={(e) => updateBlock(block.id, { theme: e.target.value as 'light' | 'dark' | 'auto' })}
-                  className="block-input"
-                >
-                  <option value="auto">Automatique (suit le thème global)</option>
-                  <option value="light">Thème clair forcé</option>
-                  <option value="dark">Thème sombre forcé</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Logos clients
-                </label>
-                <div className="logos-grid-container grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
-                  {(block.logos || []).map((logo, index) => (
-                    <div 
-                      key={index} 
-                      data-logo-index={index}
-                      className={`logo-drop-zone p-3 border border-gray-200 rounded-lg transition-all duration-200 ${
-                        draggedLogoIndex === index ? 'dragging' : ''
-                      } ${
-                        dragOverLogoIndex === index && draggedLogoIndex !== index 
-                          ? 'drag-over' 
-                          : ''
-                      }`}
-                      onDragOver={(e) => handleLogoDragOver(e, index)}
-                      onDrop={(e) => handleLogoDrop(e, index, block.id)}
-                      onDragLeave={(e) => {
-                        // S'assurer que la zone de drop se désactive quand on quitte
-                        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
-                          setDragOverLogoIndex(null);
-                        }
-                      }}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <div 
-                          className="logo-drag-item flex items-center gap-2"
-                          draggable
-                          onDragStart={(e) => handleLogoDragStart(e, index)}
-                          onDragEnd={handleLogoDragEnd}
-                        >
-                          <span className="logo-drag-handle text-xs">⋮⋮</span>
-                          <span className="text-xs font-medium text-gray-600">Logo {index + 1}</span>
-                        </div>
-                        <button
-                          onClick={() => {
-                            const newLogos = (block.logos || []).filter((_, i) => i !== index);
-                            updateBlock(block.id, { logos: newLogos });
-                          }}
-                          className="text-red-500 hover:text-red-700 text-sm transition-colors"
-                          title="Supprimer ce logo"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                      
-                      {/* Indicateur de drop */}
-                      <div className="logo-drop-indicator">
-                        Déposer ici
-                      </div>
-                      <div className="space-y-2">
-                        <div>
-                          <label className="block text-xs font-medium text-gray-600 mb-1">
-                            Image
-                          </label>
-                          <LogoUploader
-                            currentUrl={logo.src || logo.image || ''}
-                            onUpload={(src) => {
-                              const newLogos = [...(block.logos || [])];
-                              newLogos[index] = { ...newLogos[index], src };
-                              updateBlock(block.id, { logos: newLogos });
-                            }}
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-medium text-gray-600 mb-1">
-                            Nom du client
-                          </label>
-                          <input
-                            type="text"
-                            value={logo.alt || logo.name || ''}
-                            onChange={(e) => {
-                              const newLogos = [...(block.logos || [])];
-                              newLogos[index] = { ...newLogos[index], alt: e.target.value };
-                              updateBlock(block.id, { logos: newLogos });
-                            }}
-                            placeholder="Ex: Apple"
-                            className="block-input text-sm"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  <button
-                    onClick={() => {
-                      const newLogos = [...(block.logos || []), { src: '', alt: '' }];
-                      updateBlock(block.id, { logos: newLogos });
-                      
-                      // Ajouter une animation d'apparition au nouveau logo
-                      setTimeout(() => {
-                        const newLogoElement = document.querySelector(`[data-logo-index="${newLogos.length - 1}"]`);
-                        if (newLogoElement) {
-                          newLogoElement.classList.add('logo-item-enter');
-                        }
-                      }, 100);
-                    }}
-                    className="w-full py-2 px-3 border border-gray-300 border-dashed rounded-lg text-gray-500 hover:text-gray-700 hover:border-gray-400 transition-colors hover:bg-gray-50"
-                  >
-                    + Ajouter un logo
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      
-      case 'projects':
-        const projectsBlockEditor = renderAutoBlockEditor(block, (updates) => updateBlock(block.id, updates));
-        if (projectsBlockEditor) {
-          return projectsBlockEditor;
-        }
-        // Fallback vers l'ancien système si le scalable n'est pas disponible
-        return (
-          <div className="block-editor">
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Titre de la section
-                </label>
-                <input
-                  type="text"
-                  value={block.title || ''}
-                  onChange={(e) => updateBlock(block.id, { title: e.target.value })}
-                  placeholder="Ex: NOS RÉALISATIONS"
-                  className="block-input"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nombre maximum de projets
-                </label>
-                <input
-                  type="number"
-                  value={block.maxProjects || 6}
-                  onChange={(e) => updateBlock(block.id, { maxProjects: parseInt(e.target.value) || 6 })}
-                  placeholder="6"
-                  className="block-input"
-                  min="1"
-                  max="12"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Thème de fond
-                </label>
-                <select
-                  value={block.theme || 'auto'}
-                  onChange={(e) => updateBlock(block.id, { theme: e.target.value as 'light' | 'dark' | 'auto' })}
-                  className="block-input"
-                >
-                  <option value="auto">Automatique (suit le thème global)</option>
-                  <option value="light">Thème clair forcé</option>
-                  <option value="dark">Thème sombre forcé</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Projets à afficher
-                </label>
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Colonne gauche - Projets sélectionnés */}
-                  <div className="border border-gray-200 rounded-lg p-3 bg-gray-50">
-                    <h4 className="text-sm font-medium text-gray-700 mb-2">Projets sélectionnés</h4>
-                    <div className="space-y-2 min-h-[200px]">
-                      {(() => {
-                        const allProjects = [
-                          { id: 'project-1', title: 'Project Alpha', category: 'Brand' },
-                          { id: 'project-2', title: 'Project Beta', category: 'Digital' },
-                          { id: 'project-3', title: 'Project Gamma', category: 'Strategy' },
-                          { id: 'project-4', title: 'Project Delta', category: 'Digital' }
-                        ];
-                        const selectedProjects = block.selectedProjects || [];
-                        const selectedItems = allProjects.filter(project => selectedProjects.includes(project.id));
-                        
-                        if (selectedItems.length === 0) {
-                          return (
-                            <div className="text-sm text-gray-400 text-center py-8">
-                              Aucun projet sélectionné
-                            </div>
-                          );
-                        }
-                        
-                        return selectedItems.map(project => (
-                          <div key={project.id} className="flex items-center justify-between p-2 bg-white rounded border">
-                            <div>
-                              <div className="text-sm font-medium text-gray-700">{project.title}</div>
-                              <div className="text-xs text-gray-500">{project.category}</div>
-                            </div>
-                            <button
-                              onClick={() => {
-                                const newSelected = selectedProjects.filter(id => id !== project.id);
-                                updateBlock(block.id, { selectedProjects: newSelected });
-                              }}
-                              className="text-red-500 hover:text-red-700 text-sm"
-                            >
-                              ✕
-                            </button>
-                          </div>
-                        ));
-                      })()}
-                    </div>
-                  </div>
-                  
-                  {/* Colonne droite - Tous les projets disponibles */}
-                  <div className="border border-gray-200 rounded-lg p-3">
-                    <h4 className="text-sm font-medium text-gray-700 mb-2">Projets disponibles</h4>
-                    <div className="space-y-2">
-                      {[
-                        { id: 'project-1', title: 'Project Alpha', category: 'Brand' },
-                        { id: 'project-2', title: 'Project Beta', category: 'Digital' },
-                        { id: 'project-3', title: 'Project Gamma', category: 'Strategy' },
-                        { id: 'project-4', title: 'Project Delta', category: 'Digital' }
-                      ].map(project => {
-                        const isSelected = block.selectedProjects?.includes(project.id) || false;
-                        return (
-                          <div
-                            key={project.id}
-                            className={`p-2 rounded border cursor-pointer transition-colors ${
-                              isSelected 
-                                ? 'bg-blue-50 border-blue-200 text-blue-700' 
-                                : 'bg-white border-gray-200 hover:bg-gray-50'
-                            }`}
-                            onClick={() => {
-                              if (!isSelected) {
-                                const currentSelected = block.selectedProjects || [];
-                                const newSelected = [...currentSelected, project.id];
-                                updateBlock(block.id, { selectedProjects: newSelected });
-                              }
-                            }}
-                          >
-                            <div className="text-sm font-medium">{project.title}</div>
-                            <div className="text-xs text-gray-500">{project.category}</div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-                <p className="text-xs text-gray-500 mt-2">
-                  Cliquez sur un projet pour l'ajouter/retirer. Laissez vide pour afficher tous les projets.
-                </p>
-              </div>
-              <div className="text-sm text-gray-500">
-                <p>Ce bloc affiche automatiquement les projets de la page Portfolio en 3 colonnes.</p>
-              </div>
-            </div>
-          </div>
-        );
-      
-      case 'two-columns':
-        return renderAutoBlockEditor(block, (updates) => updateBlock(block.id, updates));
-      
-      default:
-        return null;
-    }
+    // Rendu automatique via le système scalable
+    return renderAutoBlockEditor(block, (updates) => updateBlock(block.id, updates));
   };
 
-  const renderBlockTypeLabel = (type: Block['type']) => {
-    switch (type) {
-              case 'h2': return 'Titre H2';
-        case 'h3': return 'Sous-titre H3';
-        case 'content': return 'Contenu';
-        case 'image': return 'Image';
-      case 'cta': return 'CTA';
-      case 'contact': return 'Contact';
-      case 'about': return 'À propos';
-              case 'services': return 'Services';
-        case 'projects': return 'Projets';
-      case 'logos': return 'Logos clients';
-      case 'two-columns': return 'Deux colonnes';
-      default: return type;
-    }
+  const renderBlockTypeLabel = (type: string) => {
+    // Récupérer automatiquement le label depuis le registre
+    const blockMetadata = getBlockMetadata().find(block => block.type === type);
+    return blockMetadata ? blockMetadata.label : type;
   };
 
   const renderHeroBlock = () => (
@@ -2497,17 +1822,12 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="">Ajouter un bloc...</option>
-                          <option value="h2">Titre H2</option>
-              <option value="h3">Sous-titre H3</option>
-              <option value="content">Contenu</option>
-              <option value="image">Image</option>
-            <option value="cta">CTA</option>
-            <option value="contact">Contact</option>
-            <option value="about">À propos</option>
-            <option value="services">Services</option>
-            <option value="projects">Projets</option>
-            <option value="logos">Logos clients</option>
-            <option value="two-columns">Deux colonnes</option>
+            {/* Options auto-générées depuis le système scalable */}
+            {getBlockMetadata().map(block => (
+              <option key={block.type} value={block.type}>
+                {block.icon} {block.label}
+              </option>
+            ))}
           </select>
         </div>
       </div>

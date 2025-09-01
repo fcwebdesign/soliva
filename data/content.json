@@ -154,11 +154,6 @@
         "ctaText": "Yes, sign me up",
         "ctaLink": "https://google.com",
         "theme": "auto"
-      },
-      {
-        "id": "block-1756738447402",
-        "type": "h2",
-        "content": ""
       }
     ]
   },
@@ -314,6 +309,19 @@
         "layout": "left-right",
         "gap": "medium",
         "alignment": "top"
+      },
+      {
+        "id": "quote-1756753800786",
+        "type": "quote",
+        "data": {
+          "quote": "Une citation inspirante pour votre contenu...",
+          "author": "Nom de l'auteur",
+          "role": "Fonction",
+          "theme": "auto"
+        },
+        "quote": "dsdsdf",
+        "author": "dfsdfsd",
+        "role": "dsffdsfds"
       }
     ]
   },

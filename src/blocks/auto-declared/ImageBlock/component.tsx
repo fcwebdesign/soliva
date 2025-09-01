@@ -1,24 +1,27 @@
 import React from 'react';
 
 interface ImageData {
-  src: string;
-  alt: string;
+  image?: {
+    src?: string;
+    alt?: string;
+  };
 }
 
 export default function ImageBlock({ data }: { data: ImageData }) {
-  if (!data?.src) {
+  // Vérifier si on a une image
+  if (!data.image?.src) {
     return (
-      <div className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center text-gray-500">
+      <div className="block-image p-4 bg-gray-100 border border-gray-300 rounded text-center text-gray-500">
         Aucune image sélectionnée
       </div>
     );
   }
 
   return (
-    <div className="image-block">
-      <img
-        src={data.src}
-        alt={data.alt || ''}
+    <div className="block-image">
+      <img 
+        src={data.image.src} 
+        alt={data.image.alt || ''} 
         className="w-full h-auto"
       />
     </div>
