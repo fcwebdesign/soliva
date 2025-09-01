@@ -5,10 +5,8 @@ import { createPortal } from 'react-dom';
 import WysiwygEditor from './WysiwygEditor';
 import MediaUploader, { LogoUploader } from './MediaUploader';
 import VersionList from './VersionList';
-import TwoColumnsEditor from './TwoColumnsEditor';
 import { renderAutoBlockEditor } from "@/app/admin/components/AutoBlockIntegration";
 import { getAutoDeclaredBlock } from '@/blocks/auto-declared/registry';
-import TwoColumns from '@/blocks/defaults/TwoColumns';
 
 interface Block {
   id: string;
@@ -633,10 +631,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
               />
             );
           }
-          // Fallback vers l'ancien système
-          return (
-            <TwoColumns key={block.id} {...(block as any)} />
-          );
+          // Plus de fallback - le bloc scalable est obligatoire
+          return null;
         default:
           return '';
       }

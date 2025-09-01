@@ -154,6 +154,11 @@
         "ctaText": "Yes, sign me up",
         "ctaLink": "https://google.com",
         "theme": "auto"
+      },
+      {
+        "id": "block-1756738447402",
+        "type": "h2",
+        "content": ""
       }
     ]
   },

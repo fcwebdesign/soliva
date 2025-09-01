@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import FormattedText from './FormattedText';
 import HeroSignature from './HeroSignature';
 import StorytellingSection from './StorytellingSection';
-import TwoColumns from '../blocks/defaults/TwoColumns';
 // Import du système scalable (charge automatiquement tous les blocs)
 import '../blocks/auto-declared';
 import { getAutoDeclaredBlock } from '../blocks/auto-declared/registry';
@@ -538,9 +537,18 @@ const BlockRenderer = ({ blocks = [] }) => {
         );
       
       case 'two-columns':
-        return (
-          <TwoColumns key={block.id} {...block} />
-        );
+        // Utilisation du système scalable pour le bloc two-columns
+        const TwoColumnsBlockScalable = getAutoDeclaredBlock('two-columns')?.component;
+        if (TwoColumnsBlockScalable) {
+          return (
+            <TwoColumnsBlockScalable 
+              key={block.id}
+              data={block}
+            />
+          );
+        }
+        // Plus de fallback - le bloc scalable est obligatoire
+        return null;
       
       case 'contact':
         // Utilisation du système scalable pour le bloc contact

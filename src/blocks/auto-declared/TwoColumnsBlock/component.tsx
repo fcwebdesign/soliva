@@ -56,10 +56,28 @@ export default function TwoColumnsBlock({ data }: { data: TwoColumnsData }) {
     const scalableBlock = getAutoDeclaredBlock(subBlock.type);
     if (scalableBlock) {
       const BlockComponent = scalableBlock.component;
+      
+      // Adapter les données selon le type de bloc
+      let adaptedData = subBlock;
+      if (subBlock.type === 'image' && subBlock.image) {
+        // Pour les blocs image, adapter la structure
+        adaptedData = {
+          ...subBlock,
+          src: subBlock.image.src,
+          alt: subBlock.image.alt
+        };
+      } else if (subBlock.type === 'h2' || subBlock.type === 'h3') {
+        // Pour les blocs H2/H3, passer le thème du bloc TwoColumns
+        adaptedData = {
+          content: subBlock.content,
+          theme: blockTheme // Utiliser le thème du bloc TwoColumns
+        };
+      }
+      
       return (
         <BlockComponent 
           key={subBlock.id}
-          data={subBlock}
+          data={adaptedData}
         />
       );
     }
