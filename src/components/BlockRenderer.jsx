@@ -3,7 +3,6 @@ import FormattedText from './FormattedText';
 import HeroSignature from './HeroSignature';
 import StorytellingSection from './StorytellingSection';
 import TwoColumns from '../blocks/defaults/TwoColumns';
-import Services from '../blocks/defaults/Services';
 // Import du système scalable (charge automatiquement tous les blocs)
 import '../blocks/auto-declared';
 import { getAutoDeclaredBlock } from '../blocks/auto-declared/registry';
@@ -115,10 +114,30 @@ const BlockRenderer = ({ blocks = [] }) => {
         );
       
       case 'services':
+        // Utilisation du système scalable pour le bloc services
+        const ServicesBlockScalable = getAutoDeclaredBlock('services')?.component;
+        if (ServicesBlockScalable) {
+          return (
+            <ServicesBlockScalable 
+              key={block.id}
+              id={block.id}
+              type={block.type}
+              title={block.title}
+              offerings={block.offerings}
+              theme={block.theme}
+            />
+          );
+        }
+        // Fallback vers l'ancien système si le scalable n'est pas disponible
         return (
-          <div key={block.id} data-block-type="services" data-block-theme={block.theme || 'auto'}>
-            <Services {...block} />
-          </div>
+          <Services 
+            key={block.id}
+            id={block.id}
+            type={block.type}
+            title={block.title}
+            offerings={block.offerings}
+            theme={block.theme}
+          />
         );
       
 

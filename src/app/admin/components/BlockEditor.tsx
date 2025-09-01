@@ -1027,9 +1027,13 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         );
       
       case 'services':
+        const servicesBlockEditor = renderAutoBlockEditor(block, (updates) => updateBlock(block.id, updates));
+        if (servicesBlockEditor) {
+          return servicesBlockEditor;
+        }
+        // Fallback vers l'ancien système si le scalable n'est pas disponible
         return (
           <div className="block-editor">
-
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">

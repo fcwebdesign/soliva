@@ -142,27 +142,21 @@
       },
       {
         "id": "block-5",
+        "type": "image",
+        "content": "",
+        "image": {
+          "src": "/uploads/1756726187080-2d68a18c.jpg",
+          "alt": ""
+        }
+      },
+      {
+        "id": "block-6",
         "type": "contact",
         "content": "",
         "title": "Would you like to see a demo?",
         "ctaText": "Yes, sign me up",
         "ctaLink": "https://google.com",
         "theme": "auto"
-      },
-      {
-        "citation": "Votre citation inspirante ici...",
-        "auteur": "Auteur",
-        "style": "simple",
-        "id": "quote-box-1756724996628",
-        "type": "quote-box"
-      },
-      {
-        "id": "image-scalable-1756725156597",
-        "type": "image-scalable",
-        "image": {
-          "src": "/uploads/1756725161918-17c60b70.png",
-          "alt": ""
-        }
       }
     ]
   },
