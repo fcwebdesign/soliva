@@ -2,7 +2,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Sidebar from './components/Sidebar';
-import BlockEditor from './components/BlockEditor';
+import BlockEditor from "./components/BlockEditor";
 import TemplateManager from './components/TemplateManager';
 import HeaderManager from './components/HeaderManager';
 import FooterManager from './components/FooterManager';

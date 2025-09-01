@@ -142,6 +142,15 @@
       },
       {
         "id": "block-5",
+        "type": "image",
+        "content": "",
+        "image": {
+          "src": "/uploads/1756726187080-2d68a18c.jpg",
+          "alt": ""
+        }
+      },
+      {
+        "id": "block-6",
         "type": "contact",
         "content": "",
         "title": "Would you like to see a demo?",

@@ -1,0 +1,158 @@
+{
+  "h2": {
+    "name": "Titre H2",
+    "description": "Titre de section principal",
+    "icon": "��",
+    "category": "text",
+    "fields": [
+      {
+        "name": "content",
+        "type": "text",
+        "label": "Texte du titre",
+        "required": true,
+        "placeholder": "Votre titre ici..."
+      }
+    ],
+    "defaultProps": {
+      "content": "Nouveau titre"
+    },
+    "component": "H2"
+  },
+  "h3": {
+    "name": "Titre H3",
+    "description": "Sous-titre de section",
+    "icon": "📄",
+    "category": "text",
+    "fields": [
+      {
+        "name": "content",
+        "type": "text",
+        "label": "Texte du sous-titre",
+        "required": true,
+        "placeholder": "Votre sous-titre ici..."
+      }
+    ],
+    "defaultProps": {
+      "content": "Nouveau sous-titre"
+    },
+    "component": "H3"
+  },
+  "content": {
+    "name": "Contenu",
+    "description": "Bloc de texte riche",
+    "icon": "📝",
+    "category": "text",
+    "fields": [
+      {
+        "name": "content",
+        "type": "wysiwyg",
+        "label": "Contenu",
+        "required": true,
+        "placeholder": "Saisissez votre contenu..."
+      }
+    ],
+    "defaultProps": {
+      "content": ""
+    },
+    "component": "Content"
+  },
+  "image": {
+    "name": "Image",
+    "description": "Image avec légende",
+    "icon": "🖼️",
+    "category": "media",
+    "fields": [
+      {
+        "name": "image",
+        "type": "image",
+        "label": "Image",
+        "required": true
+      },
+      {
+        "name": "alt",
+        "type": "text",
+        "label": "Texte alternatif",
+        "required": false,
+        "placeholder": "Description de l'image..."
+      }
+    ],
+    "defaultProps": {
+      "image": null,
+      "alt": ""
+    },
+    "component": "Image"
+  },
+  "cta": {
+    "name": "Bouton d'action",
+    "description": "Bouton avec lien",
+    "icon": "🔗",
+    "category": "action",
+    "fields": [
+      {
+        "name": "ctaText",
+        "type": "text",
+        "label": "Texte du bouton",
+        "required": true,
+        "placeholder": "Cliquez ici..."
+      },
+      {
+        "name": "ctaLink",
+        "type": "url",
+        "label": "Lien",
+        "required": true,
+        "placeholder": "https://..."
+      }
+    ],
+    "defaultProps": {
+      "ctaText": "En savoir plus",
+      "ctaLink": "#"
+    },
+    "component": "Cta"
+  },
+  "services": {
+    "name": "Services",
+    "description": "Liste des services",
+    "icon": "⚙️",
+    "category": "content",
+    "fields": [
+      {
+        "name": "title",
+        "type": "text",
+        "label": "Titre de la section",
+        "required": false,
+        "placeholder": "Nos services..."
+      },
+      {
+        "name": "offerings",
+        "type": "array",
+        "label": "Services",
+        "required": true,
+        "itemFields": [
+          {
+            "name": "title",
+            "type": "text",
+            "label": "Titre du service",
+            "required": true
+          },
+          {
+            "name": "description",
+            "type": "textarea",
+            "label": "Description",
+            "required": true
+          },
+          {
+            "name": "icon",
+            "type": "text",
+            "label": "Icône (emoji)",
+            "required": false
+          }
+        ]
+      }
+    ],
+    "defaultProps": {
+      "title": "Nos services",
+      "offerings": []
+    },
+    "component": "Services"
+  }
+}

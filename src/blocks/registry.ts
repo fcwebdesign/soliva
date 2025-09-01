@@ -19,13 +19,13 @@ import H3Min from '../templates/minimaliste-premium/blocks/H3';
 import ContentMin from '../templates/minimaliste-premium/blocks/Content';
 import ImageMin from '../templates/minimaliste-premium/blocks/Image';
 
+
 export type BlockRegistry = Record<string, BlockComponent>;
 
 export const defaultRegistry: BlockRegistry = {
   h2: H2 as BlockComponent,
   h3: H3 as BlockComponent,
   content: Content as BlockComponent,
-  image: Image as BlockComponent,
   cta: Cta as BlockComponent,
   contact: Contact as BlockComponent,
   about: About as BlockComponent,
@@ -34,8 +34,6 @@ export const defaultRegistry: BlockRegistry = {
   'logos': Logos as BlockComponent,
   'two-columns': TwoColumns as BlockComponent,
 };
-
-
 
 export const registries: Record<string, BlockRegistry> = {
   default: defaultRegistry,
@@ -47,4 +45,4 @@ export const registries: Record<string, BlockRegistry> = {
     image: ImageMin as BlockComponent,
     contact: Contact as BlockComponent,
   },
-}; 
+};

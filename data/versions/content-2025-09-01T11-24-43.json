@@ -148,6 +148,15 @@
         "ctaText": "Yes, sign me up",
         "ctaLink": "https://google.com",
         "theme": "auto"
+      },
+      {
+        "id": "block-1756725327639",
+        "type": "image",
+        "content": "",
+        "image": {
+          "src": "/uploads/1756725335690-c87c58f4.jpg",
+          "alt": ""
+        }
       }
     ]
   },
@@ -198,10 +207,15 @@
         "alt": "L'équipe Soliva au travail dans notre espace créatif"
       }
     },
-    "description": "<p>Bienvenue dans notre studio, où créativité et impact se rencontrent. <br>Chaque projet est une aventure unique, qu'il s'agisse de donner vie à une identité de marque écoresponsable ou de concevoir une plateforme immersive pour l'art. Ici, on ne se contente pas de créer, on provoque des émotions et des réactions. Prêt à transformer vos idées en réalité palpable ? On s'y met ensemble.</p>",
+    "description": "<p></p>",
     "blocks": [
       {
         "id": "block-1",
+        "type": "content",
+        "content": "<p>Bienvenue dans notre studio, où créativité et impact se rencontrent. <br>Chaque projet est une aventure unique, qu'il s'agisse de donner vie à une identité de marque écoresponsable ou de concevoir une plateforme immersive pour l'art. Ici, on ne se contente pas de créer, on provoque des émotions et des réactions. Prêt à transformer vos idées en réalité palpable ? On s'y met ensemble.</p>"
+      },
+      {
+        "id": "block-2",
         "type": "image",
         "content": "",
         "image": {
@@ -210,64 +224,14 @@
         }
       },
       {
-        "id": "block-2",
+        "id": "block-3",
         "type": "h2",
         "content": "Concevez, testez, impactez"
       },
       {
-        "id": "block-3",
+        "id": "block-4",
         "type": "content",
         "content": "<p>Nous avançons par itérations courtes, avec des livrables clairs à chaque étape: wireframes testés, maquettes validées, puis développement mesurable. Chaque décision s’appuie sur des données concrètes: tests utilisateurs, analytics, retours terrain. Résultat: un produit qui charge vite, convertit mieux et reste simple à faire évoluer.</p>"
-      },
-      {
-        "id": "block-4",
-        "type": "two-columns",
-        "content": "",
-        "leftColumn": [
-          {
-            "id": "block-1756480744101-0.9759858553497809",
-            "type": "image",
-            "content": "",
-            "image": {
-              "src": "/uploads/1756480758926-52818ca6.png",
-              "alt": ""
-            }
-          },
-          {
-            "id": "block-1756481724646-0.42236443879098884",
-            "type": "h3",
-            "content": "Lisa Lombard"
-          },
-          {
-            "id": "block-1756481774304-0.08598438704230948",
-            "type": "content",
-            "content": "<p>SuperWoman</p>"
-          }
-        ],
-        "rightColumn": [
-          {
-            "id": "block-1756480761132-0.64442277832819",
-            "type": "image",
-            "content": "",
-            "image": {
-              "src": "/uploads/1756480764062-769f0b02.png",
-              "alt": ""
-            }
-          },
-          {
-            "id": "block-1756481745127-0.16814001516551214",
-            "type": "h3",
-            "content": "Florent Cleron"
-          },
-          {
-            "id": "block-1756481800400-0.2609483852161575",
-            "type": "content",
-            "content": "<p>Superman</p>"
-          }
-        ],
-        "layout": "left-right",
-        "gap": "medium",
-        "alignment": "top"
       },
       {
         "id": "block-5",
@@ -298,6 +262,56 @@
         "id": "block-10",
         "type": "content",
         "content": "<p>Livrez, optimisez, progressez Déploiement en sprint d’une semaine, suivi d’un check de performances à J+3: Core Web Vitals, conversions, bugs réels. À J+14, itération ciblée sur ce qui bloque (formulaire trop long, visuel peu cliquable), avec changelog et impacts mesurés pour décider du prochain sprint.</p>"
+      },
+      {
+        "id": "block-11",
+        "type": "two-columns",
+        "content": "",
+        "leftColumn": [
+          {
+            "id": "block-1756480744101-0.9759858553497809",
+            "type": "image",
+            "content": "",
+            "image": {
+              "src": "/uploads/1756480758926-52818ca6.png",
+              "alt": ""
+            }
+          },
+          {
+            "id": "block-1756481724646-0.42236443879098884",
+            "type": "h3",
+            "content": "Lisa Lombard"
+          },
+          {
+            "id": "block-1756481774304-0.08598438704230948",
+            "type": "content",
+            "content": "<p>Poste</p>"
+          }
+        ],
+        "rightColumn": [
+          {
+            "id": "block-1756480761132-0.64442277832819",
+            "type": "image",
+            "content": "",
+            "image": {
+              "src": "/uploads/1756480764062-769f0b02.png",
+              "alt": ""
+            }
+          },
+          {
+            "id": "block-1756481745127-0.16814001516551214",
+            "type": "h3",
+            "content": "Florent Cleron"
+          },
+          {
+            "id": "block-1756481800400-0.2609483852161575",
+            "type": "content",
+            "content": "<p>Poste</p>"
+          }
+        ],
+        "layout": "left-right",
+        "gap": "medium",
+        "alignment": "top"
       }
     ]
   },

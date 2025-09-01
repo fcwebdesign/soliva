@@ -4,6 +4,9 @@ import HeroSignature from './HeroSignature';
 import StorytellingSection from './StorytellingSection';
 import TwoColumns from '../blocks/defaults/TwoColumns';
 import Services from '../blocks/defaults/Services';
+// Import du système scalable (charge automatiquement tous les blocs)
+import '../blocks/auto-declared';
+import { getAutoDeclaredBlock } from '../blocks/auto-declared/registry';
 
 const BlockRenderer = ({ blocks = [] }) => {
   // Gestion du thème par bloc avec priorité sur le scroll
@@ -73,17 +76,25 @@ const BlockRenderer = ({ blocks = [] }) => {
           </h3>
         );
       
-      case 'image':
-        return (
-          <div key={block.id} className="block-image">
-            <img 
-              src={block.image?.src} 
-              alt={block.image?.alt || ''} 
-              className="w-full h-auto"
-            />
-          </div>
-        );
-      
+        case 'image':
+          // Utilisation du système scalable pour le bloc image
+          const ImageBlockScalable = getAutoDeclaredBlock('image')?.component;
+          if (ImageBlockScalable) {
+            return (
+              <ImageBlockScalable 
+                key={block.id}
+                id={block.id}
+                type={block.type}
+                image={block.image}
+              />
+            );
+          }
+          // Si le scalable n'est pas disponible, on affiche un message d'erreur
+          return (
+            <div key={block.id} className="p-4 bg-red-100 border border-red-300 rounded text-red-700">
+              ❌ Erreur: Système scalable non disponible
+            </div>
+          );
       case 'cta':
         return (
           <div key={block.id} className="block-cta">

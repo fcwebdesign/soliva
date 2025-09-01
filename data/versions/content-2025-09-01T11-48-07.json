@@ -148,6 +148,15 @@
         "ctaText": "Yes, sign me up",
         "ctaLink": "https://google.com",
         "theme": "auto"
+      },
+      {
+        "id": "block-1756726181337",
+        "type": "image",
+        "content": "",
+        "image": {
+          "src": "/uploads/1756726187080-2d68a18c.jpg",
+          "alt": ""
+        }
       }
     ]
   },
@@ -276,7 +285,7 @@
           {
             "id": "block-1756481774304-0.08598438704230948",
             "type": "content",
-            "content": "<p>SuperWoman rend vos journées plus simples avec des actions concrètes. Organisation du planning, gestion des imprévus, suivi des tâches prioritaires. Résultat: moins de stress, plus de temps pour ce qui compte.</p>"
+            "content": "<p>Poste</p>"
           }
         ],
         "rightColumn": [
@@ -297,7 +306,7 @@
           {
             "id": "block-1756481800400-0.2609483852161575",
             "type": "content",
-            "content": "<p>Présentation claire du produit et de ses limites. Fonctionne sur desktop et mobile, chargement moyen de 1,2 s sur une connexion 4G. Intègre le suivi des actions clés (clics, formulaires) pour mesurer l’impact réel et prioriser les améliorations.</p>"
+            "content": "<p>Poste</p>"
           }
         ],
         "layout": "left-right",

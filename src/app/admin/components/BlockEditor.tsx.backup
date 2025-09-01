@@ -6,7 +6,7 @@ import WysiwygEditor from './WysiwygEditor';
 import MediaUploader, { LogoUploader } from './MediaUploader';
 import VersionList from './VersionList';
 import TwoColumnsEditor from './TwoColumnsEditor';
-import { renderAutoBlockEditor } from "@/app/admin/components/AutoBlockIntegration";
+
 interface Block {
   id: string;
   type: 'h2' | 'h3' | 'content' | 'image' | 'cta' | 'contact' | 'about' | 'services' | 'projects' | 'logos' | 'two-columns';
@@ -908,13 +908,6 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         );
       
       case 'image':
-      case 'image':
-        // Utiliser le système auto-déclaré pour le bloc image
-        const imageBlockEditor = renderAutoBlockEditor(block, (updates) => updateBlock(block.id, updates));
-        if (imageBlockEditor) {
-          return imageBlockEditor;
-        }
-        // Fallback vers l'ancienne logique si le bloc auto-déclaré n'est pas trouvé
         return (
           <div className="block-editor">
             <MediaUploader
@@ -929,7 +922,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
               className="block-input"
             />
           </div>
-        );      
+        );
+      
       case 'cta':
         return (
           <div className="block-editor">

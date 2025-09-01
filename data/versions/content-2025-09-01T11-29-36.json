@@ -148,6 +148,15 @@
         "ctaText": "Yes, sign me up",
         "ctaLink": "https://google.com",
         "theme": "auto"
+      },
+      {
+        "id": "block-1756725327639",
+        "type": "image",
+        "content": "",
+        "image": {
+          "src": "/uploads/1756725335690-c87c58f4.jpg",
+          "alt": ""
+        }
       }
     ]
   },
@@ -202,17 +211,17 @@
     "blocks": [
       {
         "id": "block-1",
+        "type": "content",
+        "content": "<p>Bienvenue dans notre studio, où créativité et impact se rencontrent. <br>Chaque projet est une aventure unique, qu'il s'agisse de donner vie à une identité de marque écoresponsable ou de concevoir une plateforme immersive pour l'art. Ici, on ne se contente pas de créer, on provoque des émotions et des réactions. Prêt à transformer vos idées en réalité palpable ? On s'y met ensemble.</p>"
+      },
+      {
+        "id": "block-2",
         "type": "image",
         "content": "",
         "image": {
           "src": "/uploads/1756481613960-30ee05ee.jpg",
           "alt": ""
         }
-      },
-      {
-        "id": "block-2",
-        "type": "content",
-        "content": "<p>Bienvenue dans notre studio, où créativité et impact se rencontrent. <br>Chaque projet est une aventure unique, qu'il s'agisse de donner vie à une identité de marque écoresponsable ou de concevoir une plateforme immersive pour l'art. Ici, on ne se contente pas de créer, on provoque des émotions et des réactions. Prêt à transformer vos idées en réalité palpable ? On s'y met ensemble.</p>"
       },
       {
         "id": "block-3",
@@ -226,6 +235,36 @@
       },
       {
         "id": "block-5",
+        "type": "h2",
+        "content": "Faites simple, faites mieux"
+      },
+      {
+        "id": "block-6",
+        "type": "content",
+        "content": "<p>Nous travaillons avec des objectifs clairs, des délais tenus et des métriques suivies. Par exemple: charte graphique livrée en 10 jours, prototype cliquable en 2 semaines, puis mise en ligne avec suivi des conversions et des temps de chargement. Vous obtenez un résultat propre, mesurable et prêt à évoluer.</p>"
+      },
+      {
+        "id": "block-7",
+        "type": "h2",
+        "content": "Mesurez, apprenez, itérez"
+      },
+      {
+        "id": "block-8",
+        "type": "content",
+        "content": "<p>Mesurez, apprenez, itérez Nous suivons les KPIs clés dès le jour 1: taux de conversion, rétention, temps de chargement, SEO. Chaque mois, nous testons une hypothèse précise (A/B sur le formulaire, nouveau wording, optimisation d’image) et déployons ce qui performe. Résultat: des gains chiffrés, documentés, et un produit qui progresse sans refonte lourde.</p>"
+      },
+      {
+        "id": "block-9",
+        "type": "h2",
+        "content": "Livrez, optimisez, progressez"
+      },
+      {
+        "id": "block-10",
+        "type": "content",
+        "content": "<p>Livrez, optimisez, progressez Déploiement en sprint d’une semaine, suivi d’un check de performances à J+3: Core Web Vitals, conversions, bugs réels. À J+14, itération ciblée sur ce qui bloque (formulaire trop long, visuel peu cliquable), avec changelog et impacts mesurés pour décider du prochain sprint.</p>"
+      },
+      {
+        "id": "block-11",
         "type": "two-columns",
         "content": "",
         "leftColumn": [
@@ -246,7 +285,7 @@
           {
             "id": "block-1756481774304-0.08598438704230948",
             "type": "content",
-            "content": "<p>SuperWoman rend vos journées plus simples avec des actions concrètes. Organisation du planning, gestion des imprévus, suivi des tâches prioritaires. Résultat: moins de stress, plus de temps pour ce qui compte.</p>"
+            "content": "<p>Poste</p>"
           }
         ],
         "rightColumn": [
@@ -267,42 +306,12 @@
           {
             "id": "block-1756481800400-0.2609483852161575",
             "type": "content",
-            "content": "<p>Présentation claire du produit et de ses limites. Fonctionne sur desktop et mobile, chargement moyen de 1,2 s sur une connexion 4G. Intègre le suivi des actions clés (clics, formulaires) pour mesurer l’impact réel et prioriser les améliorations.</p>"
+            "content": "<p>Poste</p>"
           }
         ],
         "layout": "left-right",
         "gap": "medium",
         "alignment": "top"
-      },
-      {
-        "id": "block-6",
-        "type": "h2",
-        "content": "Faites simple, faites mieux"
-      },
-      {
-        "id": "block-7",
-        "type": "content",
-        "content": "<p>Nous travaillons avec des objectifs clairs, des délais tenus et des métriques suivies. Par exemple: charte graphique livrée en 10 jours, prototype cliquable en 2 semaines, puis mise en ligne avec suivi des conversions et des temps de chargement. Vous obtenez un résultat propre, mesurable et prêt à évoluer.</p>"
-      },
-      {
-        "id": "block-8",
-        "type": "h2",
-        "content": "Mesurez, apprenez, itérez"
-      },
-      {
-        "id": "block-9",
-        "type": "content",
-        "content": "<p>Mesurez, apprenez, itérez Nous suivons les KPIs clés dès le jour 1: taux de conversion, rétention, temps de chargement, SEO. Chaque mois, nous testons une hypothèse précise (A/B sur le formulaire, nouveau wording, optimisation d’image) et déployons ce qui performe. Résultat: des gains chiffrés, documentés, et un produit qui progresse sans refonte lourde.</p>"
-      },
-      {
-        "id": "block-10",
-        "type": "h2",
-        "content": "Livrez, optimisez, progressez"
-      },
-      {
-        "id": "block-11",
-        "type": "content",
-        "content": "<p>Livrez, optimisez, progressez Déploiement en sprint d’une semaine, suivi d’un check de performances à J+3: Core Web Vitals, conversions, bugs réels. À J+14, itération ciblée sur ce qui bloque (formulaire trop long, visuel peu cliquable), avec changelog et impacts mesurés pour décider du prochain sprint.</p>"
       }
     ]
   },
