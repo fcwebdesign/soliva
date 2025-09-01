@@ -164,6 +164,48 @@
         "id": "block-1756734107512",
         "type": "h3",
         "content": "test de sou-titre"
+      },
+      {
+        "id": "block-1756734529201",
+        "type": "logos",
+        "content": "",
+        "title": "NOS CLIENTS",
+        "logos": [
+          {
+            "src": "/uploads/1756734535168-52557606.png",
+            "alt": ""
+          },
+          {
+            "src": "/uploads/1756734539180-4d983b34.png",
+            "alt": ""
+          }
+        ]
+      },
+      {
+        "id": "block-1756735050060",
+        "type": "projects",
+        "content": "",
+        "title": "NOS RÉALISATIONS",
+        "maxProjects": 6,
+        "selectedProjects": [
+          "project-4",
+          "project-2"
+        ],
+        "theme": "light"
+      },
+      {
+        "id": "block-1756735387415",
+        "type": "contact",
+        "content": "",
+        "title": "hello florent",
+        "ctaText": "yep",
+        "ctaLink": "https://google.com",
+        "theme": "auto"
+      },
+      {
+        "id": "block-1756735546977",
+        "type": "content",
+        "content": "<p>Clarifiez votre message en quelques lignes utiles, sans jargon. Nous écrivons des textes courts qui expliquent ce que vous faites, pourquoi c’est utile et comment vous contacter. Exemple: page “Services” concise, tarifs visibles, formulaire simple en 3 champs.</p>"
       }
     ]
   },

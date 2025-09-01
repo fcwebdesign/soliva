@@ -7,6 +7,9 @@ import MediaUploader, { LogoUploader } from './MediaUploader';
 import VersionList from './VersionList';
 import TwoColumnsEditor from './TwoColumnsEditor';
 import { renderAutoBlockEditor } from "@/app/admin/components/AutoBlockIntegration";
+import { getAutoDeclaredBlock } from '@/blocks/auto-declared/registry';
+import TwoColumns from '@/blocks/defaults/TwoColumns';
+
 interface Block {
   id: string;
   type: 'h2' | 'h3' | 'content' | 'image' | 'cta' | 'contact' | 'about' | 'services' | 'projects' | 'logos' | 'two-columns';
@@ -620,74 +623,20 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             </div>
           </section>`;
         case 'two-columns':
-          const gapClasses = {
-            small: 'gap-4',
-            medium: 'gap-8',
-            large: 'gap-12'
-          };
-          const alignmentClasses = {
-            top: 'items-start',
-            center: 'items-center',
-            bottom: 'items-end'
-          };
-          const layoutClasses = {
-            'left-right': 'grid-cols-1 md:grid-cols-2',
-            'right-left': 'grid-cols-1 md:grid-cols-2',
-            'stacked-mobile': 'grid-cols-1 lg:grid-cols-2'
-          };
-          
-          const leftColumnHtml = (block.leftColumn || []).map((subBlock: any) => {
-            switch (subBlock.type) {
-              case 'h2': return subBlock.content ? `<h2>${subBlock.content}</h2>` : '';
-              case 'h3': return subBlock.content ? `<h3>${subBlock.content}</h3>` : '';
-              case 'content': return subBlock.content || '';
-              case 'image': return subBlock.image?.src ? `<img src="${subBlock.image.src}" alt="${subBlock.image.alt || ''}" />` : '';
-              case 'cta': return (subBlock.ctaText || subBlock.ctaLink) ? 
-                `<div class="cta-block"><p>${subBlock.ctaText || ''}</p><a href="${subBlock.ctaLink || ''}" class="cta-button">En savoir plus</a></div>` : '';
-              case 'contact': return (subBlock.title || subBlock.ctaText || subBlock.ctaLink) ? 
-                `<div class="contact-block bg-gray-50 dark:bg-gray-800 rounded-lg p-6 shadow-sm">
-                  <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                      <div class="w-2 h-8 bg-black dark:bg-white mr-4"></div>
-                      <h3 class="text-lg font-medium text-black dark:text-white">${subBlock.title || ''}</h3>
-                    </div>
-                    <a href="${subBlock.ctaLink || '#'}" class="bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors">
-                      ${subBlock.ctaText || 'Contact'}
-                    </a>
-                  </div>
-                </div>` : '';
-              default: return '';
-            }
-          }).join('');
-          
-          const rightColumnHtml = (block.rightColumn || []).map((subBlock: any) => {
-            switch (subBlock.type) {
-              case 'h2': return subBlock.content ? `<h2>${subBlock.content}</h2>` : '';
-              case 'h3': return subBlock.content ? `<h3>${subBlock.content}</h3>` : '';
-              case 'content': return subBlock.content || '';
-              case 'image': return subBlock.image?.src ? `<img src="${subBlock.image.src}" alt="${subBlock.image.alt || ''}" />` : '';
-              case 'cta': return (subBlock.ctaText || subBlock.ctaLink) ? 
-                `<div class="cta-block"><p>${subBlock.ctaText || ''}</p><a href="${subBlock.ctaLink || ''}" class="cta-button">En savoir plus</a></div>` : '';
-              case 'contact': return (subBlock.title || subBlock.ctaText || subBlock.ctaLink) ? 
-                `<div class="contact-block bg-gray-50 dark:bg-gray-800 rounded-lg p-6 shadow-sm">
-                  <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                      <div class="w-2 h-8 bg-black dark:bg-white mr-4"></div>
-                      <h3 class="text-lg font-medium text-black dark:text-white">${subBlock.title || ''}</h3>
-                    </div>
-                    <a href="${subBlock.ctaLink || '#'}" class="bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors">
-                      ${subBlock.ctaText || 'Contact'}
-                    </a>
-                  </div>
-                </div>` : '';
-              default: return '';
-            }
-          }).join('');
-          
-          return `<div class="grid ${layoutClasses[block.layout || 'left-right']} ${gapClasses[block.gap || 'medium']} ${alignmentClasses[block.alignment || 'top']}">
-            <div class="space-y-4">${leftColumnHtml}</div>
-            <div class="space-y-4">${rightColumnHtml}</div>
-          </div>`;
+          // Utilisation du système scalable pour le bloc two-columns
+          const TwoColumnsBlockScalable = getAutoDeclaredBlock('two-columns')?.component;
+          if (TwoColumnsBlockScalable) {
+            return (
+              <TwoColumnsBlockScalable 
+                key={block.id}
+                data={block}
+              />
+            );
+          }
+          // Fallback vers l'ancien système
+          return (
+            <TwoColumns key={block.id} {...(block as any)} />
+          );
         default:
           return '';
       }
@@ -1574,14 +1523,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         );
       
       case 'two-columns':
-        return (
-          <div className="block-editor">
-            <TwoColumnsEditor
-              block={block as any}
-              onUpdate={(updates) => updateBlock(block.id, updates)}
-            />
-          </div>
-        );
+        return renderAutoBlockEditor(block, (updates) => updateBlock(block.id, updates));
       
       default:
         return null;

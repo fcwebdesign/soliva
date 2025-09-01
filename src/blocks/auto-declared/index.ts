@@ -10,10 +10,11 @@ import './ImageBlock';
 import './LogosBlock';
 import './ProjectsBlock';
 import './ServicesBlock';
+import './TwoColumnsBlock';
 
 // Pour ajouter un nouveau bloc :
 // 1. Créer un dossier src/blocks/auto-declared/MonBloc/
 // 2. Exécuter: npm run generate-blocks
 // 3. C'est tout !
 
-console.log('🚀 Blocs auto-déclarés chargés (8 blocs)');
+console.log('🚀 Blocs auto-déclarés chargés (10 blocs)');
