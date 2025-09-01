@@ -8,8 +8,6 @@ registerAutoBlock({
   component: ServicesBlock,
   editor: ServicesBlockEditor,
   defaultData: {
-    id: '',
-    type: 'services',
     title: 'OUR CORE OFFERINGS',
     theme: 'auto',
     offerings: []

@@ -463,14 +463,147 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             </div>
           </section>`;
         case 'projects':
-          return `<section class="projects-section py-28">
-            <div class="container mx-auto">
-              ${block.title ? `<div class="mb-12"><h2 class="text-2xl md:text-3xl font-bold tracking-tight text-black">${block.title}</h2></div>` : ''}
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Les projets seront injectés dynamiquement -->
+          const projectsBlockEditor = renderAutoBlockEditor(block, (updates) => updateBlock(block.id, updates));
+          if (projectsBlockEditor) {
+            return projectsBlockEditor;
+        }
+        // Fallback vers l'ancien système si le scalable n'est pas disponible
+        return (
+          <div className="block-editor">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Titre de la section
+                </label>
+                <input
+                  type="text"
+                  value={block.title || ''}
+                  onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                  placeholder="Ex: NOS RÉALISATIONS"
+                  className="block-input"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nombre maximum de projets
+                </label>
+                <input
+                  type="number"
+                  value={block.maxProjects || 6}
+                  onChange={(e) => updateBlock(block.id, { maxProjects: parseInt(e.target.value) || 6 })}
+                  placeholder="6"
+                  className="block-input"
+                  min="1"
+                  max="12"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Thème de fond
+                </label>
+                <select
+                  value={block.theme || 'auto'}
+                    onChange={(e) => updateBlock(block.id, { theme: e.target.value as 'light' | 'dark' | 'auto' })}
+                    className="block-input"
+                  >
+                    <option value="auto">Automatique (suit le thème global)</option>
+                    <option value="light">Thème clair forcé</option>
+                    <option value="dark">Thème sombre forcé</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Projets à afficher
+                  </label>
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* Colonne gauche - Projets sélectionnés */}
+                    <div className="border border-gray-200 rounded-lg p-3 bg-gray-50">
+                      <h4 className="text-sm font-medium text-gray-700 mb-2">Projets sélectionnés</h4>
+                      <div className="space-y-2 min-h-[200px]">
+                        {(() => {
+                          const allProjects = [
+                            { id: 'project-1', title: 'Project Alpha', category: 'Brand' },
+                            { id: 'project-2', title: 'Project Beta', category: 'Digital' },
+                            { id: 'project-3', title: 'Project Gamma', category: 'Strategy' },
+                            { id: 'project-4', title: 'Project Delta', category: 'Digital' }
+                          ];
+                          const selectedProjects = block.selectedProjects || [];
+                          const selectedItems = allProjects.filter(project => selectedProjects.includes(project.id));
+                          
+                          if (selectedItems.length === 0) {
+                            return (
+                              <div className="text-sm text-gray-400 text-center py-8">
+                                Aucun projet sélectionné
+                              </div>
+                            );
+                          }
+                          
+                          return selectedItems.map(project => (
+                            <div key={project.id} className="flex items-center justify-between p-2 bg-white rounded border">
+                              <div>
+                                <div className="text-sm font-medium text-gray-700">{project.title}</div>
+                                <div className="text-xs text-gray-500">{project.category}</div>
+                              </div>
+                              <button
+                                onClick={() => {
+                                  const newSelected = selectedProjects.filter(id => id !== project.id);
+                                  updateBlock(block.id, { selectedProjects: newSelected });
+                                }}
+                                className="text-red-500 hover:text-red-700 text-sm"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          ));
+                        })()}
+                      </div>
+                    </div>
+                    
+                    {/* Colonne droite - Tous les projets disponibles */}
+                    <div className="border border-gray-200 rounded-lg p-3">
+                      <h4 className="text-sm font-medium text-gray-700 mb-2">Projets disponibles</h4>
+                      <div className="space-y-2">
+                        {[
+                          { id: 'project-1', title: 'Project Alpha', category: 'Brand' },
+                          { id: 'project-2', title: 'Project Beta', category: 'Digital' },
+                          { id: 'project-3', title: 'Project Gamma', category: 'Strategy' },
+                          { id: 'project-4', title: 'Project Delta', category: 'Digital' }
+                        ].map(project => {
+                          const isSelected = block.selectedProjects?.includes(project.id) || false;
+                          return (
+                            <div
+                              key={project.id}
+                              className={`p-2 rounded border cursor-pointer transition-colors ${
+                                isSelected 
+                                  ? 'bg-blue-50 border-blue-200 text-blue-700' 
+                                  : 'bg-white border-gray-200 hover:bg-gray-50'
+                              }`}
+                              onClick={() => {
+                                if (!isSelected) {
+                                  const currentSelected = block.selectedProjects || [];
+                                  const newSelected = [...currentSelected, project.id];
+                                  updateBlock(block.id, { selectedProjects: newSelected });
+                                }
+                              }}
+                            >
+                              <div className="text-sm font-medium">{project.title}</div>
+                              <div className="text-xs text-gray-500">{project.category}</div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    Cliquez sur un projet pour l'ajouter/retirer. Laissez vide pour afficher tous les projets.
+                  </p>
+                </div>
+                <div className="text-sm text-gray-500">
+                  <p>Ce bloc affiche automatiquement les projets de la page Portfolio en 3 colonnes.</p>
+                </div>
               </div>
             </div>
-          </section>`;
+          );
         case 'logos':
           if (!block.logos || block.logos.length === 0) return '';
           const logosHtml = block.logos.map(logo => `
@@ -884,6 +1017,11 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         );
       
       case 'content':
+        const contentBlockEditor = renderAutoBlockEditor(block, (updates) => updateBlock(block.id, updates));
+        if (contentBlockEditor) {
+          return contentBlockEditor;
+        }
+        // Fallback vers l'ancien système si le scalable n'est pas disponible
         return (
           <div className="block-editor">
             <div className="flex items-center gap-2 mb-2">
@@ -951,6 +1089,11 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         );
       
       case 'contact':
+        const contactBlockEditor = renderAutoBlockEditor(block, (updates) => updateBlock(block.id, updates));
+        if (contactBlockEditor) {
+          return contactBlockEditor;
+        }
+        // Fallback vers l'ancien système si le scalable n'est pas disponible
         return (
           <div className="block-editor">
             <div className="space-y-4">
@@ -1288,6 +1431,11 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         );
       
       case 'projects':
+        const projectsBlockEditor = renderAutoBlockEditor(block, (updates) => updateBlock(block.id, updates));
+        if (projectsBlockEditor) {
+          return projectsBlockEditor;
+        }
+        // Fallback vers l'ancien système si le scalable n'est pas disponible
         return (
           <div className="block-editor">
             <div className="space-y-4">

@@ -1,16 +1,12 @@
 import React from 'react';
 
-interface ImageBlockProps {
-  id: string;
-  type: string;
-  image?: {
-    src: string;
-    alt: string;
-  };
+interface ImageData {
+  src: string;
+  alt: string;
 }
 
-export default function ImageBlock({ id, type, image }: ImageBlockProps) {
-  if (!image?.src) {
+export default function ImageBlock({ data }: { data: ImageData }) {
+  if (!data?.src) {
     return (
       <div className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center text-gray-500">
         Aucune image sélectionnée
@@ -20,11 +16,10 @@ export default function ImageBlock({ id, type, image }: ImageBlockProps) {
 
   return (
     <div className="image-block">
-      {/* Texte pour confirmer que c'est le système scalable */}
       <img
-        src={image.src}
-        alt={image.alt || ''}
-        className="max-w-full h-auto rounded-lg"
+        src={data.src}
+        alt={data.alt || ''}
+        className="w-full h-auto"
       />
     </div>
   );

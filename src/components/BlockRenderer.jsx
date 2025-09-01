@@ -53,6 +53,19 @@ const BlockRenderer = ({ blocks = [] }) => {
   const renderBlock = (block) => {
     switch (block.type) {
       case 'content':
+        // Utilisation du système scalable pour le bloc content
+        const ContentBlockScalable = getAutoDeclaredBlock('content')?.component;
+        if (ContentBlockScalable) {
+          // Validation des données avec fallback
+          const contentData = { content: block.content || '' };
+          return (
+            <ContentBlockScalable 
+              key={block.id}
+              data={contentData}
+            />
+          );
+        }
+        // Fallback vers l'ancien système
         return (
           <div key={block.id} className="block-content">
             <FormattedText>
@@ -62,6 +75,19 @@ const BlockRenderer = ({ blocks = [] }) => {
         );
       
       case 'h2':
+        // Utilisation du système scalable pour le bloc h2
+        const H2BlockScalable = getAutoDeclaredBlock('h2')?.component;
+        if (H2BlockScalable) {
+          // Validation des données avec fallback
+          const h2Data = { content: block.content || '' };
+          return (
+            <H2BlockScalable 
+              key={block.id}
+              data={h2Data}
+            />
+          );
+        }
+        // Fallback vers l'ancien système
         return (
           <h2 key={block.id} className="block-h2">
             {block.content}
@@ -69,6 +95,19 @@ const BlockRenderer = ({ blocks = [] }) => {
         );
       
       case 'h3':
+        // Utilisation du système scalable pour le bloc h3
+        const H3BlockScalable = getAutoDeclaredBlock('h3')?.component;
+        if (H3BlockScalable) {
+          // Validation des données avec fallback
+          const h3Data = { content: block.content || '' };
+          return (
+            <H3BlockScalable 
+              key={block.id}
+              data={h3Data}
+            />
+          );
+        }
+        // Fallback vers l'ancien système
         return (
           <h3 key={block.id} className="block-h3">
             {block.content}
@@ -79,19 +118,23 @@ const BlockRenderer = ({ blocks = [] }) => {
           // Utilisation du système scalable pour le bloc image
           const ImageBlockScalable = getAutoDeclaredBlock('image')?.component;
           if (ImageBlockScalable) {
+            // Validation des données avec fallback
+            const imageData = block.image || { src: '', alt: '' };
             return (
               <ImageBlockScalable 
                 key={block.id}
-                id={block.id}
-                type={block.type}
-                image={block.image}
+                data={imageData}
               />
             );
           }
-          // Si le scalable n'est pas disponible, on affiche un message d'erreur
+          // Fallback vers l'ancien système
           return (
-            <div key={block.id} className="p-4 bg-red-100 border border-red-300 rounded text-red-700">
-              ❌ Erreur: Système scalable non disponible
+            <div key={block.id} className="block-image">
+              <img 
+                src={block.image?.src} 
+                alt={block.image?.alt || ''} 
+                className="w-full h-auto"
+              />
             </div>
           );
       case 'cta':
@@ -117,18 +160,20 @@ const BlockRenderer = ({ blocks = [] }) => {
         // Utilisation du système scalable pour le bloc services
         const ServicesBlockScalable = getAutoDeclaredBlock('services')?.component;
         if (ServicesBlockScalable) {
+          // Validation des données avec fallback
+          const servicesData = {
+            title: block.title || 'OUR CORE OFFERINGS',
+            offerings: block.offerings || [],
+            theme: block.theme || 'auto'
+          };
           return (
             <ServicesBlockScalable 
               key={block.id}
-              id={block.id}
-              type={block.type}
-              title={block.title}
-              offerings={block.offerings}
-              theme={block.theme}
+              data={servicesData}
             />
           );
         }
-        // Fallback vers l'ancien système si le scalable n'est pas disponible
+        // Fallback vers l'ancien système
         return (
           <Services 
             key={block.id}
@@ -142,6 +187,25 @@ const BlockRenderer = ({ blocks = [] }) => {
       
 
       case 'projects':
+        // Utilisation du système scalable pour le bloc projects
+        const ProjectsBlockScalable = getAutoDeclaredBlock('projects')?.component;
+        if (ProjectsBlockScalable) {
+          // Validation des données avec fallback
+          const projectsData = {
+            title: block.title || 'NOS RÉALISATIONS',
+            maxProjects: block.maxProjects || 6,
+            selectedProjects: block.selectedProjects || [],
+            theme: block.theme || 'auto',
+            id: block.id // Pour l'ID du carousel
+          };
+          return (
+            <ProjectsBlockScalable 
+              key={block.id}
+              data={projectsData}
+            />
+          );
+        }
+        // Fallback vers l'ancien système (le code existant)
         return (
           <section key={block.id} className="projects-section py-28" data-block-type="projects" data-block-theme={block.theme || 'auto'}>
             <div className="container mx-auto">
@@ -431,10 +495,26 @@ const BlockRenderer = ({ blocks = [] }) => {
         );
       
       case 'logos':
+        // Utilisation du système scalable pour le bloc logos
+        const LogosBlockScalable = getAutoDeclaredBlock('logos')?.component;
+        if (LogosBlockScalable) {
+          // Validation des données avec fallback
+          const logosData = {
+            title: block.title || 'NOS CLIENTS',
+            theme: block.theme || 'auto',
+            logos: block.logos || []
+          };
+          return (
+            <LogosBlockScalable 
+              key={block.id}
+              data={logosData}
+            />
+          );
+        }
+        // Fallback vers l'ancien système
         return (
           <section key={block.id} className="logos-section py-28" data-block-type="logos" data-block-theme={block.theme || 'auto'}>
             <div className="container mx-auto">
-              {/* Titre de la section */}
               {block.title && (
                 <div className="mb-12">
                   <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
@@ -442,14 +522,13 @@ const BlockRenderer = ({ blocks = [] }) => {
                   </h2>
                 </div>
               )}
-
-              {/* Grille des logos clients */}
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 justify-items-center">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
                 {(block.logos || []).map((logo, index) => (
-                  <div key={index} className="logo-item">
+                  <div key={index} className="logo-item flex items-center justify-center">
                     <img
                       src={logo.src || logo.image}
                       alt={logo.alt || logo.name || `Logo client ${index + 1}`}
+                      className="max-w-full h-12 md:h-16 object-contain grayscale hover:grayscale-0 transition-all duration-300"
                     />
                   </div>
                 ))}
@@ -464,6 +543,24 @@ const BlockRenderer = ({ blocks = [] }) => {
         );
       
       case 'contact':
+        // Utilisation du système scalable pour le bloc contact
+        const ContactBlockScalable = getAutoDeclaredBlock('contact')?.component;
+        if (ContactBlockScalable) {
+          // Validation des données avec fallback
+          const contactData = {
+            title: block.title || '',
+            ctaText: block.ctaText || '',
+            ctaLink: block.ctaLink || '',
+            theme: block.theme || 'auto'
+          };
+          return (
+            <ContactBlockScalable 
+              key={block.id}
+              data={contactData}
+            />
+          );
+        }
+        // Fallback vers l'ancien système
         return (
           <section 
             key={block.id} 
@@ -473,14 +570,11 @@ const BlockRenderer = ({ blocks = [] }) => {
           >
             <div className="container mx-auto border border-black/20 dark:border-white/20 p-8">
               <div className="flex justify-between items-center">
-                {/* Titre de la section */}
                 {block.title && (
                   <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-black dark:text-white">
                     {block.title}
                   </h2>
                 )}
-                
-                {/* Bouton CTA */}
                 {block.ctaText && block.ctaLink && (
                   <a 
                     href={block.ctaLink}

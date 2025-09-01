@@ -93,6 +93,12 @@
             "title": "Social media",
             "description": "<p>Boostez votre visibilité en ligne. Nous créons du contenu engageant, optimisé pour l'interaction et le partage. <br>Profitez d'une croissance significative de votre audience et de votre portée organique.</p>",
             "icon": ""
+          },
+          {
+            "id": "service-1756730673686",
+            "title": "marketing",
+            "description": "<p>Boostez la visibilité de votre marque grâce à notre service de marketing. Par une approche basée sur les données, nous ciblons précisément votre audience pour maximiser vos ventes et renforcer votre présence sur le marché.</p>",
+            "icon": ""
           }
         ],
         "theme": "dark"
@@ -141,7 +147,7 @@
         "theme": "auto"
       },
       {
-        "id": "block-5",
+        "id": "block-6",
         "type": "contact",
         "content": "",
         "title": "Would you like to see a demo?",

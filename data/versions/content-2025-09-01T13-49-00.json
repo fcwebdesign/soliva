@@ -93,6 +93,12 @@
             "title": "Social media",
             "description": "<p>Boostez votre visibilité en ligne. Nous créons du contenu engageant, optimisé pour l'interaction et le partage. <br>Profitez d'une croissance significative de votre audience et de votre portée organique.</p>",
             "icon": ""
+          },
+          {
+            "id": "service-1756730673686",
+            "title": "marketing",
+            "description": "<p>Boostez la visibilité de votre marque grâce à notre service de marketing. Par une approche basée sur les données, nous ciblons précisément votre audience pour maximiser vos ventes et renforcer votre présence sur le marché.</p>",
+            "icon": ""
           }
         ],
         "theme": "dark"
@@ -141,15 +147,6 @@
         "theme": "auto"
       },
       {
-        "id": "block-5",
-        "type": "image",
-        "content": "",
-        "image": {
-          "src": "/uploads/1756726187080-2d68a18c.jpg",
-          "alt": ""
-        }
-      },
-      {
         "id": "block-6",
         "type": "contact",
         "content": "",
@@ -157,6 +154,16 @@
         "ctaText": "Yes, sign me up",
         "ctaLink": "https://google.com",
         "theme": "auto"
+      },
+      {
+        "id": "block-1756733975419",
+        "type": "h2",
+        "content": "test de tutre h2"
+      },
+      {
+        "id": "block-1756734107512",
+        "type": "h3",
+        "content": "test de sou-titre"
       }
     ]
   },

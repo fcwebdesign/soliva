@@ -1,9 +1,8 @@
 import React from 'react';
-import type { BlockBase } from '../types';
 
-interface LogosBlock extends BlockBase {
-  type: 'logos';
+interface LogosData {
   title?: string;
+  theme?: 'light' | 'dark' | 'auto';
   logos: Array<{
     src?: string;
     image?: string;
@@ -12,9 +11,11 @@ interface LogosBlock extends BlockBase {
   }>;
 }
 
-export default function Logos({ title = "NOS CLIENTS", logos = [] }: LogosBlock) {
+export default function LogosBlock({ data }: { data: LogosData }) {
+  const { title = "NOS CLIENTS", logos = [] } = data;
+  
   return (
-    <section className="logos-section py-28">
+    <section className="logos-section py-28" data-block-type="logos" data-block-theme={data.theme || 'auto'}>
       <div className="container mx-auto">
         {/* Titre de la section */}
         {title && (
@@ -26,13 +27,12 @@ export default function Logos({ title = "NOS CLIENTS", logos = [] }: LogosBlock)
         )}
         
         {/* Grille des logos clients */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 justify-items-center">
           {logos.map((logo, index) => (
-            <div key={index} className="logo-item flex items-center justify-center">
-              <img 
-                src={logo.src || logo.image} 
+            <div key={index} className="logo-item">
+              <img
+                src={logo.src || logo.image}
                 alt={logo.alt || logo.name || `Logo client ${index + 1}`}
-                className="max-w-full h-12 md:h-16 object-contain grayscale hover:grayscale-0 transition-all duration-300"
               />
             </div>
           ))}
@@ -40,4 +40,4 @@ export default function Logos({ title = "NOS CLIENTS", logos = [] }: LogosBlock)
       </div>
     </section>
   );
-} 
+}

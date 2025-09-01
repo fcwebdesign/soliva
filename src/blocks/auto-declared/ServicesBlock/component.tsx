@@ -1,8 +1,6 @@
 import React from 'react';
 
-interface ServicesBlockProps {
-  id: string;
-  type: string;
+interface ServicesData {
   title?: string;
   offerings: Array<{
     id: string;
@@ -13,7 +11,9 @@ interface ServicesBlockProps {
   theme?: 'light' | 'dark' | 'auto';
 }
 
-export default function ServicesBlock({ title = "OUR CORE OFFERINGS", offerings }: ServicesBlockProps) {
+export default function ServicesBlock({ data }: { data: ServicesData }) {
+  const { title = "OUR CORE OFFERINGS", offerings = [] } = data;
+  
   return (
     <section className="service-offerings-section py-28">
       <div className="container mx-auto">

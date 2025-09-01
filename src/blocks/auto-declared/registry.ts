@@ -1,34 +1,55 @@
-// Système de blocs auto-déclarés pour votre admin existant
+// Système de blocs auto-déclarés HMR-safe
 import React from 'react';
+import { z } from 'zod';
 
-// Interface pour un bloc auto-déclaré
-export interface AutoDeclaredBlock {
-  type: string;
+// Types améliorés
+export type BlockType = string;
+
+export interface BlockBase<TData = unknown> {
+  id: string;
+  type: BlockType;
+  data: TData;
+}
+
+export interface BlockModule<TData = unknown> {
+  type: BlockType;
+  component: React.ComponentType<{ data: TData }>;
+  editor: React.ComponentType<{ data: TData; onChange: (next: TData) => void }>;
+  schema?: z.ZodType<TData>;
+  defaultData: TData; // Pas d'id/type ici
   label?: string;
   icon?: string;
-  component: React.ComponentType<any>;
-  editor?: React.ComponentType<any>;
-  defaultData: any;
 }
 
-// Registre global des blocs auto-déclarés
-const autoDeclaredBlocks = new Map<string, AutoDeclaredBlock>();
-
-// Fonction pour enregistrer un bloc auto-déclaré
-export function registerAutoBlock(block: AutoDeclaredBlock): AutoDeclaredBlock {
-  autoDeclaredBlocks.set(block.type, block);
-  console.log(`✅ Bloc auto-déclaré enregistré: ${block.type} (${block.label})`);
-  return block;
+// Registre global HMR-safe
+declare global {
+  // eslint-disable-next-line no-var
+  var __AUTO_BLOCKS__: Map<string, BlockModule<any>> | undefined;
 }
 
-// Fonction pour récupérer tous les blocs auto-déclarés
-export function getAutoDeclaredBlocks(): AutoDeclaredBlock[] {
-  return Array.from(autoDeclaredBlocks.values());
+const REGISTRY: Map<string, BlockModule<any>> =
+  globalThis.__AUTO_BLOCKS__ ?? (globalThis.__AUTO_BLOCKS__ = new Map());
+
+// Fonction d'enregistrement améliorée
+export function registerAutoBlock<T>(mod: BlockModule<T>) {
+  if (!mod?.type) throw new Error('registerAutoBlock: type manquant');
+  
+  const exists = REGISTRY.get(mod.type);
+  if (exists && process.env.NODE_ENV !== 'production') {
+    console.warn(`[blocks] remplacement du bloc '${mod.type}' (HMR)`);
+  }
+  
+  REGISTRY.set(mod.type, mod);
+  console.log(`✅ Bloc auto-déclaré enregistré: ${mod.type}${mod.label ? ` (${mod.label})` : ''}`);
 }
 
-// Fonction pour récupérer un bloc spécifique
-export function getAutoDeclaredBlock(type: string): AutoDeclaredBlock | undefined {
-  return autoDeclaredBlocks.get(type);
+// Fonctions de récupération
+export function getAutoDeclaredBlock(type: string) {
+  return REGISTRY.get(type);
+}
+
+export function getAllAutoDeclared() {
+  return Array.from(REGISTRY.values());
 }
 
 // Fonction pour créer une instance par défaut d'un bloc
@@ -39,22 +60,25 @@ export function createAutoBlockInstance(type: string, id?: string): any {
   }
   
   return {
-    ...block.defaultData,
     id: id || `${type}-${Date.now()}`,
-    type
+    type,
+    data: block.defaultData
   };
 }
 
-// Fonction pour obtenir la liste des types disponibles (pour votre admin existant)
+// Fonction pour obtenir la liste des types disponibles
 export function getAvailableBlockTypes(): string[] {
-  return Array.from(autoDeclaredBlocks.keys());
+  return Array.from(REGISTRY.keys());
 }
 
-// Fonction pour obtenir les métadonnées des blocs (pour l'interface d'ajout)
+// Fonction pour obtenir les métadonnées des blocs
 export function getBlockMetadata(): Array<{type: string, label: string, icon: string}> {
-  return Array.from(autoDeclaredBlocks.values()).map(block => ({
+  return Array.from(REGISTRY.values()).map(block => ({
     type: block.type,
-    label: block.label,
-    icon: block.icon
+    label: block.label || block.type,
+    icon: block.icon || '📦'
   }));
 }
+
+// Alias pour compatibilité
+export const getAutoDeclaredBlocks = getAllAutoDeclared;

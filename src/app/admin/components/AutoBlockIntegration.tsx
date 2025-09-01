@@ -19,20 +19,6 @@ export function AutoBlockEditor({ block, onUpdate, onRemove }: {
 
   return (
     <div className="block-editor">
-      <div className="flex items-center gap-2 mb-2">
-        {(autoBlock.icon || autoBlock.label) && (
-          <span className="text-sm font-medium text-gray-700">
-            {autoBlock.icon} {autoBlock.label}
-          </span>
-        )}
-        <button
-          onClick={() => onRemove(block.id)}
-          className="ml-auto px-2 py-1 text-xs bg-red-100 text-red-600 rounded hover:bg-red-200"
-        >
-          🗑️
-        </button>
-      </div>
-      
       {autoBlock.editor ? (
         <autoBlock.editor
           data={block}
@@ -87,12 +73,6 @@ export function renderAutoBlockEditor(block: any, onUpdate?: (updates: any) => v
 
   return (
     <div className="block-editor">
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-sm font-medium text-gray-700">
-          {autoBlock.icon} {autoBlock.label}
-        </span>
-      </div>
-      
       {autoBlock.editor ? (
         <autoBlock.editor
           data={block}
