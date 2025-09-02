@@ -14,17 +14,38 @@ export default function ContactBlock({ data }: { data: ContactData }) {
     return null;
   }
 
+  const getThemeClasses = () => {
+    if (data.theme === 'dark') {
+      return {
+        container: 'border-white/20',
+        title: 'text-white'
+      };
+    }
+    if (data.theme === 'light') {
+      return {
+        container: 'border-black/20',
+        title: 'text-black'
+      };
+    }
+    return {
+      container: 'border-black/20',
+      title: 'text-black'
+    };
+  };
+
+  const themeClasses = getThemeClasses();
+
   return (
     <section 
       className="contact-section py-28" 
       data-block-type="contact" 
       data-block-theme={data.theme || 'auto'}
     >
-      <div className="container mx-auto border border-black/20 dark:border-white/20 p-8">
+      <div className={`container mx-auto border ${themeClasses.container} p-8`}>
         <div className="flex justify-between items-center">
           {/* Titre de la section */}
           {title && (
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-black dark:text-white">
+            <h2 className={`text-2xl md:text-3xl font-bold tracking-tight ${themeClasses.title}`}>
               {title}
             </h2>
           )}

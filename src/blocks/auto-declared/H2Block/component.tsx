@@ -6,14 +6,18 @@ interface H2Data {
 }
 
 export default function H2Block({ data }: { data: H2Data }) {
+  const getThemeClasses = () => {
+    if (data.theme === 'dark') return 'text-white';
+    if (data.theme === 'light') return 'text-gray-900';
+    return 'text-gray-900'; // Par défaut, sera surchargé par CSS
+  };
+
   return (
-    <h2 className={`text-3xl font-bold mb-6 ${
-      data.theme === 'dark' 
-        ? 'text-white' 
-        : data.theme === 'light' 
-        ? 'text-gray-900' 
-        : 'text-gray-900 dark:text-white'
-    }`}>
+    <h2 
+      className={`text-3xl font-bold mb-6 ${getThemeClasses()}`}
+      data-block-type="h2"
+      data-block-theme={data.theme || 'auto'}
+    >
       {data.content}
     </h2>
   );

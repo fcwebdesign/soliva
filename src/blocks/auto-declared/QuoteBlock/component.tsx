@@ -8,15 +8,31 @@ interface QuoteData {
 }
 
 export default function QuoteBlock({ data }: { data: QuoteData }) {
-  const themeClasses = {
-    light: 'bg-gray-50 text-gray-900 border-gray-200',
-    dark: 'bg-gray-800 text-white border-gray-600',
-    auto: 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-200 dark:border-gray-600'
+  const getThemeClasses = () => {
+    if (data.theme === 'light') {
+      return {
+        container: 'bg-gray-50 text-gray-900 border-gray-200',
+        role: 'text-gray-500'
+      };
+    }
+    if (data.theme === 'dark') {
+      return {
+        container: 'bg-gray-800 text-white border-gray-600',
+        role: 'text-gray-400'
+      };
+    }
+    // Auto - sera surchargé par CSS
+    return {
+      container: 'bg-white text-gray-900 border-gray-200',
+      role: 'text-gray-500'
+    };
   };
+
+  const themeClasses = getThemeClasses();
 
   return (
     <blockquote 
-      className={`p-8 border-l-4 rounded-r-lg ${themeClasses[data.theme]} transition-colors`}
+      className={`p-8 border-l-4 rounded-r-lg ${themeClasses.container} transition-colors`}
       data-block-type="quote"
       data-block-theme={data.theme}
     >
@@ -26,7 +42,7 @@ export default function QuoteBlock({ data }: { data: QuoteData }) {
       <footer className="text-sm">
         <cite className="not-italic font-semibold">{data.author}</cite>
         {data.role && (
-          <span className="text-gray-500 dark:text-gray-400 ml-2">— {data.role}</span>
+          <span className={`${themeClasses.role} ml-2`}>— {data.role}</span>
         )}
       </footer>
     </blockquote>

@@ -6,14 +6,18 @@ interface H3Data {
 }
 
 export default function H3Block({ data }: { data: H3Data }) {
+  const getThemeClasses = () => {
+    if (data.theme === 'dark') return 'text-white';
+    if (data.theme === 'light') return 'text-gray-900';
+    return 'text-gray-900'; // Par défaut, sera surchargé par CSS
+  };
+
   return (
-    <h3 className={`text-xl font-semibold mb-4 ${
-      data.theme === 'dark' 
-        ? 'text-white' 
-        : data.theme === 'light' 
-        ? 'text-gray-900' 
-        : 'text-gray-900 dark:text-white'
-    }`}>
+    <h3 
+      className={`text-2xl font-semibold mb-4 ${getThemeClasses()}`}
+      data-block-type="h3"
+      data-block-theme={data.theme || 'auto'}
+    >
       {data.content}
     </h3>
   );

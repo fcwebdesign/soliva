@@ -21,6 +21,38 @@
   --text-secondary: #cccccc;
 }
 
+/* Styles pour les blocs avec thème automatique */
+[data-theme="auto"] h2,
+[data-theme="auto"] h3 {
+  color: var(--text);
+}
+
+[data-theme="auto"] .text-gray-900 {
+  color: var(--text);
+}
+
+/* Thème sombre pour les blocs */
+[data-theme="dark"] h2,
+[data-theme="dark"] h3 {
+  color: white;
+}
+
+[data-theme="dark"] .text-gray-900 {
+  color: white;
+}
+
+[data-theme="dark"] .bg-white {
+  background-color: #1f2937; /* gray-800 */
+}
+
+[data-theme="dark"] .border-gray-200 {
+  border-color: #4b5563; /* gray-600 */
+}
+
+[data-theme="dark"] .text-gray-500 {
+  color: #9ca3af; /* gray-400 */
+}
+
 * {
   box-sizing: border-box;
 }
