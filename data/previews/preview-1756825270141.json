@@ -1,0 +1,1190 @@
+{
+  "content": {
+    "metadata": {
+      "title": "Soliva - Creative Studio | Digital & Brand Strategy",
+      "description": "Soliva est un studio créatif spécialisé en stratégie digitale et de marque. Découvrez nos projets et notre approche unique."
+    },
+    "nav": {
+      "logo": "soliva",
+      "logoImage": "",
+      "location": "paris, le havre",
+      "items": [
+        "hello-test",
+        "studio",
+        "work",
+        "blog",
+        "contact"
+      ],
+      "pageLabels": {
+        "blog": "le blog",
+        "home": "home",
+        "studio": "le studio",
+        "contact": "contact",
+        "hello-test": "test",
+        "work": "réalisations"
+      }
+    },
+    "home": {
+      "hero": {
+        "title": "soliva",
+        "subtitle": "creative studio.\ndigitaI & brand strategy."
+      },
+      "blocks": [
+        {
+          "id": "block-1",
+          "type": "two-columns",
+          "content": "",
+          "leftColumn": [
+            {
+              "id": "block-1756225439361-0.9107021052170442",
+              "type": "content",
+              "content": "<p>Le studio réunit une équipe compacte de designers et développeurs basée au Hevre. Nous livrons des sites rapides, accessibles et faciles à maintenir, avec des délais clairs et un budget maîtrisé. Exemples récents: refonte e‑commerce (+28% de conversion) et site vitrine B2B chargé en moins de 1,2 s.</p>"
+            }
+          ],
+          "rightColumn": [],
+          "layout": "right-left",
+          "gap": "large",
+          "alignment": "bottom",
+          "theme": "dark"
+        },
+        {
+          "id": "block-2",
+          "type": "services",
+          "content": "",
+          "title": "Nos services",
+          "offerings": [
+            {
+              "id": "service-1",
+              "title": "Site web sur-mesure",
+              "description": "<p>Bénéficiez d'un site web sur-mesure, conçu pour captiver votre audience et booster vos conversions. <br>Grâce à une méthodologie rigoureuse, nous créons un design unique et une navigation intuitive, maximisant ainsi la visibilité de votre marque et votre taux de retour sur investissement.</p>",
+              "icon": ""
+            },
+            {
+              "id": "service-1756055507192",
+              "title": "E-commerce",
+              "description": "<p>Boostez vos ventes en ligne avec notre service E-commerce. <br>Nous appliquons une méthodologie rigoureuse pour optimiser votre site, améliorer votre référencement et maximiser votre taux de conversion. Résultat : une croissance mesurable de votre chiffre d'affaires.</p>",
+              "icon": ""
+            },
+            {
+              "id": "service-1756056290453",
+              "title": "IA appliquée",
+              "description": "<p>L'IA appliquée démultiplie votre efficacité en automatisant les processus répétitifs, en optimisant les prises de décision et en prédisant les tendances du marché. <br>À travers une méthodologie rigoureuse et une approche basée sur les données, nous transformons votre entreprise en une entité plus agile et réactive.</p>",
+              "icon": ""
+            },
+            {
+              "id": "service-1756056312520",
+              "title": "Stratégie de marque",
+              "description": "<p>La Stratégie de marque vous offre un chemin clair et mesurable pour vous démarquer dans votre secteur. <br>Par un processus rigoureux basé sur des données spécifiques, nous façonnons une identité de marque forte et mémorable qui stimule la fidélité des clients.</p>",
+              "icon": ""
+            },
+            {
+              "id": "service-1756056339086",
+              "title": "Contenu & Shooting",
+              "description": "<p>Transformez votre vision en réalité. <br>Nous produisons du contenu web captivant et organisons des shootings photo professionnels pour donner vie à votre marque. <br>Profitez d'un rendu visuel haut de gamme et d'un storytelling efficace pour marquer l'esprit de vos clients.</p>",
+              "icon": ""
+            },
+            {
+              "id": "service-1756056410351",
+              "title": "Maintenance & Évolutions",
+              "description": "<p>Notre service garantit la performance continue de votre site web. <br>Nous réalisons une veille technologique constante pour anticiper les évolutions et assurer la mise à jour régulière de vos outils. <br>Bénéficiez d'un site toujours fonctionnel, sécurisé et à la pointe des dernières innovations.</p>",
+              "icon": ""
+            },
+            {
+              "id": "service-1756065515509",
+              "title": "Social media",
+              "description": "<p>Boostez votre visibilité en ligne. Nous créons du contenu engageant, optimisé pour l'interaction et le partage. <br>Profitez d'une croissance significative de votre audience et de votre portée organique.</p>",
+              "icon": ""
+            },
+            {
+              "id": "service-1756730673686",
+              "title": "marketing",
+              "description": "<p>Boostez la visibilité de votre marque grâce à notre service de marketing. Par une approche basée sur les données, nous ciblons précisément votre audience pour maximiser vos ventes et renforcer votre présence sur le marché.</p>",
+              "icon": ""
+            }
+          ],
+          "theme": "dark"
+        },
+        {
+          "id": "block-3",
+          "type": "projects",
+          "content": "",
+          "title": "Projets selectionnés",
+          "maxProjects": 4,
+          "selectedProjects": [
+            "project-1",
+            "project-3",
+            "project-4",
+            "project-2"
+          ],
+          "theme": "auto"
+        },
+        {
+          "id": "block-4",
+          "type": "logos",
+          "content": "",
+          "title": "Nos clients",
+          "logos": [
+            {
+              "src": "/uploads/1756077271103-771afa9a.png",
+              "alt": "Nelly rody"
+            },
+            {
+              "src": "/uploads/1756079435705-625c9f30.svg",
+              "alt": "FFPAPF"
+            },
+            {
+              "src": "/uploads/1756077077137-5e13dd8e.svg",
+              "alt": "Four seasons"
+            },
+            {
+              "src": "/uploads/1756076765287-dc6eeb82.png",
+              "alt": "The calling"
+            },
+            {
+              "src": "/uploads/1756072340655-7219b8d5.png",
+              "alt": "EDF"
+            }
+          ],
+          "theme": "auto"
+        },
+        {
+          "id": "block-6",
+          "type": "contact",
+          "content": "",
+          "title": "Would you like to see a demo?",
+          "ctaText": "Yes, sign me up",
+          "ctaLink": "https://google.com",
+          "theme": "auto"
+        },
+        {
+          "id": "quote-1756755532179",
+          "type": "quote",
+          "data": {
+            "quote": "Une citation inspirante pour votre contenu...",
+            "author": "Nom de l'auteur",
+            "role": "Fonction",
+            "theme": "auto"
+          },
+          "quote": "dsdfsfds",
+          "author": "sdfdsdfsdf",
+          "role": "dsffsfd"
+        }
+      ]
+    },
+    "contact": {
+      "hero": {
+        "title": "Nous contacter",
+        "subtitle": "Notre approche créative"
+      },
+      "sections": {
+        "collaborations": {
+          "title": "Collaborations",
+          "email": "hello@soliva.studio"
+        },
+        "inquiries": {
+          "title": "Demandes générales",
+          "email": "contact@soliva.studio yep"
+        }
+      },
+      "socials": [
+        "Instagram",
+        "LinkedIn",
+        "Behance"
+      ],
+      "briefGenerator": {
+        "placeholder": "Décrivez votre projet, vos objectifs et votre vision...",
+        "button": "Générer le brief",
+        "loading": "Génération en cours...",
+        "resultTitle": "Brief généré pour votre projet :"
+      },
+      "content": {
+        "description": "<p><strong>testxcvvxvcxvxcvvxcvcvxcvcx</strong></p>",
+        "image": {
+          "src": "/studio.jpg",
+          "alt": "L'équipe Soliva au travail dans notre espace créatif"
+        }
+      },
+      "description": "<p><strong>Vous avez des questions ? Des idées à partager ?</strong> </p><p>On est là. Que vous soyez à Paris ou au Havre, n’hésitez pas à nous écrire. On adore échanger, alors faites le premier pas. Votre message est le début d'une conversation qui pourrait tout changer. Allez-y, on attend de vous lire !</p>"
+    },
+    "studio": {
+      "hero": {
+        "title": "Le studio",
+        "subtitle": "Notre approche créative"
+      },
+      "content": {
+        "description": "<p></p>",
+        "image": {
+          "src": "/studio.jpg",
+          "alt": "L'équipe Soliva au travail dans notre espace créatif"
+        }
+      },
+      "description": "<p></p>",
+      "blocks": [
+        {
+          "id": "block-1",
+          "type": "content",
+          "content": "<p>Bienvenue dans notre studio, où créativité et impact se rencontrent. <br>Chaque projet est une aventure unique, qu'il s'agisse de donner vie à une identité de marque écoresponsable ou de concevoir une plateforme immersive pour l'art. Ici, on ne se contente pas de créer, on provoque des émotions et des réactions. Prêt à transformer vos idées en réalité palpable ? On s'y met ensemble.</p>"
+        },
+        {
+          "id": "block-2",
+          "type": "image",
+          "content": "",
+          "image": {
+            "src": "/uploads/1756481613960-30ee05ee.jpg",
+            "alt": ""
+          }
+        },
+        {
+          "id": "block-3",
+          "type": "h2",
+          "content": "Concevez, testez, impactez"
+        },
+        {
+          "id": "block-4",
+          "type": "content",
+          "content": "<p>Nous avançons par itérations courtes, avec des livrables clairs à chaque étape: wireframes testés, maquettes validées, puis développement mesurable. Chaque décision s’appuie sur des données concrètes: tests utilisateurs, analytics, retours terrain. Résultat: un produit qui charge vite, convertit mieux et reste simple à faire évoluer.</p>"
+        },
+        {
+          "id": "block-5",
+          "type": "h2",
+          "content": "Faites simple, faites mieux"
+        },
+        {
+          "id": "block-6",
+          "type": "content",
+          "content": "<p>Nous travaillons avec des objectifs clairs, des délais tenus et des métriques suivies. Par exemple: charte graphique livrée en 10 jours, prototype cliquable en 2 semaines, puis mise en ligne avec suivi des conversions et des temps de chargement. Vous obtenez un résultat propre, mesurable et prêt à évoluer.</p>"
+        },
+        {
+          "id": "block-7",
+          "type": "h2",
+          "content": "Mesurez, apprenez, itérez"
+        },
+        {
+          "id": "block-8",
+          "type": "content",
+          "content": "<p>Mesurez, apprenez, itérez Nous suivons les KPIs clés dès le jour 1: taux de conversion, rétention, temps de chargement, SEO. Chaque mois, nous testons une hypothèse précise (A/B sur le formulaire, nouveau wording, optimisation d’image) et déployons ce qui performe. Résultat: des gains chiffrés, documentés, et un produit qui progresse sans refonte lourde.</p>"
+        },
+        {
+          "id": "block-9",
+          "type": "h2",
+          "content": "Livrez, optimisez, progressez"
+        },
+        {
+          "id": "block-10",
+          "type": "content",
+          "content": "<p>Livrez, optimisez, progressez Déploiement en sprint d’une semaine, suivi d’un check de performances à J+3: Core Web Vitals, conversions, bugs réels. À J+14, itération ciblée sur ce qui bloque (formulaire trop long, visuel peu cliquable), avec changelog et impacts mesurés pour décider du prochain sprint.</p>"
+        },
+        {
+          "id": "block-11",
+          "type": "two-columns",
+          "content": "",
+          "leftColumn": [
+            {
+              "id": "block-1756480744101-0.9759858553497809",
+              "type": "image",
+              "content": "",
+              "image": {
+                "src": "/uploads/1756480758926-52818ca6.png",
+                "alt": ""
+              }
+            },
+            {
+              "id": "block-1756481724646-0.42236443879098884",
+              "type": "h3",
+              "content": "Lisa Lombard"
+            },
+            {
+              "id": "block-1756481774304-0.08598438704230948",
+              "type": "content",
+              "content": "<p>Poste</p>"
+            }
+          ],
+          "rightColumn": [
+            {
+              "id": "block-1756480761132-0.64442277832819",
+              "type": "image",
+              "content": "",
+              "image": {
+                "src": "/uploads/1756480764062-769f0b02.png",
+                "alt": ""
+              }
+            },
+            {
+              "id": "block-1756481745127-0.16814001516551214",
+              "type": "h3",
+              "content": "Florent Cleron"
+            },
+            {
+              "id": "block-1756481800400-0.2609483852161575",
+              "type": "content",
+              "content": "<p>Poste</p>"
+            }
+          ],
+          "layout": "left-right",
+          "gap": "medium",
+          "alignment": "top"
+        },
+        {
+          "id": "quote-1756753800786",
+          "type": "quote",
+          "data": {
+            "quote": "Une citation inspirante pour votre contenu...",
+            "author": "Nom de l'auteur",
+            "role": "Fonction",
+            "theme": "auto"
+          },
+          "quote": "dsdsdf",
+          "author": "dfsdfsd",
+          "role": "dsffdsfds"
+        }
+      ]
+    },
+    "work": {
+      "hero": {
+        "title": "Nos réalisations",
+        "subtitle": "Projets sélectionnés"
+      },
+      "filters": [
+        "Tous",
+        "Stratégie",
+        "Identité",
+        "Digital",
+        "IA"
+      ],
+      "description": "<p><strong>Découvrez notre sélection de projets</strong> qui illustrent notre approche créative et notre expertise en stratégie de marque et design digital. Chaque projet raconte une histoire unique, celle d'une collaboration fructueuse entre notre vision créative et les objectifs de nos clients. </p><p>De la conception d'identités de marque mémorables à la création d'expériences digitales innovantes, nous nous efforçons de dépasser les attentes et de créer un impact durable. fds</p>",
+      "projects": [
+        {
+          "id": "ecotech-solutions",
+          "title": "EcoTech Solutions",
+          "content": "<h3>test H3</h3>\n<img src=\"/uploads/1755556322957-c5ae9812.jpg\" alt=\"\">\n<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>\n<h2>Défis du projet</h2>\n<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>",
+          "slug": "ecotech-solutions",
+          "status": "published",
+          "publishedAt": "2025-08-19T09:54:32.476Z",
+          "excerpt": "Identité de marque complète pour une startup spécialisée dans les technologies vertes.",
+          "client": "EcoTech Solutions",
+          "category": "Identité",
+          "year": "2024",
+          "featured": true,
+          "blocks": [
+            {
+              "id": "block-1",
+              "type": "content",
+              "content": "<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwcxw</p>"
+            },
+            {
+              "id": "block-2",
+              "type": "h2",
+              "content": "Défis du projet"
+            },
+            {
+              "id": "block-3",
+              "type": "content",
+              "content": "<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>"
+            },
+            {
+              "id": "block-1755556319801",
+              "type": "image",
+              "content": "",
+              "image": {
+                "src": "/uploads/1755556322957-c5ae9812.jpg",
+                "alt": ""
+              }
+            }
+          ],
+          "image": "/uploads/1755561574161-96b8a35f.jpg"
+        },
+        {
+          "title": "Art Gallery Digital",
+          "category": "Digital",
+          "image": "/uploads/1755597343554-71ad1faf.jpg",
+          "slug": "art-gallery-digital",
+          "excerpt": "Plateforme web immersive pour une galerie d'art contemporain.",
+          "content": "<p>Plateforme web immersive pour une galerie d'art contemporain. Interface intuitive permettant aux visiteurs d'explorer les œuvres en 3D et de découvrir les artistes.</p>",
+          "client": "Art Gallery Digital",
+          "year": "2024",
+          "featured": false,
+          "status": "published",
+          "publishedAt": "2024-02-20T14:30:00.000Z"
+        },
+        {
+          "title": "Mode Éthique Collective",
+          "category": "Stratégie",
+          "slug": "mode-ethique-collective",
+          "excerpt": "Stratégie de communication globale pour une marque de mode durable.",
+          "content": "<p>Stratégie de communication globale pour une marque de mode durable. Campagne multicanal intégrant storytelling, réseaux sociaux et expériences événementielles.</p>",
+          "client": "Mode Éthique Collective",
+          "year": "2024",
+          "featured": false,
+          "status": "published",
+          "publishedAt": "2025-08-19T09:55:29.559Z",
+          "image": "/uploads/1755597298777-8b15cf89.jpg"
+        }
+      ],
+      "adminProjects": [
+        {
+          "id": "ecotech-solutions",
+          "title": "EcoTech Solutions",
+          "content": "<h3>test H3</h3>\n<img src=\"/uploads/1755556322957-c5ae9812.jpg\" alt=\"\">\n<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>\n<h2>Défis du projet</h2>\n<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>",
+          "slug": "ecotech-solutions",
+          "status": "published",
+          "publishedAt": "2025-08-19T09:54:32.476Z",
+          "excerpt": "Identité de marque complète pour une startup spécialisée dans les technologies vertes.",
+          "client": "EcoTech Solutions",
+          "category": "Identité",
+          "year": "2024",
+          "featured": true,
+          "blocks": [
+            {
+              "id": "block-1",
+              "type": "h3",
+              "content": "test H3"
+            },
+            {
+              "id": "block-2",
+              "type": "image",
+              "content": "",
+              "image": {
+                "src": "/uploads/1755556322957-c5ae9812.jpg",
+                "alt": ""
+              }
+            },
+            {
+              "id": "block-3",
+              "type": "content",
+              "content": "<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>"
+            },
+            {
+              "id": "block-4",
+              "type": "h2",
+              "content": "Défis du projet"
+            },
+            {
+              "id": "block-5",
+              "type": "content",
+              "content": "<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>"
+            },
+            {
+              "id": "quote-1756796142950",
+              "type": "quote",
+              "data": {
+                "quote": "Une citation inspirante pour votre contenu...",
+                "author": "Nom de l'auteur",
+                "role": "Fonction",
+                "theme": "auto"
+              },
+              "quote": "ddd",
+              "author": "gdgdgd",
+              "role": "gddg"
+            },
+            {
+              "id": "services-1756798314423",
+              "type": "services",
+              "data": {
+                "title": "OUR CORE OFFERINGS",
+                "theme": "auto",
+                "offerings": []
+              },
+              "title": "test services",
+              "offerings": [
+                {
+                  "id": "service-1756798319784",
+                  "title": "hello",
+                  "description": "<p>sdfsddf</p>",
+                  "icon": ""
+                }
+              ]
+            }
+          ],
+          "image": "/uploads/1755561574161-96b8a35f.jpg"
+        },
+        {
+          "id": "art-gallery-digital",
+          "title": "Art Gallery Digital",
+          "content": "<p>Plateforme web immersive pour une galerie d'art contemporain. Interface intuitive permettant aux visiteurs d'explorer les œuvres en 3D et de découvrir les artistes.</p>",
+          "slug": "art-gallery-digital",
+          "status": "published",
+          "publishedAt": "2024-02-20T14:30:00.000Z",
+          "excerpt": "Plateforme web immersive pour une galerie d'art contemporain.",
+          "client": "Art Gallery Digital",
+          "category": "Digital",
+          "year": "2024",
+          "featured": false,
+          "blocks": [
+            {
+              "id": "block-1",
+              "type": "content",
+              "content": "<p>Plateforme web immersive pour une galerie d'art contemporain. Interface intuitive permettant aux visiteurs d'explorer les œuvres en 3D et de découvrir les artistes.</p>"
+            }
+          ],
+          "image": "/uploads/1755597343554-71ad1faf.jpg"
+        },
+        {
+          "id": "mode-ethique-collective",
+          "title": "Mode Éthique Collective",
+          "content": "<p>Stratégie de communication globale pour une marque de mode durable. Campagne multicanal intégrant storytelling, réseaux sociaux et expériences événementielles.</p>",
+          "slug": "mode-ethique-collective",
+          "status": "published",
+          "excerpt": "Stratégie de communication globale pour une marque de mode durable.",
+          "client": "Mode Éthique Collective",
+          "category": "Stratégie",
+          "year": "2024",
+          "featured": false,
+          "blocks": [
+            {
+              "id": "block-1",
+              "type": "content",
+              "content": "<p>Stratégie de communication globale pour une marque de mode durable. Campagne multicanal intégrant storytelling, réseaux sociaux et expériences événementielles.</p>"
+            }
+          ],
+          "publishedAt": "2025-08-19T09:55:29.559Z",
+          "image": "/uploads/1755597298777-8b15cf89.jpg"
+        }
+      ]
+    },
+    "blog": {
+      "hero": {
+        "title": "Le journal",
+        "subtitle": "Nos réflexions et insights"
+      },
+      "description": "<p>Découvrez des réflexions percutantes sur le monde digital. Ici, on ne fait pas dans la langue de bois. E-commerce, design, branding : chaque article bouscule les idées reçues et propose un regard frais. Pourquoi votre site ne convertit pas ? Comment sortir de la dépendance aux plateformes ? Ces questions brûlantes méritent des réponses franches. Plongez dans des analyses qui comptent et redéfinissez votre approche.</p>",
+      "articles": [
+        {
+          "id": "ecommerce-retour-relationnel",
+          "title": "E-commerce : le retour du relationnel"
+        },
+        {
+          "id": "sobriete-design-moins-plein-vue",
+          "title": "La sobriété design : l'art de faire mieux avec moins"
+        },
+        {
+          "id": "sortir-dependance-plateformes-audience-ne-vous-appartient-pas",
+          "title": "Sortir de la dépendance aux plateformes : votre audience ne vous appartient pas"
+        },
+        {
+          "id": "sites-vitrine-oublies-5-secondes",
+          "title": "Pourquoi 80 % des sites vitrine sont oubliés 5 secondes après leur visite"
+        },
+        {
+          "id": "slider-accueil-ne-sert-rien",
+          "title": "Votre slider d'accueil ne sert à rien"
+        },
+        {
+          "id": "site-lent-site-mort",
+          "title": "Un site lent est un site mort"
+        },
+        {
+          "id": "pourquoi-boutique-en-ligne-ne-vend-pas",
+          "title": "Pourquoi votre boutique en ligne ne vend pas"
+        },
+        {
+          "id": "mythe-theme-shopify-parfait",
+          "title": "Le mythe du thème Shopify parfait"
+        },
+        {
+          "id": "marques-misent-moins-mais-mieux",
+          "title": "Les marques qui misent sur moins mais mieux"
+        },
+        {
+          "id": "personnalisation-donnees-proprietaires-tendance-montante",
+          "title": "La personnalisation et les données propriétaires : la tendance montante"
+        },
+        {
+          "id": "si-ia-tuait-creativite-avant-sauver",
+          "title": "Et si l'IA tuait la créativité… avant de la sauver ?"
+        },
+        {
+          "id": "arretez-illustrer-posts-linkedin-images-sans-sens",
+          "title": "Arrêtez d'illustrer vos posts LinkedIn avec des images qui n'ont aucun sens"
+        },
+        {
+          "id": "prompts-parfaits-nexistent-pas",
+          "title": "Les prompts parfaits n'existent pas"
+        },
+        {
+          "id": "obsession-outils-probleme-pas-logiciel",
+          "title": "L'obsession des outils : pourquoi le problème n'est pas votre logiciel"
+        },
+        {
+          "id": "futur-branding-humain-augmente-remplace",
+          "title": "Le futur du branding : humain, augmenté ou remplacé ?"
+        },
+        {
+          "id": "faux-outils-ia-juste-scripts",
+          "title": "Les faux outils 'IA' qui sont juste des scripts",
+          "slug": "faux-outils-ia-juste-scripts"
+        },
+        {
+          "id": "reseaux-sociaux-ne-sont-pas-strategie",
+          "title": "Les réseaux sociaux ne sont pas une stratégie"
+        },
+        {
+          "id": "pourquoi-90-contenus-ia-se-ressemblent",
+          "title": "Pourquoi 90 % des contenus IA se ressemblent"
+        },
+        {
+          "id": "pourquoi-copier-branding-grandes-marques-erreur",
+          "title": "Pourquoi copier le branding des grandes marques est une erreur"
+        },
+        {
+          "id": "votre-logo-nest-pas-votre-marque",
+          "title": "Votre logo n'est pas votre marque"
+        },
+        {
+          "id": "ia-promesses-marketing-realite-technique",
+          "title": "IA : entre promesses marketing et réalité technique"
+        },
+        {
+          "id": "no-code-puissant-pas-magique",
+          "title": "No-code : puissant, mais pas magique",
+          "blocks": [
+            {
+              "id": "block-1",
+              "type": "content",
+              "content": "<p></p>"
+            }
+          ],
+          "status": "draft",
+          "content": "<p></p>"
+        },
+        {
+          "id": "ia-strategie-marque-arretez-copier-commencez-creer",
+          "title": "IA et stratégie de marque : arrêtez de copier, commencez à créer"
+        },
+        {
+          "id": "piege-tout-pour-algorithme",
+          "title": "Le piège du 'tout pour l'algorithme'"
+        },
+        {
+          "id": "arretez-vouloir-etre-partout",
+          "title": "Arrêtez de vouloir être partout"
+        },
+        {
+          "id": "tendances-graphiques-2025",
+          "title": "Les tendances graphiques… pourquoi il faut parfois les ignorer"
+        },
+        {
+          "id": "personnalisation-amazon-toutes-marques",
+          "title": "La personnalisation à la Amazon arrive pour toutes les marques"
+        },
+        {
+          "id": "ceci-est-mon-nouveal-id",
+          "title": "Nouvel article",
+          "content": "<h2>test de section ok</h2>\n<p><strong>test contenu</strong></p><p><em>ça marche pas</em></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\"><em>yepddsfd</em></a></p><p></p><ul><li><p>test</p></li></ul><ol><li><p>ok je crois que c'est bon</p></li></ol><blockquote><p>citation</p></blockquote><p></p><p>hello c'est vraiment cool ce CMS</p><p>mais aloirs très cool</p><p>wai bof</p><p>xcvvcxcvx</p><p>fsfdsfdsdfsfds</p>\n<img src=\"/uploads/1755521225223-9689ec4e.png\" alt=\"test image\">",
+          "status": "published",
+          "slug": "ceci-est-mon-nouveal-id",
+          "excerpt": "wxcxwcwxc xcccfffd cv",
+          "blocks": [
+            {
+              "id": "block-1",
+              "type": "h2",
+              "content": "test de section ok"
+            },
+            {
+              "id": "block-2",
+              "type": "content",
+              "content": "<p><strong>test contenu</strong></p><p><em>ça marche pas</em></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\"><em>yepddsfd</em></a></p><p></p><ul><li><p>test</p></li></ul><ol><li><p>ok je crois que c'est bon</p></li></ol><blockquote><p>citation</p></blockquote><p></p><p>hello c'est vraiment cool ce CMS</p><p>mais aloirs très cool</p><p>wai bof</p><p>xcvvcxcvx</p><p>fsfdsfdsdfsfds</p>"
+            },
+            {
+              "id": "block-3",
+              "type": "image",
+              "content": "",
+              "image": {
+                "src": "/uploads/1755521225223-9689ec4e.png",
+                "alt": "test image"
+              }
+            }
+          ],
+          "publishedAt": "2025-08-18T13:25:59.640Z"
+        },
+        {
+          "id": "recette",
+          "title": "recette",
+          "content": "<p>Découvrez l’essentiel du sujet en 2 minutes. Points clés, exemples concrets, et actions à mettre en place dès aujourd’hui. Pas de théorie inutile, uniquement ce qui vous aide à avancer.</p>\n<img src=\"/uploads/1756796114538-67a6d89c.jpg\" alt=\"\">",
+          "status": "published",
+          "slug": "recette",
+          "publishedAt": "2025-08-28T13:57:02.113Z",
+          "blocks": [
+            {
+              "id": "block-1",
+              "type": "content",
+              "content": "<p>Découvrez l’essentiel du sujet en 2 minutes. Points clés, exemples concrets, et actions à mettre en place dès aujourd’hui. Pas de théorie inutile, uniquement ce qui vous aide à avancer.</p>"
+            },
+            {
+              "id": "quote-1756796073426",
+              "type": "quote",
+              "data": {
+                "quote": "Une citation inspirante pour votre contenu...",
+                "author": "Nom de l'auteur",
+                "role": "Fonction",
+                "theme": "auto"
+              },
+              "quote": "dgd",
+              "author": "fggffg",
+              "role": "fgfggf"
+            },
+            {
+              "id": "image-1756796109873",
+              "type": "image",
+              "data": {
+                "id": "",
+                "type": "image",
+                "image": {
+                  "src": "",
+                  "alt": ""
+                }
+              },
+              "image": {
+                "src": "/uploads/1756796114538-67a6d89c.jpg"
+              }
+            }
+          ]
+        },
+        {
+          "id": "slug",
+          "title": "Test d'un nouvel article",
+          "content": "<h2>test de contenu</h2>\n<p>Vous avez besoin d’un contenu clair, utile et facile à parcourir. Je propose des textes structurés, avec des phrases courtes, des exemples concrets et des appels à l’action précis. Objectif: aider vos visiteurs à comprendre en 10 secondes ce que vous faites, pourquoi c’est pertinent pour eux et comment passer à l’étape suivante.</p>",
+          "status": "published",
+          "blocks": [
+            {
+              "id": "block-1",
+              "type": "h2",
+              "data": {
+                "content": ""
+              },
+              "content": "test de contenu"
+            },
+            {
+              "id": "block-2",
+              "type": "content",
+              "content": "<p>Vous avez besoin d’un contenu clair, utile et facile à parcourir. Je propose des textes structurés, avec des phrases courtes, des exemples concrets et des appels à l’action précis. Objectif: aider vos visiteurs à comprendre en 10 secondes ce que vous faites, pourquoi c’est pertinent pour eux et comment passer à l’étape suivante.</p>"
+            },
+            {
+              "id": "quote-1756797763692",
+              "type": "quote",
+              "data": {
+                "quote": "Une citation inspirante pour votre contenu...",
+                "author": "Nom de l'auteur",
+                "role": "Fonction",
+                "theme": "auto"
+              },
+              "quote": "erzezer",
+              "author": "erzeerz",
+              "role": "er"
+            },
+            {
+              "id": "services-1756797772120",
+              "type": "services",
+              "data": {
+                "title": "OUR CORE OFFERINGS",
+                "theme": "auto",
+                "offerings": []
+              },
+              "title": "zeerzrzerez",
+              "offerings": [
+                {
+                  "id": "service-1756797775510",
+                  "title": "zerzerer",
+                  "description": "<p>Zerzerer, le service qui transforme votre présence en ligne. Bénéficiez d'un contenu web unique et mémorable, créé via une méthodologie rigoureuse pour optimiser votre visibilité et engagement. Profitez d'une stratégie claire et mesurable, sans jargon ni clichés.</p>",
+                  "icon": ""
+                }
+              ]
+            },
+            {
+              "id": "logos-1756797906179",
+              "type": "logos",
+              "data": {
+                "title": "NOS CLIENTS",
+                "theme": "auto",
+                "logos": []
+              },
+              "logos": [
+                {
+                  "src": "/uploads/1756797911175-89d96d2d.jpg",
+                  "alt": ""
+                }
+              ]
+            }
+          ],
+          "slug": "slug",
+          "publishedAt": "2025-09-02T07:23:13.331Z"
+        },
+        {
+          "id": "les-faux-outils-ia-qui-sont-juste-des-scripts",
+          "title": "Les faux outils \"IA\" qui sont juste des scripts",
+          "slug": "les-faux-outils-ia-qui-sont-juste-des-scripts",
+          "content": "<h2>L’illusion de l’IA partout</h2>\n<p>Aujourd’hui, tout semble être “boosté à l’IA”. Les promesses sont partout, sur les sites web, dans les publicités, dans les pitchs d’outils qui sortent chaque semaine. Une extension Chrome qui reformule un texte ? C’est présenté comme de l’intelligence artificielle. Un logiciel qui génère une facture en PDF ? Évidemment, il est “propulsé par l’IA”. Même un chatbot qui suit un scénario rigide et répond uniquement à ce pour quoi il a été programmé se retrouve vendu comme “assistant intelligent”.</p><p>À force, on a l’impression que l’IA est partout. Mais dans <strong>80 % des cas, il n’y a pas la moindre intelligence artificielle derrière</strong>. Ce sont simplement des scripts, des automatisations plus ou moins basiques, maquillés par une couche marketing.</p><p>Et le problème, ce n’est pas que les scripts soient inutiles — loin de là. C’est qu’on entretient une illusion. On vend du rêve en appelant “IA” quelque chose qui n’a rien d’intelligent.</p>\n<h2>Le “IA-washing” : une bulle marketing</h2>\n<p>Ce phénomène a même un nom officieux : le “IA-washing”. On pourrait le comparer au “greenwashing” dans l’écologie. Collez “IA” sur un produit, et il prend immédiatement de la valeur dans l’esprit des utilisateurs et des investisseurs. Le terme est devenu un label de modernité, presque une promesse magique.</p><p>Mais cette inflation artificielle a des conséquences. D’abord, elle alimente un <strong>marketing abusif</strong>, où les promesses dépassent largement la réalité. Ensuite, elle crée une <strong>confusion totale</strong> : le grand public ne sait plus faire la différence entre un simple automatisme et une IA qui apprend réellement. Enfin, elle entraîne une <strong>perte de confiance</strong> : à force de se faire vendre de la pseudo-IA, les utilisateurs deviennent sceptiques, et finissent par douter même des vrais outils.</p><p>C’est un peu comme si on vendait une calculatrice en affirmant que c’est un “ordinateur quantique”. Au début, ça impressionne. Mais une fois que les gens se rendent compte de la supercherie, plus personne n’y croit.</p>\n<h2>Qu’est-ce qu’un script, vraiment ?</h2>\n<p>Un script, c’est du code figé. Il suit une suite d’instructions, dans un ordre déterminé. Si vous remplissez une condition, il exécute une action. Sinon, il en exécute une autre. Point.</p><p>Prenons un exemple concret : un petit programme qui affiche “bonjour” si vous écrivez “bonjour”. C’est un script. Il n’ira pas plus loin, il ne comprendra pas vos intentions, il ne saura pas improviser. Pour qu’il évolue, il faudra qu’un humain le modifie et ajoute de nouvelles conditions.</p><p>Les scripts ne sont pas inutiles, bien au contraire. Ils sont rapides, fiables, prévisibles. Ils font parfaitement leur travail… tant qu’on ne leur demande pas plus. Le problème, c’est quand on essaie de faire croire qu’ils sont “intelligents”.</p>\n<h2>Et l’intelligence artificielle, alors ?</h2>\n<p>L’IA, ce n’est pas juste un script qui répond à une condition. C’est un système qui <strong>analyse des données, apprend de l’expérience et s’adapte à des situations nouvelles</strong>. Elle n’a pas besoin d’être reprogrammée en permanence, car elle ajuste son comportement en fonction de ce qu’elle apprend.</p><p>Un exemple simple : un assistant conversationnel. Un script répondra toujours de la même façon à une entrée donnée. Une IA, elle, sera capable de comprendre des formulations différentes, de saisir l’intention derrière vos mots, et même de s’améliorer avec le temps en intégrant du feedback.</p><p>Autre exemple : Netflix. Le moteur de recommandation n’est pas un simple script qui vous propose les films les plus regardés. C’est un système qui analyse votre historique, croise vos goûts avec ceux de millions d’autres utilisateurs, détecte des patterns et vous propose des contenus qui évoluent en fonction de vos comportements. Ça, c’est de l’IA.</p><p>La nuance est énorme : <strong>un script exécute, une IA apprend.</strong></p>\n<h2>Pourquoi cette distinction est cruciale</h2>\n<p>On pourrait se dire : peu importe le nom, tant que l’outil marche. Mais non. Parce que cette confusion a des conséquences bien réelles.</p><p>D’abord, elle fausse les choix. Un simple script peut être largement suffisant pour automatiser une tâche répétitive, mais si on vous le vend comme de l’IA révolutionnaire, vous allez probablement payer plus cher que nécessaire. Ensuite, elle gaspille des ressources. Les entreprises investissent dans des solutions “IA” qui n’en sont pas, et passent à côté des vraies innovations. Enfin, elle abîme la crédibilité des acteurs sérieux. Quand des utilisateurs découvrent qu’on leur a vendu un simple automatisme en le maquillant, ils deviennent méfiants, et finissent par mettre tout dans le même sac.</p><p>Savoir distinguer un script d’une IA, ce n’est pas du jargon technique. C’est une question de <strong>lucidité et de stratégie</strong>.</p>\n<h2>Les scripts ne sont pas les ennemis</h2>\n<p>Soyons clairs : un script n’est pas une mauvaise solution. Dans beaucoup de cas, c’est même la meilleure. Si vous avez une tâche répétitive, figée, qui ne demande aucune capacité d’analyse, alors un script est idéal. Il sera plus rapide, plus fiable et moins coûteux qu’une IA.</p><p>Le problème n’est donc pas l’existence des scripts, mais le <strong>mensonge autour de leur nature</strong>. Faire passer un script pour une IA, c’est comme vendre une bicyclette en disant que c’est une voiture électrique. La bicyclette n’a rien de honteux, mais si vous l’achetez en pensant que c’est un véhicule motorisé, la déception est garantie.</p>\n<h2>Notre regard de studio</h2>\n<p>Si on insiste autant là-dessus, c’est parce qu’on le vit au quotidien. En tant que studio digital, on voit passer des clients qui arrivent avec des outils soi-disant “IA”, persuadés d’avoir trouvé la solution miracle. Sauf qu’au moment de gratter un peu, on découvre qu’il ne s’agit que d’un enchaînement de conditions figées. Résultat : frustration, perte de temps, perte de budget.</p><p>Notre philosophie est simple : pas de bullshit.</p><ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>Si c’est un script, on le dit clairement, et on explique ce qu’il permet de faire.</p></li><li class=\"mb-1\"><p>Si c’est de l’IA, on montre comment elle apprend, sur quelles données, et jusqu’où elle peut aller.</p></li><li class=\"mb-1\"><p>Et surtout, on choisit toujours <strong>la solution la plus adaptée</strong>, pas celle qui fait le plus joli sur une plaquette.</p></li></ul><p>La technologie est un outil. Pas un slogan.</p><p></p>\n<h2>Conclusion : séparer le vrai du faux</h2>\n<p>Tout ce qui brille n’est pas de l’IA.<br>Un script peut être extrêmement utile, mais il reste ce qu’il est : du code figé. Une IA, elle, est définie par sa capacité à comprendre, apprendre et s’adapter.</p><p>La seule vraie question à poser devant un outil, c’est la suivante :</p><blockquote><p><br><strong>“Est-ce que cet outil apprend de lui-même ?”</strong></p></blockquote><p><br>Si la réponse est non, alors ce n’est pas de l’intelligence artificielle.</p><p>Et ce n’est pas grave. Tant qu’on ne vous le vend pas comme tel.<br><br>✨ <em>Cet article fait partie de notre ligne éditoriale : distinguer les vraies applications de l’IA du simple vernis marketing. Parce qu’au final, la seule promesse qui compte, c’est celle qu’on peut tenir.</em></p>",
+          "status": "published",
+          "publishedAt": "2025-09-02T12:20:43.928Z",
+          "blocks": [
+            {
+              "id": "block-1",
+              "type": "h2",
+              "data": {
+                "content": ""
+              },
+              "content": "L’illusion de l’IA partout"
+            },
+            {
+              "id": "block-2",
+              "type": "content",
+              "data": {
+                "content": ""
+              },
+              "content": "<p>Aujourd’hui, tout semble être “boosté à l’IA”. Les promesses sont partout, sur les sites web, dans les publicités, dans les pitchs d’outils qui sortent chaque semaine. Une extension Chrome qui reformule un texte ? C’est présenté comme de l’intelligence artificielle. Un logiciel qui génère une facture en PDF ? Évidemment, il est “propulsé par l’IA”. Même un chatbot qui suit un scénario rigide et répond uniquement à ce pour quoi il a été programmé se retrouve vendu comme “assistant intelligent”.</p><p>À force, on a l’impression que l’IA est partout. Mais dans <strong>80 % des cas, il n’y a pas la moindre intelligence artificielle derrière</strong>. Ce sont simplement des scripts, des automatisations plus ou moins basiques, maquillés par une couche marketing.</p><p>Et le problème, ce n’est pas que les scripts soient inutiles — loin de là. C’est qu’on entretient une illusion. On vend du rêve en appelant “IA” quelque chose qui n’a rien d’intelligent.</p>"
+            },
+            {
+              "id": "block-3",
+              "type": "h2",
+              "data": {
+                "content": ""
+              },
+              "content": "Le “IA-washing” : une bulle marketing"
+            },
+            {
+              "id": "block-4",
+              "type": "content",
+              "data": {
+                "content": ""
+              },
+              "content": "<p>Ce phénomène a même un nom officieux : le “IA-washing”. On pourrait le comparer au “greenwashing” dans l’écologie. Collez “IA” sur un produit, et il prend immédiatement de la valeur dans l’esprit des utilisateurs et des investisseurs. Le terme est devenu un label de modernité, presque une promesse magique.</p><p>Mais cette inflation artificielle a des conséquences. D’abord, elle alimente un <strong>marketing abusif</strong>, où les promesses dépassent largement la réalité. Ensuite, elle crée une <strong>confusion totale</strong> : le grand public ne sait plus faire la différence entre un simple automatisme et une IA qui apprend réellement. Enfin, elle entraîne une <strong>perte de confiance</strong> : à force de se faire vendre de la pseudo-IA, les utilisateurs deviennent sceptiques, et finissent par douter même des vrais outils.</p><p>C’est un peu comme si on vendait une calculatrice en affirmant que c’est un “ordinateur quantique”. Au début, ça impressionne. Mais une fois que les gens se rendent compte de la supercherie, plus personne n’y croit.</p>"
+            },
+            {
+              "id": "block-5",
+              "type": "h2",
+              "data": {
+                "content": ""
+              },
+              "content": "Qu’est-ce qu’un script, vraiment ?"
+            },
+            {
+              "id": "block-6",
+              "type": "content",
+              "data": {
+                "content": ""
+              },
+              "content": "<p>Un script, c’est du code figé. Il suit une suite d’instructions, dans un ordre déterminé. Si vous remplissez une condition, il exécute une action. Sinon, il en exécute une autre. Point.</p><p>Prenons un exemple concret : un petit programme qui affiche “bonjour” si vous écrivez “bonjour”. C’est un script. Il n’ira pas plus loin, il ne comprendra pas vos intentions, il ne saura pas improviser. Pour qu’il évolue, il faudra qu’un humain le modifie et ajoute de nouvelles conditions.</p><p>Les scripts ne sont pas inutiles, bien au contraire. Ils sont rapides, fiables, prévisibles. Ils font parfaitement leur travail… tant qu’on ne leur demande pas plus. Le problème, c’est quand on essaie de faire croire qu’ils sont “intelligents”.</p>"
+            },
+            {
+              "id": "block-7",
+              "type": "h2",
+              "data": {
+                "content": ""
+              },
+              "content": "Et l’intelligence artificielle, alors ?"
+            },
+            {
+              "id": "block-8",
+              "type": "content",
+              "data": {
+                "content": ""
+              },
+              "content": "<p>L’IA, ce n’est pas juste un script qui répond à une condition. C’est un système qui <strong>analyse des données, apprend de l’expérience et s’adapte à des situations nouvelles</strong>. Elle n’a pas besoin d’être reprogrammée en permanence, car elle ajuste son comportement en fonction de ce qu’elle apprend.</p><p>Un exemple simple : un assistant conversationnel. Un script répondra toujours de la même façon à une entrée donnée. Une IA, elle, sera capable de comprendre des formulations différentes, de saisir l’intention derrière vos mots, et même de s’améliorer avec le temps en intégrant du feedback.</p><p>Autre exemple : Netflix. Le moteur de recommandation n’est pas un simple script qui vous propose les films les plus regardés. C’est un système qui analyse votre historique, croise vos goûts avec ceux de millions d’autres utilisateurs, détecte des patterns et vous propose des contenus qui évoluent en fonction de vos comportements. Ça, c’est de l’IA.</p><p>La nuance est énorme : <strong>un script exécute, une IA apprend.</strong></p>"
+            },
+            {
+              "id": "block-9",
+              "type": "h2",
+              "data": {
+                "content": ""
+              },
+              "content": "Pourquoi cette distinction est cruciale"
+            },
+            {
+              "id": "block-10",
+              "type": "content",
+              "data": {
+                "content": ""
+              },
+              "content": "<p>On pourrait se dire : peu importe le nom, tant que l’outil marche. Mais non. Parce que cette confusion a des conséquences bien réelles.</p><p>D’abord, elle fausse les choix. Un simple script peut être largement suffisant pour automatiser une tâche répétitive, mais si on vous le vend comme de l’IA révolutionnaire, vous allez probablement payer plus cher que nécessaire. Ensuite, elle gaspille des ressources. Les entreprises investissent dans des solutions “IA” qui n’en sont pas, et passent à côté des vraies innovations. Enfin, elle abîme la crédibilité des acteurs sérieux. Quand des utilisateurs découvrent qu’on leur a vendu un simple automatisme en le maquillant, ils deviennent méfiants, et finissent par mettre tout dans le même sac.</p><p>Savoir distinguer un script d’une IA, ce n’est pas du jargon technique. C’est une question de <strong>lucidité et de stratégie</strong>.</p>"
+            },
+            {
+              "id": "block-11",
+              "type": "h2",
+              "data": {
+                "content": ""
+              },
+              "content": "Les scripts ne sont pas les ennemis"
+            },
+            {
+              "id": "block-12",
+              "type": "content",
+              "data": {
+                "content": ""
+              },
+              "content": "<p>Soyons clairs : un script n’est pas une mauvaise solution. Dans beaucoup de cas, c’est même la meilleure. Si vous avez une tâche répétitive, figée, qui ne demande aucune capacité d’analyse, alors un script est idéal. Il sera plus rapide, plus fiable et moins coûteux qu’une IA.</p><p>Le problème n’est donc pas l’existence des scripts, mais le <strong>mensonge autour de leur nature</strong>. Faire passer un script pour une IA, c’est comme vendre une bicyclette en disant que c’est une voiture électrique. La bicyclette n’a rien de honteux, mais si vous l’achetez en pensant que c’est un véhicule motorisé, la déception est garantie.</p>"
+            },
+            {
+              "id": "block-13",
+              "type": "h2",
+              "data": {
+                "content": ""
+              },
+              "content": "Notre regard de studio"
+            },
+            {
+              "id": "block-14",
+              "type": "content",
+              "data": {
+                "content": ""
+              },
+              "content": "<p>Si on insiste autant là-dessus, c’est parce qu’on le vit au quotidien. En tant que studio digital, on voit passer des clients qui arrivent avec des outils soi-disant “IA”, persuadés d’avoir trouvé la solution miracle. Sauf qu’au moment de gratter un peu, on découvre qu’il ne s’agit que d’un enchaînement de conditions figées. Résultat : frustration, perte de temps, perte de budget.</p><p>Notre philosophie est simple : pas de bullshit.</p><ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>Si c’est un script, on le dit clairement, et on explique ce qu’il permet de faire.</p></li><li class=\"mb-1\"><p>Si c’est de l’IA, on montre comment elle apprend, sur quelles données, et jusqu’où elle peut aller.</p></li><li class=\"mb-1\"><p>Et surtout, on choisit toujours <strong>la solution la plus adaptée</strong>, pas celle qui fait le plus joli sur une plaquette.</p></li></ul><p>La technologie est un outil. Pas un slogan.</p><p></p>"
+            },
+            {
+              "id": "block-15",
+              "type": "h2",
+              "data": {
+                "content": ""
+              },
+              "content": "Conclusion : séparer le vrai du faux"
+            },
+            {
+              "id": "block-16",
+              "type": "content",
+              "data": {
+                "content": ""
+              },
+              "content": "<p>Tout ce qui brille n’est pas de l’IA.<br>Un script peut être extrêmement utile, mais il reste ce qu’il est : du code figé. Une IA, elle, est définie par sa capacité à comprendre, apprendre et s’adapter.</p><p>La seule vraie question à poser devant un outil, c’est la suivante :</p><blockquote><p><br><strong>“Est-ce que cet outil apprend de lui-même ?”</strong></p></blockquote><p><br>Si la réponse est non, alors ce n’est pas de l’intelligence artificielle.</p><p>Et ce n’est pas grave. Tant qu’on ne vous le vend pas comme tel.<br><br>✨ <em>Cet article fait partie de notre ligne éditoriale : distinguer les vraies applications de l’IA du simple vernis marketing. Parce qu’au final, la seule promesse qui compte, c’est celle qu’on peut tenir.</em></p>"
+            }
+          ],
+          "hasCustomSlug": false
+        }
+      ],
+      "filters": [
+        "All",
+        "Brand",
+        "IA"
+      ]
+    },
+    "_isPreview": true,
+    "_previewId": "preview-1756825270141",
+    "_originalPage": "pages",
+    "footer": {
+      "logo": "soliva",
+      "logoImage": "",
+      "description": "AI-Native Studio",
+      "links": [
+        {
+          "title": "Get in touch",
+          "url": "contact"
+        },
+        {
+          "title": "Le studio",
+          "url": "studio"
+        },
+        {
+          "title": "Réalisations",
+          "url": "work"
+        },
+        {
+          "title": "Le blog",
+          "url": "blog"
+        },
+        {
+          "title": "Kodza",
+          "url": ""
+        },
+        {
+          "title": "Hello",
+          "url": "hello-test"
+        }
+      ],
+      "socialLinks": [
+        {
+          "platform": "linkedin",
+          "url": ""
+        },
+        {
+          "platform": "medium",
+          "url": ""
+        },
+        {
+          "platform": "instagram",
+          "url": ""
+        },
+        {
+          "platform": "twitter",
+          "url": ""
+        }
+      ],
+      "copyright": "© 2025 Soliva",
+      "bottomLinks": [
+        "home",
+        "hello-test"
+      ],
+      "legalPageLabels": {}
+    },
+    "custom": [
+      {
+        "id": "nouvelle-page",
+        "title": "Nouvelle page",
+        "slug": "nouvelle-page",
+        "description": "",
+        "content": "",
+        "blocks": [
+          {
+            "id": "block-1756390279798",
+            "type": "content",
+            "content": "",
+            "title": "Description"
+          }
+        ]
+      },
+      {
+        "id": "test-page",
+        "title": "Test Page",
+        "slug": "test-page",
+        "description": "",
+        "content": "",
+        "blocks": [
+          {
+            "id": "block-1756390279798",
+            "type": "content",
+            "content": "",
+            "title": "Description"
+          }
+        ],
+        "hero": {
+          "title": "test de page"
+        }
+      },
+      {
+        "id": "test-page-new",
+        "title": "Test Page",
+        "slug": "test-page-new",
+        "description": "",
+        "content": "",
+        "blocks": [
+          {
+            "id": "block-1756390279798",
+            "type": "content",
+            "content": "",
+            "title": "Description"
+          }
+        ],
+        "hero": {
+          "title": "test de page"
+        }
+      }
+    ],
+    "pages": {
+      "pages": [
+        {
+          "id": "hello-test",
+          "title": "Hello",
+          "content": "<h2>Recette de cuisine</h2>\n<p>Ce guide présente une recette simple avec des étapes claires, des temps de cuisson précis et une liste d’ingrédients courte. Vous trouverez les quantités exactes, les ustensiles nécessaires et des variantes pour adapter la recette en 20 minutes, même en semaine.</p>",
+          "slug": "hello-test",
+          "status": "published",
+          "description": "<p></p>",
+          "blocks": [
+            {
+              "id": "block-1",
+              "type": "h2",
+              "content": "Recette de cuisine"
+            },
+            {
+              "id": "block-2",
+              "type": "content",
+              "content": "<p>Ce guide présente une recette simple avec des étapes claires, des temps de cuisson précis et une liste d’ingrédients courte. Vous trouverez les quantités exactes, les ustensiles nécessaires et des variantes pour adapter la recette en 20 minutes, même en semaine.</p>",
+              "title": "Description"
+            },
+            {
+              "id": "block-1756392134898",
+              "type": "projects",
+              "content": "",
+              "title": "NOS RÉALISATIONS",
+              "maxProjects": 6,
+              "selectedProjects": [
+                "project-1",
+                "project-2",
+                "project-3",
+                "project-4"
+              ],
+              "theme": "light"
+            },
+            {
+              "id": "block-1756392480232",
+              "type": "two-columns",
+              "content": "",
+              "leftColumn": [
+                {
+                  "id": "block-1756392484040-0.09886361847597935",
+                  "type": "h2",
+                  "content": "Accélérez vos résultats aujourd’hui"
+                },
+                {
+                  "id": "block-1756393044999-0.9073500461618058",
+                  "type": "content",
+                  "content": "<p>Réservez un créneau de 20 minutes et repartez avec un plan d’action clair pour les 30 prochains jours. Nous identifions trois priorités mesurables, les ressources nécessaires et un calendrier précis. Résultat attendu: premiers gains visibles sous deux semaines.</p>"
+                }
+              ],
+              "rightColumn": [
+                {
+                  "id": "block-1756392508564-0.350207173272053",
+                  "type": "image",
+                  "content": "",
+                  "image": {
+                    "src": "/uploads/1756392512213-97c1ffbf.jpg",
+                    "alt": ""
+                  }
+                }
+              ],
+              "layout": "left-right",
+              "gap": "medium",
+              "alignment": "top"
+            },
+            {
+              "id": "block-1756392538443",
+              "type": "logos",
+              "content": "",
+              "title": "NOS CLIENTS",
+              "logos": [
+                {
+                  "src": "/uploads/1756392549258-1fb6ed81.png",
+                  "alt": ""
+                },
+                {
+                  "src": "/uploads/1756392552871-2950fd71.png",
+                  "alt": ""
+                },
+                {
+                  "src": "/uploads/1756392583920-73c8d2a0.png",
+                  "alt": ""
+                }
+              ]
+            },
+            {
+              "id": "block-1756392615686",
+              "type": "contact",
+              "content": "",
+              "title": "contactez-nous",
+              "ctaText": "Yep !",
+              "ctaLink": "https://google.com",
+              "theme": "auto"
+            },
+            {
+              "id": "block-1756392735016",
+              "type": "services",
+              "content": "",
+              "title": "Test services",
+              "offerings": [
+                {
+                  "id": "service-1",
+                  "title": "test service 1",
+                  "description": "<p>\"Test Service 1\" propulse votre contenu en ligne en boostant la visibilité et l'engagement. Grâce à notre analyse de données précise en temps réel, nous optimisons votre performance web, vous permettant de surpasser vos concurrents.</p>",
+                  "icon": ""
+                }
+              ],
+              "theme": "light"
+            }
+          ],
+          "publishedAt": "2025-08-28T14:25:16.756Z",
+          "hero": {
+            "title": ""
+          }
+        }
+      ]
+    }
+  },
+  "page": "pages",
+  "createdAt": "2025-09-02T15:01:11.087Z",
+  "expiresAt": "2025-09-03T15:01:11.087Z"
+}

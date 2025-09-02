@@ -1,8 +1,9 @@
 "use client";
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import BlockEditor from '../../components/BlockEditor';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import Sidebar from '../../components/Sidebar';
+import HeaderAdmin from '../../components/HeaderAdmin';
+import BlockEditor from '../../components/BlockEditor';
 import MediaUploader from '../../components/MediaUploader';
 import type { Content } from '@/types/content';
 
@@ -474,86 +475,25 @@ export default function WorkProjectEdit() {
       {/* Zone principale */}
       <div className="flex flex-col">
         {/* Header avec SaveBar sticky */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-start justify-between">
-              <div>
-                <h1 className="text-4xl font-semibold text-gray-900 mb-2" style={{ fontSize: '2.25rem' }}>
-                  {project.title || 'Nouveau projet'}
-                </h1>
-                <button
-                  onClick={() => {
-                    // Rediriger directement vers la page work
-                    router.push('/admin?page=work');
-                  }}
-                  className="text-sm text-gray-500 hover:text-gray-700"
-                >
-                  ← Retour aux projets
-                </button>
-              </div>
-            
-              <div className="flex items-center space-x-3">
-                {hasUnsavedChanges && (
-                  <span className="text-sm text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
-                    Modifications non enregistrées
-                  </span>
-                )}
-                
-                {saveStatus === 'saving' && (
-                  <div className="flex items-center space-x-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                    <span className="text-sm text-gray-600">Enregistrement...</span>
-                  </div>
-                )}
-                
-                {saveStatus === 'success' && (
-                  <span className="text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full">
-                    Enregistré
-                  </span>
-                )}
-                
-                <button
-                  onClick={hasUnsavedChanges ? handlePreview : () => window.open(`/work/${project.slug || project.id}`, '_blank')}
-                  className={`text-sm px-4 py-2 rounded-lg transition-colors ${
-                    hasUnsavedChanges 
-                      ? 'bg-orange-600 text-white hover:bg-orange-700' 
-                      : 'bg-gray-600 text-white hover:bg-gray-700'
-                  }`}
-                  title={hasUnsavedChanges ? "Aperçu avec les modifications non sauvegardées" : "Voir le projet publié"}
-                >
-                  {hasUnsavedChanges ? '👁️ Aperçu' : '🔗 Voir la page'}
-                </button>
-                
-                <button
-                  onClick={() => handleSaveWithStatus('draft')}
-                  disabled={saveStatus === 'saving'}
-                  className={`text-sm px-4 py-2 rounded-lg transition-colors ${
-                    saveStatus === 'saving'
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : 'bg-gray-600 text-white hover:bg-gray-700'
-                  }`}
-                  title={project.status === 'published' ? "Repasser le projet en brouillon" : "Enregistrer comme brouillon"}
-                >
-                  {project.status === 'published' ? '📝 Passer en brouillon' : '💾 Enregistrer brouillon'}
-                </button>
-                
-                <button
-                  onClick={() => handleSaveWithStatus('published')}
-                  disabled={saveStatus === 'saving'}
-                  className={`text-sm px-4 py-2 rounded-lg transition-colors ${
-                    saveStatus === 'saving'
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : project.status === 'published'
-                        ? 'bg-green-600 text-white hover:bg-green-700'
-                        : 'bg-blue-600 text-white hover:bg-blue-700'
-                  }`}
-                >
-                  {project.status === 'published' ? '✅ Mettre à jour' : '🚀 Publier'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
+        <HeaderAdmin
+          title={project.title || 'Nouveau projet'}
+          backButton={{
+            text: '← Retour aux projets',
+            onClick: () => router.push('/admin?page=work')
+          }}
+          actions={{
+            hasUnsavedChanges,
+            saveStatus,
+            onPreview: hasUnsavedChanges ? handlePreview : () => window.open(`/work/${project.slug || project.id}`, '_blank'),
+            onSaveDraft: () => handleSaveWithStatus('draft'),
+            onPublish: () => handleSaveWithStatus('published'),
+            previewDisabled: saveStatus === 'saving',
+            saveDisabled: saveStatus === 'saving',
+            publishDisabled: saveStatus === 'saving',
+            previewTitle: hasUnsavedChanges ? "Aperçu avec les modifications non sauvegardées" : "Voir le projet publié",
+            draftTitle: project.status === 'published' ? "Repasser le projet en brouillon" : "Enregistrer comme brouillon"
+          }}
+        />
 
         {/* Contenu principal */}
         <main className="flex-1 p-6">

@@ -1,8 +1,9 @@
 "use client";
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import BlockEditor from '../../components/BlockEditor';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import Sidebar from '../../components/Sidebar';
+import HeaderAdmin from '../../components/HeaderAdmin';
+import BlockEditor from '../../components/BlockEditor';
 import type { Content } from '@/types/content';
 
 interface Page {
@@ -374,82 +375,25 @@ export default function PageEdit() {
       {/* Zone principale */}
       <div className="flex flex-col">
         {/* Header avec SaveBar sticky */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-start justify-between">
-              {/* Titre et navigation */}
-              <div className="flex items-center space-x-4">
-                <button
-                  onClick={() => router.push('/admin/pages')}
-                  className="text-gray-500 hover:text-gray-700 transition-colors"
-                >
-                  ← Retour aux pages
-                </button>
-                <div className="flex items-center space-x-3">
-                  <span className="text-2xl">📄</span>
-                  <div>
-                    <h1 className="text-2xl font-bold text-gray-900">
-                      {pageId === 'new' ? 'Nouvelle page' : page.title}
-                    </h1>
-                    <p className="text-sm text-gray-600">
-                      {pageId === 'new' ? 'Créer une nouvelle page' : 'Modifier la page'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Actions */}
-              <div className="flex items-center space-x-3">
-                {hasUnsavedChanges && (
-                  <span className="text-sm text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
-                    ⚠️ Modifications non sauvegardées
-                  </span>
-                )}
-                
-                {saveStatus === 'saving' && (
-                  <span className="text-sm text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
-                    💾 Sauvegarde...
-                  </span>
-                )}
-                
-                {saveStatus === 'success' && (
-                  <span className="text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full">
-                    ✅ Sauvegardé
-                  </span>
-                )}
-                
-                {saveStatus === 'error' && (
-                  <span className="text-sm text-red-600 bg-red-50 px-3 py-1 rounded-full">
-                    ❌ Erreur
-                  </span>
-                )}
-                
-                <button
-                  onClick={handlePreview}
-                  className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
-                >
-                  👁️ Aperçu
-                </button>
-                
-                <button
-                  onClick={() => handleSaveWithStatus('draft')}
-                  disabled={!hasUnsavedChanges || saveStatus === 'saving'}
-                  className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-                >
-                  Brouillon
-                </button>
-                
-                <button
-                  onClick={() => handleSaveWithStatus('published')}
-                  disabled={!hasUnsavedChanges || saveStatus === 'saving'}
-                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-                >
-                  {saveStatus === 'saving' ? 'Sauvegarde...' : '💾 Publier'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
+        <HeaderAdmin
+          title={pageId === 'new' ? 'Nouvelle page' : page.title}
+          backButton={{
+            text: '← Retour aux pages',
+            onClick: () => router.push('/admin/pages')
+          }}
+          actions={{
+            hasUnsavedChanges,
+            saveStatus,
+            onPreview: handlePreview,
+            onSaveDraft: () => handleSaveWithStatus('draft'),
+            onPublish: () => handleSaveWithStatus('published'),
+            previewDisabled: saveStatus === 'saving',
+            saveDisabled: !hasUnsavedChanges || saveStatus === 'saving',
+            publishDisabled: !hasUnsavedChanges || saveStatus === 'saving',
+            previewTitle: 'Aperçu de la page',
+            draftTitle: 'Enregistrer comme brouillon'
+          }}
+        />
 
         {/* Contenu principal */}
         <main className="flex-1 p-6">

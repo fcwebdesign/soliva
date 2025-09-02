@@ -1,8 +1,9 @@
 "use client";
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import BlockEditor from '../../components/BlockEditor';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import Sidebar from '../../components/Sidebar';
+import HeaderAdmin from '../../components/HeaderAdmin';
+import BlockEditor from '../../components/BlockEditor';
 import type { Content } from '@/types/content';
 import slugify from 'slugify';
 
@@ -47,6 +48,28 @@ export default function BlogArticleEdit() {
   useEffect(() => {
     fetchContent();
   }, []);
+
+  // Réinitialiser hasUnsavedChanges quand l'article est chargé
+  useEffect(() => {
+    if (article && !loading) {
+      console.log('🔄 Réinitialisation hasUnsavedChanges:', {
+        articleId: article.id,
+        articleTitle: article.title,
+        loading,
+        hasUnsavedChanges: false
+      });
+      setHasUnsavedChanges(false);
+    }
+  }, [article, loading]);
+
+  // Debug: Afficher l'état de hasUnsavedChanges
+  useEffect(() => {
+    console.log('🔍 État hasUnsavedChanges:', {
+      hasUnsavedChanges,
+      articleId: article?.id,
+      loading
+    });
+  }, [hasUnsavedChanges, article, loading]);
 
   // Ajouter la classe admin-page au body
   useEffect(() => {
@@ -100,6 +123,12 @@ export default function BlogArticleEdit() {
 
   const updateArticle = (updates: Partial<Article>) => {
     if (!article) return;
+    
+    console.log('📝 updateArticle appelé:', {
+      updates,
+      currentHasUnsavedChanges: hasUnsavedChanges,
+      willSetTo: true
+    });
     
     // Auto-génération du slug en temps réel si le titre change
     if (updates.title && !article.hasCustomSlug) {
@@ -412,205 +441,144 @@ export default function BlogArticleEdit() {
       {/* Zone principale */}
       <div className="flex flex-col">
         {/* Header avec SaveBar sticky */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-start justify-between">
-              <div>
-                <h1 className="text-4xl font-semibold text-gray-900 mb-2" style={{ fontSize: '2.25rem' }}>
-                  {article.title || 'Nouvel article'}
-                </h1>
-                <button
-                  onClick={() => {
-                    // Rediriger directement vers la page blog
-                    router.push('/admin?page=blog');
-                  }}
-                  className="text-sm text-gray-500 hover:text-gray-700"
-                >
-                  ← Retour au blog
-                </button>
-              </div>
-            
-            <div className="flex items-center space-x-3">
-              {hasUnsavedChanges && (
-                <span className="text-sm text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
-                  Modifications non enregistrées
-                </span>
-              )}
-              
-              {saveStatus === 'saving' && (
-                <div className="flex items-center space-x-2">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                  <span className="text-sm text-gray-600">Enregistrement...</span>
-                </div>
-              )}
-              
-              {saveStatus === 'success' && (
-                <span className="text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full">
-                  Enregistré
-                </span>
-              )}
-              
-              <button
-                onClick={hasUnsavedChanges ? handlePreview : () => window.open(`/blog/${article.slug || article.id}`, '_blank')}
-                className={`text-sm px-4 py-2 rounded-lg transition-colors ${
-                  hasUnsavedChanges 
-                    ? 'bg-orange-600 text-white hover:bg-orange-700' 
-                    : 'bg-gray-600 text-white hover:bg-gray-700'
-                }`}
-                title={hasUnsavedChanges ? "Aperçu avec les modifications non sauvegardées" : "Voir l'article publié"}
-              >
-                {hasUnsavedChanges ? '👁️ Aperçu' : '🔗 Voir la page'}
-              </button>
-              
-              <button
-                onClick={() => handleSaveWithStatus('draft')}
-                disabled={saveStatus === 'saving'}
-                className={`text-sm px-4 py-2 rounded-lg transition-colors ${
-                  saveStatus === 'saving'
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-gray-600 text-white hover:bg-gray-700'
-                }`}
-                title={article.status === 'published' ? "Repasser l'article en brouillon" : "Enregistrer comme brouillon"}
-              >
-                {article.status === 'published' ? '📝 Passer en brouillon' : '💾 Enregistrer brouillon'}
-              </button>
-              
-              <button
-                onClick={() => handleSaveWithStatus('published')}
-                disabled={saveStatus === 'saving'}
-                className={`text-sm px-4 py-2 rounded-lg transition-colors ${
-                  saveStatus === 'saving'
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : article.status === 'published'
-                      ? 'bg-green-600 text-white hover:bg-green-700'
-                      : 'bg-blue-600 text-white hover:bg-blue-700'
-                }`}
-              >
-                {article.status === 'published' ? '✅ Mettre à jour' : '🚀 Publier'}
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+        <HeaderAdmin
+          title={article.title || 'Nouvel article'}
+          backButton={{
+            text: '← Retour au blog',
+            onClick: () => router.push('/admin?page=blog')
+          }}
+          actions={{
+            hasUnsavedChanges,
+            saveStatus,
+            onPreview: hasUnsavedChanges ? handlePreview : () => window.open(`/blog/${article.slug || article.id}`, '_blank'),
+            onSaveDraft: () => handleSaveWithStatus('draft'),
+            onPublish: () => handleSaveWithStatus('published'),
+            previewDisabled: saveStatus === 'saving',
+            saveDisabled: saveStatus === 'saving',
+            publishDisabled: saveStatus === 'saving',
+            previewTitle: hasUnsavedChanges ? "Aperçu avec les modifications non sauvegardées" : "Voir l'article publié",
+            draftTitle: article.status === 'published' ? "Repasser l'article en brouillon" : "Enregistrer comme brouillon"
+          }}
+        />
 
-      {/* Contenu principal */}
-      <main className="flex-1 p-6">
-        <div className="max-w-7xl mx-auto space-y-6">
-          {/* Titre */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Titre de l'article
-            </label>
-            <input
-              type="text"
-              value={article.title || ''}
-              onChange={(e) => updateArticle({ title: e.target.value })}
-              className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              placeholder="Titre de l'article..."
-            />
-          </div>
-
-          {/* Slug */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Slug (URL)
+        {/* Contenu principal */}
+        <main className="flex-1 p-6">
+          <div className="max-w-7xl mx-auto space-y-6">
+            {/* Titre */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Titre de l'article
               </label>
-              {article.hasCustomSlug && (
-                <button
-                  onClick={() => {
-                    const autoSlug = slugify(article.title || '', {
-                      lower: true,
-                      strict: true,
-                      locale: 'fr'
-                    });
-                    updateArticle({ 
-                      slug: autoSlug,
-                      id: autoSlug,
-                      hasCustomSlug: false
-                    });
-                  }}
-                  className="text-xs text-blue-600 hover:text-blue-700 underline"
-                  title="Réinitialiser le slug automatiquement à partir du titre"
-                >
-                  🔄 Réinitialiser automatiquement
-                </button>
-              )}
+              <input
+                type="text"
+                value={article.title || ''}
+                onChange={(e) => updateArticle({ title: e.target.value })}
+                className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                placeholder="Titre de l'article..."
+              />
             </div>
-            <input
-              type="text"
-              value={article.slug || article.id || ''}
-              onChange={(e) => {
-                const newSlug = e.target.value;
-                updateArticle({ 
-                  slug: newSlug,
-                  id: newSlug // Mettre à jour l'ID avec le slug
-                });
-              }}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              placeholder="slug-de-larticle"
-            />
-            {!article.hasCustomSlug && (
-              <p className="text-xs text-gray-500 mt-1">
-                💡 Le slug se génère automatiquement à partir du titre
-              </p>
-            )}
-          </div>
 
-          {/* Informations de statut */}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <div className="flex items-center justify-between">
-              <div>
-                <span className="text-sm font-medium text-gray-700">Statut :</span>
-                <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${
-                  article.status === 'published' 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {article.status === 'published' ? '✅ Publié' : '📝 Brouillon'}
-                </span>
+            {/* Slug */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Slug (URL)
+                </label>
+                {article.hasCustomSlug && (
+                  <button
+                    onClick={() => {
+                      const autoSlug = slugify(article.title || '', {
+                        lower: true,
+                        strict: true,
+                        locale: 'fr'
+                      });
+                      updateArticle({ 
+                        slug: autoSlug,
+                        id: autoSlug,
+                        hasCustomSlug: false
+                      });
+                    }}
+                    className="text-xs text-blue-600 hover:text-blue-700 underline"
+                    title="Réinitialiser le slug automatiquement à partir du titre"
+                  >
+                    🔄 Réinitialiser automatiquement
+                  </button>
+                )}
               </div>
-              {article.publishedAt && (
-                <div className="text-sm text-gray-500">
-                  Publié le {new Date(article.publishedAt).toLocaleDateString('fr-FR', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
-                </div>
+              <input
+                type="text"
+                value={article.slug || article.id || ''}
+                onChange={(e) => {
+                  const newSlug = e.target.value;
+                  updateArticle({ 
+                    slug: newSlug,
+                    id: newSlug // Mettre à jour l'ID avec le slug
+                  });
+                }}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                placeholder="slug-de-larticle"
+              />
+              {!article.hasCustomSlug && (
+                <p className="text-xs text-gray-500 mt-1">
+                  💡 Le slug se génère automatiquement à partir du titre
+                </p>
               )}
             </div>
-          </div>
 
-          {/* Éditeur de blocs */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Contenu de l'article
-            </label>
-            <BlockEditor
-              pageData={article}
-              pageKey="article"
-              onUpdate={(updates) => updateArticle(updates)}
-            />
-          </div>
+            {/* Informations de statut */}
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-sm font-medium text-gray-700">Statut :</span>
+                  <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${
+                    article.status === 'published' 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {article.status === 'published' ? '✅ Publié' : '📝 Brouillon'}
+                  </span>
+                </div>
+                {article.publishedAt && (
+                  <div className="text-sm text-gray-500">
+                    Publié le {new Date(article.publishedAt).toLocaleDateString('fr-FR', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
 
-          {/* Extrait */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Extrait (résumé)
-            </label>
-            <textarea
-              value={article.excerpt || ''}
-              onChange={(e) => updateArticle({ excerpt: e.target.value })}
-              rows={3}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              placeholder="Résumé de l'article..."
-            />
+            {/* Éditeur de blocs */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Contenu de l'article
+              </label>
+              <BlockEditor
+                pageData={article}
+                pageKey="article"
+                onUpdate={(updates) => updateArticle(updates)}
+              />
+            </div>
+
+            {/* Extrait */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Extrait (résumé)
+              </label>
+              <textarea
+                value={article.excerpt || ''}
+                onChange={(e) => updateArticle({ excerpt: e.target.value })}
+                rows={3}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                placeholder="Résumé de l'article..."
+              />
+            </div>
           </div>
-        </div>
-      </main>
+        </main>
       </div>
     </div>
   );
