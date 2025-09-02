@@ -17,9 +17,50 @@ const WysiwygEditor = ({ value, onChange, placeholder }) => {
         horizontalRule: false,
         // Réactiver les listes et citations pour l'éditeur de contenu
         blockquote: true,
-        bulletList: true,
-        orderedList: true,
-        listItem: true,
+        bulletList: {
+          HTMLAttributes: {
+            class: 'list-disc list-inside',
+          },
+          // Configuration pour corriger le bug du premier élément après du texte
+          content: 'listItem+',
+          defining: true,
+          parseHTML() {
+            return [
+              {
+                tag: 'ul',
+              },
+            ];
+          },
+          renderHTML({ HTMLAttributes }) {
+            return ['ul', HTMLAttributes, 0];
+          },
+        },
+        orderedList: {
+          HTMLAttributes: {
+            class: 'list-decimal list-inside',
+          },
+          // Configuration pour corriger le bug du premier élément après du texte
+          content: 'listItem+',
+          defining: true,
+          parseHTML() {
+            return [
+              {
+                tag: 'ol',
+              },
+            ];
+          },
+          renderHTML({ HTMLAttributes }) {
+            return ['ol', HTMLAttributes, 0];
+          },
+        },
+        listItem: {
+          HTMLAttributes: {
+            class: 'mb-1',
+          },
+          // Configuration pour corriger le bug du premier élément
+          content: 'inline*',
+          defining: true,
+        },
       }),
       TextAlign.configure({
         types: ['heading', 'paragraph'],
@@ -41,12 +82,13 @@ const WysiwygEditor = ({ value, onChange, placeholder }) => {
     ],
     content: value,
     onUpdate: ({ editor }) => {
-      // Stocker directement le HTML
-      onChange(editor.getHTML());
+      // Laisser TipTap travailler naturellement avec son schéma par défaut
+      const html = editor.getHTML();
+      onChange(html);
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-sm max-w-none focus:outline-none min-h-[200px] p-3',
+        class: 'prose prose-sm max-w-none focus:outline-none min-h-[200px] p-3 wysiwyg-editor',
       },
     },
     immediatelyRender: false,
@@ -80,6 +122,7 @@ const WysiwygEditor = ({ value, onChange, placeholder }) => {
   // Mettre à jour le contenu quand value change
   React.useEffect(() => {
     if (editor && value !== editor.getHTML()) {
+      // Pas de nettoyage - on charge le contenu tel quel
       editor.commands.setContent(value);
     }
   }, [value, editor]);

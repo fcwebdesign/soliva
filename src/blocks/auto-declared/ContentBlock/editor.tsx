@@ -3,10 +3,16 @@ import WysiwygEditor from '../../../app/admin/components/WysiwygEditor';
 
 interface ContentData {
   content: string;
+  theme?: 'light' | 'dark' | 'auto';
 }
 
 export default function ContentBlockEditor({ data, onChange }: { data: ContentData; onChange: (data: ContentData) => void }) {
   const [isLoadingBlockAI, setIsLoadingBlockAI] = useState<string | null>(null);
+
+  const handleContentChange = (content: string) => {
+    // Pas de nettoyage HTML - on laisse TipTap faire son travail naturellement
+    onChange({ ...data, content });
+  };
 
   const getBlockContentSuggestion = async (blockId: string, blockType: string) => {
     setIsLoadingBlockAI(blockId);
@@ -17,7 +23,7 @@ export default function ContentBlockEditor({ data, onChange }: { data: ContentDa
         body: JSON.stringify({ 
           blockType,
           pageKey: 'content',
-          context: `Contenu de texte pour la page`
+          context: `Contenu pour un bloc de contenu`
         })
       });
 
@@ -27,7 +33,7 @@ export default function ContentBlockEditor({ data, onChange }: { data: ContentDa
         throw new Error(responseData.error || 'Erreur API');
       }
 
-      onChange({ content: responseData.suggestedContent });
+      onChange({ ...data, content: responseData.suggestedContent });
       
     } catch (error) {
       console.error('Erreur suggestion contenu IA:', error);
@@ -53,8 +59,8 @@ export default function ContentBlockEditor({ data, onChange }: { data: ContentDa
         </button>
       </div>
       <WysiwygEditor
-        value={data.content}
-        onChange={(content: any) => onChange({ content })}
+        value={data.content || ''}
+        onChange={handleContentChange}
         placeholder="Saisissez votre contenu ici..."
       />
     </div>

@@ -53,7 +53,7 @@ export default function H3BlockEditor({ data, onChange }: { data: H3Data; onChan
       </div>
       <input
         type="text"
-        value={data.content}
+        value={data.content || ''}
         onChange={(e) => onChange({ content: e.target.value })}
         placeholder="Sous-titre (H3)"
         className="block-input h3-input"

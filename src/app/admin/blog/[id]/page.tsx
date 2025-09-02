@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import BlockEditor from '../../components/BlockEditor';
 import Sidebar from '../../components/Sidebar';
 import type { Content } from '@/types/content';
+import slugify from 'slugify';
 
 const PAGES = [
   { id: 'home', label: 'Accueil', path: '/', icon: '🏠' },
@@ -28,6 +29,7 @@ interface Article {
   publishedAt?: string;
   excerpt?: string;
   blocks?: any[];
+  hasCustomSlug?: boolean;
 }
 
 export default function BlogArticleEdit() {
@@ -98,6 +100,23 @@ export default function BlogArticleEdit() {
 
   const updateArticle = (updates: Partial<Article>) => {
     if (!article) return;
+    
+    // Auto-génération du slug en temps réel si le titre change
+    if (updates.title && !article.hasCustomSlug) {
+      const autoSlug = slugify(updates.title, {
+        lower: true,           // Tout en minuscules
+        strict: true,          // Supprime les caractères spéciaux
+        locale: 'fr'           // Gestion des accents français
+      });
+      
+      updates.slug = autoSlug;
+      updates.id = autoSlug;   // Mettre à jour l'ID aussi
+    }
+    
+    // Si on modifie manuellement le slug, marquer comme personnalisé
+    if (updates.slug && updates.slug !== article.slug) {
+      updates.hasCustomSlug = true;
+    }
     const updatedArticle = { ...article, ...updates } as Article;
     setArticle(updatedArticle);
     setHasUnsavedChanges(true);
@@ -349,9 +368,8 @@ export default function BlogArticleEdit() {
       setHasUnsavedChanges(false);
       setSaveStatus('success');
       
-      // Forcer le rechargement des données après sauvegarde
+      // Réinitialiser le statut de sauvegarde après un délai
       setTimeout(() => {
-        fetchContent();
         setSaveStatus('idle');
       }, 1000);
     } catch (err) {
@@ -494,9 +512,31 @@ export default function BlogArticleEdit() {
 
           {/* Slug */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Slug (URL)
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Slug (URL)
+              </label>
+              {article.hasCustomSlug && (
+                <button
+                  onClick={() => {
+                    const autoSlug = slugify(article.title || '', {
+                      lower: true,
+                      strict: true,
+                      locale: 'fr'
+                    });
+                    updateArticle({ 
+                      slug: autoSlug,
+                      id: autoSlug,
+                      hasCustomSlug: false
+                    });
+                  }}
+                  className="text-xs text-blue-600 hover:text-blue-700 underline"
+                  title="Réinitialiser le slug automatiquement à partir du titre"
+                >
+                  🔄 Réinitialiser automatiquement
+                </button>
+              )}
+            </div>
             <input
               type="text"
               value={article.slug || article.id || ''}
@@ -510,6 +550,11 @@ export default function BlogArticleEdit() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
               placeholder="slug-de-larticle"
             />
+            {!article.hasCustomSlug && (
+              <p className="text-xs text-gray-500 mt-1">
+                💡 Le slug se génère automatiquement à partir du titre
+              </p>
+            )}
           </div>
 
           {/* Informations de statut */}

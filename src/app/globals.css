@@ -53,6 +53,87 @@
   color: #9ca3af; /* gray-400 */
 }
 
+/* Styles personnalisés pour les listes dans les blocs de contenu (FRONT-END UNIQUEMENT) */
+.custom-lists ul {
+  list-style: none !important;
+  padding-left: 0 !important;
+  margin-bottom: 1rem;
+}
+
+.custom-lists li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.custom-lists li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  background-color: currentColor;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+}
+
+/* Pas d'effet hover sur les listes - ronds statiques uniquement */
+
+/* Styles pour les listes numérotées (garder le style par défaut) */
+.custom-lists ol {
+  list-style: decimal !important;
+  padding-left: 1.5rem !important;
+}
+
+.custom-lists ol li {
+  padding-left: 0;
+}
+
+.custom-lists ol li::before {
+  display: none;
+}
+
+/* Neutraliser les marges des <p> dans les listes (solution GPT) */
+.custom-lists li > p {
+  margin: 0 !important;
+}
+
+/* Si utilisation de @tailwindcss/typography, neutraliser ses marges */
+.custom-lists :where(li>p):not(:where([class~="not-prose"] *)) {
+  margin: 0 !important;
+}
+
+/* PROTECTION ADMIN : Réinitialiser les styles de listes dans l'admin */
+.admin-page .custom-lists ul,
+.admin-page .custom-lists li,
+.admin-page .custom-lists ol {
+  list-style: revert !important;
+  padding-left: revert !important;
+  position: revert !important;
+  margin-bottom: revert !important;
+}
+
+.admin-page .custom-lists li::before {
+  display: none !important;
+}
+
+/* PROTECTION WYSIWYG : Réinitialiser les styles de listes dans l'éditeur */
+.wysiwyg-editor ul,
+.wysiwyg-editor li,
+.wysiwyg-editor ol {
+  list-style: revert !important;
+  padding-left: revert !important;
+  position: revert !important;
+  margin-bottom: revert !important;
+}
+
+.wysiwyg-editor li::before {
+  display: none !important;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -1074,6 +1155,12 @@ a {
 .blog-content > * {
   opacity: 1;
   transform: none;
+}
+.blog-content .blocks-container {
+  margin: 0;
+}
+.blog-content p {
+  line-height: inherit;
 }
 
 .blog-article-page .col:nth-child(1) {

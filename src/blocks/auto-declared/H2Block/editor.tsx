@@ -53,7 +53,7 @@ export default function H2BlockEditor({ data, onChange }: { data: H2Data; onChan
       </div>
       <input
         type="text"
-        value={data.content}
+        value={data.content || ''}
         onChange={(e) => onChange({ content: e.target.value })}
         placeholder="Titre de section (H2)"
         className="block-input h2-input"
