@@ -50,10 +50,22 @@ const BlockRenderer = ({ blocks = [] }) => {
   }, [blocks]);
 
   const renderBlock = (block) => {
+    console.log('🔍 Rendu du bloc:', block.type, block);
+    
+    // Debug spécifique pour le bloc quote
+    if (block.type === 'quote') {
+      console.log('🎯 DEBUG QUOTE - Bloc complet:', block);
+      console.log('🎯 DEBUG QUOTE - Registre disponible:', getAutoDeclaredBlock);
+      console.log('🎯 DEBUG QUOTE - Bloc quote dans registre:', getAutoDeclaredBlock('quote'));
+    }
+    
     // Essayer d'abord le système scalable automatiquement
     const scalableBlock = getAutoDeclaredBlock(block.type);
+    console.log('🔍 Bloc scalable trouvé pour', block.type, ':', scalableBlock);
+    
     if (scalableBlock && scalableBlock.component) {
       const BlockComponent = scalableBlock.component;
+      console.log('🔍 Composant du bloc', block.type, ':', BlockComponent);
       
       // Validation des données avec fallback automatique
       const blockData = {
@@ -66,6 +78,8 @@ const BlockRenderer = ({ blocks = [] }) => {
         ...block
       };
       
+      console.log('🔍 Données du bloc', block.type, ':', blockData);
+      
       return (
         <BlockComponent 
           key={block.id}
@@ -73,6 +87,8 @@ const BlockRenderer = ({ blocks = [] }) => {
         />
       );
     }
+
+    console.warn('⚠️ Bloc scalable non trouvé pour', block.type);
 
     // Fallback pour les blocs non scalables (si on en a encore)
     switch (block.type) {

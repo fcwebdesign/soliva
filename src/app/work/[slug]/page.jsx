@@ -7,6 +7,7 @@ import { TRANSITION_CONFIG } from "@/config";
 import { notFound } from "next/navigation";
 import FormattedText from "@/components/FormattedText";
 import PreviewBar from "@/components/PreviewBar";
+import BlockRenderer from "@/components/BlockRenderer";
 
 import gsap from "gsap";
 import SplitText from "gsap/SplitText";
@@ -191,7 +192,13 @@ const ProjectPage = ({ params }) => {
       });
       const content = await response.json();
       
-      const foundProject = content.work.projects.find(p => p.slug === resolvedParams.slug);
+      // Chercher d'abord dans adminProjects (avec blocs), puis dans projects (fallback)
+      let foundProject = content.work?.adminProjects?.find(p => p.slug === resolvedParams.slug);
+      
+      if (!foundProject) {
+        // Fallback vers les projets publics
+        foundProject = content.work?.projects?.find(p => p.slug === resolvedParams.slug);
+      }
       
       if (!foundProject) {
         notFound();
@@ -202,6 +209,8 @@ const ProjectPage = ({ params }) => {
         slug: foundProject.slug,
         hasContent: !!foundProject.content,
         hasDescription: !!foundProject.description,
+        hasBlocks: !!foundProject.blocks,
+        blocksCount: foundProject.blocks?.length || 0,
         contentLength: foundProject.content?.length || 0,
         contentPreview: foundProject.content?.substring(0, 100),
         descriptionPreview: foundProject.description?.substring(0, 100)
@@ -269,7 +278,15 @@ const ProjectPage = ({ params }) => {
               
               <div className="project-description">
                 <h2>Contenu</h2>
-                <FormattedText>{project.content || project.description}</FormattedText>
+                {/* Priorité 1: Utiliser les blocs scalables s'ils existent */}
+                {project.blocks && project.blocks.length > 0 ? (
+                  <BlockRenderer blocks={project.blocks} />
+                ) : project.content || project.description ? (
+                  /* Priorité 2: Fallback vers le content HTML si pas de blocs */
+                  <FormattedText>{project.content || project.description}</FormattedText>
+                ) : (
+                  <p>Ce projet n'a pas encore de contenu.</p>
+                )}
               </div>
               
               <div className="project-navigation">

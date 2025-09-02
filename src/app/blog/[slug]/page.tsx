@@ -1,15 +1,16 @@
 "use client";
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useGSAP } from "@gsap/react";
 import { useTransitionRouter } from "next-view-transitions";
 import { useTransition } from "@/hooks/useTransition";
 import { TRANSITION_CONFIG } from "@/config";
-import FormattedText from '@/components/FormattedText';
 import PreviewBar from '@/components/PreviewBar';
 import gsap from "gsap";
 import SplitText from "gsap/SplitText";
 import ReactLenis from "lenis/react";
+import BlockRenderer from '@/components/BlockRenderer';
+import FormattedText from '@/components/FormattedText';
 
 gsap.registerPlugin(SplitText);
 
@@ -228,7 +229,11 @@ export default function BlogArticle() {
           </div>
           <div className="col">
             <div className="blog-content">
-              {article.content ? (
+              {/* Priorité 1: Utiliser les blocs scalables s'ils existent */}
+              {article.blocks && article.blocks.length > 0 ? (
+                <BlockRenderer blocks={article.blocks} />
+              ) : article.content ? (
+                /* Priorité 2: Fallback vers le content HTML si pas de blocs */
                 <div className="blog-section">
                   <FormattedText>{article.content}</FormattedText>
                 </div>

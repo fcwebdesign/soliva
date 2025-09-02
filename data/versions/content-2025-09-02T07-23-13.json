@@ -154,6 +154,19 @@
         "ctaText": "Yes, sign me up",
         "ctaLink": "https://google.com",
         "theme": "auto"
+      },
+      {
+        "id": "quote-1756755532179",
+        "type": "quote",
+        "data": {
+          "quote": "Une citation inspirante pour votre contenu...",
+          "author": "Nom de l'auteur",
+          "role": "Fonction",
+          "theme": "auto"
+        },
+        "quote": "dsdfsfds",
+        "author": "sdfdsdfsdf",
+        "role": "dsffsfd"
       }
     ]
   },
@@ -311,16 +324,6 @@
         "alignment": "top"
       },
       {
-        "id": "simple-1756753501377",
-        "type": "simple",
-        "data": {
-          "text": "Hello World !",
-          "color": "blue"
-        },
-        "text": "Florent",
-        "color": "red"
-      },
-      {
         "id": "quote-1756753800786",
         "type": "quote",
         "data": {
@@ -458,6 +461,19 @@
             "id": "block-5",
             "type": "content",
             "content": "<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>"
+          },
+          {
+            "id": "quote-1756796142950",
+            "type": "quote",
+            "data": {
+              "quote": "Une citation inspirante pour votre contenu...",
+              "author": "Nom de l'auteur",
+              "role": "Fonction",
+              "theme": "auto"
+            },
+            "quote": "ddd",
+            "author": "gdgdgd",
+            "role": "gddg"
           }
         ],
         "image": "/uploads/1755561574161-96b8a35f.jpg"
@@ -663,7 +679,7 @@
       {
         "id": "recette",
         "title": "recette",
-        "content": "<p>Découvrez l’essentiel du sujet en 2 minutes. Points clés, exemples concrets, et actions à mettre en place dès aujourd’hui. Pas de théorie inutile, uniquement ce qui vous aide à avancer.</p>",
+        "content": "<p>Découvrez l’essentiel du sujet en 2 minutes. Points clés, exemples concrets, et actions à mettre en place dès aujourd’hui. Pas de théorie inutile, uniquement ce qui vous aide à avancer.</p>\n<img src=\"/uploads/1756796114538-67a6d89c.jpg\" alt=\"\">",
         "status": "published",
         "slug": "recette",
         "publishedAt": "2025-08-28T13:57:02.113Z",
@@ -672,6 +688,34 @@
             "id": "block-1",
             "type": "content",
             "content": "<p>Découvrez l’essentiel du sujet en 2 minutes. Points clés, exemples concrets, et actions à mettre en place dès aujourd’hui. Pas de théorie inutile, uniquement ce qui vous aide à avancer.</p>"
+          },
+          {
+            "id": "quote-1756796073426",
+            "type": "quote",
+            "data": {
+              "quote": "Une citation inspirante pour votre contenu...",
+              "author": "Nom de l'auteur",
+              "role": "Fonction",
+              "theme": "auto"
+            },
+            "quote": "dgd",
+            "author": "fggffg",
+            "role": "fgfggf"
+          },
+          {
+            "id": "image-1756796109873",
+            "type": "image",
+            "data": {
+              "id": "",
+              "type": "image",
+              "image": {
+                "src": "",
+                "alt": ""
+              }
+            },
+            "image": {
+              "src": "/uploads/1756796114538-67a6d89c.jpg"
+            }
           }
         ]
       }

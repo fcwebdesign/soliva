@@ -30,6 +30,14 @@ declare global {
 const REGISTRY: Map<string, BlockModule<any>> =
   globalThis.__AUTO_BLOCKS__ ?? (globalThis.__AUTO_BLOCKS__ = new Map());
 
+// Exposer le registre globalement côté client
+if (typeof window !== 'undefined') {
+  (window as any).__AUTO_BLOCKS__ = REGISTRY;
+  (window as any).getAutoDeclaredBlock = getAutoDeclaredBlock;
+  (window as any).getBlockMetadata = getBlockMetadata;
+  (window as any).getAvailableBlockTypes = getAvailableBlockTypes;
+}
+
 // Fonction d'enregistrement améliorée
 export function registerAutoBlock<T>(mod: BlockModule<T>) {
   if (!mod?.type) throw new Error('registerAutoBlock: type manquant');

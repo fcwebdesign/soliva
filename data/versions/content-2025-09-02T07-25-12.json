@@ -38,47 +38,9 @@
             "id": "block-1756225439361-0.9107021052170442",
             "type": "content",
             "content": "<p>Le studio réunit une équipe compacte de designers et développeurs basée au Hevre. Nous livrons des sites rapides, accessibles et faciles à maintenir, avec des délais clairs et un budget maîtrisé. Exemples récents: refonte e‑commerce (+28% de conversion) et site vitrine B2B chargé en moins de 1,2 s.</p>"
-          },
-          {
-            "id": "h2-1756738088196",
-            "type": "h2",
-            "content": "Accélérez votre croissance maintenant"
-          },
-          {
-            "id": "h3-1756738217920",
-            "type": "h3",
-            "content": "Sous-titre ciblé"
-          },
-          {
-            "id": "services-1756738235279",
-            "type": "services",
-            "title": "OUR CORE OFFERINGS",
-            "theme": "auto",
-            "offerings": [
-              {
-                "id": "service-1756738237408",
-                "title": "dfgffdg",
-                "description": "<p>dfdfg</p>",
-                "icon": ""
-              }
-            ]
           }
         ],
-        "rightColumn": [
-          {
-            "id": "",
-            "type": "image",
-            "image": {
-              "src": "/uploads/1756738070243-d3e7510d.png",
-              "alt": ""
-            }
-          },
-          {
-            "id": "content-1756738115140",
-            "type": "content",
-            "content": "<p>Contenu clair, utile et facile à lire. Nous présentons l’information essentielle en quelques lignes, avec des exemples concrets et des actions immédiates à entreprendre. Objectif: vous permettre de comprendre vite et d’agir sans perdre de temps.</p>"
-          }
-        ],
+        "rightColumn": [],
         "layout": "right-left",
         "gap": "large",
         "alignment": "bottom",
@@ -192,6 +154,19 @@
         "ctaText": "Yes, sign me up",
         "ctaLink": "https://google.com",
         "theme": "auto"
+      },
+      {
+        "id": "quote-1756755532179",
+        "type": "quote",
+        "data": {
+          "quote": "Une citation inspirante pour votre contenu...",
+          "author": "Nom de l'auteur",
+          "role": "Fonction",
+          "theme": "auto"
+        },
+        "quote": "dsdfsfds",
+        "author": "sdfdsdfsdf",
+        "role": "dsffsfd"
       }
     ]
   },
@@ -347,6 +322,19 @@
         "layout": "left-right",
         "gap": "medium",
         "alignment": "top"
+      },
+      {
+        "id": "quote-1756753800786",
+        "type": "quote",
+        "data": {
+          "quote": "Une citation inspirante pour votre contenu...",
+          "author": "Nom de l'auteur",
+          "role": "Fonction",
+          "theme": "auto"
+        },
+        "quote": "dsdsdf",
+        "author": "dfsdfsd",
+        "role": "dsffdsfds"
       }
     ]
   },
@@ -473,6 +461,19 @@
             "id": "block-5",
             "type": "content",
             "content": "<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>"
+          },
+          {
+            "id": "quote-1756796142950",
+            "type": "quote",
+            "data": {
+              "quote": "Une citation inspirante pour votre contenu...",
+              "author": "Nom de l'auteur",
+              "role": "Fonction",
+              "theme": "auto"
+            },
+            "quote": "ddd",
+            "author": "gdgdgd",
+            "role": "gddg"
           }
         ],
         "image": "/uploads/1755561574161-96b8a35f.jpg"
@@ -678,7 +679,7 @@
       {
         "id": "recette",
         "title": "recette",
-        "content": "<p>Découvrez l’essentiel du sujet en 2 minutes. Points clés, exemples concrets, et actions à mettre en place dès aujourd’hui. Pas de théorie inutile, uniquement ce qui vous aide à avancer.</p>",
+        "content": "<p>Découvrez l’essentiel du sujet en 2 minutes. Points clés, exemples concrets, et actions à mettre en place dès aujourd’hui. Pas de théorie inutile, uniquement ce qui vous aide à avancer.</p>\n<img src=\"/uploads/1756796114538-67a6d89c.jpg\" alt=\"\">",
         "status": "published",
         "slug": "recette",
         "publishedAt": "2025-08-28T13:57:02.113Z",
@@ -687,8 +688,133 @@
             "id": "block-1",
             "type": "content",
             "content": "<p>Découvrez l’essentiel du sujet en 2 minutes. Points clés, exemples concrets, et actions à mettre en place dès aujourd’hui. Pas de théorie inutile, uniquement ce qui vous aide à avancer.</p>"
+          },
+          {
+            "id": "quote-1756796073426",
+            "type": "quote",
+            "data": {
+              "quote": "Une citation inspirante pour votre contenu...",
+              "author": "Nom de l'auteur",
+              "role": "Fonction",
+              "theme": "auto"
+            },
+            "quote": "dgd",
+            "author": "fggffg",
+            "role": "fgfggf"
+          },
+          {
+            "id": "image-1756796109873",
+            "type": "image",
+            "data": {
+              "id": "",
+              "type": "image",
+              "image": {
+                "src": "",
+                "alt": ""
+              }
+            },
+            "image": {
+              "src": "/uploads/1756796114538-67a6d89c.jpg"
+            }
           }
         ]
+      },
+      {
+        "id": "slug",
+        "title": "Test d'un nouvel article",
+        "content": "<h2>test de contenu</h2>\n<p>Vous avez besoin d’un contenu clair, utile et facile à parcourir. Je propose des textes structurés, avec des phrases courtes, des exemples concrets et des appels à l’action précis. Objectif: aider vos visiteurs à comprendre en 10 secondes ce que vous faites, pourquoi c’est pertinent pour eux et comment passer à l’étape suivante.</p>",
+        "status": "published",
+        "blocks": [
+          {
+            "id": "block-1",
+            "type": "h2",
+            "data": {
+              "content": ""
+            },
+            "content": "test de contenu"
+          },
+          {
+            "id": "block-2",
+            "type": "content",
+            "content": "<p>Vous avez besoin d’un contenu clair, utile et facile à parcourir. Je propose des textes structurés, avec des phrases courtes, des exemples concrets et des appels à l’action précis. Objectif: aider vos visiteurs à comprendre en 10 secondes ce que vous faites, pourquoi c’est pertinent pour eux et comment passer à l’étape suivante.</p>"
+          },
+          {
+            "id": "quote-1756797763692",
+            "type": "quote",
+            "data": {
+              "quote": "Une citation inspirante pour votre contenu...",
+              "author": "Nom de l'auteur",
+              "role": "Fonction",
+              "theme": "auto"
+            },
+            "quote": "erzezer",
+            "author": "erzeerz",
+            "role": "er"
+          },
+          {
+            "id": "services-1756797772120",
+            "type": "services",
+            "data": {
+              "title": "OUR CORE OFFERINGS",
+              "theme": "auto",
+              "offerings": []
+            },
+            "title": "zeerzrzerez",
+            "offerings": [
+              {
+                "id": "service-1756797775510",
+                "title": "zerzerer",
+                "description": "<p>Zerzerer, le service qui transforme votre présence en ligne. Bénéficiez d'un contenu web unique et mémorable, créé via une méthodologie rigoureuse pour optimiser votre visibilité et engagement. Profitez d'une stratégie claire et mesurable, sans jargon ni clichés.</p>",
+                "icon": ""
+              }
+            ]
+          }
+        ],
+        "slug": "slug",
+        "publishedAt": "2025-09-02T07:23:13.331Z"
+      },
+      {
+        "id": "slig-new",
+        "title": "rezeezrezrez",
+        "content": "<p>Vous avez besoin de contenu clair et utile, sans détour. Je rédige des textes qui expliquent concrètement votre offre, avec des exemples précis, des chiffres quand c’est pertinent, et un appel à l’action simple. Objectif: aider vos visiteurs à comprendre vite, et agir sans friction.</p>\n<img src=\"/uploads/1756797837552-e8d03848.png\" alt=\"\">",
+        "status": "published",
+        "publishedAt": "2025-09-02T07:23:22.176Z",
+        "blocks": [
+          {
+            "id": "block-1",
+            "type": "content",
+            "content": "<p>Vous avez besoin de contenu clair et utile, sans détour. Je rédige des textes qui expliquent concrètement votre offre, avec des exemples précis, des chiffres quand c’est pertinent, et un appel à l’action simple. Objectif: aider vos visiteurs à comprendre vite, et agir sans friction.</p>"
+          },
+          {
+            "id": "quote-1756797808954",
+            "type": "quote",
+            "data": {
+              "quote": "Une citation inspirante pour votre contenu...",
+              "author": "Nom de l'auteur",
+              "role": "Fonction",
+              "theme": "auto"
+            },
+            "quote": "zerrrzezer",
+            "author": "ezrerzzer",
+            "role": "rezezer"
+          },
+          {
+            "id": "image-1756797833971",
+            "type": "image",
+            "data": {
+              "id": "",
+              "type": "image",
+              "image": {
+                "src": "",
+                "alt": ""
+              }
+            },
+            "image": {
+              "src": "/uploads/1756797837552-e8d03848.png"
+            }
+          }
+        ],
+        "slug": "slig-new"
       }
     ],
     "filters": [
