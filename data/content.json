@@ -8,7 +8,6 @@
     "logoImage": "",
     "location": "paris, le havre",
     "items": [
-      "hello-test",
       "studio",
       "work",
       "blog",
@@ -203,7 +202,7 @@
         "alt": "L'équipe Soliva au travail dans notre espace créatif"
       }
     },
-    "description": "<p><strong>Vous avez des questions ? Des idées à partager ?</strong> </p><p>On est là. Que vous soyez à Paris ou au Havre, n’hésitez pas à nous écrire. On adore échanger, alors faites le premier pas. Votre message est le début d'une conversation qui pourrait tout changer. Allez-y, on attend de vous lire !</p>"
+    "description": "<p><strong>Vous avez des questions ? Des idées à partager ?</strong></p><p>On est là. Que vous soyez à Paris ou au Havre, n’hésitez pas à nous écrire. On adore échanger, alors faites le premier pas. Votre message est le début d'une conversation qui pourrait tout changer. Allez-y, on attend de vous lire !</p>"
   },
   "studio": {
     "hero": {
@@ -542,7 +541,7 @@
   },
   "blog": {
     "hero": {
-      "title": "Le journal",
+      "title": "Le Journal",
       "subtitle": "Nos réflexions et insights"
     },
     "description": "<p>Découvrez des réflexions percutantes sur le monde digital. Ici, on ne fait pas dans la langue de bois. E-commerce, design, branding : chaque article bouscule les idées reçues et propose un regard frais. Pourquoi votre site ne convertit pas ? Comment sortir de la dépendance aux plateformes ? Ces questions brûlantes méritent des réponses franches. Plongez dans des analyses qui comptent et redéfinissez votre approche.</p>",
@@ -1006,8 +1005,7 @@
     ],
     "copyright": "© 2025 Soliva",
     "bottomLinks": [
-      "home",
-      "hello-test"
+      "mentions-legales"
     ],
     "legalPageLabels": {}
   },
@@ -1067,12 +1065,12 @@
   "pages": {
     "pages": [
       {
-        "id": "hello-test",
-        "title": "Hello",
+        "id": "mentions-legales",
+        "title": "Mentions légales",
         "content": "<h2>Recette de cuisine</h2>\n<p>Ce guide présente une recette simple avec des étapes claires, des temps de cuisson précis et une liste d’ingrédients courte. Vous trouverez les quantités exactes, les ustensiles nécessaires et des variantes pour adapter la recette en 20 minutes, même en semaine.</p>",
-        "slug": "hello-test",
+        "slug": "mentions-legales",
         "status": "published",
-        "description": "<p></p>",
+        "description": "<p>Bienvenue chez Hello, l'atelier qui transforme vos idées en marques percutantes. Ici, pas de blabla : juste des identités visuelles qui frappent, des plateformes digitales qui captivent et des stratégies de communication qui marquent les esprits. Chaque projet est une aventure, chaque résultat, une victoire. Prêt à faire du bruit ? Contactez-nous et démarquez-vous dès maintenant. </p>",
         "blocks": [
           {
             "id": "block-1",
@@ -1177,8 +1175,9 @@
         ],
         "publishedAt": "2025-08-28T14:25:16.756Z",
         "hero": {
-          "title": ""
-        }
+          "title": "Mentions légales"
+        },
+        "layout": "two-columns"
       }
     ]
   }

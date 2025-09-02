@@ -15,6 +15,11 @@ interface Page {
   publishedAt?: string;
   description?: string;
   blocks?: any[];
+  layout?: 'single-column' | 'two-columns';
+  hero?: {
+    title: string;
+    description: string;
+  };
 }
 
 export default function PageEdit() {
@@ -401,15 +406,18 @@ export default function PageEdit() {
             {/* Titre */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Titre de la page
+                Titre principal de la page
               </label>
               <input
                 type="text"
                 value={page.title || ''}
                 onChange={(e) => updatePage({ title: e.target.value })}
                 className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                placeholder="Titre de la page..."
+                placeholder="Titre principal de la page..."
               />
+              <p className="text-sm text-gray-500 mt-1">
+                Ce titre sera affiché en grand sur la page
+              </p>
             </div>
 
             {/* Slug */}
@@ -426,6 +434,27 @@ export default function PageEdit() {
               />
               <p className="text-sm text-gray-500 mt-1">
                 L'URL sera : /{page.slug || 'url-de-la-page'}
+              </p>
+            </div>
+
+            {/* Layout de la page */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Layout de la page
+              </label>
+              <select
+                value={page.layout || 'single-column'}
+                onChange={(e) => updatePage({ layout: e.target.value as 'single-column' | 'two-columns' })}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              >
+                <option value="single-column">Une colonne (layout simple)</option>
+                <option value="two-columns">Deux colonnes (avec sidebar sticky)</option>
+              </select>
+              <p className="text-sm text-gray-500 mt-1">
+                {page.layout === 'two-columns' 
+                  ? 'La page aura une colonne gauche sticky et une colonne droite pour le contenu'
+                  : 'La page aura un layout simple en une seule colonne'
+                }
               </p>
             </div>
 

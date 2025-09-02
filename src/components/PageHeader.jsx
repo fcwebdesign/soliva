@@ -2,12 +2,14 @@ import FormattedText from './FormattedText';
 
 const PageHeader = ({ 
   title, 
-  subtitle, 
+  subtitle = "", 
   description, 
   className = "contact-description",
-  titleClassName = ""
+  titleClassName = "",
+  sticky = true,
+  stickyTop = "top-32"
 }) => {
-  return (
+  const content = (
     <>
       <h1 className={titleClassName}>{title}</h1>
       
@@ -21,6 +23,18 @@ const PageHeader = ({
       )}
     </>
   );
+
+  // Si sticky est activé, wrapper dans la section sticky
+  if (sticky) {
+    return (
+      <div className={`work-header-section sticky ${stickyTop}`}>
+        {content}
+      </div>
+    );
+  }
+
+  // Sinon, retourner le contenu sans sticky
+  return content;
 };
 
 export default PageHeader; 

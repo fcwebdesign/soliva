@@ -353,9 +353,7 @@ export default function PagesAdmin() {
                               <p className="text-sm text-gray-500">
                                 ID: {page.id}
                               </p>
-                              <p className="text-sm text-gray-500">
-                                {page.description}
-                              </p>
+
                               {page.lastModified && (
                                 <p className="text-sm text-gray-500">
                                   Modifié: {page.lastModified}

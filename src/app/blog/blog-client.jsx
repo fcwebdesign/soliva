@@ -214,6 +214,8 @@ const BlogClient = ({ content: initialContent }) => {
               title={previewContent?.hero?.title || ''}
               description={previewContent?.description}
               titleClassName="blog-header"
+              sticky={true}
+              stickyTop="top-32"
             />
           </div>
           <div className="col">

@@ -1041,13 +1041,13 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     return (
       <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
         <div className="flex items-center space-x-2 mb-4">
-          <span className="text-2xl">📝</span>
-          <h3 className="text-lg font-semibold text-gray-900">Contenu</h3>
+          <span className="text-2xl">🎯</span>
+          <h3 className="text-lg font-semibold text-gray-900">Hero</h3>
         </div>
         
         <div className="space-y-4">
-          {/* Titre pour les pages contact, studio et custom */}
-          {(pageKey === 'contact' || pageKey === 'studio' || pageKey === 'custom') && (
+          {/* Titre pour les pages blog, work, contact, studio et custom */}
+          {(pageKey === 'blog' || pageKey === 'work' || pageKey === 'contact' || pageKey === 'studio' || pageKey === 'custom') && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Titre
@@ -1571,7 +1571,6 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         {blogActiveTab === 'content' && renderArticlesBlock()}
         {blogActiveTab === 'settings' && (
           <div className="space-y-6">
-            {renderHeroBlock()}
             {renderContentBlock()}
           </div>
         )}
@@ -1623,7 +1622,6 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         {workActiveTab === 'content' && renderProjectsBlock()}
         {workActiveTab === 'settings' && (
           <div className="space-y-6">
-            {renderHeroBlock()}
             {renderContentBlock()}
           </div>
         )}

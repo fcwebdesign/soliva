@@ -11,6 +11,7 @@ import SplitText from "gsap/SplitText";
 import ReactLenis from "lenis/react";
 import BlockRenderer from '@/components/BlockRenderer';
 import FormattedText from '@/components/FormattedText';
+import PageHeader from '@/components/PageHeader';
 
 gsap.registerPlugin(SplitText);
 
@@ -219,13 +220,13 @@ export default function BlogArticle() {
         
         <div className="blog-article-page">
           <div className="col">
-            <h1 className="blog-header">{article.title}</h1>
-            <div className="blog-meta">
-              <div className="blog-date">
-                <h3>Date</h3>
-                <p>{formattedDate}</p>
-              </div>
-            </div>
+            <PageHeader
+              title={article.title}
+              description={`Publié en ${formattedDate}`}
+              titleClassName="blog-header"
+              sticky={true}
+              stickyTop="top-32"
+            />
           </div>
           <div className="col">
             <div className="blog-content">
