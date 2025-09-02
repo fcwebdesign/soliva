@@ -510,25 +510,7 @@ a {
 }
 
 /* Styles pour les pages projet */
-.project-page {
-  padding: 20em 2em;
-  display: flex;
-  gap: 8em;
-  background-color: var(--bg);
-  color: var(--text);
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
 
-.project-page .col:nth-child(1) {
-  flex: 1;
-}
-
-.project-page .col:nth-child(2) {
-  flex: 2;
-  display: flex;
-  flex-direction: column;
-  gap: 3em;
-}
 
 .project-content {
   display: flex;
@@ -602,7 +584,8 @@ a {
 .studio,
 .contact,
 .work,
-.blog {
+.blog,
+.project-page {
   padding: 20em 1em;
   display: flex;
   gap: 0;
@@ -613,13 +596,15 @@ a {
 
 .studio .col:nth-child(1),
 .contact .col:nth-child(1),
-.blog .col:nth-child(1) {
+.blog .col:nth-child(1),
+.project-page .col:nth-child(1) {
   flex: 1.5;
 }
 
 .studio .col:nth-child(2),
 .contact .col:nth-child(2),
-.blog .col:nth-child(2) {
+.blog .col:nth-child(2),
+.project-page .col:nth-child(2) {
   flex: 2;
   display: flex;
   flex-direction: column;

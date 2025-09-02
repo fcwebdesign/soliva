@@ -258,40 +258,50 @@ const ProjectPage = ({ params }) => {
         
         <div className="project-page">
           <div className="col">
-            <h1 className="work-header">{project.title}</h1>
-            <div className="project-meta">
-              <div className="project-category">
-                <h3>Catégorie</h3>
-                <p>{project.category}</p>
-              </div>
-              <div className="project-slug">
-                <h3>Slug</h3>
-                <p>{project.slug}</p>
+            <div className="work-header-section sticky top-32">
+              <h1 className="work-header">{project.title}</h1>
+              <div className="project-meta">
+                <div className="project-category">
+                  <h3>Catégorie</h3>
+                  <p>{project.category}</p>
+                </div>
+                <div className="project-slug">
+                  <h3>Slug</h3>
+                  <p>{project.slug}</p>
+                </div>
               </div>
             </div>
           </div>
           <div className="col">
             <div className="project-content">
-              <div className="project-image">
-                <img src={project.image} alt={project.alt} />
-              </div>
+              {/* Image du projet */}
+              {project.image && (
+                <div className="project-image mb-8">
+                  <img src={project.image} alt={project.alt || project.title} className="w-full h-auto rounded-lg" />
+                </div>
+              )}
               
-              <div className="project-description">
-                <h2>Contenu</h2>
-                {/* Priorité 1: Utiliser les blocs scalables s'ils existent */}
-                {project.blocks && project.blocks.length > 0 ? (
+              {/* Contenu principal : blocs scalables ou fallback HTML */}
+              {project.blocks && project.blocks.length > 0 ? (
+                <div className="project-blocks">
                   <BlockRenderer blocks={project.blocks} />
-                ) : project.content || project.description ? (
-                  /* Priorité 2: Fallback vers le content HTML si pas de blocs */
+                </div>
+              ) : project.content || project.description ? (
+                /* Fallback vers le content HTML si pas de blocs */
+                <div className="project-description">
+                  <h2>Description</h2>
                   <FormattedText>{project.content || project.description}</FormattedText>
-                ) : (
+                </div>
+              ) : (
+                <div className="project-description">
                   <p>Ce projet n'a pas encore de contenu.</p>
-                )}
-              </div>
+                </div>
+              )}
               
-              <div className="project-navigation">
+              {/* Navigation */}
+              <div className="project-navigation mt-8">
                 <a href="/work" onClick={handleBackClick} className="back-link">
-                  ← Back to Selected Work
+                  ← Retour aux réalisations
                 </a>
               </div>
             </div>
