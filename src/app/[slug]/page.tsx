@@ -261,7 +261,7 @@ export default function Page() {
                 />
               </div>
               <div className="col">
-                <div className="project-content">
+                <div className="project-content mt-3">
                   {/* Priorité 1: Utiliser les blocs scalables s'ils existent */}
                   {pageData.blocks && pageData.blocks.length > 0 ? (
                     <div className="project-blocks">

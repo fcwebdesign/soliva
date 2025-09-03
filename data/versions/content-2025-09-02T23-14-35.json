@@ -8,7 +8,6 @@
     "logoImage": "",
     "location": "paris, le havre",
     "items": [
-      "hello",
       "studio",
       "work",
       "blog",
@@ -980,10 +979,6 @@
       {
         "title": "Kodza",
         "url": ""
-      },
-      {
-        "title": "Hello",
-        "url": "hello-test"
       }
     ],
     "socialLinks": [
@@ -1006,8 +1001,8 @@
     ],
     "copyright": "© 2025 Soliva",
     "bottomLinks": [
-      "home",
-      "hello-test"
+      "politique-de-confidentialite",
+      "mentions-legales"
     ],
     "legalPageLabels": {}
   },
@@ -1067,119 +1062,104 @@
   "pages": {
     "pages": [
       {
-        "id": "hello",
-        "title": "Hello",
-        "content": "<h2>Recette de cuisine</h2>\n<p>Ce guide présente une recette simple avec des étapes claires, des temps de cuisson précis et une liste d’ingrédients courte. Vous trouverez les quantités exactes, les ustensiles nécessaires et des variantes pour adapter la recette en 20 minutes, même en semaine.</p>",
-        "slug": "hello",
+        "id": "mentions-legales",
+        "title": "Mentions légales",
+        "content": "<h2>Éditeur du site</h2>\n<p>Dénomination : {Nom de l’agence} — {Forme juridique} au capital de {Montant} €<br>Siège social : {Adresse complète}<br>Immatriculation : RCS {Ville} n° {SIREN} — SIRET {SIRET}<br>TVA intracommunautaire : {FR…}<br>Contact : {email} — {téléphone}<br>Directeur·rice de la publication : {Nom, fonction}<br>Responsable de la rédaction (le cas échéant) : {Nom}</p><p>Pour toute question relative au site ou à son contenu : {email support} — {téléphone}</p>\n<h2>Hébergeur</h2>\n<p>{Raison sociale de l’hébergeur}<br>{Adresse complète}<br>{Téléphone} — {Site web}</p>",
+        "slug": "mentions-legales",
         "status": "published",
-        "description": "<p>Bienvenue chez Hello, l'atelier qui transforme vos idées en marques percutantes. Ici, pas de blabla : juste des identités visuelles qui frappent, des plateformes digitales qui captivent et des stratégies de communication qui marquent les esprits. Chaque projet est une aventure, chaque résultat, une victoire. Prêt à faire du bruit ? Contactez-nous et démarquez-vous dès maintenant.</p>",
+        "description": "<p>Dernière mise à jour : JJ/MM/AAAA</p>",
         "blocks": [
           {
             "id": "block-1",
             "type": "h2",
-            "content": "Recette de cuisine"
+            "content": "Éditeur du site"
           },
           {
             "id": "block-2",
             "type": "content",
-            "content": "<p>Ce guide présente une recette simple avec des étapes claires, des temps de cuisson précis et une liste d’ingrédients courte. Vous trouverez les quantités exactes, les ustensiles nécessaires et des variantes pour adapter la recette en 20 minutes, même en semaine.</p>",
+            "content": "<p>Dénomination : {Nom de l’agence} — {Forme juridique} au capital de {Montant} €<br>Siège social : {Adresse complète}<br>Immatriculation : RCS {Ville} n° {SIREN} — SIRET {SIRET}<br>TVA intracommunautaire : {FR…}<br>Contact : {email} — {téléphone}<br>Directeur·rice de la publication : {Nom, fonction}<br>Responsable de la rédaction (le cas échéant) : {Nom}</p><p>Pour toute question relative au site ou à son contenu : {email support} — {téléphone}</p>",
             "title": "Description"
           },
           {
-            "id": "block-1756392134898",
-            "type": "projects",
-            "content": "",
-            "title": "NOS RÉALISATIONS",
-            "maxProjects": 6,
-            "selectedProjects": [
-              "project-1",
-              "project-2",
-              "project-3",
-              "project-4"
-            ],
-            "theme": "light"
+            "id": "h2-1756852363581",
+            "type": "h2",
+            "data": {
+              "content": ""
+            },
+            "content": "Hébergeur"
           },
           {
-            "id": "block-1756392480232",
-            "type": "two-columns",
-            "content": "",
-            "leftColumn": [
-              {
-                "id": "block-1756392484040-0.09886361847597935",
-                "type": "h2",
-                "content": "Accélérez vos résultats aujourd’hui"
-              },
-              {
-                "id": "block-1756393044999-0.9073500461618058",
-                "type": "content",
-                "content": "<p>Réservez un créneau de 20 minutes et repartez avec un plan d’action clair pour les 30 prochains jours. Nous identifions trois priorités mesurables, les ressources nécessaires et un calendrier précis. Résultat attendu: premiers gains visibles sous deux semaines.</p>"
-              }
-            ],
-            "rightColumn": [
-              {
-                "id": "block-1756392508564-0.350207173272053",
-                "type": "image",
-                "content": "",
-                "image": {
-                  "src": "/uploads/1756392512213-97c1ffbf.jpg",
-                  "alt": ""
-                }
-              }
-            ],
-            "layout": "left-right",
-            "gap": "medium",
-            "alignment": "top"
-          },
-          {
-            "id": "block-1756392538443",
-            "type": "logos",
-            "content": "",
-            "title": "NOS CLIENTS",
-            "logos": [
-              {
-                "src": "/uploads/1756392549258-1fb6ed81.png",
-                "alt": ""
-              },
-              {
-                "src": "/uploads/1756392552871-2950fd71.png",
-                "alt": ""
-              },
-              {
-                "src": "/uploads/1756392583920-73c8d2a0.png",
-                "alt": ""
-              }
-            ]
-          },
-          {
-            "id": "block-1756392615686",
-            "type": "contact",
-            "content": "",
-            "title": "contactez-nous",
-            "ctaText": "Yep !",
-            "ctaLink": "https://google.com",
-            "theme": "auto"
-          },
-          {
-            "id": "block-1756392735016",
-            "type": "services",
-            "content": "",
-            "title": "Test services",
-            "offerings": [
-              {
-                "id": "service-1",
-                "title": "test service 1",
-                "description": "<p>\"Test Service 1\" propulse votre contenu en ligne en boostant la visibilité et l'engagement. Grâce à notre analyse de données précise en temps réel, nous optimisons votre performance web, vous permettant de surpasser vos concurrents.</p>",
-                "icon": ""
-              }
-            ],
-            "theme": "light"
+            "id": "content-1756852371334",
+            "type": "content",
+            "data": {
+              "content": ""
+            },
+            "content": "<p>{Raison sociale de l’hébergeur}<br>{Adresse complète}<br>{Téléphone} — {Site web}</p>"
           }
         ],
         "publishedAt": "2025-08-28T14:25:16.756Z",
         "hero": {
-          "title": "Mentions légales test"
+          "title": "Mentions légales"
         },
-        "layout": "single-column"
+        "layout": "two-columns"
+      },
+      {
+        "id": "politique-de-confidentialite",
+        "title": "Politique de confidentialité",
+        "content": "<h2>Données collectées</h2>\n<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>Formulaires de contact / devis : nom, prénom, entreprise, email, téléphone, message, pièces jointes.</p></li><li class=\"mb-1\"><p>Newsletter : email.</p></li><li class=\"mb-1\"><p>Données de navigation (cookies/traceurs) : pages consultées, clics, durée de session, identifiant de consentement.</p></li><li class=\"mb-1\"><p>Données techniques : adresse IP abrégée/anonymisée*, type d’appareil, navigateur, système d’exploitation.</p></li></ul><p></p>\n<h2>Finalités et bases légales</h2>\n<p>Nous traitons vos données pour :</p><ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>Répondre à vos demandes (formulaires de contact/devis) — <strong>base légale</strong> : exécution de mesures précontractuelles (art. 6-1-b RGPD).</p></li><li class=\"mb-1\"><p>Gestion de la relation client et des prestations — <strong>base légale</strong> : exécution du contrat (art. 6-1-b) et obligations légales (facturation, comptabilité — art. 6-1-c).</p></li><li class=\"mb-1\"><p>Envoi d’informations et de newsletters — <strong>base légale</strong> : votre consentement (art. 6-1-a), révocable à tout moment.</p></li><li class=\"mb-1\"><p>Mesure d’audience et amélioration du site — <strong>base légale</strong> : votre consentement (art. 6-1-a), ou intérêt légitime si exempté de consentement (mesure strictement nécessaire).</p></li><li class=\"mb-1\"><p>Sécurisation du site, prévention de la fraude — <strong>base légale</strong> : intérêt légitime (art. 6-1-f).</p></li></ul><p></p>\n<h2>Durées de conservation</h2>\n<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>Prospects / demandes entrantes : <strong>3 ans</strong> après le dernier contact.</p></li><li class=\"mb-1\"><p>Clients et dossiers : pendant la relation contractuelle puis <strong>5 à 10 ans</strong> (exigences comptables/légales).</p></li><li class=\"mb-1\"><p>Newsletter : jusqu’au retrait du consentement ou <strong>3 ans</strong> d’inactivité.</p></li><li class=\"mb-1\"><p>Mesures d’audience (événements, logs) : <strong>13 mois</strong> pour les cookies soumis à consentement / <strong>25 mois</strong> pour les statistiques agrégées (à ajuster selon votre outil).</p></li><li class=\"mb-1\"><p>Sécurité (journaux techniques) : <strong>6 à 12 mois</strong> (selon besoin opérationnel).</p></li></ul><p></p>",
+        "slug": "politique-de-confidentialite",
+        "status": "published",
+        "description": "<p>Dernière mise à jour : JJ/MM/AAAA</p>",
+        "blocks": [
+          {
+            "id": "block-1",
+            "type": "h2",
+            "content": "Données collectées"
+          },
+          {
+            "id": "block-2",
+            "type": "content",
+            "content": "<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>Formulaires de contact / devis : nom, prénom, entreprise, email, téléphone, message, pièces jointes.</p></li><li class=\"mb-1\"><p>Newsletter : email.</p></li><li class=\"mb-1\"><p>Données de navigation (cookies/traceurs) : pages consultées, clics, durée de session, identifiant de consentement.</p></li><li class=\"mb-1\"><p>Données techniques : adresse IP abrégée/anonymisée*, type d’appareil, navigateur, système d’exploitation.</p></li></ul><p></p>",
+            "title": "Description"
+          },
+          {
+            "id": "h2-1756852363581",
+            "type": "h2",
+            "data": {
+              "content": ""
+            },
+            "content": "Finalités et bases légales"
+          },
+          {
+            "id": "content-1756852371334",
+            "type": "content",
+            "data": {
+              "content": ""
+            },
+            "content": "<p>Nous traitons vos données pour :</p><ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>Répondre à vos demandes (formulaires de contact/devis) — <strong>base légale</strong> : exécution de mesures précontractuelles (art. 6-1-b RGPD).</p></li><li class=\"mb-1\"><p>Gestion de la relation client et des prestations — <strong>base légale</strong> : exécution du contrat (art. 6-1-b) et obligations légales (facturation, comptabilité — art. 6-1-c).</p></li><li class=\"mb-1\"><p>Envoi d’informations et de newsletters — <strong>base légale</strong> : votre consentement (art. 6-1-a), révocable à tout moment.</p></li><li class=\"mb-1\"><p>Mesure d’audience et amélioration du site — <strong>base légale</strong> : votre consentement (art. 6-1-a), ou intérêt légitime si exempté de consentement (mesure strictement nécessaire).</p></li><li class=\"mb-1\"><p>Sécurisation du site, prévention de la fraude — <strong>base légale</strong> : intérêt légitime (art. 6-1-f).</p></li></ul><p></p>"
+          },
+          {
+            "id": "h2-1756853085623",
+            "type": "h2",
+            "data": {
+              "content": ""
+            },
+            "content": "Durées de conservation"
+          },
+          {
+            "id": "content-1756853090236",
+            "type": "content",
+            "data": {
+              "content": ""
+            },
+            "content": "<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>Prospects / demandes entrantes : <strong>3 ans</strong> après le dernier contact.</p></li><li class=\"mb-1\"><p>Clients et dossiers : pendant la relation contractuelle puis <strong>5 à 10 ans</strong> (exigences comptables/légales).</p></li><li class=\"mb-1\"><p>Newsletter : jusqu’au retrait du consentement ou <strong>3 ans</strong> d’inactivité.</p></li><li class=\"mb-1\"><p>Mesures d’audience (événements, logs) : <strong>13 mois</strong> pour les cookies soumis à consentement / <strong>25 mois</strong> pour les statistiques agrégées (à ajuster selon votre outil).</p></li><li class=\"mb-1\"><p>Sécurité (journaux techniques) : <strong>6 à 12 mois</strong> (selon besoin opérationnel).</p></li></ul><p></p>"
+          }
+        ],
+        "publishedAt": "2025-09-02T22:45:27.939Z",
+        "hero": {
+          "title": "Politique de confidentialité"
+        },
+        "layout": "two-columns"
       }
     ]
   }

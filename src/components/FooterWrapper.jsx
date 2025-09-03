@@ -54,7 +54,7 @@ const FooterWrapper = ({ initialContent }) => {
     };
   }, [initialContent]);
 
-  return <Footer content={footerContent} />;
+  return <Footer content={footerContent} fullContent={initialContent} />;
 };
 
 export default FooterWrapper; 

@@ -2,8 +2,25 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-const Footer = ({ content }) => {
+const Footer = ({ content, fullContent }) => {
   const [footerContent, setFooterContent] = useState(content);
+  const [allPages, setAllPages] = useState([]);
+
+  // Récupérer toutes les pages depuis l'API
+  useEffect(() => {
+    const fetchPages = async () => {
+      try {
+        const response = await fetch('/api/content');
+        const data = await response.json();
+        setAllPages(data.pages?.pages || []);
+        console.log('🔍 Footer - Pages récupérées:', data.pages?.pages);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des pages:', error);
+      }
+    };
+
+    fetchPages();
+  }, []);
 
   useEffect(() => {
     setFooterContent(content);
@@ -129,21 +146,17 @@ const Footer = ({ content }) => {
               <div className="text-right">
                 <ul className="flex flex-wrap justify-end gap-4 text-sm">
                   {footerContent.bottomLinks.map((pageKey, index) => {
-                    // Trouver la page correspondante
+                    // Construire la liste des pages disponibles de manière dynamique
                     const availablePages = [
+                      // Pages principales du site (toujours présentes)
                       { key: 'home', label: 'Accueil', path: '/' },
                       { key: 'work', label: 'Réalisations', path: '/work' },
                       { key: 'studio', label: 'Studio', path: '/studio' },
                       { key: 'blog', label: 'Journal', path: '/blog' },
                       { key: 'contact', label: 'Contact', path: '/contact' },
-                      { key: 'mentions-legales', label: 'Mentions légales', path: '/mentions-legales' },
-                      { key: 'politique-confidentialite', label: 'Politique de confidentialité', path: '/politique-confidentialite' },
-                      { key: 'cgu', label: 'Conditions générales d\'utilisation', path: '/cgu' },
-                      { key: 'cookies', label: 'Politique des cookies', path: '/cookies' },
-                      { key: 'rgpd', label: 'RGPD', path: '/rgpd' },
-                      { key: 'mentions-obligatoires', label: 'Mentions obligatoires', path: '/mentions-obligatoires' },
-                      // Ajouter automatiquement les pages personnalisées
-                      ...(content?.pages?.pages || []).map(page => ({
+                      
+                      // Pages légales et personnalisées (ajoutées automatiquement)
+                      ...(allPages || []).map(page => ({
                         key: page.slug || page.id,
                         label: page.title || 'Page personnalisée',
                         path: `/${page.slug || page.id}`
