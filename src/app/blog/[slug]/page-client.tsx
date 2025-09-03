@@ -210,6 +210,26 @@ export default function BlogArticle() {
   const articleDate = article.publishedAt ? new Date(article.publishedAt) : new Date();
   const formattedDate = articleDate.getFullYear().toString();
 
+  // Breadcrumbs JSON-LD pour le SEO
+  const breadcrumbsJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Blog",
+        item: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3006"}/blog`
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: article.title,
+        item: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3006"}/blog/${article.slug}`
+      }
+    ]
+  };
+
   return (
     <>
       <ReactLenis root>
@@ -252,6 +272,12 @@ export default function BlogArticle() {
             </div>
           </div>
         </div>
+        
+        {/* Breadcrumbs JSON-LD pour le SEO */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsJsonLd) }}
+        />
       </ReactLenis>
     </>
   );

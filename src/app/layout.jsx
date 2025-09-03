@@ -2,6 +2,7 @@ import "./globals.css";
 import { ViewTransitions } from "next-view-transitions";
 import { readContent } from "@/lib/content";
 import { draftMode } from 'next/headers';
+import { SITE_NAME, SITE_URL, DEFAULT_OG_IMAGE } from "@/lib/seo";
 
 import NavWrapper from "@/components/NavWrapper";
 import ConditionalFooter from "@/components/ConditionalFooter";
@@ -12,8 +13,23 @@ import { TemplateProvider } from "@/templates/context";
 export async function generateMetadata() {
   const content = await readContent();
   return {
-    title: content.metadata.title,
-    description: content.metadata.description,
+    metadataBase: new URL(SITE_URL),
+    title: { 
+      default: content.metadata.title || SITE_NAME, 
+      template: `%s — ${SITE_NAME}` 
+    },
+    description: content.metadata.description || "Site officiel de " + SITE_NAME,
+    alternates: { canonical: SITE_URL },
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      images: [DEFAULT_OG_IMAGE],
+      url: SITE_URL,
+      locale: "fr_FR"
+    },
+    twitter: { 
+      card: "summary_large_image" 
+    }
   };
 }
 
@@ -46,11 +62,43 @@ export default async function RootLayout({ children }) {
               // DÉLÉGATION TOTALE AU TEMPLATE
               <TemplateRenderer keyName={activeTemplate.key} />
             ) : (
-              // SHELL GLOBAL PAR DÉFAUT
+                              // SHELL GLOBAL PAR DÉFAUT
               <>
                 <NavWrapper initialContent={content.nav} />
                 {children}
                 <ConditionalFooter initialContent={content.footer} />
+                
+                {/* JSON-LD Organization */}
+                <script
+                  type="application/ld+json"
+                  dangerouslySetInnerHTML={{
+                    __html: JSON.stringify({
+                      "@context": "https://schema.org",
+                      "@type": "Organization",
+                      name: SITE_NAME,
+                      url: SITE_URL,
+                      logo: `${SITE_URL}${DEFAULT_OG_IMAGE}`
+                    })
+                  }}
+                />
+                
+                {/* JSON-LD WebSite */}
+                <script
+                  type="application/ld+json"
+                  dangerouslySetInnerHTML={{
+                    __html: JSON.stringify({
+                      "@context": "https://schema.org",
+                      "@type": "WebSite",
+                      name: SITE_NAME,
+                      url: SITE_URL,
+                      potentialAction: {
+                        "@type": "SearchAction",
+                        target: `${SITE_URL}/recherche?q={query}`,
+                        "query-input": "required name=query"
+                      }
+                    })
+                  }}
+                />
               </>
             )}
           </TemplateProvider>
