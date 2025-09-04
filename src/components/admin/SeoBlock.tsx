@@ -71,6 +71,7 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedTitle, setSelectedTitle] = useState<string>('');
   const [selectedDescription, setSelectedDescription] = useState<string>('');
+  const [selectedKeyword, setSelectedKeyword] = useState<string>('');
 
   // Analyse locale du contenu
   const analyzeContent = useMemo(() => {
@@ -291,15 +292,24 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
   const applyAllProposals = () => {
     if (!aiProposals) return;
 
+    const finalTitle = selectedTitle || aiProposals.metaTitles[0];
+    const finalDescription = selectedDescription || aiProposals.metaDescriptions[0].text;
+    const finalKeyword = aiProposals.focus;
+
     const newSeo: SeoData = {
       ...seoFields,
-      metaTitle: selectedTitle || aiProposals.metaTitles[0],
-      metaDescription: selectedDescription || aiProposals.metaDescriptions[0].text,
-      focusKeyword: aiProposals.focus,
+      metaTitle: finalTitle,
+      metaDescription: finalDescription,
+      focusKeyword: finalKeyword,
       canonicalUrl: absoluteUrl(`/blog/${content.slug}`),
       schemas: aiProposals.schemas,
       suggestedInternalLinks: aiProposals.internalLinks
     };
+
+    // Mettre à jour les états de sélection
+    setSelectedTitle(finalTitle);
+    setSelectedDescription(finalDescription);
+    setSelectedKeyword(finalKeyword);
 
     onSeoChange(newSeo);
   };
@@ -500,8 +510,15 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
               </label>
               <div className="flex items-center space-x-2 mb-2">
                 <button
-                  onClick={() => onSeoChange({ ...seoFields, focusKeyword: aiProposals.focus })}
-                  className="px-3 py-1 bg-blue-600 text-white text-sm rounded-full hover:bg-blue-700 transition-colors"
+                  onClick={() => {
+                    onSeoChange({ ...seoFields, focusKeyword: aiProposals.focus });
+                    setSelectedKeyword(aiProposals.focus);
+                  }}
+                  className={`px-3 py-1 text-sm rounded-full transition-colors ${
+                    selectedKeyword === aiProposals.focus
+                      ? 'bg-green-600 text-white hover:bg-green-700'
+                      : 'bg-blue-600 text-white hover:bg-blue-700'
+                  }`}
                 >
                   {aiProposals.focus}
                 </button>
@@ -515,8 +532,15 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
                   {aiProposals.alternatives.map((alt, index) => (
                     <button
                       key={index}
-                      onClick={() => onSeoChange({ ...seoFields, focusKeyword: alt })}
-                      className="text-xs text-blue-600 hover:text-blue-700 underline mr-2"
+                      onClick={() => {
+                        onSeoChange({ ...seoFields, focusKeyword: alt });
+                        setSelectedKeyword(alt);
+                      }}
+                      className={`text-xs underline mr-2 transition-colors ${
+                        selectedKeyword === alt
+                          ? 'text-green-600 hover:text-green-700'
+                          : 'text-blue-600 hover:text-blue-700'
+                      }`}
                     >
                       {alt}
                     </button>
@@ -534,11 +558,16 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
                 {aiProposals.metaTitles.map((title, index) => (
                   <div key={index} className="flex items-center space-x-2">
                     <button
-                      onClick={() => applyProposal('title', title)}
+                      onClick={() => {
+                        applyProposal('title', title);
+                        setSelectedTitle(title);
+                      }}
                       className={`flex-1 text-left px-3 py-2 rounded-lg border transition-colors ${
-                        title.length > 60 
-                          ? 'border-red-300 bg-red-50 text-red-700 hover:bg-red-100' 
-                          : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                        selectedTitle === title
+                          ? 'border-green-500 bg-green-50 text-green-700 hover:bg-green-100'
+                          : title.length > 60 
+                            ? 'border-red-300 bg-red-50 text-red-700 hover:bg-red-100' 
+                            : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
                       }`}
                     >
                       <div className="text-sm font-medium">{title}</div>
@@ -558,11 +587,16 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
                 {aiProposals.metaDescriptions.map((desc, index) => (
                   <div key={index}>
                     <button
-                      onClick={() => applyProposal('description', desc.text)}
+                      onClick={() => {
+                        applyProposal('description', desc.text);
+                        setSelectedDescription(desc.text);
+                      }}
                       className={`w-full text-left px-3 py-2 rounded-lg border transition-colors ${
-                        desc.text.length < 150 || desc.text.length > 160
-                          ? 'border-red-300 bg-red-50 text-red-700 hover:bg-red-100'
-                          : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                        selectedDescription === desc.text
+                          ? 'border-green-500 bg-green-50 text-green-700 hover:bg-green-100'
+                          : desc.text.length < 150 || desc.text.length > 160
+                            ? 'border-red-300 bg-red-50 text-red-700 hover:bg-red-100'
+                            : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
                       }`}
                     >
                       <div className="text-sm">{desc.text}</div>
