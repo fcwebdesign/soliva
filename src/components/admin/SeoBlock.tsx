@@ -72,6 +72,7 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
   const [selectedTitle, setSelectedTitle] = useState<string>('');
   const [selectedDescription, setSelectedDescription] = useState<string>('');
   const [selectedKeyword, setSelectedKeyword] = useState<string>('');
+  const [allArticles, setAllArticles] = useState<any[]>([]);
 
   // Analyse locale du contenu
   const analyzeContent = useMemo(() => {
@@ -105,13 +106,99 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
     const focusKeyword = Object.entries(wordCount)
       .sort(([,a], [,b]) => b - a)[0]?.[0] || '';
 
-    // Construire un pool de liens internes
+    // Construire un pool de liens internes intelligents
     const internalLinks = [
-      { url: '/blog', label: 'Blog', reason: 'Page principale du blog' },
-      { url: '/studio', label: 'Le Studio', reason: 'Présentation de l\'équipe' },
+      { url: '/blog', label: 'Notre blog', reason: 'Page principale du blog' },
+      { url: '/studio', label: 'Visitez notre studio', reason: 'Pour découvrir nos projets en lien avec l\'IA' },
       { url: '/work', label: 'Portfolio', reason: 'Nos réalisations' },
-      { url: '/contact', label: 'Contact', reason: 'Nous contacter' }
+      { url: '/contact', label: 'Contactez-nous', reason: 'Pour poser vos questions sur l\'IA et ses outils' }
     ];
+
+    // Logique intelligente de maillage
+    if (allArticles.length > 0) {
+      const currentArticleTags = content.tags || [];
+      const currentArticleTitle = content.title.toLowerCase();
+      const currentArticleContent = cleanText.toLowerCase();
+      
+      // 1. Articles avec tags communs (priorité haute)
+      const relatedByTags = allArticles
+        .filter(article => {
+          if (article.id === content.id || !article.title) return false;
+          const articleTags = article.tags || [];
+          return articleTags.some(tag => currentArticleTags.includes(tag));
+        })
+        .map(article => ({
+          article,
+          score: (article.tags || []).filter(tag => currentArticleTags.includes(tag)).length,
+          reason: 'Article avec tags similaires'
+        }));
+
+      // 2. Articles avec contenu similaire (titre + excerpt) (priorité moyenne)
+      const relatedByContent = allArticles
+        .filter(article => {
+          if (article.id === content.id || !article.title) return false;
+          const articleTitle = article.title.toLowerCase();
+          const articleExcerpt = (article.excerpt || '').toLowerCase();
+          const articleContent = `${articleTitle} ${articleExcerpt}`;
+          
+          // Mots-clés du contenu actuel
+          const currentKeywords = currentArticleContent.split(' ')
+            .filter(word => word.length > 3)
+            .filter(word => !['avec', 'dans', 'pour', 'cette', 'sont', 'tout', 'plus', 'bien', 'très', 'mais', 'donc', 'alors'].includes(word));
+          
+          // Vérifier les mots-clés communs
+          const commonKeywords = currentKeywords.filter(keyword => 
+            articleContent.includes(keyword)
+          );
+          
+          return commonKeywords.length > 0;
+        })
+        .map(article => {
+          const articleTitle = article.title.toLowerCase();
+          const articleExcerpt = (article.excerpt || '').toLowerCase();
+          const articleContent = `${articleTitle} ${articleExcerpt}`;
+          
+          const currentKeywords = currentArticleContent.split(' ')
+            .filter(word => word.length > 3)
+            .filter(word => !['avec', 'dans', 'pour', 'cette', 'sont', 'tout', 'plus', 'bien', 'très', 'mais', 'donc', 'alors'].includes(word));
+          
+          const commonKeywords = currentKeywords.filter(keyword => 
+            articleContent.includes(keyword)
+          );
+          
+          return {
+            article,
+            score: commonKeywords.length,
+            reason: 'Article avec contenu similaire'
+          };
+        });
+
+      // 3. Articles récents (priorité basse)
+      const recentArticles = allArticles
+        .filter(article => {
+          if (article.id === content.id || !article.title) return false;
+          return article.publishedAt && new Date(article.publishedAt) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); // 30 jours
+        })
+        .map(article => ({
+          article,
+          score: 1,
+          reason: 'Article récent'
+        }));
+
+      // Combiner et trier par pertinence
+      const allRelated = [...relatedByTags, ...relatedByContent, ...recentArticles]
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3); // Limiter à 3 articles maximum
+
+      // Ajouter les articles les plus pertinents
+      allRelated.forEach(({ article, reason }) => {
+        internalLinks.push({
+          url: `/blog/${article.slug || article.id}`,
+          label: article.title,
+          reason: reason
+        });
+      });
+    }
 
     // Détecter FAQ et HowTo
     const hasFAQ = /question|réponse|faq|pourquoi|comment|quand|où|qui|quoi/i.test(cleanText);
@@ -126,7 +213,7 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
       hasHowTo,
       wordCount: cleanText.split(' ').length
     };
-  }, [content]);
+  }, [content, allArticles]);
 
   // Calculer le score SEO
   const calculateScore = useMemo(() => {
@@ -191,6 +278,24 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
 
     return { score: Math.max(0, score), flags };
   }, [content, seoFields, analyzeContent]);
+
+  // Charger tous les articles pour les liens internes
+  useEffect(() => {
+    const fetchAllArticles = async () => {
+      try {
+        const response = await fetch('/api/admin/content');
+        if (response.ok) {
+          const data = await response.json();
+          const articles = data.blog?.articles || [];
+          setAllArticles(articles);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des articles:', error);
+      }
+    };
+
+    fetchAllArticles();
+  }, []);
 
   // Analyser le contenu au chargement
   useEffect(() => {
@@ -287,6 +392,7 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
       setIsGenerating(false);
     }
   };
+
 
   // Appliquer toutes les propositions
   const applyAllProposals = () => {
@@ -653,6 +759,7 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
           </div>
         )}
       </div>
+
 
       {/* Aide & contrôle */}
       <div className="border-t pt-6">

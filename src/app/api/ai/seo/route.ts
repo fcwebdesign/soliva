@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { detectContentSchemas } from '@/lib/schema';
 
 interface SEORequest {
   brand: string;
@@ -72,8 +73,10 @@ DESCRIPTIONS (150-160 caractères):
 
 LIENS INTERNES:
 - Uniquement parmi le pool fourni: ${data.internalUrls.join(', ')}
-- Ancres descriptives
-- Raison courte et pertinente
+- Sélectionner les 3 PLUS PERTINENTS pour le contenu
+- Priorité: articles avec tags similaires > contenu similaire (titre+excerpt) > articles récents
+- Ancres descriptives et naturelles
+- Raison courte expliquant la pertinence
 
 SCHÉMAS:
 - Article (toujours)
@@ -82,6 +85,10 @@ SCHÉMAS:
 
 Langue: français naturel
 Si contrainte non respectée → reformuler, ne jamais tronquer.`;
+
+    // Détecter les schémas pertinents dans le contenu
+    const detectedSchemas = detectContentSchemas(data.plainText);
+    const suggestedSchemas = ['Article', ...detectedSchemas];
 
     const userPrompt = `Contexte:
 - Marque: ${data.brand}
@@ -94,14 +101,17 @@ Si contrainte non respectée → reformuler, ne jamais tronquer.`;
 - Tags: ${data.tags.join(', ')}
 - Catégorie: ${data.category}
 - Focus proposé: ${data.focusKeyword}
+- Schémas détectés: ${detectedSchemas.join(', ') || 'Aucun'}
 
 Génère:
 1. Focus keyword (1 seul, le plus pertinent)
 2. 2 alternatives au focus
 3. 2 titres optimisés (≤60 chars, focus au début)
 4. 3 descriptions (standard, conversion, pédagogique, 150-160 chars)
-5. 3 liens internes pertinents
-6. Schémas appropriés
+5. 3 liens internes les plus pertinents (sélectionner intelligemment parmi le pool)
+6. Schémas appropriés (UNIQUEMENT ceux détectés dans le contenu)
+
+IMPORTANT: Ne suggère que les schémas qui correspondent vraiment au contenu analysé.
 
 Réponds UNIQUEMENT en JSON valide:
 {
@@ -118,7 +128,7 @@ Réponds UNIQUEMENT en JSON valide:
     {"url": "/url2", "label": "Label2", "reason": "Raison2"},
     {"url": "/url3", "label": "Label3", "reason": "Raison3"}
   ],
-  "schemas": ["Article", "FAQPage"]
+  "schemas": ${JSON.stringify(suggestedSchemas)}
 }`;
 
     const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {

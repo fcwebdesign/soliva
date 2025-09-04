@@ -12,6 +12,8 @@ import ReactLenis from "lenis/react";
 import BlockRenderer from '@/components/BlockRenderer';
 import FormattedText from '@/components/FormattedText';
 import PageHeader from '@/components/PageHeader';
+import { generateAllSchemas, generateBreadcrumbSchema } from '@/lib/schema';
+import BaseSchemas from '@/components/BaseSchemas';
 
 gsap.registerPlugin(SplitText);
 
@@ -211,27 +213,31 @@ export default function BlogArticle() {
   const formattedDate = articleDate.getFullYear().toString();
 
   // Breadcrumbs JSON-LD pour le SEO
-  const breadcrumbsJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Blog",
-        item: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3006"}/blog`
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: article.title,
-        item: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3006"}/blog/${article.slug}`
-      }
-    ]
-  };
+  const breadcrumbsSchema = generateBreadcrumbSchema([
+    { name: "Blog", url: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3006"}/blog` },
+    { name: article.title, url: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3006"}/blog/${article.slug}` }
+  ]);
+
+  // Générer les schémas SEO
+  const articleContent = article.blocks && article.blocks.length > 0 
+    ? article.blocks.map(block => block.content || '').join(' ')
+    : article.content || '';
+    
+  const schemasJson = generateAllSchemas({
+    title: article.title || '',
+    excerpt: article.excerpt,
+    content: articleContent,
+    publishedAt: article.publishedAt,
+    updatedAt: article.publishedAt,
+    slug: article.slug || article.id || '',
+    schemas: article.seo?.schemas
+  });
 
   return (
     <>
+      {/* Schémas de base (Organization + WebSite) */}
+      <BaseSchemas />
+      
       <ReactLenis root>
         {TRANSITION_CONFIG.mode === 'curtain' && <div className="revealer"></div>}
         
@@ -276,7 +282,13 @@ export default function BlogArticle() {
         {/* Breadcrumbs JSON-LD pour le SEO */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsSchema) }}
+        />
+        
+        {/* Schémas SEO (Article, FAQ, HowTo) */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: schemasJson }}
         />
       </ReactLenis>
     </>

@@ -5,6 +5,8 @@ import Sidebar from '../../components/Sidebar';
 import HeaderAdmin from '../../components/HeaderAdmin';
 import BlockEditor from '../../components/BlockEditor';
 import SeoBlock from '@/components/admin/SeoBlock';
+import SchemaScript from '@/components/SchemaScript';
+import { generateAllSchemas } from '@/lib/schema';
 import type { Content } from '@/types/content';
 import slugify from 'slugify';
 
@@ -207,6 +209,7 @@ export default function BlogArticleEdit() {
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
   }, [article]);
+
 
   const handlePreview = async () => {
     if (!article) return;
@@ -444,8 +447,24 @@ export default function BlogArticleEdit() {
     );
   }
 
+  // Générer le schéma JSON-LD
+  const schemaJson = article ? generateAllSchemas({
+    title: article.title || '',
+    excerpt: article.excerpt,
+    content: Array.isArray(article.blocks) 
+      ? article.blocks.map(block => block.content || '').join(' ')
+      : article.content || '',
+    publishedAt: article.publishedAt,
+    updatedAt: article.publishedAt,
+    slug: article.slug || article.id || '',
+    schemas: article.seo?.schemas
+  }) : '';
+
   return (
     <div className="min-h-screen bg-gray-50 grid grid-cols-1 xl:grid-cols-[256px_1fr]">
+      {/* Injection du schéma JSON-LD */}
+      {schemaJson && <SchemaScript schema={schemaJson} />}
+      
       {/* Sidebar gauche */}
       <Sidebar 
         currentPage="blog"
