@@ -49,10 +49,10 @@ export default function BlogArticleEdit() {
     fetchContent();
   }, []);
 
-  // Réinitialiser hasUnsavedChanges quand l'article est chargé
+  // Réinitialiser hasUnsavedChanges seulement au chargement initial
   useEffect(() => {
     if (article && !loading) {
-      console.log('🔄 Réinitialisation hasUnsavedChanges:', {
+      console.log('🔄 Réinitialisation hasUnsavedChanges au chargement initial:', {
         articleId: article.id,
         articleTitle: article.title,
         loading,
@@ -60,7 +60,7 @@ export default function BlogArticleEdit() {
       });
       setHasUnsavedChanges(false);
     }
-  }, [article, loading]);
+  }, [loading]); // ← Supprimer 'article' des dépendances pour éviter les réinitialisations
 
   // Debug: Afficher l'état de hasUnsavedChanges
   useEffect(() => {

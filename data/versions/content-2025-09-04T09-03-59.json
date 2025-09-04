@@ -153,19 +153,6 @@
         "ctaText": "Yes, sign me up",
         "ctaLink": "https://google.com",
         "theme": "auto"
-      },
-      {
-        "id": "quote-1756755532179",
-        "type": "quote",
-        "data": {
-          "quote": "Une citation inspirante pour votre contenu...",
-          "author": "Nom de l'auteur",
-          "role": "Fonction",
-          "theme": "auto"
-        },
-        "quote": "dsdfsfds",
-        "author": "sdfdsdfsdf",
-        "role": "dsffsfd"
       }
     ]
   },
@@ -389,7 +376,7 @@
             }
           }
         ],
-        "image": "/uploads/1755561574161-96b8a35f.jpg"
+        "image": "/uploads/1756854873729-ae4aa905.png"
       },
       {
         "title": "Art Gallery Digital",
@@ -493,7 +480,7 @@
             ]
           }
         ],
-        "image": "/uploads/1755561574161-96b8a35f.jpg"
+        "image": "/uploads/1756854873729-ae4aa905.png"
       },
       {
         "id": "art-gallery-digital",
@@ -979,18 +966,6 @@
       {
         "title": "Kodza",
         "url": ""
-      },
-      {
-        "title": "Hello",
-        "url": "hello-test"
-      },
-      {
-        "title": "Politique de confidentialité",
-        "url": "politique-de-confidentialite"
-      },
-      {
-        "title": "Mentions légales",
-        "url": "mentions-legales"
       }
     ],
     "socialLinks": [

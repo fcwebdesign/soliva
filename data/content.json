@@ -930,7 +930,7 @@
             "content": "<p>Tout ce qui brille n’est pas de l’IA.<br>Un script peut être extrêmement utile, mais il reste ce qu’il est : du code figé. Une IA, elle, est définie par sa capacité à comprendre, apprendre et s’adapter.</p><p>La seule vraie question à poser devant un outil, c’est la suivante :</p><blockquote><p><br><strong>“Est-ce que cet outil apprend de lui-même ?”</strong></p></blockquote><p><br>Si la réponse est non, alors ce n’est pas de l’intelligence artificielle.</p><p>Et ce n’est pas grave. Tant qu’on ne vous le vend pas comme tel.<br><br>✨ <em>Cet article fait partie de notre ligne éditoriale : distinguer les vraies applications de l’IA du simple vernis marketing. Parce qu’au final, la seule promesse qui compte, c’est celle qu’on peut tenir.</em></p>"
           }
         ],
-        "hasCustomSlug": false
+        "hasCustomSlug": true
       }
     ],
     "filters": [
