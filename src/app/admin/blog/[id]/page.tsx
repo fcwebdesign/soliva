@@ -4,6 +4,7 @@ import { useRouter, useParams } from 'next/navigation';
 import Sidebar from '../../components/Sidebar';
 import HeaderAdmin from '../../components/HeaderAdmin';
 import BlockEditor from '../../components/BlockEditor';
+import SeoBlock from '@/components/admin/SeoBlock';
 import type { Content } from '@/types/content';
 import slugify from 'slugify';
 
@@ -31,6 +32,18 @@ interface Article {
   excerpt?: string;
   blocks?: any[];
   hasCustomSlug?: boolean;
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    focusKeyword?: string;
+    canonicalUrl?: string;
+    schemas?: any[];
+    suggestedInternalLinks?: Array<{
+      url: string;
+      label: string;
+      reason: string;
+    }>;
+  };
 }
 
 export default function BlogArticleEdit() {
@@ -577,6 +590,29 @@ export default function BlogArticleEdit() {
                 placeholder="Résumé de l'article..."
               />
             </div>
+
+            {/* Bloc SEO intégré */}
+            <SeoBlock
+              content={{
+                id: article.id,
+                type: 'article',
+                title: article.title || '',
+                slug: article.slug || article.id || '',
+                contentHtml: Array.isArray(article.blocks) ? article.blocks : (article.content || ''),
+                excerpt: article.excerpt,
+                category: '',
+                tags: [],
+                publishedAt: article.publishedAt,
+                updatedAt: article.publishedAt,
+                seo: {}
+              }}
+              seoFields={article.seo || {}}
+              onSeoChange={(seo) => {
+                console.log('SEO mis à jour:', seo);
+                // Sauvegarder les champs SEO dans l'article
+                updateArticle({ seo });
+              }}
+            />
           </div>
         </main>
       </div>

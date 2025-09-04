@@ -930,7 +930,34 @@
             "content": "<p>Tout ce qui brille n’est pas de l’IA.<br>Un script peut être extrêmement utile, mais il reste ce qu’il est : du code figé. Une IA, elle, est définie par sa capacité à comprendre, apprendre et s’adapter.</p><p>La seule vraie question à poser devant un outil, c’est la suivante :</p><blockquote><p><br><strong>“Est-ce que cet outil apprend de lui-même ?”</strong></p></blockquote><p><br>Si la réponse est non, alors ce n’est pas de l’intelligence artificielle.</p><p>Et ce n’est pas grave. Tant qu’on ne vous le vend pas comme tel.<br><br>✨ <em>Cet article fait partie de notre ligne éditoriale : distinguer les vraies applications de l’IA du simple vernis marketing. Parce qu’au final, la seule promesse qui compte, c’est celle qu’on peut tenir.</em></p>"
           }
         ],
-        "hasCustomSlug": true
+        "hasCustomSlug": true,
+        "seo": {
+          "focusKeyword": "IA-washing",
+          "metaDescription": "Découvrez le phénomène d'IA-washing et comment il crée une illusion autour des outils présentés comme intelligents. Découvrez nos services et notre expertise.",
+          "metaTitle": "Comprendre l'IA-washing et ses enjeux — Soliva",
+          "canonicalUrl": "http://localhost:3006/blog/les-faux-outils-ia-qui-sont-juste-des-scripts",
+          "schemas": [
+            "Article",
+            "FAQPage"
+          ],
+          "suggestedInternalLinks": [
+            {
+              "url": "/blog",
+              "label": "Notre blog sur l'IA",
+              "reason": "Pour plus d'articles sur l'intelligence artificielle."
+            },
+            {
+              "url": "/studio",
+              "label": "Découvrez notre studio",
+              "reason": "Pour voir nos projets liés à l'IA."
+            },
+            {
+              "url": "/contact",
+              "label": "Contactez-nous",
+              "reason": "Pour poser vos questions sur nos services."
+            }
+          ]
+        }
       }
     ],
     "filters": [
