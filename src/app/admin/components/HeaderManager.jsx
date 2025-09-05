@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import MediaUploader from './MediaUploader';
 import { Button } from '@/components/ui/button';
-import { Trash2, ChevronUp, ChevronDown, Pencil, UserPen, Menu } from 'lucide-react';
+import { Trash2, ChevronUp, ChevronDown, UserPen, Menu, Plus, Link } from 'lucide-react';
 
 const HeaderManager = ({ content, onSave }) => {
   const [headerData, setHeaderData] = useState({
@@ -97,25 +97,85 @@ const HeaderManager = ({ content, onSave }) => {
     window.dispatchEvent(new CustomEvent('navigation-changed'));
   };
 
-  const getPageLabel = (pageKey) => {
-    const defaultLabel = availablePages.find(p => p.key === pageKey)?.label || pageKey;
-    return headerData.pageLabels[pageKey] || defaultLabel;
+  const updatePageUrl = (pageKey, newUrl) => {
+    setHeaderData(prev => {
+      const currentLabel = prev.pageLabels[pageKey];
+      const newPageLabels = {
+        ...prev.pageLabels,
+        [pageKey]: {
+          ...(typeof currentLabel === 'object' ? currentLabel : { title: currentLabel }),
+          customUrl: newUrl
+        }
+      };
+      return { ...prev, pageLabels: newPageLabels };
+    });
+    window.dispatchEvent(new CustomEvent('navigation-changed'));
   };
 
-  // Drag & Drop handlers améliorés
+  const updatePageTarget = (pageKey, newTarget) => {
+    setHeaderData(prev => {
+      const currentLabel = prev.pageLabels[pageKey];
+      const newPageLabels = {
+        ...prev.pageLabels,
+        [pageKey]: {
+          ...(typeof currentLabel === 'object' ? currentLabel : { title: currentLabel }),
+          target: newTarget
+        }
+      };
+      return { ...prev, pageLabels: newPageLabels };
+    });
+    window.dispatchEvent(new CustomEvent('navigation-changed'));
+  };
+
+  const getPageLabel = (pageKey) => {
+    const defaultLabel = availablePages.find(p => p.key === pageKey)?.label || pageKey;
+    const customLink = headerData.pageLabels[pageKey];
+    if (customLink && typeof customLink === 'object') {
+      return customLink.title || defaultLabel;
+    }
+    return customLink || defaultLabel;
+  };
+
+  const getPageUrl = (pageKey) => {
+    const customLink = headerData.pageLabels[pageKey];
+    if (customLink && typeof customLink === 'object') {
+      return customLink.customUrl || '';
+    }
+    return '';
+  };
+
+  const getPageTarget = (pageKey) => {
+    const customLink = headerData.pageLabels[pageKey];
+    if (customLink && typeof customLink === 'object') {
+      return customLink.target || '_blank';
+    }
+    return '_blank';
+  };
+
+  const addCustomNavLink = () => {
+    const newLinkKey = `custom-${Date.now()}`;
+    setHeaderData(prev => ({
+      ...prev,
+      pages: [...prev.pages, newLinkKey],
+      pageLabels: {
+        ...prev.pageLabels,
+        [newLinkKey]: { title: 'Nouveau lien', url: 'custom', customUrl: '', target: '_blank' }
+      }
+    }));
+    window.dispatchEvent(new CustomEvent('navigation-changed'));
+  };
+
+  // Drag & Drop handlers
   const handleDragStart = (e, index) => {
     setDraggedItem(index);
     setDragOverIndex(null);
     e.dataTransfer.effectAllowed = 'move';
-    
-    // Ajouter une classe au body pour le style de drag
     document.body.classList.add('dragging');
   };
 
   const handleDragOver = (e, index) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
-    
     if (draggedItem !== null && draggedItem !== index) {
       setDragOverIndex(index);
     }
@@ -139,11 +199,6 @@ const HeaderManager = ({ content, onSave }) => {
 
   return (
     <div>
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold text-gray-900">
-          Configuration du Header
-        </h3>
-      </div>
 
       <div className="space-y-6">
         {/* Section : Identité */}
@@ -253,7 +308,7 @@ const HeaderManager = ({ content, onSave }) => {
             <label className="block text-sm font-medium text-gray-700 mb-3">
               Pages de navigation
             </label>
-            <p className="text-sm text-gray-600 mb-3">Utilisez les boutons "Modifier" pour personnaliser les noms des pages</p>
+            <p className="text-sm text-gray-600 mb-3">Utilisez les boutons "Éditer" pour personnaliser les noms des pages</p>
             
             {/* Pages sélectionnées (ordre) */}
             <div className="mb-4">
@@ -286,57 +341,80 @@ const HeaderManager = ({ content, onSave }) => {
                         <span className="text-xs text-gray-500 w-6">{index + 1}</span>
                         <div className="flex-1 flex items-center gap-2">
                           {editingPage === pageKey ? (
-                            <div className="flex-1 flex items-center gap-2">
+                            <div className="flex-1 space-y-2">
                               <input
                                 type="text"
                                 value={getPageLabel(pageKey)}
                                 onChange={(e) => updatePageLabel(pageKey, e.target.value)}
-                                className="flex-1 text-sm font-medium bg-white border border-blue-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full text-sm font-medium bg-white border border-blue-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder={page?.label || pageKey}
                                 autoFocus
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter') {
-                                    setEditingPage(null);
-                                  } else if (e.key === 'Escape') {
-                                    setEditingPage(null);
-                                  }
-                                }}
-                                onBlur={() => setEditingPage(null)}
                               />
-
+                              {pageKey.startsWith('custom-') && (
+                                <input
+                                  type="text"
+                                  value={getPageUrl(pageKey)}
+                                  onChange={(e) => updatePageUrl(pageKey, e.target.value)}
+                                  className="w-full text-sm bg-white border border-blue-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  placeholder="https://exemple.com"
+                                />
+                              )}
+                              <div className="flex items-center gap-2">
+                                {pageKey.startsWith('custom-') && (
+                                  <select
+                                    value={getPageTarget(pageKey)}
+                                    onChange={(e) => updatePageTarget(pageKey, e.target.value)}
+                                    className="text-xs bg-white border border-blue-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  >
+                                    <option value="_self">Même onglet</option>
+                                    <option value="_blank">Nouvel onglet</option>
+                                  </select>
+                                )}
+                                <Button
+                                  type="button"
+                                  onClick={() => setEditingPage(null)}
+                                  size="sm"
+                                  className="text-xs bg-green-100 text-green-700 hover:bg-green-200 border-0 rounded-md"
+                                >
+                                  ✓
+                                </Button>
+                              </div>
                             </div>
                           ) : (
                             <>
-                              <span className="flex-1 text-sm font-medium text-gray-700">
-                                {getPageLabel(pageKey)}
-                              </span>
+                              <div className="flex-1">
+                                <span className="text-sm font-medium text-gray-700">
+                                  {getPageLabel(pageKey)}
+                                </span>
+                                {pageKey.startsWith('custom-') && getPageUrl(pageKey) && (
+                                  <div className="text-xs text-gray-500 truncate">
+                                    {getPageUrl(pageKey)}
+                                  </div>
+                                )}
+                                {pageKey.startsWith('custom-') && (
+                                  <div className="text-xs text-gray-400 flex items-center gap-1">
+                                    <Link className="w-3 h-3" />
+                                    {getPageTarget(pageKey) === '_blank' ? 'Nouvel onglet' : 'Même onglet'}
+                                  </div>
+                                )}
+                              </div>
                               <Button
                                 type="button"
                                 onClick={() => setEditingPage(pageKey)}
                                 size="sm"
                                 className="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 border-0 rounded-md"
                               >
-                                <Pencil className="w-3 h-3 mr-0" />
-                                Modifier
+                                Éditer
                               </Button>
                             </>
                           )}
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-gray-400">Glisser-déposer</span>
                           {isDragging && <span className="text-xs text-blue-600 font-medium">En cours...</span>}
                           {isDragOver && <span className="text-xs text-green-600 font-medium">Déposer ici</span>}
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Button
-                          onClick={() => togglePage(pageKey)}
-                          size="sm"
-                          className="text-xs bg-red-100 text-red-700 hover:bg-red-200 border-0 rounded-md"
-                          title="Retirer cette page"
-                        >
-                          <Trash2 className="w-3 h-3 mr-0" />
-                        </Button>
                         {index > 0 && (
                           <Button
                             onClick={() => movePage(index, index - 1)}
@@ -357,6 +435,14 @@ const HeaderManager = ({ content, onSave }) => {
                             <ChevronDown className="w-3 h-3 mr-0" />
                           </Button>
                         )}
+                        <Button
+                          onClick={() => togglePage(pageKey)}
+                          size="sm"
+                          className="text-xs bg-red-100 text-red-700 hover:bg-red-200 border-0 rounded-md"
+                          title="Retirer cette page"
+                        >
+                          <Trash2 className="w-3 h-3 mr-0" />
+                        </Button>
                       </div>
                     </div>
                   );
@@ -366,7 +452,16 @@ const HeaderManager = ({ content, onSave }) => {
 
             {/* Pages disponibles */}
             <div>
-              <h4 className="text-sm font-medium text-gray-600 mb-2">Pages disponibles :</h4>
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-sm font-medium text-gray-600">Pages disponibles :</h4>
+                <Button
+                  onClick={addCustomNavLink}
+                  className="flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Lien personnalisé
+                </Button>
+              </div>
               <div className="grid grid-cols-2 gap-2">
                 {availablePages.map((page) => (
                   <label key={page.key} className="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">

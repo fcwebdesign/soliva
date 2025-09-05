@@ -133,9 +133,16 @@ const Nav = ({ content }) => {
       return customPage.title || 'Page personnalisée';
     }
     
+    // Gérer les liens personnalisés (objets) et les labels simples (chaînes)
+    const customLabel = content?.pageLabels?.[pageKey];
+    if (customLabel && typeof customLabel === 'object') {
+      return customLabel.title || pageLabels[pageKey] || pageKey;
+    }
+    
     // Sinon utiliser les labels par défaut
-    return content?.pageLabels?.[pageKey] || pageLabels[pageKey] || pageKey;
+    return customLabel || pageLabels[pageKey] || pageKey;
   };
+
 
   // Créer une clé unique pour forcer le re-render
   const navKey = JSON.stringify(content);
@@ -182,15 +189,31 @@ const Nav = ({ content }) => {
       <div className="col">
         <div className="nav-items">
           {navigationItems.map((item) => {
-            const path = item === 'home' ? "/" : `/${item}`;
-            const isActive = pathname === path;
+            const defaultPath = item === 'home' ? "/" : `/${item}`;
+            const isActive = pathname === defaultPath;
             const label = getPageLabel(item);
+            
+            // Gérer les liens personnalisés (objets) et les liens normaux (chaînes)
+            let href, target, onClick;
+            const customLabel = content?.pageLabels?.[item];
+            if (customLabel && typeof customLabel === 'object') {
+              // Lien personnalisé
+              href = customLabel.customUrl || defaultPath;
+              target = customLabel.target || '_blank';
+              onClick = target === '_blank' ? undefined : handleNavigation(href);
+            } else {
+              // Lien normal
+              href = defaultPath;
+              target = '_self';
+              onClick = handleNavigation(href);
+            }
             
             return (
               <div key={item} className="nav-item">
                 <Link 
-                  onClick={handleNavigation(path)} 
-                  href={path}
+                  onClick={onClick} 
+                  href={href}
+                  target={target}
                   className={isActive ? "active" : ""}
                 >
                   {label}

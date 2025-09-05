@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import MediaUploader from './MediaUploader';
 import { Button } from '@/components/ui/button';
-import { Trash2, ChevronUp, ChevronDown, Plus, Pencil, UserPen, CircleFadingPlus, Scale, Menu } from 'lucide-react';
+import { Trash2, ChevronUp, ChevronDown, Plus, UserPen, CircleFadingPlus, Scale, Menu, Link } from 'lucide-react';
 
 const FooterManager = ({ content, onSave }) => {
   const [footerData, setFooterData] = useState({
@@ -154,6 +154,19 @@ const FooterManager = ({ content, onSave }) => {
     window.dispatchEvent(new CustomEvent('footer-changed'));
   };
 
+  const addCustomLegalLink = () => {
+    const newLinkKey = `custom-${Date.now()}`;
+    setFooterData(prev => ({
+      ...prev,
+      bottomLinks: [...prev.bottomLinks, newLinkKey],
+      legalPageLabels: {
+        ...prev.legalPageLabels,
+        [newLinkKey]: { title: 'Nouveau lien', url: 'custom', customUrl: '', target: '_blank' }
+      }
+    }));
+    window.dispatchEvent(new CustomEvent('footer-changed'));
+  };
+
   const updateLinkUrl = (index, newUrl) => {
     setFooterData(prev => {
       const newLinks = [...prev.links];
@@ -269,7 +282,27 @@ const FooterManager = ({ content, onSave }) => {
 
   const getLegalPageLabel = (pageKey) => {
     const defaultLabel = availableLegalPages.find(p => p.key === pageKey)?.label || pageKey;
-    return footerData.legalPageLabels?.[pageKey] || defaultLabel;
+    const customLink = footerData.legalPageLabels?.[pageKey];
+    if (customLink && typeof customLink === 'object') {
+      return customLink.title || defaultLabel;
+    }
+    return customLink || defaultLabel;
+  };
+
+  const getLegalPageUrl = (pageKey) => {
+    const customLink = footerData.legalPageLabels?.[pageKey];
+    if (customLink && typeof customLink === 'object') {
+      return customLink.customUrl || '';
+    }
+    return '';
+  };
+
+  const getLegalPageTarget = (pageKey) => {
+    const customLink = footerData.legalPageLabels?.[pageKey];
+    if (customLink && typeof customLink === 'object') {
+      return customLink.target || '_blank';
+    }
+    return '_blank';
   };
 
   const updateLegalPageLabel = (pageKey, newLabel) => {
@@ -285,6 +318,36 @@ const FooterManager = ({ content, onSave }) => {
       };
     });
     // Déclencher hasUnsavedChanges
+    window.dispatchEvent(new CustomEvent('footer-changed'));
+  };
+
+  const updateLegalPageUrl = (pageKey, newUrl) => {
+    setFooterData(prev => {
+      const currentLabel = prev.legalPageLabels[pageKey];
+      const newLegalPageLabels = {
+        ...prev.legalPageLabels,
+        [pageKey]: {
+          ...(typeof currentLabel === 'object' ? currentLabel : { title: currentLabel }),
+          customUrl: newUrl
+        }
+      };
+      return { ...prev, legalPageLabels: newLegalPageLabels };
+    });
+    window.dispatchEvent(new CustomEvent('footer-changed'));
+  };
+
+  const updateLegalPageTarget = (pageKey, newTarget) => {
+    setFooterData(prev => {
+      const currentLabel = prev.legalPageLabels[pageKey];
+      const newLegalPageLabels = {
+        ...prev.legalPageLabels,
+        [pageKey]: {
+          ...(typeof currentLabel === 'object' ? currentLabel : { title: currentLabel }),
+          target: newTarget
+        }
+      };
+      return { ...prev, legalPageLabels: newLegalPageLabels };
+    });
     window.dispatchEvent(new CustomEvent('footer-changed'));
   };
 
@@ -330,11 +393,6 @@ const FooterManager = ({ content, onSave }) => {
 
   return (
     <div>
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold text-gray-900">
-          Configuration du Footer
-        </h3>
-      </div>
 
       <div className="space-y-6">
           {/* Section : Identité */}
@@ -444,7 +502,7 @@ const FooterManager = ({ content, onSave }) => {
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Liens
               </label>
-            <p className="text-sm text-gray-600 mb-3">Utilisez les boutons "Modifier" pour personnaliser les noms des liens</p>
+            <p className="text-sm text-gray-600 mb-3">Utilisez les boutons "Éditer" pour personnaliser les noms des liens</p>
             
             {/* Liens sélectionnés (ordre) */}
             <div className="mb-4">
@@ -527,8 +585,9 @@ const FooterManager = ({ content, onSave }) => {
                                   </div>
                                 )}
                                 {link.url === 'custom' && (
-                                  <div className="text-xs text-gray-400">
-                                    {link.target === '_blank' ? '🔗 Nouvel onglet' : '📄 Même onglet'}
+                                  <div className="text-xs text-gray-400 flex items-center gap-1">
+                                    <Link className="w-3 h-3" />
+                                    {link.target === '_blank' ? 'Nouvel onglet' : 'Même onglet'}
                                   </div>
                                 )}
                               </div>
@@ -538,27 +597,17 @@ const FooterManager = ({ content, onSave }) => {
                                 size="sm"
                                 className="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 border-0 rounded-md"
                               >
-                                <Pencil className="w-3 h-3 mr-0" />
-                                Modifier
+                                Éditer
                               </Button>
                             </>
                           )}
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-gray-400">Glisser-déposer</span>
                           {isDragging && <span className="text-xs text-blue-600 font-medium">En cours...</span>}
                           {isDragOver && <span className="text-xs text-green-600 font-medium">Déposer ici</span>}
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Button
-                          onClick={() => toggleLink(link.url)}
-                          size="sm"
-                          className="text-xs bg-red-100 text-red-700 hover:bg-red-200 border-0 rounded-md"
-                          title="Retirer ce lien"
-                        >
-                          <Trash2 className="w-3 h-3 mr-0" />
-                        </Button>
                         {index > 0 && (
                           <Button
                             onClick={() => moveLink(index, index - 1)}
@@ -579,6 +628,14 @@ const FooterManager = ({ content, onSave }) => {
                             <ChevronDown className="w-3 h-3 mr-0" />
                           </Button>
                         )}
+                        <Button
+                          onClick={() => toggleLink(link.url)}
+                          size="sm"
+                          className="text-xs bg-red-100 text-red-700 hover:bg-red-200 border-0 rounded-md"
+                          title="Retirer ce lien"
+                        >
+                          <Trash2 className="w-3 h-3 mr-0" />
+                        </Button>
                       </div>
                     </div>
                   );
@@ -592,9 +649,9 @@ const FooterManager = ({ content, onSave }) => {
                 <h4 className="text-sm font-medium text-gray-600">Liens disponibles :</h4>
                 <Button
                   onClick={addCustomLink}
-                  className="px-3 py-1 text-sm bg-green-100 text-green-700 hover:bg-green-200 border-0 rounded-md"
+                  className="flex items-center gap-2"
                 >
-                  <Plus className="w-4 h-4 mr-0" />
+                  <Plus className="w-4 h-4" />
                   Lien personnalisé
                 </Button>
               </div>
@@ -625,9 +682,9 @@ const FooterManager = ({ content, onSave }) => {
             <div className="flex items-center justify-between mb-3">
               <Button
                 onClick={addSocialLink}
-                className="px-3 py-1 text-sm bg-blue-100 text-blue-700 hover:bg-blue-200 border-0 rounded-md"
+                className="flex items-center gap-2"
               >
-                <Plus className="w-4 h-4 mr-0" />
+                <Plus className="w-4 h-4" />
                 Ajouter
               </Button>
             </div>
@@ -735,56 +792,80 @@ const FooterManager = ({ content, onSave }) => {
                             <span className="text-xs text-gray-500 w-6">{index + 1}</span>
                             <div className="flex-1 flex items-center gap-2">
                               {editingLegalPage === pageKey ? (
-                                <div className="flex-1 flex items-center gap-2">
+                                <div className="flex-1 space-y-2">
                                   <input
                                     type="text"
                                     value={getLegalPageLabel(pageKey)}
                                     onChange={(e) => updateLegalPageLabel(pageKey, e.target.value)}
-                                    className="flex-1 text-sm font-medium bg-white border border-blue-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    className="w-full text-sm font-medium bg-white border border-blue-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                     placeholder={page?.label || pageKey}
                                     autoFocus
-                                    onKeyDown={(e) => {
-                                      if (e.key === 'Enter') {
-                                        setEditingLegalPage(null);
-                                      } else if (e.key === 'Escape') {
-                                        setEditingLegalPage(null);
-                                      }
-                                    }}
-                                    onBlur={() => setEditingLegalPage(null)}
                                   />
+                                  {pageKey.startsWith('custom-') && (
+                                    <input
+                                      type="text"
+                                      value={getLegalPageUrl(pageKey)}
+                                      onChange={(e) => updateLegalPageUrl(pageKey, e.target.value)}
+                                      className="w-full text-sm bg-white border border-blue-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                      placeholder="https://exemple.com"
+                                    />
+                                  )}
+                                  <div className="flex items-center gap-2">
+                                    {pageKey.startsWith('custom-') && (
+                                      <select
+                                        value={getLegalPageTarget(pageKey)}
+                                        onChange={(e) => updateLegalPageTarget(pageKey, e.target.value)}
+                                        className="text-xs bg-white border border-blue-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                      >
+                                        <option value="_self">Même onglet</option>
+                                        <option value="_blank">Nouvel onglet</option>
+                                      </select>
+                                    )}
+                                    <Button
+                                      type="button"
+                                      onClick={() => setEditingLegalPage(null)}
+                                      size="sm"
+                                      className="text-xs bg-green-100 text-green-700 hover:bg-green-200 border-0 rounded-md"
+                                    >
+                                      ✓
+                                    </Button>
+                                  </div>
                                 </div>
                               ) : (
                                 <>
-                                  <span className="flex-1 text-sm font-medium text-gray-700">
-                                    {getLegalPageLabel(pageKey)}
-                                  </span>
+                                  <div className="flex-1">
+                                    <span className="text-sm font-medium text-gray-700">
+                                      {getLegalPageLabel(pageKey)}
+                                    </span>
+                                    {pageKey.startsWith('custom-') && getLegalPageUrl(pageKey) && (
+                                      <div className="text-xs text-gray-500 truncate">
+                                        {getLegalPageUrl(pageKey)}
+                                      </div>
+                                    )}
+                                    {pageKey.startsWith('custom-') && (
+                                      <div className="text-xs text-gray-400 flex items-center gap-1">
+                                        <Link className="w-3 h-3" />
+                                        {getLegalPageTarget(pageKey) === '_blank' ? 'Nouvel onglet' : 'Même onglet'}
+                                      </div>
+                                    )}
+                                  </div>
                                   <Button
                                     type="button"
                                     onClick={() => setEditingLegalPage(pageKey)}
                                     size="sm"
                                     className="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 border-0 rounded-md"
                                   >
-                                    <Pencil className="w-3 h-3 mr-0" />
-                                    Modifier
+                                    Éditer
                                   </Button>
                                 </>
                               )}
                             </div>
                             <div className="flex items-center gap-2">
-                              <span className="text-xs text-gray-400">Glisser-déposer</span>
                               {isDragging && <span className="text-xs text-blue-600 font-medium">En cours...</span>}
                               {isDragOver && <span className="text-xs text-green-600 font-medium">Déposer ici</span>}
                             </div>
                           </div>
                           <div className="flex items-center gap-1">
-                            <Button
-                              onClick={() => removeBottomLink(pageKey)}
-                              size="sm"
-                              className="text-xs bg-red-100 text-red-700 hover:bg-red-200 border-0 rounded-md"
-                              title="Retirer cette page"
-                            >
-                              <Trash2 className="w-3 h-3 mr-0" />
-                            </Button>
                             {index > 0 && (
                               <Button
                                 onClick={() => moveBottomLink(index, index - 1)}
@@ -805,6 +886,14 @@ const FooterManager = ({ content, onSave }) => {
                                 <ChevronDown className="w-3 h-3 mr-0" />
                               </Button>
                             )}
+                            <Button
+                              onClick={() => removeBottomLink(pageKey)}
+                              size="sm"
+                              className="text-xs bg-red-100 text-red-700 hover:bg-red-200 border-0 rounded-md"
+                              title="Retirer cette page"
+                            >
+                              <Trash2 className="w-3 h-3 mr-0" />
+                            </Button>
                           </div>
                         </div>
                       );
@@ -814,7 +903,16 @@ const FooterManager = ({ content, onSave }) => {
 
                 {/* Pages disponibles */}
                 <div>
-                  <h4 className="text-sm font-medium text-gray-600 mb-2">Pages disponibles :</h4>
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-sm font-medium text-gray-600">Pages disponibles :</h4>
+                    <Button
+                      onClick={addCustomLegalLink}
+                      className="flex items-center gap-2"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Lien personnalisé
+                    </Button>
+                  </div>
                   <div className="grid grid-cols-2 gap-2">
                     {availableLegalPages.map((page) => (
                       <label key={page.key} className="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">

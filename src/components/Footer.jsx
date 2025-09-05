@@ -166,13 +166,24 @@ const Footer = ({ content, fullContent }) => {
                     const page = availablePages.find(p => p.key === pageKey);
                     const defaultLabel = page?.label || pageKey;
                     const customLabel = footerContent.legalPageLabels?.[pageKey];
-                    const displayLabel = customLabel || defaultLabel;
-                    const url = page?.path || '#';
+                    
+                    // Gérer les liens personnalisés (objets) et les labels simples (chaînes)
+                    let displayLabel, url, target;
+                    if (customLabel && typeof customLabel === 'object') {
+                      displayLabel = customLabel.title || defaultLabel;
+                      url = customLabel.customUrl || page?.path || '#';
+                      target = customLabel.target || '_blank';
+                    } else {
+                      displayLabel = customLabel || defaultLabel;
+                      url = page?.path || '#';
+                      target = '_self';
+                    }
                     
                     return (
                       <li key={index}>
                         <Link 
                           href={url} 
+                          target={target}
                           className="transition-colors hover:opacity-80 leading-tight"
                           style={{ color: 'var(--text-secondary)' }}
                         >

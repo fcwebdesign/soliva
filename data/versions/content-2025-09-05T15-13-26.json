@@ -8,10 +8,10 @@
     "logoImage": "",
     "location": "paris, le havre",
     "items": [
-      "studio",
       "work",
-      "blog",
-      "contact"
+      "studio",
+      "contact",
+      "blog"
     ],
     "pageLabels": {
       "blog": "le blog",
@@ -157,8 +157,8 @@
     ],
     "seo": {
       "focusKeyword": "studio créatif",
-      "metaTitle": "Studio créatif innovant — Soliva",
-      "metaDescription": "Découvrez notre studio créatif pour transformer vos idées en projets concrets et attrayants. Découvrez nos services et notre expertise.",
+      "metaTitle": "Studio créatif pour vos projets innovants — Soliva",
+      "metaDescription": "Comprenez l'importance d'un studio créatif pour vos projets. Nous proposons des solutions digitales sur-mesure qui répondent à vos besoins spécifiques.",
       "canonicalUrl": "http://localhost:3006/",
       "schemas": [
         "Article"
@@ -201,7 +201,7 @@
     "description": "<p><strong>Vous avez des questions ? Des idées à partager ?</strong></p><p>On est là. Que vous soyez à Paris ou au Havre, n’hésitez pas à nous écrire. On adore échanger, alors faites le premier pas. Votre message est le début d'une conversation qui pourrait tout changer. Allez-y, on attend de vous lire !</p>",
     "seo": {
       "focusKeyword": "contact",
-      "metaDescription": "Contactez-nous pour toute question. Partagez vos idées et engagez la conversation avec l'équipe Soliva. Découvrez nos services et notre expertise.",
+      "metaDescription": "Contactez-nous pour toute question. Échangez facilement avec notre équipe à Paris ou au Havre. Découvrez nos services et notre expertise.",
       "metaTitle": "Contactez-nous pour vos questions — Soliva"
     }
   },
@@ -1004,6 +1004,10 @@
     "description": "AI-Native Studio",
     "links": [
       {
+        "title": "Le blog",
+        "url": "blog"
+      },
+      {
         "title": "Get in touch",
         "url": "contact"
       },
@@ -1014,10 +1018,6 @@
       {
         "title": "Réalisations",
         "url": "work"
-      },
-      {
-        "title": "Le blog",
-        "url": "blog"
       },
       {
         "title": "Kodza",
@@ -1045,9 +1045,18 @@
     "copyright": "© 2025 Soliva",
     "bottomLinks": [
       "politique-de-confidentialite",
-      "mentions-legales"
+      "mentions-legales",
+      "studio",
+      "custom-1757084495511"
     ],
-    "legalPageLabels": {}
+    "legalPageLabels": {
+      "custom-1757084495511": {
+        "title": "Nouveau lien",
+        "url": "custom",
+        "customUrl": "https://google.com",
+        "target": "_blank"
+      }
+    }
   },
   "custom": [
     {
