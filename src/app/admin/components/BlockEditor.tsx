@@ -7,7 +7,8 @@ import MediaUploader, { LogoUploader } from './MediaUploader';
 import VersionList from './VersionList';
 import { renderAutoBlockEditor } from "@/app/admin/components/AutoBlockIntegration";
 import { getAutoDeclaredBlock, getBlockMetadata, getAvailableBlockTypes, createAutoBlockInstance } from '@/blocks/auto-declared/registry';
-import { FileText, Briefcase, Navigation, Settings, Mail, Footprints, Save, Target, Layout, Tag, Atom, Trash2 } from 'lucide-react';
+import { FileText, Briefcase, Navigation, Settings, Mail, Footprints, Save, Target, Layout, Tag, Atom, Trash2, Plus } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 interface Block {
   id: string;
@@ -1137,15 +1138,16 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
               </span>
             </div>
           </div>
-          <button 
+                    <Button
             onClick={() => {
               const newId = `article-${Date.now()}`;
               router.push(`/admin/blog/${newId}`);
             }}
-            className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2"
           >
-            ➕ Nouvel article
-          </button>
+            <Plus className="w-4 h-4" />
+            Nouvel article
+          </Button>
         </div>
         
         <div className="space-y-3">
@@ -1178,36 +1180,40 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                 </div>
                 
                 <div className="flex space-x-2 ml-4">
-                  <button 
+                  <Button 
                     onClick={() => router.push(`/admin/blog/${article.id}`)}
-                    className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium hover:bg-blue-200 transition-colors focus:outline-none"
+                    size="sm"
+                    className="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 border-0 rounded-md"
                     title="Éditer l'article complet"
                   >
                     Éditer
-                  </button>
-                  <button 
+                  </Button>
+                  <Button 
                     onClick={() => window.open(`/blog/${article.slug || article.id}`, '_blank')}
-                    className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full font-medium hover:bg-gray-200 transition-colors focus:outline-none"
+                    size="sm"
+                    className="text-xs bg-gray-100 text-gray-700 hover:bg-gray-200 border-0 rounded-md"
                     title="Aperçu de l'article"
                   >
                     Aperçu
-                  </button>
-                  <button 
+                  </Button>
+                  <Button 
                     onClick={() => handleDuplicate('blog', article.id)}
                     disabled={isDuplicating === article.id}
-                    className={`text-xs px-2 py-1 rounded-full font-medium transition-colors focus:outline-none ${
+                    size="sm"
+                    className={`text-xs border-0 rounded-md ${
                       isDuplicating === article.id
                         ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        : 'bg-orange-100 text-orange-700 hover:bg-orange-200'
+                        : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
                     }`}
                     title="Dupliquer cet article"
                   >
                     {isDuplicating === article.id ? '...' : 'Dupliquer'}
-                  </button>
-                  <button 
+                  </Button>
+                  <Button 
                     onClick={() => handleDelete('blog', article.id, article.title || `Article ${index + 1}`)}
                     disabled={isDeleting === article.id}
-                    className={`text-xs px-2 py-1 rounded-full font-medium transition-colors focus:outline-none ${
+                    size="sm"
+                    className={`text-xs border-0 rounded-md ${
                       isDeleting === article.id
                         ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                         : 'bg-red-100 text-red-700 hover:bg-red-200'
@@ -1215,7 +1221,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                     title="Supprimer cet article"
                   >
                     {isDeleting === article.id ? '...' : 'Supprimer'}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -1251,15 +1257,16 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
               </span>
             </div>
           </div>
-          <button 
+                    <Button
             onClick={() => {
               const newId = `project-${Date.now()}`;
               router.push(`/admin/work/${newId}`);
             }}
-            className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2"
           >
-            ➕ Nouveau projet
-          </button>
+            <Plus className="w-4 h-4" />
+            Nouveau projet
+          </Button>
         </div>
         
         <div className="space-y-3">
@@ -1312,36 +1319,40 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                 </div>
                 
                 <div className="flex space-x-2 ml-4">
-                  <button 
+                  <Button 
                     onClick={() => router.push(`/admin/work/${project.id}`)}
-                    className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium hover:bg-blue-200 transition-colors focus:outline-none"
+                    size="sm"
+                    className="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 border-0 rounded-md"
                     title="Éditer le projet complet"
                   >
                     Éditer
-                  </button>
-                  <button 
+                  </Button>
+                  <Button 
                     onClick={() => window.open(`/work/${project.slug || project.id}`, '_blank')}
-                    className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full font-medium hover:bg-gray-200 transition-colors focus:outline-none"
+                    size="sm"
+                    className="text-xs bg-gray-100 text-gray-700 hover:bg-gray-200 border-0 rounded-md"
                     title="Aperçu du projet"
                   >
                     Aperçu
-                  </button>
-                  <button 
+                  </Button>
+                  <Button 
                     onClick={() => handleDuplicate('work', project.id)}
                     disabled={isDuplicating === project.id}
-                    className={`text-xs px-2 py-1 rounded-full font-medium transition-colors focus:outline-none ${
+                    size="sm"
+                    className={`text-xs border-0 rounded-md ${
                       isDuplicating === project.id
                         ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        : 'bg-orange-100 text-orange-700 hover:bg-orange-200'
+                        : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
                     }`}
                     title="Dupliquer ce projet"
                   >
                     {isDuplicating === project.id ? '...' : 'Dupliquer'}
-                  </button>
-                  <button 
+                  </Button>
+                  <Button 
                     onClick={() => handleDelete('work', project.id, project.title || `Projet ${index + 1}`)}
                     disabled={isDeleting === project.id}
-                    className={`text-xs px-2 py-1 rounded-full font-medium transition-colors focus:outline-none ${
+                    size="sm"
+                    className={`text-xs border-0 rounded-md ${
                       isDeleting === project.id
                         ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                         : 'bg-red-100 text-red-700 hover:bg-red-200'
@@ -1349,7 +1360,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                     title="Supprimer ce projet"
                   >
                     {isDeleting === project.id ? '...' : 'Supprimer'}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

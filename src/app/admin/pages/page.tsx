@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '../components/Sidebar';
-import { Home, Mail, Palette, FileText, Settings, Layout } from 'lucide-react';
+import { Home, Mail, Palette, FileText, Settings, Layout, Plus } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 interface Page {
   id: string;
@@ -331,12 +332,10 @@ export default function PagesAdmin() {
                         )}
                       </div>
                     </div>
-                    <button
-                      onClick={handleNewPage}
-                      className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                      ➕ Nouvelle page
-                    </button>
+                    <Button onClick={handleNewPage} className="flex items-center gap-2">
+                      <Plus className="w-4 h-4" />
+                      Nouvelle page
+                    </Button>
                   </div>
 
                   <div className="space-y-3">
@@ -370,34 +369,38 @@ export default function PagesAdmin() {
                           </div>
                           
                           <div className="flex space-x-2 ml-4">
-                            <button
+                            <Button
                               onClick={() => handleEditPage(page.id)}
-                              className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium hover:bg-blue-200 transition-colors focus:outline-none"
+                              size="sm"
+                              className="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 border-0 rounded-md"
                               title="Éditer la page"
                             >
                               Éditer
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                               onClick={() => handlePreviewPage(page.id)}
-                              className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full font-medium hover:bg-gray-200 transition-colors focus:outline-none"
+                              size="sm"
+                              className="text-xs bg-gray-100 text-gray-700 hover:bg-gray-200 border-0 rounded-md"
                               title="Aperçu de la page"
                             >
                               Aperçu
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                               onClick={() => handleDuplicatePage(page.id)}
-                              className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full font-medium hover:bg-orange-200 transition-colors focus:outline-none"
+                              size="sm"
+                              className="text-xs bg-purple-100 text-purple-700 hover:bg-purple-200 border-0 rounded-md"
                               title="Dupliquer cette page"
                             >
                               Dupliquer
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                               onClick={() => handleDeletePage(page.id)}
-                              className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full font-medium hover:bg-red-200 transition-colors focus:outline-none"
+                              size="sm"
+                              className="text-xs bg-red-100 text-red-700 hover:bg-red-200 border-0 rounded-md"
                               title="Supprimer cette page"
                             >
                               Supprimer
-                            </button>
+                            </Button>
                           </div>
                         </div>
                       </div>

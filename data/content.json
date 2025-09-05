@@ -8,10 +8,10 @@
     "logoImage": "",
     "location": "paris, le havre",
     "items": [
-      "studio",
       "work",
-      "blog",
-      "contact"
+      "studio",
+      "contact",
+      "blog"
     ],
     "pageLabels": {
       "blog": "le blog",
@@ -999,10 +999,14 @@
   "_previewId": "preview-1755558070217",
   "_originalPage": "blog",
   "footer": {
-    "logo": "soliva",
+    "logo": "soliva ",
     "logoImage": "",
     "description": "AI-Native Studio",
     "links": [
+      {
+        "title": "Le blog",
+        "url": "blog"
+      },
       {
         "title": "Get in touch",
         "url": "contact"
@@ -1014,10 +1018,6 @@
       {
         "title": "Réalisations",
         "url": "work"
-      },
-      {
-        "title": "Le blog",
-        "url": "blog"
       },
       {
         "title": "Kodza",

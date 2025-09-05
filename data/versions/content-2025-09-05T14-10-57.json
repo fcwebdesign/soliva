@@ -157,8 +157,8 @@
     ],
     "seo": {
       "focusKeyword": "studio créatif",
-      "metaTitle": "Studio créatif innovant — Soliva",
-      "metaDescription": "Découvrez notre studio créatif pour des solutions innovantes en branding et stratégie digitale. Découvrez nos services et notre expertise. Découvrez nos services et notre expertise.",
+      "metaTitle": "Studio créatif pour vos projets innovants — Soliva",
+      "metaDescription": "Comprenez l'importance d'un studio créatif pour vos projets. Nous proposons des solutions digitales sur-mesure qui répondent à vos besoins spécifiques.",
       "canonicalUrl": "http://localhost:3006/",
       "schemas": [
         "Article"
@@ -201,8 +201,8 @@
     "description": "<p><strong>Vous avez des questions ? Des idées à partager ?</strong></p><p>On est là. Que vous soyez à Paris ou au Havre, n’hésitez pas à nous écrire. On adore échanger, alors faites le premier pas. Votre message est le début d'une conversation qui pourrait tout changer. Allez-y, on attend de vous lire !</p>",
     "seo": {
       "focusKeyword": "contact",
-      "metaDescription": "Contactez-nous pour toute question ou idée. Nous sommes là pour échanger et répondre à vos besoins avec plaisir. Découvrez nos services et notre expertise.",
-      "metaTitle": "Nous contacter pour échanger — Soliva"
+      "metaDescription": "Contactez-nous pour toute question. Échangez facilement avec notre équipe à Paris ou au Havre. Découvrez nos services et notre expertise.",
+      "metaTitle": "Contactez-nous pour vos questions — Soliva"
     }
   },
   "studio": {
@@ -543,7 +543,12 @@
         "publishedAt": "2025-08-19T09:55:29.559Z",
         "image": "/uploads/1755597298777-8b15cf89.jpg"
       }
-    ]
+    ],
+    "seo": {
+      "focusKeyword": "projets",
+      "metaTitle": "Projets créatifs qui inspirent — Soliva",
+      "metaDescription": "Découvrez nos projets qui illustrent notre créativité et notre expertise en stratégie de marque et design digital. Découvrez nos services et notre expertise."
+    }
   },
   "blog": {
     "hero": {
@@ -986,14 +991,15 @@
     ],
     "seo": {
       "focusKeyword": "blog",
-      "metaTitle": "Le Journal : Analyses du Monde Digital — Soliva"
+      "metaTitle": "Blog: Réflexions sur le Digital — Soliva",
+      "metaDescription": "Découvrez le blog et ses réflexions sur le digital, le branding et plus. Plongez dans des analyses qui redéfinissent votre approche."
     }
   },
   "_isPreview": true,
   "_previewId": "preview-1755558070217",
   "_originalPage": "blog",
   "footer": {
-    "logo": "soliva",
+    "logo": "soliva ",
     "logoImage": "",
     "description": "AI-Native Studio",
     "links": [

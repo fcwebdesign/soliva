@@ -11,6 +11,8 @@ import SeoBlock from '@/components/admin/SeoBlock';
 import SchemaScript from '@/components/SchemaScript';
 import { generateAllSchemas } from '@/lib/schema';
 import type { Content } from '@/types/content';
+import { Button } from '@/components/ui/button';
+import { Eye, Save, Rocket } from 'lucide-react';
 
 
 
@@ -624,17 +626,27 @@ function AdminPageContent() {
 
                 {/* Bouton Aperçu */}
                 {currentPageConfig?.path && currentPage !== 'pages' && (
-                  <button
+                  <Button
                     onClick={hasUnsavedChanges ? handlePreview : () => window.open(currentPageConfig.path!, '_blank')}
-                    className={`text-sm px-4 py-2 rounded-lg transition-colors ${
+                    className={`text-sm px-4 py-2 rounded-md transition-colors ${
                       hasUnsavedChanges 
                         ? 'bg-orange-600 text-white hover:bg-orange-700' 
                         : 'bg-gray-600 text-white hover:bg-gray-700'
                     }`}
                     title={hasUnsavedChanges ? "Aperçu avec les modifications non sauvegardées" : "Voir la page publiée"}
                   >
-                    {hasUnsavedChanges ? '👁️ Aperçu' : '🔗 Voir la page'}
-                  </button>
+                    {hasUnsavedChanges ? (
+                      <>
+                        <Eye className="w-4 h-4 mr-0" />
+                        Aperçu
+                      </>
+                    ) : (
+                      <>
+                        <Eye className="w-4 h-4 mr-0" />
+                        Voir la page
+                      </>
+                    )}
+                  </Button>
                 )}
 
 
@@ -643,57 +655,41 @@ function AdminPageContent() {
                 {currentPage !== 'nav' && currentPage !== 'footer' && currentPage !== 'pages' && (
                   <>
                     {/* Bouton Enregistrer brouillon */}
-                    <button
+                    <Button
                       onClick={() => handleSaveWithStatus('draft')}
-                      disabled={saveStatus === 'saving'}
-                      className={`text-sm px-4 py-2 rounded-lg transition-colors ${
-                        saveStatus === 'saving'
+                      disabled={saveStatus === 'saving' || !hasUnsavedChanges}
+                      className={`text-sm px-4 py-2 rounded-md transition-colors ${
+                        saveStatus === 'saving' || !hasUnsavedChanges
                           ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                           : 'bg-gray-600 text-white hover:bg-gray-700'
                       }`}
-                      title={pageStatus === 'published' ? "Passer la page en brouillon" : "Enregistrer comme brouillon"}
+                      title={pageStatus === 'published' ? "Repasser la page en brouillon" : "Enregistrer comme brouillon"}
                     >
-                      {pageStatus === 'published' ? 'Passer en brouillon' : 'Enregistrer brouillon'}
-                    </button>
+                      <Save className="w-4 h-4 mr-0" />
+                      Enregistrer brouillon
+                    </Button>
 
                     {/* Bouton Publier */}
-                    <button
+                    <Button
                       onClick={() => handleSaveWithStatus('published')}
-                      disabled={saveStatus === 'saving'}
-                      className={`text-sm px-4 py-2 rounded-lg transition-colors ${
-                        saveStatus === 'saving'
+                      disabled={saveStatus === 'saving' || !hasUnsavedChanges}
+                      className={`text-sm px-6 py-2 rounded-md transition-colors ${
+                        saveStatus === 'saving' || !hasUnsavedChanges
                           ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                          : pageStatus === 'published'
-                            ? 'bg-green-600 text-white hover:bg-green-700'
-                            : 'bg-blue-600 text-white hover:bg-blue-700'
+                          : 'bg-blue-600 text-white hover:bg-blue-700'
                       }`}
+                      title="Publier"
                     >
-                      {pageStatus === 'published' ? 'Mettre à jour' : 'Publier'}
-                    </button>
+                      <Rocket className="w-4 h-4 mr-0" />
+                      Publier
+                    </Button>
                   </>
                 )}
 
                 {/* Boutons Navigation et Footer - toujours visibles */}
                 {(currentPage === 'nav' || currentPage === 'footer') && (
                   <>
-                    <button
-                      onClick={() => {
-                        // Annuler les modifications en restaurant le contenu original
-                        if (originalContent) {
-                          setContent(originalContent);
-                          setHasUnsavedChanges(false);
-                        }
-                      }}
-                      disabled={!hasUnsavedChanges}
-                      className={`text-sm px-4 py-2 rounded-lg transition-colors ${
-                        !hasUnsavedChanges
-                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                          : 'bg-gray-600 text-white hover:bg-gray-700'
-                      }`}
-                    >
-                      Annuler
-                    </button>
-                    <button
+                    <Button
                       onClick={async () => {
                         // Sauvegarder directement via la fonction de sauvegarde
                         setSaveStatus('saving');
@@ -779,14 +775,14 @@ function AdminPageContent() {
                         }
                       }}
                       disabled={saveStatus === 'saving' || !hasUnsavedChanges}
-                      className={`text-sm px-4 py-2 rounded-lg transition-colors ${
+                      className={`text-sm px-4 py-2 rounded-md transition-colors ${
                         saveStatus === 'saving' || !hasUnsavedChanges
                           ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                           : 'bg-blue-600 text-white hover:bg-blue-700'
                       }`}
                     >
                       {saveStatus === 'saving' ? 'Sauvegarde...' : 'Sauvegarder'}
-                    </button>
+                    </Button>
                   </>
                 )}
               </div>

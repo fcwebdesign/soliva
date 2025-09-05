@@ -219,13 +219,6 @@ const LinkDialog = ({ isOpen, onClose, onSave, initialHref = '', initialText = '
           )}
 
           <div className="flex gap-2 justify-end">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-gray-600 hover:text-gray-800"
-            >
-              Annuler
-            </button>
             {initialHref && (
               <button
                 type="button"

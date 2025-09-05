@@ -1,6 +1,8 @@
 'use client';
 
 import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Eye, Save, Rocket } from 'lucide-react';
 
 interface HeaderAdminProps {
   title: string;
@@ -52,12 +54,13 @@ export default function HeaderAdmin({ title, backButton, actions }: HeaderAdminP
             <h1 className="text-4xl font-semibold text-gray-900 mb-2" style={{ fontSize: '2.25rem' }}>
               {title}
             </h1>
-            <button
+            <Button
               onClick={backButton.onClick}
-              className="text-sm text-gray-500 hover:text-gray-700"
+              variant="ghost"
+              className="text-sm text-gray-500 hover:text-gray-700 p-0 h-auto"
             >
               {backButton.text}
-            </button>
+            </Button>
           </div>
           
           {/* Actions */}
@@ -88,10 +91,10 @@ export default function HeaderAdmin({ title, backButton, actions }: HeaderAdminP
             )}
             
             {onPreview && (
-              <button
+              <Button
                 onClick={onPreview}
                 disabled={previewDisabled}
-                className={`text-sm px-4 py-2 rounded-lg transition-colors ${
+                className={`text-sm px-4 py-2 rounded-md transition-colors ${
                   previewDisabled
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                     : hasUnsavedChanges 
@@ -100,38 +103,50 @@ export default function HeaderAdmin({ title, backButton, actions }: HeaderAdminP
                 }`}
                 title={previewTitle}
               >
-                {hasUnsavedChanges ? '👁️ Aperçu' : '🔗 Voir la page'}
-              </button>
+                {hasUnsavedChanges ? (
+                  <>
+                    <Eye className="w-4 h-4 mr-0" />
+                    Aperçu
+                  </>
+                ) : (
+                  <>
+                    <Eye className="w-4 h-4 mr-0" />
+                    Voir la page
+                  </>
+                )}
+              </Button>
             )}
             
             {onSaveDraft && (
-              <button
+              <Button
                 onClick={onSaveDraft}
                 disabled={saveDisabled || !hasUnsavedChanges}
-                className={`text-sm px-4 py-2 rounded-lg transition-colors ${
+                className={`text-sm px-4 py-2 rounded-md transition-colors ${
                   saveDisabled || !hasUnsavedChanges
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                     : 'bg-gray-600 text-white hover:bg-gray-700'
                 }`}
                 title={draftTitle}
               >
-                💾 Enregistrer brouillon
-              </button>
+                <Save className="w-4 h-4 mr-0" />
+                Enregistrer brouillon
+              </Button>
             )}
             
             {onPublish && (
-              <button
+              <Button
                 onClick={onPublish}
                 disabled={publishDisabled || !hasUnsavedChanges}
-                className={`text-sm px-6 py-2 rounded-lg transition-colors ${
+                className={`text-sm px-6 py-2 rounded-md transition-colors ${
                   publishDisabled || !hasUnsavedChanges
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                     : 'bg-blue-600 text-white hover:bg-blue-700'
                 }`}
                 title={publishTitle}
               >
-                🚀 Publier
-              </button>
+                <Rocket className="w-4 h-4 mr-0" />
+                Publier
+              </Button>
             )}
           </div>
         </div>

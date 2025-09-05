@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect } from 'react';
 import MediaUploader from './MediaUploader';
+import { Button } from '@/components/ui/button';
+import { Trash2, ChevronUp, ChevronDown, Plus, Pencil, UserPen, CircleFadingPlus, Scale, Menu } from 'lucide-react';
 
 const FooterManager = ({ content, onSave }) => {
   const [footerData, setFooterData] = useState({
@@ -14,7 +16,6 @@ const FooterManager = ({ content, onSave }) => {
     legalPageLabels: content?.footer?.legalPageLabels || {}
   });
 
-  const [isEditing, setIsEditing] = useState(false);
   const [draggedItem, setDraggedItem] = useState(null);
   const [dragOverIndex, setDragOverIndex] = useState(null);
   const [logoType, setLogoType] = useState(content?.footer?.logoImage ? 'image' : 'text');
@@ -43,10 +44,7 @@ const FooterManager = ({ content, onSave }) => {
       legalPageLabels: content?.footer?.legalPageLabels || {}
     });
     setLogoType(content?.footer?.logoImage ? 'image' : 'text');
-    // Réinitialiser l'état d'édition après sauvegarde
-    if (isEditing) {
-      setIsEditing(false);
-    }
+    // Réinitialiser l'état après sauvegarde
   }, [content]);
 
   // Pages disponibles pour sélection (mise à jour dynamiquement)
@@ -309,7 +307,7 @@ const FooterManager = ({ content, onSave }) => {
   const handleDrop = (e, dropIndex) => {
     e.preventDefault();
     if (draggedItem !== null && draggedItem !== dropIndex) {
-      if (draggedItem.startsWith('bottom-')) {
+      if (typeof draggedItem === 'string' && draggedItem.startsWith('bottom-')) {
         // Gestion des liens légaux
         const draggedIndex = parseInt(draggedItem.replace('bottom-', ''));
         const dropIndexNum = parseInt(dropIndex.replace('bottom-', ''));
@@ -331,27 +329,19 @@ const FooterManager = ({ content, onSave }) => {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
+    <div>
+      <div className="mb-6">
         <h3 className="text-lg font-semibold text-gray-900">
           Configuration du Footer
         </h3>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setIsEditing(!isEditing)}
-            className="px-4 py-1.5 bg-gray-600 text-white text-sm rounded-lg hover:bg-gray-700"
-          >
-            {isEditing ? 'Fermer' : 'Modifier'}
-          </button>
-        </div>
       </div>
 
-      {isEditing ? (
-        <div className="space-y-6">
+      <div className="space-y-6">
           {/* Section : Identité */}
           <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
-              🏢 Identité
+              <UserPen className="w-6 h-6 inline mr-2 text-gray-600" />
+              Identité
             </h3>
             
             {/* Logo - Texte et Image */}
@@ -446,7 +436,8 @@ const FooterManager = ({ content, onSave }) => {
           {/* Section : Navigation */}
           <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
-              🔗 Navigation
+              <Menu className="w-6 h-6 inline mr-2 text-gray-600" />
+              Navigation
             </h3>
             
             <div>
@@ -514,13 +505,14 @@ const FooterManager = ({ content, onSave }) => {
                                     <option value="_blank">Nouvel onglet</option>
                                   </select>
                                 )}
-                                <button
+                                <Button
                                   type="button"
                                   onClick={() => setEditingLink(null)}
-                                  className="px-2 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                                  size="sm"
+                                  className="text-xs bg-green-100 text-green-700 hover:bg-green-200 border-0 rounded-md"
                                 >
                                   ✓
-                                </button>
+                                </Button>
                               </div>
                             </div>
                           ) : (
@@ -540,13 +532,15 @@ const FooterManager = ({ content, onSave }) => {
                                   </div>
                                 )}
                               </div>
-                              <button
+                              <Button
                                 type="button"
                                 onClick={() => setEditingLink(index)}
-                                className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                                size="sm"
+                                className="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 border-0 rounded-md"
                               >
+                                <Pencil className="w-3 h-3 mr-0" />
                                 Modifier
-                              </button>
+                              </Button>
                             </>
                           )}
                         </div>
@@ -557,30 +551,33 @@ const FooterManager = ({ content, onSave }) => {
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <button
+                        <Button
                           onClick={() => toggleLink(link.url)}
-                          className="text-red-500 hover:text-red-700 text-sm px-2 py-1 rounded hover:bg-red-50"
+                          size="sm"
+                          className="text-xs bg-red-100 text-red-700 hover:bg-red-200 border-0 rounded-md"
                           title="Retirer ce lien"
                         >
-                          ✕
-                        </button>
+                          <Trash2 className="w-3 h-3 mr-0" />
+                        </Button>
                         {index > 0 && (
-                          <button
+                          <Button
                             onClick={() => moveLink(index, index - 1)}
-                            className="text-gray-500 hover:text-gray-700 px-2 py-1 rounded hover:bg-gray-200"
+                            size="sm"
+                            className="text-xs bg-gray-100 text-gray-700 hover:bg-gray-200 border-0 rounded-md"
                             title="Déplacer vers le haut"
                           >
-                            ↑
-                          </button>
+                            <ChevronUp className="w-3 h-3 mr-0" />
+                          </Button>
                         )}
                         {index < footerData.links.length - 1 && (
-                          <button
+                          <Button
                             onClick={() => moveLink(index, index + 1)}
-                            className="text-gray-500 hover:text-gray-700 px-2 py-1 rounded hover:bg-gray-200"
+                            size="sm"
+                            className="text-xs bg-gray-100 text-gray-700 hover:bg-gray-200 border-0 rounded-md"
                             title="Déplacer vers le bas"
                           >
-                            ↓
-                          </button>
+                            <ChevronDown className="w-3 h-3 mr-0" />
+                          </Button>
                         )}
                       </div>
                     </div>
@@ -593,12 +590,13 @@ const FooterManager = ({ content, onSave }) => {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <h4 className="text-sm font-medium text-gray-600">Liens disponibles :</h4>
-                <button
+                <Button
                   onClick={addCustomLink}
-                  className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600"
+                  className="px-3 py-1 text-sm bg-green-100 text-green-700 hover:bg-green-200 border-0 rounded-md"
                 >
-                  + Lien personnalisé
-                </button>
+                  <Plus className="w-4 h-4 mr-0" />
+                  Lien personnalisé
+                </Button>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 {availablePages.map((page) => (
@@ -620,16 +618,18 @@ const FooterManager = ({ content, onSave }) => {
           {/* Section : Réseaux sociaux */}
           <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
-              📱 Réseaux sociaux
+              <CircleFadingPlus className="w-6 h-6 inline mr-2 text-gray-600" />
+              Réseaux sociaux
             </h3>
             
             <div className="flex items-center justify-between mb-3">
-              <button
+              <Button
                 onClick={addSocialLink}
-                className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+                className="px-3 py-1 text-sm bg-blue-100 text-blue-700 hover:bg-blue-200 border-0 rounded-md"
               >
-                + Ajouter
-              </button>
+                <Plus className="w-4 h-4 mr-0" />
+                Ajouter
+              </Button>
             </div>
             
             <div className="space-y-2">
@@ -657,13 +657,14 @@ const FooterManager = ({ content, onSave }) => {
                         className="flex-1 px-2 py-1 text-sm border border-gray-200 rounded focus:ring-1 focus:ring-blue-500"
                         placeholder="URL du profil"
                       />
-                      <button
+                      <Button
                         onClick={() => removeSocialLink(index)}
-                        className="text-red-500 hover:text-red-700 text-sm px-2 py-1 rounded hover:bg-red-50"
+                        size="sm"
+                        className="text-xs bg-red-100 text-red-700 hover:bg-red-200 border-0 rounded-md"
                         title="Supprimer ce réseau social"
                       >
-                        ✕
-                      </button>
+                        <Trash2 className="w-3 h-3 mr-0" />
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -674,7 +675,8 @@ const FooterManager = ({ content, onSave }) => {
           {/* Section : Légal */}
           <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
-              ⚖️ Légal
+              <Scale className="w-6 h-6 inline mr-2 text-gray-600" />
+              Légal
             </h3>
             
             <div className="space-y-6">
@@ -756,13 +758,15 @@ const FooterManager = ({ content, onSave }) => {
                                   <span className="flex-1 text-sm font-medium text-gray-700">
                                     {getLegalPageLabel(pageKey)}
                                   </span>
-                                  <button
+                                  <Button
                                     type="button"
                                     onClick={() => setEditingLegalPage(pageKey)}
-                                    className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                                    size="sm"
+                                    className="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 border-0 rounded-md"
                                   >
+                                    <Pencil className="w-3 h-3 mr-0" />
                                     Modifier
-                                  </button>
+                                  </Button>
                                 </>
                               )}
                             </div>
@@ -773,30 +777,33 @@ const FooterManager = ({ content, onSave }) => {
                             </div>
                           </div>
                           <div className="flex items-center gap-1">
-                            <button
+                            <Button
                               onClick={() => removeBottomLink(pageKey)}
-                              className="text-red-500 hover:text-red-700 text-sm px-2 py-1 rounded hover:bg-red-50"
+                              size="sm"
+                              className="text-xs bg-red-100 text-red-700 hover:bg-red-200 border-0 rounded-md"
                               title="Retirer cette page"
                             >
-                              ✕
-                            </button>
+                              <Trash2 className="w-3 h-3 mr-0" />
+                            </Button>
                             {index > 0 && (
-                              <button
+                              <Button
                                 onClick={() => moveBottomLink(index, index - 1)}
-                                className="text-gray-500 hover:text-gray-700 px-2 py-1 rounded hover:bg-gray-200"
+                                size="sm"
+                                className="text-xs bg-gray-100 text-gray-700 hover:bg-gray-200 border-0 rounded-md"
                                 title="Déplacer vers le haut"
                               >
-                                ↑
-                              </button>
+                                <ChevronUp className="w-3 h-3 mr-0" />
+                              </Button>
                             )}
                             {index < footerData.bottomLinks.length - 1 && (
-                              <button
+                              <Button
                                 onClick={() => moveBottomLink(index, index + 1)}
-                                className="text-gray-500 hover:text-gray-700 px-2 py-1 rounded hover:bg-gray-200"
+                                size="sm"
+                                className="text-xs bg-gray-100 text-gray-700 hover:bg-gray-200 border-0 rounded-md"
                                 title="Déplacer vers le bas"
                               >
-                                ↓
-                              </button>
+                                <ChevronDown className="w-3 h-3 mr-0" />
+                              </Button>
                             )}
                           </div>
                         </div>
@@ -826,52 +833,6 @@ const FooterManager = ({ content, onSave }) => {
             </div>
           </div>
         </div>
-      ) : (
-        <div className="space-y-4">
-          {/* Aperçu */}
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <h4 className="text-sm font-medium text-gray-700 mb-3">Aperçu du footer :</h4>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="font-semibold text-lg">
-                  {logoType === 'image' && footerData.logoImage ? (
-                    <img src={footerData.logoImage} alt="Logo" className="h-8 max-w-[200px] object-contain" />
-                  ) : (
-                    footerData.logo
-                  )}
-                </div>
-              </div>
-              {footerData.description && (
-                <p className="text-sm text-gray-600">{footerData.description}</p>
-              )}
-              {footerData.links.length > 0 && (
-                <div className="flex items-center gap-4 text-sm text-gray-600">
-                  {footerData.links.map((link, index) => (
-                    <span key={index}>{link.title}</span>
-                  ))}
-                </div>
-              )}
-              <div className="text-xs text-gray-500">{footerData.copyright}</div>
-              {footerData.bottomLinks.length > 0 && (
-                <div className="flex items-center gap-4 text-xs text-gray-500">
-                  {footerData.bottomLinks.map((pageKey, index) => (
-                    <span key={index}>{getLegalPageLabel(pageKey)}</span>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Informations */}
-          <div className="text-sm text-gray-600">
-            <p><strong>Logo :</strong> {logoType === 'image' ? 'Image' : footerData.logo}</p>
-            <p><strong>Description :</strong> {footerData.description || 'Aucune'}</p>
-            <p><strong>Liens :</strong> {footerData.links.length} lien(s)</p>
-            <p><strong>Réseaux sociaux :</strong> {footerData.socialLinks.length} réseau(x)</p>
-            <p><strong>Liens légaux :</strong> {footerData.bottomLinks.length} lien(s)</p>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

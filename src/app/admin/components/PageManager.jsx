@@ -149,12 +149,6 @@ const PageManager = ({ content, onSave }) => {
                         >
                           Sauvegarder
                         </button>
-                        <button
-                          onClick={() => setEditingPage(null)}
-                          className="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600"
-                        >
-                          Annuler
-                        </button>
                       </div>
                     </div>
                   ) : (
