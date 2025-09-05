@@ -5,6 +5,7 @@ import Sidebar from '../../components/Sidebar';
 import HeaderAdmin from '../../components/HeaderAdmin';
 import BlockEditor from '../../components/BlockEditor';
 import MediaUploader from '../../components/MediaUploader';
+import { Checkbox } from '@/components/ui/checkbox';
 import type { Content } from '@/types/content';
 
 const PAGES = [
@@ -602,11 +603,10 @@ export default function WorkProjectEdit() {
             {/* Projet en vedette */}
             <div>
               <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={project.featured || false}
-                  onChange={(e) => updateProject({ featured: e.target.checked })}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  onCheckedChange={(checked) => updateProject({ featured: checked })}
+                  className="rounded-[3px]"
                 />
                 <span className="text-sm font-medium text-gray-700">
                   Projet en vedette (affiché en premier)
