@@ -19,7 +19,13 @@
       "studio": "le studio",
       "contact": "contact",
       "hello-test": "test",
-      "work": "réalisations"
+      "work": "réalisations",
+      "custom-1757085192824": {
+        "title": "Nouveau lien",
+        "url": "custom",
+        "customUrl": "https://google.com",
+        "target": "_blank"
+      }
     }
   },
   "home": {
@@ -1022,6 +1028,18 @@
       {
         "title": "Kodza",
         "url": ""
+      },
+      {
+        "title": "Mentions légales",
+        "url": "mentions-legales"
+      },
+      {
+        "title": "Politique de confidentialité",
+        "url": "politique-de-confidentialite"
+      },
+      {
+        "title": "Nouveau lien",
+        "url": ""
       }
     ],
     "socialLinks": [
@@ -1046,9 +1064,17 @@
     "bottomLinks": [
       "politique-de-confidentialite",
       "mentions-legales",
-      "studio"
+      "studio",
+      "custom-1757084495511"
     ],
-    "legalPageLabels": {}
+    "legalPageLabels": {
+      "custom-1757084495511": {
+        "title": "Nouveau lien",
+        "url": "custom",
+        "customUrl": "https://google.com",
+        "target": "_blank"
+      }
+    }
   },
   "custom": [
     {

@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import MediaUploader from './MediaUploader';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 import { Trash2, ChevronUp, ChevronDown, Plus, UserPen, CircleFadingPlus, Scale, Menu, Link } from 'lucide-react';
 
 const FooterManager = ({ content, onSave }) => {
@@ -423,36 +425,27 @@ const FooterManager = ({ content, onSave }) => {
             
             {/* Type de logo */}
             <div className="mb-4">
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    name="logoType"
-                    value="text"
-                    checked={logoType === 'text'}
-                    onChange={() => {
-                      setLogoType('text');
-                      setFooterData(prev => ({ ...prev, logoImage: '' }));
-                    }}
-                    className="text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="text-sm">Logo texte</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    name="logoType"
-                    value="image"
-                    checked={logoType === 'image'}
-                    onChange={() => {
-                      setLogoType('image');
-                      setFooterData(prev => ({ ...prev, logo: 'soliva' }));
-                    }}
-                    className="text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="text-sm">Logo image</span>
-                </label>
-              </div>
+              <RadioGroup
+                value={logoType}
+                onValueChange={(value) => {
+                  setLogoType(value);
+                  if (value === 'text') {
+                    setFooterData(prev => ({ ...prev, logoImage: '' }));
+                  } else {
+                    setFooterData(prev => ({ ...prev, logo: 'soliva' }));
+                  }
+                }}
+                className="flex items-center gap-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="text" id="footer-text" />
+                  <Label htmlFor="footer-text" className="text-sm">Logo texte</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="image" id="footer-image" />
+                  <Label htmlFor="footer-image" className="text-sm">Logo image</Label>
+                </div>
+              </RadioGroup>
             </div>
 
             {/* Logo texte */}
@@ -641,14 +634,6 @@ const FooterManager = ({ content, onSave }) => {
                                   </div>
                                 )}
                               </div>
-                              <Button
-                                type="button"
-                                onClick={() => setEditingLink(index)}
-                                size="sm"
-                                className="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 border-0 rounded-md"
-                              >
-                                Éditer
-                              </Button>
                             </>
                           )}
                         </div>
@@ -676,6 +661,16 @@ const FooterManager = ({ content, onSave }) => {
                             title="Déplacer vers le bas"
                           >
                             <ChevronDown className="w-3 h-3 mr-0" />
+                          </Button>
+                        )}
+                        {editingLink !== index && (
+                          <Button
+                            type="button"
+                            onClick={() => setEditingLink(index)}
+                            size="sm"
+                            className="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 border-0 rounded-md"
+                          >
+                            Éditer
                           </Button>
                         )}
                         <Button
@@ -923,14 +918,6 @@ const FooterManager = ({ content, onSave }) => {
                                       </div>
                                     )}
                                   </div>
-                                  <Button
-                                    type="button"
-                                    onClick={() => setEditingLegalPage(pageKey)}
-                                    size="sm"
-                                    className="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 border-0 rounded-md"
-                                  >
-                                    Éditer
-                                  </Button>
                                 </>
                               )}
                             </div>
@@ -958,6 +945,16 @@ const FooterManager = ({ content, onSave }) => {
                                 title="Déplacer vers le bas"
                               >
                                 <ChevronDown className="w-3 h-3 mr-0" />
+                              </Button>
+                            )}
+                            {editingLegalPage !== pageKey && (
+                              <Button
+                                type="button"
+                                onClick={() => setEditingLegalPage(pageKey)}
+                                size="sm"
+                                className="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 border-0 rounded-md"
+                              >
+                                Éditer
                               </Button>
                             )}
                             <Button

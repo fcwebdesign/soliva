@@ -1024,10 +1024,6 @@
       {
         "title": "Réalisations",
         "url": "work"
-      },
-      {
-        "title": "Kodza",
-        "url": ""
       }
     ],
     "socialLinks": [
@@ -1051,9 +1047,7 @@
     "copyright": "© 2025 Soliva",
     "bottomLinks": [
       "politique-de-confidentialite",
-      "mentions-legales",
-      "studio",
-      "custom-1757084495511"
+      "mentions-legales"
     ],
     "legalPageLabels": {
       "custom-1757084495511": {
