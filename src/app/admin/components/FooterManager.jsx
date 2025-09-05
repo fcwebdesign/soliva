@@ -23,6 +23,7 @@ const FooterManager = ({ content, onSave }) => {
   const [editingLink, setEditingLink] = useState(null);
   const [editingLegalPage, setEditingLegalPage] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [legalSearchTerm, setLegalSearchTerm] = useState('');
 
 
   // Exposer les données actuelles via une fonction globale
@@ -85,6 +86,11 @@ const FooterManager = ({ content, onSave }) => {
       isCustom: true
     }))
   ];
+
+  // Filtrer les pages légales selon le terme de recherche
+  const filteredLegalPages = availableLegalPages.filter(page =>
+    page.label.toLowerCase().includes(legalSearchTerm.toLowerCase())
+  );
 
   // Réseaux sociaux disponibles
   const [availableSocials, setAvailableSocials] = useState([
@@ -790,6 +796,45 @@ const FooterManager = ({ content, onSave }) => {
                 </label>
                 <p className="text-sm text-gray-600 mb-3">Ces liens apparaîtront dans la colonne de droite du copyright</p>
                 
+                {/* Interface en deux colonnes (1/3 - 2/3) - Responsive */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {/* Colonne gauche - Pages disponibles */}
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-600 mb-2">Pages disponibles :</h4>
+                    
+                    {/* Champ de recherche */}
+                    <div className="mb-3">
+                      <input 
+                        type="text" 
+                        placeholder="Rechercher une page..."
+                        className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+                        value={legalSearchTerm}
+                        onChange={(e) => setLegalSearchTerm(e.target.value)}
+                      />
+                    </div>
+                    
+                    <div className="space-y-2 max-h-[350px] overflow-y-auto">
+                      {filteredLegalPages.map((page) => (
+                        <label key={page.key} className="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                          <Checkbox
+                            checked={footerData.bottomLinks.includes(page.key)}
+                            onCheckedChange={() => toggleLegalPage(page.key)}
+                            className="rounded-[3px]"
+                          />
+                          <span className="text-sm">{page.label}</span>
+                        </label>
+                      ))}
+                      {filteredLegalPages.length === 0 && legalSearchTerm && (
+                        <div className="text-center text-sm text-gray-500 py-4">
+                          Aucune page trouvée pour "{legalSearchTerm}"
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Colonne droite - Pages légales (2/3) */}
+                  <div className="lg:col-span-2">
+                
                 {/* Liens sélectionnés (ordre) */}
                 <div className="mb-4">
                   <h4 className="text-sm font-medium text-gray-600 mb-2">Ordre d'affichage :</h4>
@@ -930,30 +975,16 @@ const FooterManager = ({ content, onSave }) => {
                   </div>
                 </div>
 
-                {/* Pages disponibles */}
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-sm font-medium text-gray-600">Pages disponibles :</h4>
-                    <Button
-                      onClick={addCustomLegalLink}
-                      className="flex items-center gap-2"
-                    >
-                      <Plus className="w-4 h-4" />
-                      Lien personnalisé
-                    </Button>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    {availableLegalPages.map((page) => (
-                      <label key={page.key} className="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={footerData.bottomLinks.includes(page.key)}
-                          onChange={() => toggleLegalPage(page.key)}
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                        />
-                        <span className="text-sm">{page.label}</span>
-                      </label>
-                    ))}
+                    {/* Bouton Lien personnalisé */}
+                    <div className="mt-4">
+                      <Button
+                        onClick={addCustomLegalLink}
+                        className="flex items-center gap-2"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Lien personnalisé
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
