@@ -8,10 +8,11 @@
     "logoImage": "",
     "location": "paris, le havre",
     "items": [
-      "studio",
       "work",
+      "studio",
+      "contact",
       "blog",
-      "contact"
+      "custom-1757085192824"
     ],
     "pageLabels": {
       "blog": "le blog",
@@ -19,7 +20,13 @@
       "studio": "le studio",
       "contact": "contact",
       "hello-test": "test",
-      "work": "réalisations"
+      "work": "réalisations",
+      "custom-1757085192824": {
+        "title": "Nouveau lien",
+        "url": "custom",
+        "customUrl": "https://google.com",
+        "target": "_blank"
+      }
     }
   },
   "home": {
@@ -1004,6 +1011,10 @@
     "description": "AI-Native Studio",
     "links": [
       {
+        "title": "Le blog",
+        "url": "blog"
+      },
+      {
         "title": "Get in touch",
         "url": "contact"
       },
@@ -1014,10 +1025,6 @@
       {
         "title": "Réalisations",
         "url": "work"
-      },
-      {
-        "title": "Le blog",
-        "url": "blog"
       },
       {
         "title": "Kodza",
@@ -1045,9 +1052,18 @@
     "copyright": "© 2025 Soliva",
     "bottomLinks": [
       "politique-de-confidentialite",
-      "mentions-legales"
+      "mentions-legales",
+      "studio",
+      "custom-1757084495511"
     ],
-    "legalPageLabels": {}
+    "legalPageLabels": {
+      "custom-1757084495511": {
+        "title": "Nouveau lien",
+        "url": "custom",
+        "customUrl": "https://google.com",
+        "target": "_blank"
+      }
+    }
   },
   "custom": [
     {
