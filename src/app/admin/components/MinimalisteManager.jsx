@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import MediaUploader from './MediaUploader';
+import { Target, Briefcase, Mail, Image, User, Hand } from 'lucide-react';
 
 const MinimalisteManager = ({ content, onSave, onUpdate }) => {
   const [templateData, setTemplateData] = useState({
@@ -60,11 +61,11 @@ const MinimalisteManager = ({ content, onSave, onUpdate }) => {
   };
 
   const sections = [
-    { key: 'hero', label: 'Hero', icon: '🎯' },
-    { key: 'featured', label: 'Image vedette', icon: '🖼️' },
-    { key: 'work', label: 'Projets', icon: '💼' },
-    { key: 'about', label: 'À propos', icon: '👋' },
-    { key: 'contact', label: 'Contact', icon: '📧' }
+    { key: 'hero', label: 'Hero', icon: Target },
+    { key: 'featured', label: 'Image vedette', icon: Image },
+    { key: 'work', label: 'Projets', icon: Briefcase },
+    { key: 'about', label: 'À propos', icon: User },
+    { key: 'contact', label: 'Contact', icon: Mail }
   ];
 
   return (
@@ -111,7 +112,10 @@ const MinimalisteManager = ({ content, onSave, onUpdate }) => {
           {/* Section Hero */}
           {activeSection === 'hero' && (
             <div className="bg-white p-6 rounded-lg border border-gray-200">
-              <h4 className="text-lg font-medium text-gray-900 mb-4">🎯 Section Hero</h4>
+              <div className="flex items-center mb-4">
+                <Target className="w-5 h-5 text-gray-600 mr-2" />
+                <h4 className="text-lg font-medium text-gray-900">Section Hero</h4>
+              </div>
               
               <div className="space-y-4">
                 <div>
@@ -178,7 +182,10 @@ const MinimalisteManager = ({ content, onSave, onUpdate }) => {
           {/* Section Work */}
           {activeSection === 'work' && (
             <div className="bg-white p-6 rounded-lg border border-gray-200">
-              <h4 className="text-lg font-medium text-gray-900 mb-4">💼 Section Projets</h4>
+              <div className="flex items-center mb-4">
+                <Briefcase className="w-5 h-5 text-gray-600 mr-2" />
+                <h4 className="text-lg font-medium text-gray-900">Section Projets</h4>
+              </div>
               
               <div className="space-y-4">
                 <div>
@@ -255,7 +262,10 @@ const MinimalisteManager = ({ content, onSave, onUpdate }) => {
           {/* Section Contact */}
           {activeSection === 'contact' && (
             <div className="bg-white p-6 rounded-lg border border-gray-200">
-              <h4 className="text-lg font-medium text-gray-900 mb-4">📧 Section Contact</h4>
+              <div className="flex items-center mb-4">
+                <Mail className="w-5 h-5 text-gray-600 mr-2" />
+                <h4 className="text-lg font-medium text-gray-900">Section Contact</h4>
+              </div>
               
               <div className="space-y-4">
                 <div>
@@ -292,7 +302,10 @@ const MinimalisteManager = ({ content, onSave, onUpdate }) => {
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="p-4 bg-gray-50 rounded-lg">
-              <h4 className="font-medium text-gray-900 mb-2">🎯 Hero</h4>
+              <div className="flex items-center mb-2">
+                <Target className="w-4 h-4 text-gray-600 mr-2" />
+                <h4 className="font-medium text-gray-900">Hero</h4>
+              </div>
               <p className="text-sm text-gray-600 mb-1"><strong>Titre :</strong> {templateData.hero.title}</p>
               <p className="text-sm text-gray-600"><strong>Sous-titre :</strong> {templateData.hero.subtitle}</p>
             </div>
@@ -306,13 +319,19 @@ const MinimalisteManager = ({ content, onSave, onUpdate }) => {
             </div>
             
             <div className="p-4 bg-gray-50 rounded-lg">
-              <h4 className="font-medium text-gray-900 mb-2">💼 Projets</h4>
+              <div className="flex items-center mb-2">
+                <Briefcase className="w-4 h-4 text-gray-600 mr-2" />
+                <h4 className="font-medium text-gray-900">Projets</h4>
+              </div>
               <p className="text-sm text-gray-600 mb-1"><strong>Titre :</strong> {templateData.work.title}</p>
               <p className="text-sm text-gray-600"><strong>Sous-titre :</strong> {templateData.work.subtitle}</p>
             </div>
             
             <div className="p-4 bg-gray-50 rounded-lg">
-              <h4 className="font-medium text-gray-900 mb-2">📧 Contact</h4>
+              <div className="flex items-center mb-2">
+                <Mail className="w-4 h-4 text-gray-600 mr-2" />
+                <h4 className="font-medium text-gray-900">Contact</h4>
+              </div>
               <p className="text-sm text-gray-600 mb-1"><strong>Titre :</strong> {templateData.contact.title}</p>
               <p className="text-sm text-gray-600"><strong>Email :</strong> {templateData.contact.email}</p>
             </div>

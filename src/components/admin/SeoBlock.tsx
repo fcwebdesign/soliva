@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect, useMemo } from 'react';
 import { SITE_NAME, SITE_URL, absoluteUrl } from '@/lib/seo';
+import { Search, Target, FileText, Link, Sparkles, HelpCircle, AlertTriangle, Eye, TrendingUp, Hash, TextSearch, Atom, CircleQuestionMark, TriangleAlert } from 'lucide-react';
 
 // Types pour le SEO
 interface SeoData {
@@ -330,7 +331,7 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
     }
   }, [content, analyzeContent, calculateScore]);
 
-  // Générer les propositions IA
+  //Générer les propositions IA
   const generateAIProposals = async () => {
     if (!content) {
       console.warn('⚠️ Contenu manquant pour la génération IA');
@@ -410,7 +411,7 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
           generateAIProposals();
         }, 2000);
         
-        const errorMessage = errorData.error || errorText || response.statusText || 'Erreur inconnue';
+        const errorMessage = (errorData as any)?.error || errorText || response.statusText || 'Erreur inconnue';
         throw new Error(`Erreur lors de la génération IA: ${response.status} - ${errorMessage}`);
       }
 
@@ -514,14 +515,13 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
   };
 
   return (
-    <div className={`bg-white rounded-lg border border-gray-200 p-6 shadow-sm ${className}`}>
+    <div className={`bg-white/80 backdrop-blur-xl rounded-xl border border-gray-200/50 p-6 shadow-lg ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-3">
-          <span className="text-2xl">��</span>
+          <TextSearch className="w-6 h-6 text-gray-600" />
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">SEO Optimizer</h3>
-            <p className="text-sm text-gray-500">Optimisation automatique avec IA</p>
+            <h3 className="text-lg font-semibold text-gray-900">SEO AI Optimizer</h3>
           </div>
         </div>
         
@@ -571,7 +571,7 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
             type="text"
             value={seoFields.metaTitle || ''}
             onChange={(e) => onSeoChange({ ...seoFields, metaTitle: e.target.value })}
-            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+            className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm ${
               seoFields.metaTitle && seoFields.metaTitle.length > 60
                 ? 'border-red-300 bg-red-50'
                 : 'border-gray-300'
@@ -603,7 +603,7 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
             value={seoFields.metaDescription || ''}
             onChange={(e) => onSeoChange({ ...seoFields, metaDescription: e.target.value })}
             rows={3}
-            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+            className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm ${
               seoFields.metaDescription && (seoFields.metaDescription.length < 150 || seoFields.metaDescription.length > 160)
                 ? 'border-red-300 bg-red-50'
                 : 'border-gray-300'
@@ -621,7 +621,7 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
             type="text"
             value={seoFields.focusKeyword || ''}
             onChange={(e) => onSeoChange({ ...seoFields, focusKeyword: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm"
             placeholder="Mot-clé principal de l'article..."
           />
           {analysis?.focusKeyword && (
@@ -640,22 +640,25 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
             type="text"
             value={seoFields.canonicalUrl || ''}
             onChange={(e) => onSeoChange({ ...seoFields, canonicalUrl: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm"
             placeholder="URL canonique absolue..."
           />
         </div>
       </div>
 
       {/* Section IA */}
-      <div className="border-t pt-6 mb-6">
+      <div className="border-t border-gray-200/50 pt-6 mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h4 className="text-md font-semibold text-gray-900">�� Propositions IA</h4>
+          <div className="flex items-center">
+            <Atom className="w-6 h-6 text-gray-600 mr-2" />
+            <h4 className="text-md font-semibold text-gray-900">Propositions IA</h4>
+          </div>
           <button
             onClick={generateAIProposals}
             disabled={isGenerating}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
           >
-            {isGenerating ? 'Génération...' : '🔄 Générer'}
+            {isGenerating ? 'Génération...' : 'Générer'}
           </button>
         </div>
 
@@ -805,7 +808,7 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
                 onClick={applyAllProposals}
                 className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
               >
-                ✅ Appliquer toutes les propositions
+                Appliquer toutes les propositions
               </button>
             </div>
           </div>
@@ -814,14 +817,17 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
 
 
       {/* Aide & contrôle */}
-      <div className="border-t pt-6">
+      <div className="border-t border-gray-200/50 pt-6">
         <div className="flex items-center justify-between mb-4">
-          <h4 className="text-md font-semibold text-gray-900">��️ Aide & Contrôle</h4>
+          <div className="flex items-center">
+            <CircleQuestionMark className="w-6 h-6 text-gray-600 mr-2" />
+            <h4 className="text-md font-semibold text-gray-900">Aide & Contrôle</h4>
+          </div>
           <button
             onClick={autoFix}
             className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors"
           >
-            🔧 Corriger automatiquement
+            Corriger automatiquement
           </button>
         </div>
 
@@ -832,7 +838,7 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
             <div className="space-y-1">
               {analysis.flags.map((flag, index) => (
                 <div key={index} className="flex items-center space-x-2 text-sm text-red-600">
-                  <span>⚠️</span>
+                  <TriangleAlert className="w-4 h-4 text-red-600" />
                   <span>
                     {flag === 'missing_title' && 'Titre manquant'}
                     {flag === 'title_too_long' && 'Titre trop long (>60 caractères)'}

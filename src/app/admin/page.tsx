@@ -653,7 +653,7 @@ function AdminPageContent() {
                       }`}
                       title={pageStatus === 'published' ? "Passer la page en brouillon" : "Enregistrer comme brouillon"}
                     >
-                      {pageStatus === 'published' ? '📝 Passer en brouillon' : '💾 Enregistrer brouillon'}
+                      {pageStatus === 'published' ? 'Passer en brouillon' : 'Enregistrer brouillon'}
                     </button>
 
                     {/* Bouton Publier */}
@@ -668,7 +668,7 @@ function AdminPageContent() {
                             : 'bg-blue-600 text-white hover:bg-blue-700'
                       }`}
                     >
-                      {pageStatus === 'published' ? '✅ Mettre à jour' : '🚀 Publier'}
+                      {pageStatus === 'published' ? 'Mettre à jour' : 'Publier'}
                     </button>
                   </>
                 )}
@@ -810,7 +810,7 @@ function AdminPageContent() {
                             ? 'bg-green-100 text-green-800' 
                             : 'bg-yellow-100 text-yellow-800'
                         }`}>
-                          {pageStatus === 'published' ? '✅ Publié' : '📝 Brouillon'}
+                          {pageStatus === 'published' ? 'Publié' : 'Brouillon'}
                         </span>
                       </div>
                       <div className="text-sm text-gray-500">

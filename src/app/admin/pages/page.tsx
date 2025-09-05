@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '../components/Sidebar';
+import { Home, Mail, Palette, FileText, Settings, Layout } from 'lucide-react';
 
 interface Page {
   id: string;
   title: string;
   description: string;
   type: 'home' | 'contact' | 'studio' | 'work' | 'blog' | 'settings' | 'custom';
-  icon: string;
+  icon: React.ComponentType<{ className?: string }>;
   lastModified?: string;
   status: 'published' | 'draft';
 }
@@ -30,7 +31,7 @@ export default function PagesAdmin() {
         title: 'Accueil',
         description: 'Page d\'accueil du site',
         type: 'home',
-        icon: '🏠',
+        icon: Home,
         status: 'published',
         lastModified: '2024-01-15'
       },
@@ -39,7 +40,7 @@ export default function PagesAdmin() {
         title: 'Contact',
         description: 'Page de contact et coordonnées',
         type: 'contact',
-        icon: '📧',
+        icon: Mail,
         status: 'published',
         lastModified: '2024-01-10'
       },
@@ -48,7 +49,7 @@ export default function PagesAdmin() {
         title: 'Studio',
         description: 'Présentation du studio',
         type: 'studio',
-        icon: '🎨',
+        icon: Palette,
         status: 'published',
         lastModified: '2024-01-12'
       }
@@ -63,7 +64,7 @@ export default function PagesAdmin() {
             title: customPage.title || 'Page personnalisée',
             description: customPage.description || 'Page personnalisée',
             type: 'custom',
-            icon: '📄',
+            icon: FileText,
             status: customPage.status || 'published',
             lastModified: customPage.publishedAt ? new Date(customPage.publishedAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
           });
@@ -290,7 +291,10 @@ export default function PagesAdmin() {
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                     }`}
                   >
-                    📋 Contenu
+                    <div className="flex items-center">
+                      <Layout className="w-4 h-4 mr-2" />
+                      Contenu
+                    </div>
                   </button>
                   <button
                     onClick={() => setActiveTab('settings')}
@@ -300,7 +304,10 @@ export default function PagesAdmin() {
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                     }`}
                   >
-                    ⚙️ Paramètres
+                    <div className="flex items-center">
+                      <Settings className="w-4 h-4 mr-2" />
+                      Paramètres
+                    </div>
                   </button>
                 </nav>
               </div>
@@ -310,16 +317,16 @@ export default function PagesAdmin() {
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center space-x-2">
-                        <span className="text-2xl">📄</span>
+                        <FileText className="w-6 h-6 text-gray-600" />
                         <h3 className="text-lg font-semibold text-gray-900">Pages ({stats.total})</h3>
                       </div>
                       <div className="flex items-center space-x-2">
                         <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
-                          ✅ {stats.published} publié{stats.published !== 1 ? 's' : ''}
+                          {stats.published} publié{stats.published !== 1 ? 's' : ''}
                         </span>
                         {stats.drafts > 0 && (
                           <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">
-                            📝 {stats.drafts} brouillon{stats.drafts !== 1 ? 's' : ''}
+                            {stats.drafts} brouillon{stats.drafts !== 1 ? 's' : ''}
                           </span>
                         )}
                       </div>
@@ -346,7 +353,7 @@ export default function PagesAdmin() {
                                   ? 'bg-green-100 text-green-800' 
                                   : 'bg-yellow-100 text-yellow-800'
                               }`}>
-                                {page.status === 'published' ? '✅ Publié' : '📝 Brouillon'}
+                                {page.status === 'published' ? 'Publié' : 'Brouillon'}
                               </span>
                             </div>
                             <div className="flex items-center space-x-4 mt-1">
@@ -365,31 +372,31 @@ export default function PagesAdmin() {
                           <div className="flex space-x-2 ml-4">
                             <button
                               onClick={() => handleEditPage(page.id)}
-                              className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200 transition-colors"
+                              className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium hover:bg-blue-200 transition-colors focus:outline-none"
                               title="Éditer la page"
                             >
-                              ✏️ Éditer
+                              Éditer
                             </button>
                             <button
                               onClick={() => handlePreviewPage(page.id)}
-                              className="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 transition-colors"
+                              className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full font-medium hover:bg-gray-200 transition-colors focus:outline-none"
                               title="Aperçu de la page"
                             >
-                              👁️ Aperçu
+                              Aperçu
                             </button>
                             <button
                               onClick={() => handleDuplicatePage(page.id)}
-                              className="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded hover:bg-orange-200 transition-colors"
+                              className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full font-medium hover:bg-orange-200 transition-colors focus:outline-none"
                               title="Dupliquer cette page"
                             >
-                              📋 Dupliquer
+                              Dupliquer
                             </button>
                             <button
                               onClick={() => handleDeletePage(page.id)}
-                              className="text-xs bg-red-100 text-red-700 px-3 py-1 rounded hover:bg-red-200 transition-colors"
+                              className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full font-medium hover:bg-red-200 transition-colors focus:outline-none"
                               title="Supprimer cette page"
                             >
-                              🗑️ Supprimer
+                              Supprimer
                             </button>
                           </div>
                         </div>
@@ -403,7 +410,7 @@ export default function PagesAdmin() {
                 <div className="space-y-6">
                   <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
                     <div className="flex items-center space-x-2 mb-4">
-                      <span className="text-2xl">⚙️</span>
+                      <Settings className="w-6 h-6 text-gray-600" />
                       <h3 className="text-lg font-semibold text-gray-900">Paramètres des pages</h3>
                     </div>
                     <p className="text-gray-500">Configuration des paramètres généraux des pages.</p>

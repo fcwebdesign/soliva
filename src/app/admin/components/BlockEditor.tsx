@@ -7,6 +7,7 @@ import MediaUploader, { LogoUploader } from './MediaUploader';
 import VersionList from './VersionList';
 import { renderAutoBlockEditor } from "@/app/admin/components/AutoBlockIntegration";
 import { getAutoDeclaredBlock, getBlockMetadata, getAvailableBlockTypes, createAutoBlockInstance } from '@/blocks/auto-declared/registry';
+import { FileText, Briefcase, Navigation, Settings, Mail, Footprints, Save, Target, Layout, Tag, Atom, Trash2 } from 'lucide-react';
 
 interface Block {
   id: string;
@@ -871,8 +872,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   const renderHeroBlock = () => (
     <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
       <div className="flex items-center space-x-2 mb-4">
-        <span className="text-2xl">🎯</span>
-        <h3 className="text-lg font-semibold text-gray-900">Section Hero</h3>
+        <Target className="w-6 h-6 text-gray-600" />
+        <h3 className="text-lg font-semibold text-gray-900">Hero</h3>
       </div>
       
       <div className="space-y-4">
@@ -1041,7 +1042,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     return (
       <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
         <div className="flex items-center space-x-2 mb-4">
-          <span className="text-2xl">🎯</span>
+          <Target className="w-6 h-6 text-gray-600" />
           <h3 className="text-lg font-semibold text-gray-900">Hero</h3>
         </div>
         
@@ -1124,15 +1125,15 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <span className="text-2xl">📝</span>
+              <FileText className="w-6 h-6 text-gray-600" />
               <h3 className="text-lg font-semibold text-gray-900">Articles ({articles.length})</h3>
             </div>
             <div className="flex items-center space-x-2">
               <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
-                ✅ {publishedCount} publié{publishedCount !== 1 ? 's' : ''}
+                {publishedCount} publié{publishedCount !== 1 ? 's' : ''}
               </span>
               <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">
-                📝 {draftCount} brouillon{draftCount !== 1 ? 's' : ''}
+                {draftCount} brouillon{draftCount !== 1 ? 's' : ''}
               </span>
             </div>
           </div>
@@ -1161,7 +1162,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                         ? 'bg-green-100 text-green-800' 
                         : 'bg-yellow-100 text-yellow-800'
                     }`}>
-                      {article.status === 'published' ? '✅ Publié' : '📝 Brouillon'}
+                      {article.status === 'published' ? 'Publié' : 'Brouillon'}
                     </span>
                   </div>
                   <div className="flex items-center space-x-4 mt-1">
@@ -1179,41 +1180,41 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                 <div className="flex space-x-2 ml-4">
                   <button 
                     onClick={() => router.push(`/admin/blog/${article.id}`)}
-                    className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200 transition-colors"
+                    className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium hover:bg-blue-200 transition-colors focus:outline-none"
                     title="Éditer l'article complet"
                   >
-                    ✏️ Éditer
+                    Éditer
                   </button>
                   <button 
                     onClick={() => window.open(`/blog/${article.slug || article.id}`, '_blank')}
-                    className="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 transition-colors"
+                    className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full font-medium hover:bg-gray-200 transition-colors focus:outline-none"
                     title="Aperçu de l'article"
                   >
-                    👁️ Aperçu
+                    Aperçu
                   </button>
                   <button 
                     onClick={() => handleDuplicate('blog', article.id)}
                     disabled={isDuplicating === article.id}
-                    className={`text-xs px-3 py-1 rounded transition-colors ${
+                    className={`text-xs px-2 py-1 rounded-full font-medium transition-colors focus:outline-none ${
                       isDuplicating === article.id
                         ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                         : 'bg-orange-100 text-orange-700 hover:bg-orange-200'
                     }`}
                     title="Dupliquer cet article"
                   >
-                    {isDuplicating === article.id ? '⏳...' : '📋 Dupliquer'}
+                    {isDuplicating === article.id ? '...' : 'Dupliquer'}
                   </button>
                   <button 
                     onClick={() => handleDelete('blog', article.id, article.title || `Article ${index + 1}`)}
                     disabled={isDeleting === article.id}
-                    className={`text-xs px-3 py-1 rounded transition-colors ${
+                    className={`text-xs px-2 py-1 rounded-full font-medium transition-colors focus:outline-none ${
                       isDeleting === article.id
                         ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                         : 'bg-red-100 text-red-700 hover:bg-red-200'
                     }`}
                     title="Supprimer cet article"
                   >
-                    {isDeleting === article.id ? '⏳...' : '🗑️ Supprimer'}
+                    {isDeleting === article.id ? '...' : 'Supprimer'}
                   </button>
                 </div>
               </div>
@@ -1235,18 +1236,18 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <span className="text-2xl">💼</span>
+              <Briefcase className="w-6 h-6 text-gray-600" />
               <h3 className="text-lg font-semibold text-gray-900">Projets ({projects.length})</h3>
             </div>
             <div className="flex items-center space-x-2">
               <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
-                ✅ {publishedCount} publié{publishedCount !== 1 ? 's' : ''}
+                {publishedCount} publié{publishedCount !== 1 ? 's' : ''}
               </span>
               <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">
-                📝 {draftCount} brouillon{draftCount !== 1 ? 's' : ''}
+                {draftCount} brouillon{draftCount !== 1 ? 's' : ''}
               </span>
               <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
-                ⭐ {featuredCount} en vedette
+                {featuredCount} en vedette
               </span>
             </div>
           </div>
@@ -1275,11 +1276,11 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                         ? 'bg-green-100 text-green-800' 
                         : 'bg-yellow-100 text-yellow-800'
                     }`}>
-                      {project.status === 'published' ? '✅ Publié' : '📝 Brouillon'}
+                      {project.status === 'published' ? 'Publié' : 'Brouillon'}
                     </span>
                     {project.featured && (
                       <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">
-                        ⭐ Vedette
+                        Vedette
                       </span>
                     )}
                   </div>
@@ -1313,41 +1314,41 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                 <div className="flex space-x-2 ml-4">
                   <button 
                     onClick={() => router.push(`/admin/work/${project.id}`)}
-                    className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200 transition-colors"
+                    className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium hover:bg-blue-200 transition-colors focus:outline-none"
                     title="Éditer le projet complet"
                   >
-                    ✏️ Éditer
+                    Éditer
                   </button>
                   <button 
                     onClick={() => window.open(`/work/${project.slug || project.id}`, '_blank')}
-                    className="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 transition-colors"
+                    className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full font-medium hover:bg-gray-200 transition-colors focus:outline-none"
                     title="Aperçu du projet"
                   >
-                    👁️ Aperçu
+                    Aperçu
                   </button>
                   <button 
                     onClick={() => handleDuplicate('work', project.id)}
                     disabled={isDuplicating === project.id}
-                    className={`text-xs px-3 py-1 rounded transition-colors ${
+                    className={`text-xs px-2 py-1 rounded-full font-medium transition-colors focus:outline-none ${
                       isDuplicating === project.id
                         ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                         : 'bg-orange-100 text-orange-700 hover:bg-orange-200'
                     }`}
                     title="Dupliquer ce projet"
                   >
-                    {isDuplicating === project.id ? '⏳...' : '📋 Dupliquer'}
+                    {isDuplicating === project.id ? '...' : 'Dupliquer'}
                   </button>
                   <button 
                     onClick={() => handleDelete('work', project.id, project.title || `Projet ${index + 1}`)}
                     disabled={isDeleting === project.id}
-                    className={`text-xs px-3 py-1 rounded transition-colors ${
+                    className={`text-xs px-2 py-1 rounded-full font-medium transition-colors focus:outline-none ${
                       isDeleting === project.id
                         ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                         : 'bg-red-100 text-red-700 hover:bg-red-200'
                     }`}
                     title="Supprimer ce projet"
                   >
-                    {isDeleting === project.id ? '⏳...' : '🗑️ Supprimer'}
+                    {isDeleting === project.id ? '...' : 'Supprimer'}
                   </button>
                 </div>
               </div>
@@ -1361,7 +1362,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   const renderNavBlock = () => (
     <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
       <div className="flex items-center space-x-2 mb-4">
-        <span className="text-2xl">🧭</span>
+        <Navigation className="w-6 h-6 text-gray-600" />
         <h3 className="text-lg font-semibold text-gray-900">Navigation</h3>
       </div>
       
@@ -1409,7 +1410,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   const renderMetadataBlock = () => (
     <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
       <div className="flex items-center space-x-2 mb-4">
-        <span className="text-2xl">⚙️</span>
+        <Settings className="w-6 h-6 text-gray-600" />
         <h3 className="text-lg font-semibold text-gray-900">Métadonnées</h3>
       </div>
       
@@ -1444,7 +1445,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   const renderContactBlock = () => (
     <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
       <div className="flex items-center space-x-2 mb-4">
-        <span className="text-2xl">📧</span>
+        <Mail className="w-6 h-6 text-gray-600" />
         <h3 className="text-lg font-semibold text-gray-900">Contact</h3>
       </div>
       
@@ -1507,7 +1508,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   const renderFooterBlock = () => (
     <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
       <div className="flex items-center space-x-2 mb-4">
-        <span className="text-2xl">🦶</span>
+        <Footprints className="w-6 h-6 text-gray-600" />
         <h3 className="text-lg font-semibold text-gray-900">Footer</h3>
       </div>
       
@@ -1542,7 +1543,10 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              📋 Contenu
+              <div className="flex items-center">
+                <Layout className="w-4 h-4 mr-2" />
+                Contenu
+              </div>
             </button>
             <button
               onClick={() => setBlogActiveTab('settings')}
@@ -1552,7 +1556,10 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              ⚙️ Paramètres
+              <div className="flex items-center">
+                <Settings className="w-4 h-4 mr-2" />
+                Paramètres
+              </div>
             </button>
             <button
               onClick={() => setBlogActiveTab('filters')}
@@ -1562,7 +1569,10 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              🏷️ Filtres
+              <div className="flex items-center">
+                <Tag className="w-4 h-4 mr-2" />
+                Filtres
+              </div>
             </button>
           </nav>
         </div>
@@ -1593,7 +1603,10 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              📋 Contenu
+              <div className="flex items-center">
+                <Layout className="w-4 h-4 mr-2" />
+                Contenu
+              </div>
             </button>
             <button
               onClick={() => setWorkActiveTab('settings')}
@@ -1603,7 +1616,10 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              ⚙️ Paramètres
+              <div className="flex items-center">
+                <Settings className="w-4 h-4 mr-2" />
+                Paramètres
+              </div>
             </button>
             <button
               onClick={() => setWorkActiveTab('filters')}
@@ -1613,7 +1629,10 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              🏷️ Filtres
+              <div className="flex items-center">
+                <Tag className="w-4 h-4 mr-2" />
+                Filtres
+              </div>
             </button>
           </nav>
         </div>
@@ -1690,7 +1709,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     return (
       <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
         <div className="flex items-center space-x-2 mb-6">
-          <span className="text-2xl">🏷️</span>
+          <Tag className="w-6 h-6 text-gray-600" />
           <h3 className="text-lg font-semibold text-gray-900">Gestion des filtres</h3>
         </div>
         
@@ -1704,10 +1723,10 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                   <span className="text-blue-800 font-medium">{filter}</span>
                   <button
                     onClick={() => removeFilter(index)}
-                    className="text-red-500 hover:text-red-700 hover:bg-red-100 rounded p-1 transition-colors"
+                    className="text-gray-600 p-1"
                     title="Supprimer ce filtre"
                   >
-                    🗑️
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               ))}
@@ -1720,19 +1739,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
 
           {/* Colonne droite : Suggestions */}
           <div>
-            <div className="flex items-center justify-between mb-3">
+            <div className="mb-3 text-center">
               <h4 className="text-sm font-medium text-gray-700">Suggestions basées sur votre contenu</h4>
-              <button
-                onClick={getAISuggestions}
-                disabled={isLoadingAI}
-                className={`px-3 py-1 text-xs font-medium rounded-lg transition-colors ${
-                  isLoadingAI 
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                    : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600'
-                }`}
-              >
-                {isLoadingAI ? '🤖 Analyse...' : '🤖 Suggestions IA'}
-              </button>
             </div>
 
             {/* Suggestions IA */}
@@ -1747,14 +1755,22 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                     }}
                     className="text-left px-3 py-2 text-sm bg-gradient-to-r from-purple-50 to-blue-50 hover:from-purple-100 hover:to-blue-100 text-purple-700 border border-purple-200 hover:border-purple-300 rounded-lg transition-colors"
                   >
-                    ✨ {suggestion}
+                    {suggestion}
                   </button>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8 text-gray-500">
-                <div className="text-4xl mb-2">🤖</div>
-                <p className="text-sm">Cliquez sur "🤖 Suggestions IA" pour obtenir des suggestions basées sur votre contenu</p>
+              <div className="text-center py-8">
+                <div className="flex justify-center mb-4">
+                  <Atom className="w-8 h-8 text-gray-600" />
+                </div>
+                <button
+                  onClick={getAISuggestions}
+                  disabled={isLoadingAI}
+                  className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:from-purple-600 hover:to-blue-600 disabled:opacity-50 transition-colors"
+                >
+                  {isLoadingAI ? 'Analyse...' : 'Suggestions IA'}
+                </button>
               </div>
             )}
           </div>
@@ -1804,7 +1820,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-2">
-          <span className="text-2xl">📝</span>
+          <FileText className="w-6 h-6 text-gray-600" />
           <h3 className="text-lg font-semibold text-gray-900">Éditeur de contenu</h3>
         </div>
         
@@ -1846,7 +1862,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       >
         {(blocks || []).length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            <div className="text-4xl mb-2">📝</div>
+            <FileText className="w-8 h-8 text-gray-600 mb-2" />
             <p className="text-sm">Aucun bloc pour le moment</p>
             <p className="text-xs text-gray-400 mt-1">Utilisez le menu ci-dessus pour ajouter votre premier bloc</p>
           </div>
@@ -1900,7 +1916,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
               {!collapsedBlocks.has(block.id) && renderBlock(block, index)}
               {collapsedBlocks.has(block.id) && (
                 <div className="block-collapsed-indicator p-4 text-center text-gray-400 bg-gray-50 border-t border-gray-200">
-                  <div className="text-sm">📝 Contenu masqué</div>
+                  <div className="text-sm">Contenu masqué</div>
                   <div className="text-xs mt-1">Cliquez sur "Afficher" pour voir le contenu</div>
                 </div>
               )}
@@ -1992,7 +2008,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     return (
       <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
         <div className="flex items-center space-x-2 mb-6">
-          <span className="text-2xl">💾</span>
+          <Save className="w-6 h-6 text-gray-600" />
           <h3 className="text-lg font-semibold text-gray-900">Gestion des sauvegardes</h3>
         </div>
 
@@ -2004,7 +2020,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
               disabled={backupLoading}
               className="flex items-center justify-center space-x-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
             >
-              <span>💾</span>
+              <Save className="w-4 h-4" />
               <span>{backupLoading ? 'Création...' : 'Créer une sauvegarde'}</span>
             </button>
 
@@ -2057,10 +2073,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         {pageKey === 'home' && (
           <>
             {renderHeroBlock()}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Éditeur de contenu</h3>
-              {renderDragDropEditor()}
-            </div>
+            {renderDragDropEditor()}
           </>
         )}
         {pageKey === 'contact' && (
@@ -2072,10 +2085,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         {pageKey === 'studio' && (
           <>
             {renderContentBlock()}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Éditeur de contenu</h3>
-              {renderDragDropEditor()}
-            </div>
+            {renderDragDropEditor()}
           </>
         )}
         
@@ -2091,10 +2101,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         {pageKey === 'custom' && (
           <>
             {renderContentBlock()}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Éditeur de contenu</h3>
-              {renderDragDropEditor()}
-            </div>
+            {renderDragDropEditor()}
           </>
         )}
         

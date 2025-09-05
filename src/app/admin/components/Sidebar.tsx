@@ -1,12 +1,26 @@
 "use client";
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { 
+  Home, 
+  Palette, 
+  Mail, 
+  Briefcase, 
+  FileText, 
+  Navigation, 
+  Settings, 
+  Layout, 
+  Footprints, 
+  Save,
+  Globe,
+  LogOut
+} from 'lucide-react';
 
 interface Page {
   id: string;
   label: string;
   path: string | null;
-  icon: string;
+  icon: React.ComponentType<{ className?: string }>;
 }
 
 interface SidebarProps {
@@ -19,19 +33,19 @@ export default function Sidebar({ currentPage }: SidebarProps) {
 
   // Pages unifiées pour tout l'admin
   const PAGES = [
-    { id: 'home', label: 'Accueil', path: '/', icon: '🏠' },
-    { id: 'studio', label: 'Studio', path: '/studio', icon: '🎨' },
-    { id: 'contact', label: 'Contact', path: '/contact', icon: '📧' },
-    { id: 'work', label: 'Portfolio', path: '/work', icon: '💼' },
-    { id: 'blog', label: 'Blog', path: '/blog', icon: '📝' },
+    { id: 'home', label: 'Accueil', path: '/', icon: Home },
+    { id: 'studio', label: 'Studio', path: '/studio', icon: Palette },
+    { id: 'contact', label: 'Contact', path: '/contact', icon: Mail },
+    { id: 'work', label: 'Portfolio', path: '/work', icon: Briefcase },
+    { id: 'blog', label: 'Blog', path: '/blog', icon: FileText },
   ];
 
   const SETTINGS = [
-    { id: 'nav', label: 'Navigation', path: null, icon: '🧭' },
-    { id: 'metadata', label: 'Métadonnées', path: null, icon: '⚙️' },
-    { id: 'templates', label: 'Templates', path: null, icon: '🎨' },
-    { id: 'footer', label: 'Footer', path: null, icon: '🦶' },
-    { id: 'backup', label: 'Sauvegarde', path: null, icon: '💾' },
+    { id: 'nav', label: 'Navigation', path: null, icon: Navigation },
+    { id: 'metadata', label: 'Métadonnées', path: null, icon: Settings },
+    { id: 'templates', label: 'Templates', path: null, icon: Layout },
+    { id: 'footer', label: 'Footer', path: null, icon: Footprints },
+    { id: 'backup', label: 'Sauvegarde', path: null, icon: Save },
   ];
 
   const handlePageChange = (pageId: string) => {
@@ -49,13 +63,13 @@ export default function Sidebar({ currentPage }: SidebarProps) {
           handlePageChange(page.id);
           if (isMobile) setIsMobileMenuOpen(false);
         }}
-        className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+        className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none ${
           currentPage === page.id
-            ? 'bg-blue-50 text-blue-700 border border-blue-200'
+            ? 'bg-blue-50 text-blue-700'
             : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
         }`}
       >
-        <span className="text-lg">{page.icon}</span>
+        <page.icon className="w-5 h-5" />
         <span>{page.label}</span>
       </button>
     </li>
@@ -88,13 +102,13 @@ export default function Sidebar({ currentPage }: SidebarProps) {
           <div className="mb-4">
             <button
               onClick={() => handlePagesClick()}
-              className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+              className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none ${
                 currentPage === 'pages'
-                  ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                  ? 'bg-blue-50 text-blue-700'
                   : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
               }`}
             >
-              <span className="text-lg">📄</span>
+              <FileText className="w-5 h-5" />
               <span>Pages</span>
             </button>
           </div>
@@ -120,13 +134,13 @@ export default function Sidebar({ currentPage }: SidebarProps) {
                 <li key={setting.id}> 
                   <button
                     onClick={() => handlePageChange(setting.id)}
-                    className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none ${
                       currentPage === setting.id
-                        ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                        ? 'bg-blue-50 text-blue-700'
                         : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                     }`}
                   >
-                    <span className="text-lg">{setting.icon}</span>
+                    <setting.icon className="w-5 h-5" />
                     <span>{setting.label}</span>
                   </button>
                 </li>
@@ -142,15 +156,15 @@ export default function Sidebar({ currentPage }: SidebarProps) {
           </h3>
           <ul className="space-y-1">
             <li>
-              <a
-                href="/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
+              <button
+                onClick={() => {
+                  window.open('/', '_blank');
+                }}
+                className="w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors focus:outline-none"
               >
-                <span className="text-lg">👁️</span>
+                <Globe className="w-5 h-5" />
                 <span>Voir le site</span>
-              </a>
+              </button>
             </li>
             <li>
               <button
@@ -158,9 +172,9 @@ export default function Sidebar({ currentPage }: SidebarProps) {
                   // Logout - rediriger vers la page d'accueil
                   window.location.href = '/';
                 }}
-                className="w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
+                className="w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors focus:outline-none"
               >
-                <span className="text-lg">🚪</span>
+                <LogOut className="w-5 h-5" />
                 <span>Déconnexion</span>
               </button>
             </li>
@@ -212,13 +226,13 @@ export default function Sidebar({ currentPage }: SidebarProps) {
               <div className="mb-4">
                 <button
                   onClick={() => handlePagesClick(true)}
-                  className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none ${
                     currentPage === 'pages'
-                      ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                      ? 'bg-blue-50 text-blue-700'
                       : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                   }`}
                 >
-                  <span className="text-lg">📄</span>
+                  <FileText className="w-5 h-5" />
                   <span>Pages</span>
                 </button>
               </div>
@@ -247,13 +261,13 @@ export default function Sidebar({ currentPage }: SidebarProps) {
                           handlePageChange(setting.id);
                           setIsMobileMenuOpen(false);
                         }}
-                        className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                        className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none ${
                           currentPage === setting.id
-                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                            ? 'bg-blue-50 text-blue-700'
                             : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                         }`}
                       >
-                        <span className="text-lg">{setting.icon}</span>
+                        <setting.icon className="w-5 h-5" />
                         <span>{setting.label}</span>
                       </button>
                     </li>
@@ -269,24 +283,24 @@ export default function Sidebar({ currentPage }: SidebarProps) {
               </h3>
               <ul className="space-y-1">
                 <li>
-                  <a
-                    href="/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
+                  <button
+                    onClick={() => {
+                      window.open('/', '_blank');
+                    }}
+                    className="w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors focus:outline-none"
                   >
-                    <span className="text-lg">👁️</span>
+                    <Globe className="w-5 h-5" />
                     <span>Voir le site</span>
-                  </a>
+                  </button>
                 </li>
                 <li>
                   <button
                     onClick={() => {
                       window.location.href = '/';
                     }}
-                    className="w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
+                    className="w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors focus:outline-none"
                   >
-                    <span className="text-lg">🚪</span>
+                    <LogOut className="w-5 h-5" />
                     <span>Déconnexion</span>
                   </button>
                 </li>
