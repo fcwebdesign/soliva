@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import MediaUploader from './MediaUploader';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Trash2, ChevronUp, ChevronDown, UserPen, Menu, Plus, Link } from 'lucide-react';
 
 const HeaderManager = ({ content, onSave }) => {
@@ -329,11 +330,10 @@ const HeaderManager = ({ content, onSave }) => {
               <div className="space-y-2 max-h-[350px] overflow-y-auto">
                 {filteredPages.map((page) => (
                   <label key={page.key} className="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       checked={headerData.pages.includes(page.key)}
-                      onChange={() => togglePage(page.key)}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      onCheckedChange={() => togglePage(page.key)}
+                      className="rounded-[3px]"
                     />
                     <span className="text-sm">{page.label}</span>
                   </label>
