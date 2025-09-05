@@ -38,15 +38,35 @@ export async function POST(request: NextRequest) {
     console.log('🔍 API SEO - Données reçues:', {
       title: data.title,
       plainTextLength: data.plainText?.length,
+      plainTextType: typeof data.plainText,
+      plainTextPreview: typeof data.plainText === 'string' ? data.plainText.substring(0, 100) : data.plainText,
       focusKeyword: data.focusKeyword,
       hasTitle: !!data.title,
-      hasPlainText: !!data.plainText
+      hasPlainText: !!data.plainText,
+      type: data.type
     });
     
-    if (!data.title || !data.plainText) {
-      console.error('❌ API SEO - Données manquantes:', { title: data.title, plainText: data.plainText });
+    if (!data.title) {
+      console.error('❌ API SEO - Titre manquant:', { title: data.title });
       return NextResponse.json(
-        { error: 'Titre et contenu requis' },
+        { error: 'Titre requis' },
+        { status: 400 }
+      );
+    }
+
+    // Pour les pages sans contenu, utiliser le titre comme contenu de base
+    const contentToAnalyze = data.plainText || data.title || '';
+    
+    console.log('🔍 API SEO - Contenu à analyser:', {
+      contentToAnalyze: contentToAnalyze.substring(0, 200),
+      contentLength: contentToAnalyze.length,
+      hasContent: !!contentToAnalyze
+    });
+    
+    if (!contentToAnalyze) {
+      console.error('❌ API SEO - Aucun contenu à analyser:', { title: data.title, plainText: data.plainText });
+      return NextResponse.json(
+        { error: 'Contenu requis pour l\'analyse' },
         { status: 400 }
       );
     }
@@ -64,12 +84,14 @@ TITRES (≤60 caractères):
 - Pas d'emoji, pas de double ponctuation
 - Maximum 60 caractères après trim
 
-DESCRIPTIONS (150-160 caractères):
+DESCRIPTIONS (OBLIGATOIRE 150-160 caractères):
+- EXACTEMENT 150-160 caractères (pas moins, pas plus)
 - Exactement 1× le focus
 - Bénéfice clair + verbe d'action
 - Pas d'ellipses ("…", "...")
 - Pas de répétition du titre
-- 150-160 caractères après trim
+- Si trop court → ajouter des détails pertinents
+- Si trop long → reformuler plus concis
 
 LIENS INTERNES:
 - Uniquement parmi le pool fourni: ${data.internalUrls.join(', ')}
@@ -87,8 +109,8 @@ Langue: français naturel
 Si contrainte non respectée → reformuler, ne jamais tronquer.`;
 
     // Détecter les schémas pertinents dans le contenu
-    const detectedSchemas = detectContentSchemas(data.plainText);
-    const suggestedSchemas = ['Article', ...detectedSchemas];
+    const detectedSchemas = detectContentSchemas(contentToAnalyze);
+    const suggestedSchemas = data.type === 'article' ? ['Article', ...detectedSchemas] : ['WebPage'];
 
     const userPrompt = `Contexte:
 - Marque: ${data.brand}
@@ -97,7 +119,7 @@ Si contrainte non respectée → reformuler, ne jamais tronquer.`;
 - Titre: ${data.title}
 - H1: ${data.h1}
 - Extrait: ${data.excerpt || 'Aucun'}
-- Contenu: ${data.plainText.substring(0, 2000)}...
+- Contenu: ${contentToAnalyze.substring(0, 2000)}...
 - Tags: ${data.tags.join(', ')}
 - Catégorie: ${data.category}
 - Focus proposé: ${data.focusKeyword}
@@ -107,7 +129,8 @@ Génère:
 1. Focus keyword (1 seul, le plus pertinent)
 2. 2 alternatives au focus
 3. 2 titres optimisés (≤60 chars, focus au début)
-4. 3 descriptions (standard, conversion, pédagogique, 150-160 chars)
+4. 3 descriptions (standard, conversion, pédagogique, OBLIGATOIRE 150-160 chars)
+   Exemple: "Transformez vos idées en projets concrets avec notre studio créatif. Nous créons des solutions digitales sur-mesure qui captivent votre audience et boostent vos conversions. Découvrez notre approche unique."
 5. 3 liens internes les plus pertinents (sélectionner intelligemment parmi le pool)
 6. Schémas appropriés (UNIQUEMENT ceux détectés dans le contenu)
 
@@ -145,6 +168,7 @@ Réponds UNIQUEMENT en JSON valide:
         ],
         max_tokens: 800,
         temperature: 0.7,
+        response_format: { type: "json_object" }
       }),
     });
 
@@ -153,19 +177,94 @@ Réponds UNIQUEMENT en JSON valide:
     }
 
     const openaiData = await openaiResponse.json();
-    const responseText = openaiData.choices[0]?.message?.content;
+    let responseText = openaiData.choices[0]?.message?.content;
 
     if (!responseText) {
       throw new Error('Pas de réponse de l\'IA');
     }
 
-    // Parser la réponse JSON
+    // Nettoyer la réponse (supprimer les backticks markdown)
+    responseText = responseText
+      .replace(/^```json\s*/i, '')  // Supprimer ```json au début
+      .replace(/\s*```$/i, '')      // Supprimer ``` à la fin
+      .trim();
+
+    console.log('🧹 Réponse IA nettoyée:', responseText.substring(0, 200) + '...');
+
+    // Parser la réponse JSON avec retry
     let seoData: SEOResponse;
-    try {
-      seoData = JSON.parse(responseText);
-    } catch (parseError) {
-      console.error('Erreur parsing JSON:', parseError);
-      throw new Error('Réponse IA invalide');
+    let parseAttempts = 0;
+    const maxParseAttempts = 2;
+
+    while (parseAttempts < maxParseAttempts) {
+      try {
+        seoData = JSON.parse(responseText);
+        console.log('✅ JSON parsé avec succès au tentatif', parseAttempts + 1);
+        break;
+      } catch (parseError) {
+        parseAttempts++;
+        console.error(`❌ Erreur parsing JSON (tentative ${parseAttempts}/${maxParseAttempts}):`, parseError);
+        
+        if (parseAttempts >= maxParseAttempts) {
+          console.error('❌ Échec définitif du parsing JSON:', {
+            responseText: responseText.substring(0, 500),
+            error: parseError
+          });
+          throw new Error('Réponse IA invalide - format JSON incorrect');
+        }
+        
+        // Retry avec un prompt plus strict
+        console.log('🔄 Retry avec prompt plus strict...');
+        const retryPrompt = `Réponds UNIQUEMENT avec un JSON valide, sans backticks, sans texte avant ou après:
+
+{
+  "focus": "mot-clé principal",
+  "alternatives": ["alt1", "alt2"],
+  "metaTitles": ["titre1", "titre2"],
+  "metaDescriptions": [
+    {"kind": "standard", "text": "description1"},
+    {"kind": "conversion", "text": "description2"},
+    {"kind": "pédagogique", "text": "description3"}
+  ],
+  "internalLinks": [
+    {"url": "/url1", "label": "Label1", "reason": "Raison1"},
+    {"url": "/url2", "label": "Label2", "reason": "Raison2"},
+    {"url": "/url3", "label": "Label3", "reason": "Raison3"}
+  ],
+  "schemas": ${JSON.stringify(suggestedSchemas)}
+}`;
+
+        const retryResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [
+              { role: 'system', content: 'Tu es un expert SEO. Réponds UNIQUEMENT en JSON valide, sans backticks, sans texte avant ou après.' },
+              { role: 'user', content: retryPrompt }
+            ],
+            max_tokens: 800,
+            temperature: 0.3,
+            response_format: { type: "json_object" }
+          }),
+        });
+
+        if (!retryResponse.ok) {
+          throw new Error(`OpenAI retry error: ${retryResponse.status}`);
+        }
+
+        const retryData = await retryResponse.json();
+        responseText = retryData.choices[0]?.message?.content || '';
+        
+        // Nettoyer à nouveau
+        responseText = responseText
+          .replace(/^```json\s*/i, '')
+          .replace(/\s*```$/i, '')
+          .trim();
+      }
     }
 
     // Validation serveur
@@ -174,9 +273,10 @@ Réponds UNIQUEMENT en JSON valide:
     return NextResponse.json(validatedData);
 
   } catch (error) {
-    console.error('Erreur génération SEO:', error);
+    console.error('❌ Erreur génération SEO:', error);
+    console.error('❌ Stack trace:', error instanceof Error ? error.stack : 'No stack trace');
     return NextResponse.json(
-      { error: 'Erreur lors de la génération SEO' },
+      { error: 'Erreur lors de la génération SEO', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }
@@ -201,13 +301,18 @@ function validateSEOData(data: SEOResponse, context: SEORequest): SEOResponse {
     return title;
   });
 
-  // Valider les descriptions
+  // Valider les descriptions (avec ajustement de longueur)
   const validatedDescriptions = data.metaDescriptions.map(desc => {
     let text = desc.text;
     
-    // Vérifier la longueur
+    // Vérifier la longueur et ajuster si nécessaire
     if (text.length < 150) {
-      text = text + ' Découvrez nos services et notre expertise.';
+      // Si trop court, ajouter des détails pertinents
+      const brandName = context.brand || 'Soliva';
+      const relevantSuffix = context.type === 'article' 
+        ? ' Découvrez plus d\'articles et d\'insights sur notre blog pour approfondir vos connaissances.'
+        : ` Découvrez ${brandName} et nos services pour transformer vos idées en projets concrets.`;
+      text = text + relevantSuffix;
     } else if (text.length > 160) {
       text = text.substring(0, 157).trim() + '...';
     }

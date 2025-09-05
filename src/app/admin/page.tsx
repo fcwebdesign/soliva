@@ -7,6 +7,9 @@ import TemplateManager from './components/TemplateManager';
 import HeaderManager from './components/HeaderManager';
 import FooterManager from './components/FooterManager';
 import MinimalisteManager from './components/MinimalisteManager';
+import SeoBlock from '@/components/admin/SeoBlock';
+import SchemaScript from '@/components/SchemaScript';
+import { generateAllSchemas } from '@/lib/schema';
 import type { Content } from '@/types/content';
 
 
@@ -475,7 +478,12 @@ function AdminPageContent() {
     } else if (pageKey === 'metadata') {
       newContent.metadata = { ...newContent.metadata, ...updates };
     } else {
-      (newContent as any)[pageKey] = { ...(newContent as any)[pageKey], ...updates };
+      // Deep clone pour éviter les références partagées
+      const currentPageData = (newContent as any)[pageKey] || {};
+      (newContent as any)[pageKey] = { 
+        ...JSON.parse(JSON.stringify(currentPageData)), 
+        ...updates 
+      };
     }
     
     setContent(newContent);
@@ -545,8 +553,22 @@ function AdminPageContent() {
 
       const currentPageConfig = getPageConfig(currentPage);
 
+  // Générer le schéma JSON-LD pour les pages principales
+  const schemaJson = ['home', 'studio', 'contact', 'work', 'blog'].includes(currentPage) && currentPageData ? generateAllSchemas({
+    title: currentPageData?.hero?.title || currentPageData?.title || `${currentPageConfig?.label} - Soliva`,
+    excerpt: currentPageData?.description || currentPageData?.hero?.subtitle || '',
+    content: currentPageData?.blocks ? currentPageData.blocks.map((block: any) => block.content || '').join(' ') : (currentPageData?.content || currentPageData?.description || ''),
+    publishedAt: undefined,
+    updatedAt: undefined,
+    slug: currentPageConfig?.path || `/${currentPage}`,
+    schemas: currentPageData?.seo?.schemas
+  }) : '';
+
   return (
     <div className="admin-page min-h-screen bg-gray-50">
+      {/* Injection du schéma JSON-LD */}
+      {schemaJson && <SchemaScript schema={schemaJson} />}
+      
       {/* Sidebar */}
       <Sidebar 
         currentPage={currentPage}
@@ -839,11 +861,40 @@ function AdminPageContent() {
                     }}
                   />
                 ) : (
-                  <BlockEditor
-                    pageData={currentPageData}
-                    pageKey={currentPage}
-                    onUpdate={(updates) => updateContent(currentPage, updates)}
-                  />
+                  <div>
+                    <BlockEditor
+                      pageData={currentPageData}
+                      pageKey={currentPage}
+                      onUpdate={(updates) => updateContent(currentPage, updates)}
+                    />
+                    
+                    {/* Bloc SEO pour les pages principales */}
+                    {['home', 'studio', 'contact', 'work', 'blog'].includes(currentPage) && (
+                      <div className="mt-8">
+                        <SeoBlock
+                          content={{
+                            id: currentPage,
+                            type: 'page',
+                            title: currentPageData?.hero?.title || currentPageData?.title || `${currentPageConfig?.label} - Soliva`,
+                            slug: currentPageConfig?.path || `/${currentPage}`,
+                            contentHtml: currentPageData?.blocks || currentPageData?.content || currentPageData?.description || '',
+                            excerpt: currentPageData?.description || currentPageData?.hero?.subtitle || '',
+                            category: '',
+                            tags: [],
+                            publishedAt: undefined,
+                            updatedAt: undefined,
+                            seo: {}
+                          }}
+                          seoFields={currentPageData?.seo || {}}
+                          onSeoChange={(seo) => {
+                            console.log('SEO mis à jour pour', currentPage, ':', seo);
+                            // Mettre à jour le SEO spécifique à cette page avec une copie profonde
+                            updateContent(currentPage, { seo: { ...seo } });
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
                 )}
               </>
             )}

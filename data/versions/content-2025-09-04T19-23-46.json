@@ -154,7 +154,16 @@
         "ctaLink": "https://google.com",
         "theme": "auto"
       }
-    ]
+    ],
+    "seo": {
+      "focusKeyword": "studio créatif",
+      "metaTitle": "Studio créatif innovant — Soliva",
+      "metaDescription": "Découvrez notre studio créatif pour des solutions innovantes en branding et stratégie digitale. Découvrez nos services et notre expertise. Découvrez nos services et notre expertise.",
+      "canonicalUrl": "http://localhost:3006/",
+      "schemas": [
+        "Article"
+      ]
+    }
   },
   "contact": {
     "hero": {
@@ -189,7 +198,11 @@
         "alt": "L'équipe Soliva au travail dans notre espace créatif"
       }
     },
-    "description": "<p><strong>Vous avez des questions ? Des idées à partager ?</strong></p><p>On est là. Que vous soyez à Paris ou au Havre, n’hésitez pas à nous écrire. On adore échanger, alors faites le premier pas. Votre message est le début d'une conversation qui pourrait tout changer. Allez-y, on attend de vous lire !</p>"
+    "description": "<p><strong>Vous avez des questions ? Des idées à partager ?</strong></p><p>On est là. Que vous soyez à Paris ou au Havre, n’hésitez pas à nous écrire. On adore échanger, alors faites le premier pas. Votre message est le début d'une conversation qui pourrait tout changer. Allez-y, on attend de vous lire !</p>",
+    "seo": {
+      "focusKeyword": "contact",
+      "metaDescription": "Contactez-nous pour toutes vos questions et idées. Échangez avec notre équipe et commencez une conversation enrichissante."
+    }
   },
   "studio": {
     "hero": {
@@ -322,7 +335,12 @@
         "author": "dfsdfsd",
         "role": "dsffdsfds"
       }
-    ]
+    ],
+    "seo": {
+      "focusKeyword": "chaque",
+      "metaTitle": "Transformez chaque idée en réalité — Soliva",
+      "metaDescription": "Au studio Soliva, chaque projet est unique. Contactez-nous pour transformer vos idées en solutions mesurables et impactantes. Découvrez nos services et notre expertise."
+    }
   },
   "work": {
     "hero": {
@@ -933,8 +951,8 @@
         "hasCustomSlug": true,
         "seo": {
           "focusKeyword": "IA-washing",
-          "metaDescription": "Évitez les pièges de l'IA-washing. Apprenez à reconnaître les vrais outils d'IA pour maximiser votre efficacité. Découvrez nos services et notre expertise.",
-          "metaTitle": "IA-washing : décryptage des faux outils — Soliva",
+          "metaDescription": "Découvrez l'IA-washing et ses conséquences sur la perception des outils. Évitez les pièges marketing trompeurs. Découvrez nos services et notre expertise.",
+          "metaTitle": "Comprendre l'IA-washing et ses enjeux — Soliva",
           "canonicalUrl": "http://localhost:3006/blog/les-faux-outils-ia-qui-sont-juste-des-scripts",
           "schemas": [
             "Article",
@@ -964,7 +982,11 @@
       "All",
       "Brand",
       "IA"
-    ]
+    ],
+    "seo": {
+      "focusKeyword": "blog",
+      "metaTitle": "Le Journal : Analyses du Monde Digital — Soliva"
+    }
   },
   "_isPreview": true,
   "_previewId": "preview-1755558070217",

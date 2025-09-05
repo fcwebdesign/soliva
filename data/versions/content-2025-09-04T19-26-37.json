@@ -154,7 +154,16 @@
         "ctaLink": "https://google.com",
         "theme": "auto"
       }
-    ]
+    ],
+    "seo": {
+      "focusKeyword": "studio créatif",
+      "metaTitle": "Studio créatif innovant — Soliva",
+      "metaDescription": "Découvrez notre studio créatif pour des solutions innovantes en branding et stratégie digitale. Découvrez nos services et notre expertise. Découvrez nos services et notre expertise.",
+      "canonicalUrl": "http://localhost:3006/",
+      "schemas": [
+        "Article"
+      ]
+    }
   },
   "contact": {
     "hero": {
@@ -189,7 +198,12 @@
         "alt": "L'équipe Soliva au travail dans notre espace créatif"
       }
     },
-    "description": "<p><strong>Vous avez des questions ? Des idées à partager ?</strong></p><p>On est là. Que vous soyez à Paris ou au Havre, n’hésitez pas à nous écrire. On adore échanger, alors faites le premier pas. Votre message est le début d'une conversation qui pourrait tout changer. Allez-y, on attend de vous lire !</p>"
+    "description": "<p><strong>Vous avez des questions ? Des idées à partager ?</strong></p><p>On est là. Que vous soyez à Paris ou au Havre, n’hésitez pas à nous écrire. On adore échanger, alors faites le premier pas. Votre message est le début d'une conversation qui pourrait tout changer. Allez-y, on attend de vous lire !</p>",
+    "seo": {
+      "focusKeyword": "contact",
+      "metaDescription": "Contactez-nous pour toute question ou idée. Nous sommes là pour échanger et répondre à vos besoins avec plaisir. Découvrez nos services et notre expertise.",
+      "metaTitle": "Nous contacter pour échanger — Soliva"
+    }
   },
   "studio": {
     "hero": {
@@ -322,7 +336,12 @@
         "author": "dfsdfsd",
         "role": "dsffdsfds"
       }
-    ]
+    ],
+    "seo": {
+      "focusKeyword": "chaque",
+      "metaTitle": "Transformez chaque idée en réalité — Soliva",
+      "metaDescription": "Au studio Soliva, chaque projet est unique. Contactez-nous pour transformer vos idées en solutions mesurables et impactantes. Découvrez nos services et notre expertise."
+    }
   },
   "work": {
     "hero": {
@@ -524,7 +543,12 @@
         "publishedAt": "2025-08-19T09:55:29.559Z",
         "image": "/uploads/1755597298777-8b15cf89.jpg"
       }
-    ]
+    ],
+    "seo": {
+      "focusKeyword": "projets",
+      "metaTitle": "Projets créatifs qui inspirent — Soliva",
+      "metaDescription": "Découvrez nos projets qui illustrent notre créativité et notre expertise en stratégie de marque et design digital. Découvrez nos services et notre expertise."
+    }
   },
   "blog": {
     "hero": {
@@ -930,14 +954,45 @@
             "content": "<p>Tout ce qui brille n’est pas de l’IA.<br>Un script peut être extrêmement utile, mais il reste ce qu’il est : du code figé. Une IA, elle, est définie par sa capacité à comprendre, apprendre et s’adapter.</p><p>La seule vraie question à poser devant un outil, c’est la suivante :</p><blockquote><p><br><strong>“Est-ce que cet outil apprend de lui-même ?”</strong></p></blockquote><p><br>Si la réponse est non, alors ce n’est pas de l’intelligence artificielle.</p><p>Et ce n’est pas grave. Tant qu’on ne vous le vend pas comme tel.<br><br>✨ <em>Cet article fait partie de notre ligne éditoriale : distinguer les vraies applications de l’IA du simple vernis marketing. Parce qu’au final, la seule promesse qui compte, c’est celle qu’on peut tenir.</em></p>"
           }
         ],
-        "hasCustomSlug": true
+        "hasCustomSlug": true,
+        "seo": {
+          "focusKeyword": "IA-washing",
+          "metaDescription": "Découvrez l'IA-washing et ses conséquences sur la perception des outils. Évitez les pièges marketing trompeurs. Découvrez nos services et notre expertise.",
+          "metaTitle": "Comprendre l'IA-washing et ses enjeux — Soliva",
+          "canonicalUrl": "http://localhost:3006/blog/les-faux-outils-ia-qui-sont-juste-des-scripts",
+          "schemas": [
+            "Article",
+            "FAQPage"
+          ],
+          "suggestedInternalLinks": [
+            {
+              "url": "/blog",
+              "label": "Notre blog sur l'IA",
+              "reason": "Pour plus d'articles sur l'intelligence artificielle."
+            },
+            {
+              "url": "/studio",
+              "label": "Découvrez notre studio",
+              "reason": "Pour voir nos projets liés à l'IA."
+            },
+            {
+              "url": "/contact",
+              "label": "Contactez-nous",
+              "reason": "Pour poser vos questions sur nos services."
+            }
+          ]
+        }
       }
     ],
     "filters": [
       "All",
       "Brand",
       "IA"
-    ]
+    ],
+    "seo": {
+      "focusKeyword": "blog",
+      "metaTitle": "Le Journal : Analyses du Monde Digital — Soliva"
+    }
   },
   "_isPreview": true,
   "_previewId": "preview-1755558070217",

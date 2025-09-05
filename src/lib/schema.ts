@@ -145,7 +145,7 @@ export function generateBreadcrumbSchema(breadcrumbs: Array<{name: string, url: 
 export function generateArticleSchema(article: {
   title: string;
   excerpt?: string;
-  content: string;
+  content: string | any;
   publishedAt?: string;
   updatedAt?: string;
   slug: string;
@@ -183,9 +183,10 @@ export function generateArticleSchema(article: {
 }
 
 // Générer le schéma FAQ
-export function generateFAQSchema(content: string): FAQSchema | null {
+export function generateFAQSchema(content: string | any): FAQSchema | null {
   // Détection intelligente des questions/réponses
-  const cleanContent = content.toLowerCase();
+  const contentString = typeof content === 'string' ? content : JSON.stringify(content || '');
+  const cleanContent = contentString.toLowerCase();
   
   // Patterns de questions plus larges
   const questionPatterns = [
@@ -248,9 +249,10 @@ export function generateFAQSchema(content: string): FAQSchema | null {
 }
 
 // Générer le schéma HowTo
-export function generateHowToSchema(content: string, title: string): HowToSchema | null {
+export function generateHowToSchema(content: string | any, title: string): HowToSchema | null {
   // Détection intelligente des étapes
-  const cleanContent = content.toLowerCase();
+  const contentString = typeof content === 'string' ? content : JSON.stringify(content || '');
+  const cleanContent = contentString.toLowerCase();
   
   // Patterns d'étapes plus larges
   const stepPatterns = [
@@ -304,7 +306,7 @@ export function generateHowToSchema(content: string, title: string): HowToSchema
 export function generateAllSchemas(article: {
   title: string;
   excerpt?: string;
-  content: string;
+  content: string | any;
   publishedAt?: string;
   updatedAt?: string;
   slug: string;
@@ -335,9 +337,12 @@ export function generateAllSchemas(article: {
 }
 
 // Détecter les types de schémas pertinents dans le contenu
-export function detectContentSchemas(content: string): string[] {
+export function detectContentSchemas(content: string | any): string[] {
   const detectedSchemas: string[] = [];
-  const cleanContent = content.toLowerCase();
+  
+  // Convertir le contenu en string si ce n'est pas déjà le cas
+  const contentString = typeof content === 'string' ? content : JSON.stringify(content || '');
+  const cleanContent = contentString.toLowerCase();
   
   // Détecter FAQ
   const questionPatterns = [

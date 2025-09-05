@@ -67,12 +67,25 @@ interface AIProposals {
 export default function SeoBlock({ content, seoFields, onSeoChange, className = '' }: SeoBlockProps) {
   const [analysis, setAnalysis] = useState<SeoAnalysis | null>(null);
   const [aiProposals, setAiProposals] = useState<AIProposals | null>(null);
+  const [error, setError] = useState<string>('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedTitle, setSelectedTitle] = useState<string>('');
   const [selectedDescription, setSelectedDescription] = useState<string>('');
   const [selectedKeyword, setSelectedKeyword] = useState<string>('');
   const [allArticles, setAllArticles] = useState<any[]>([]);
+
+  // Réinitialiser l'état quand on change de page
+  useEffect(() => {
+    console.log('🔄 Réinitialisation SeoBlock pour nouvelle page:', content?.id);
+    setAiProposals(null);
+    setError('');
+    setSelectedTitle('');
+    setSelectedDescription('');
+    setSelectedKeyword('');
+    setIsGenerating(false);
+    setIsAnalyzing(false);
+  }, [content?.id]);
 
   // Analyse locale du contenu
   const analyzeContent = useMemo(() => {
@@ -84,7 +97,7 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
           if (block.content) return block.content;
           return '';
         }).join(' ')
-      : content.contentHtml || '';
+      : (typeof content.contentHtml === 'string' ? content.contentHtml : JSON.stringify(content.contentHtml || ''));
 
     // Extraire le texte sans HTML
     const cleanText = plainText.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
@@ -319,7 +332,22 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
 
   // Générer les propositions IA
   const generateAIProposals = async () => {
-    if (!content || !analyzeContent) return;
+    if (!content) {
+      console.warn('⚠️ Contenu manquant pour la génération IA');
+      return;
+    }
+
+    // Attendre que l'analyse soit prête
+    if (!analyzeContent) {
+      console.warn('⚠️ Analyse en cours, attente...');
+      // Retry après 1 seconde
+      setTimeout(() => {
+        if (analyzeContent) {
+          generateAIProposals();
+        }
+      }, 1000);
+      return;
+    }
 
     setIsGenerating(true);
     
@@ -331,7 +359,7 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
         title: content.title,
         h1: content.title,
         excerpt: content.excerpt,
-        plainText: analyzeContent.plainText,
+        plainText: analyzeContent.plainText || content.title || '',
         tags: content.tags || [],
         category: content.category || '',
         internalUrls: analyzeContent.internalLinks.map(link => link.url),
@@ -354,20 +382,36 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
 
       if (!response.ok) {
         let errorData = {};
+        let errorText = '';
+        
         try {
           errorData = await response.json();
         } catch (e) {
-          console.error('Impossible de parser la réponse d\'erreur:', e);
+          // Si pas de JSON, essayer de lire le texte brut
+          try {
+            errorText = await response.text();
+            console.error('Réponse d\'erreur (texte brut):', errorText);
+          } catch (textError) {
+            console.error('Impossible de lire la réponse d\'erreur:', textError);
+          }
         }
         
         console.error('Erreur API SEO détaillée:', {
           status: response.status,
           statusText: response.statusText,
           error: errorData,
+          errorText: errorText,
           url: response.url
         });
         
-        throw new Error(`Erreur lors de la génération IA: ${response.status} - ${errorData.error || response.statusText}`);
+        // Retry automatique après 2 secondes en cas d'erreur
+        console.log('🔄 Retry automatique dans 2 secondes...');
+        setTimeout(() => {
+          generateAIProposals();
+        }, 2000);
+        
+        const errorMessage = errorData.error || errorText || response.statusText || 'Erreur inconnue';
+        throw new Error(`Erreur lors de la génération IA: ${response.status} - ${errorMessage}`);
       }
 
       const proposals: AIProposals = await response.json();
@@ -388,6 +432,14 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
       
     } catch (error) {
       console.error('Erreur génération IA:', error);
+      setError('Erreur lors de la génération IA');
+      
+      // Retry automatique après 2 secondes
+      setTimeout(() => {
+        console.log('🔄 Retry automatique de la génération IA...');
+        setError('');
+        generateAIProposals();
+      }, 2000);
     } finally {
       setIsGenerating(false);
     }
