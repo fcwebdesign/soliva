@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef } from 'react';
+import { Upload, Image, GripHorizontal } from 'lucide-react';
 
 interface MediaUploaderProps {
   currentUrl?: string;
@@ -76,7 +77,7 @@ export default function MediaUploader({ currentUrl, onUpload }: MediaUploaderPro
               <span>Upload en cours...</span>
             ) : (
               <>
-                <span className="text-4xl">📁</span>
+                <Image className="w-12 h-12 text-gray-600" />
                 <span>Cliquez pour uploader une image</span>
               </>
             )}
@@ -175,7 +176,7 @@ export function LogoUploader({ currentUrl, onUpload }: MediaUploaderProps) {
               <span className="text-sm">Upload en cours...</span>
             ) : (
               <>
-                <span className="text-2xl">📁</span>
+                <Image className="w-8 h-8 text-gray-600" />
                 <span className="text-xs text-center">Cliquez pour uploader</span>
               </>
             )}

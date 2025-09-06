@@ -7,7 +7,7 @@ import MediaUploader, { LogoUploader } from './MediaUploader';
 import VersionList from './VersionList';
 import { renderAutoBlockEditor } from "@/app/admin/components/AutoBlockIntegration";
 import { getAutoDeclaredBlock, getBlockMetadata, getAvailableBlockTypes, createAutoBlockInstance } from '@/blocks/auto-declared/registry';
-import { FileText, Briefcase, Navigation, Settings, Mail, Footprints, Save, Target, Layout, Tag, Atom, Trash2, Plus, Search, Type, Heading2, Image, Columns, Phone, Grid3x3, FolderOpen, Building2, Quote, ChevronDown, Lock, AlignLeft } from 'lucide-react';
+import { FileText, Briefcase, Navigation, Settings, Mail, Footprints, Save, Target, Layout, Tag, Atom, Trash2, Plus, Search, Type, Heading2, Image, Columns, Phone, Grid3x3, FolderOpen, Building2, Quote, ChevronDown, Lock, AlignLeft, GripHorizontal, Grid3x2, List } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -48,6 +48,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   const [draggedLogoIndex, setDraggedLogoIndex] = useState<number | null>(null);
   const [dragOverLogoIndex, setDragOverLogoIndex] = useState<number | null>(null);
   const [backupLoading, setBackupLoading] = useState(false);
+  const [headerHeight, setHeaderHeight] = useState(80); // Valeur par défaut
   
   // Synchroniser localData avec pageData quand pageData change
   useEffect(() => {
@@ -55,6 +56,39 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       setLocalData(pageData);
     }
   }, [pageData]);
+
+  // Calculer la hauteur du header principal pour le positionnement sticky
+  useEffect(() => {
+    const calculateHeaderHeight = () => {
+      const header = document.querySelector('header');
+      if (header) {
+        const height = header.offsetHeight;
+        setHeaderHeight(height);
+      }
+    };
+
+    // Calculer au montage
+    calculateHeaderHeight();
+
+    // Recalculer si la fenêtre change de taille
+    window.addEventListener('resize', calculateHeaderHeight);
+    
+    // Observer les changements de taille du header
+    const header = document.querySelector('header');
+    if (header) {
+      const observer = new ResizeObserver(calculateHeaderHeight);
+      observer.observe(header);
+      
+      return () => {
+        observer.disconnect();
+        window.removeEventListener('resize', calculateHeaderHeight);
+      };
+    }
+
+    return () => {
+      window.removeEventListener('resize', calculateHeaderHeight);
+    };
+  }, []);
 
   // Réinitialiser l'état quand on change de page
   useEffect(() => {
@@ -440,7 +474,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       'image': 'Image',
       'two-columns': 'Deux colonnes',
       'contact': 'Contact',
-      'services': 'Services',
+      'services': 'Liste titre/texte',
       'projects': 'Projets',
       'logos': 'Logos',
       'quote': 'Citation'
@@ -466,11 +500,11 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       case 'contact':
         return <Phone className={iconClass} />;
       case 'services':
-        return <Grid3x3 className={iconClass} />;
+        return <List className={iconClass} />;
       case 'projects':
-        return <FolderOpen className={iconClass} />;
+        return <Grid3x3 className={iconClass} />;
       case 'logos':
-        return <Building2 className={iconClass} />;
+        return <GripHorizontal className={iconClass} />;
       case 'quote':
         return <Quote className={iconClass} />;
       default:
@@ -1993,15 +2027,19 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
 
   // Fonction pour rendre l'éditeur drag & drop
   const renderDragDropEditor = () => (
-    <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-2">
-          <FileText className="w-6 h-6 text-gray-600" />
-          <h3 className="text-lg font-semibold text-gray-900">Éditeur de contenu</h3>
-        </div>
-        
-        {/* Menu pour ajouter des blocs */}
-        <div className="flex items-center space-x-2">
+    <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+      {/* Header sticky */}
+      <div 
+        className="sticky z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200 p-6 pb-4"
+        style={{ top: `${headerHeight}px` }}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <FileText className="w-6 h-6 text-gray-600" />
+            <h3 className="text-lg font-semibold text-gray-900">Éditeur de contenu</h3>
+          </div>
+          
+          {/* Menu pour ajouter des blocs */}
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>
               <Button className="flex items-center gap-2">
@@ -2072,6 +2110,9 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
           </Sheet>
         </div>
       </div>
+      
+      {/* Contenu des blocs */}
+      <div className="p-6 pt-4">
       
       {/* Zone de blocs avec drag & drop natif */}
       <div 
@@ -2151,6 +2192,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             </div>
           ))
         )}
+      </div>
       </div>
     </div>
   );
