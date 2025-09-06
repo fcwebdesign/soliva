@@ -9,14 +9,25 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Brain, Settings, TestTube, Save, AlertTriangle, CheckCircle } from 'lucide-react';
 import AIProfileForm from './components/AIProfileForm';
 import VoiceTestModal from './components/VoiceTestModal';
+import Sidebar from '../components/Sidebar';
+import HeaderAdmin from '../components/HeaderAdmin';
 
 export default function AISettingsPage() {
   const [profile, setProfile] = useState<AIProfile | null>(null);
   const [completenessScore, setCompletenessScore] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   const [showVoiceTest, setShowVoiceTest] = useState(false);
   const [testResult, setTestResult] = useState<any>(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  // Supprimer le scroll du body
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
 
   // Charger le profil IA au montage
   useEffect(() => {
@@ -40,7 +51,7 @@ export default function AISettingsPage() {
   };
 
   const handleSaveProfile = async (formData: AIProfileFormData) => {
-    setIsSaving(true);
+    setSaveStatus('saving');
     try {
       const response = await fetch('/api/admin/ai/profile', {
         method: 'POST',
@@ -53,13 +64,20 @@ export default function AISettingsPage() {
       if (data.success) {
         setProfile(data.profile);
         setCompletenessScore(data.completenessScore);
-        // TODO: Afficher une notification de succès
+        setHasUnsavedChanges(false); // Réinitialiser l'état des modifications
+        
+        setSaveStatus('success');
+        // Réinitialiser le statut après 3 secondes
+        setTimeout(() => setSaveStatus('idle'), 3000);
+      } else {
+        console.error('Erreur API:', data.error);
+        setSaveStatus('error');
+        setTimeout(() => setSaveStatus('idle'), 3000);
       }
     } catch (error) {
       console.error('Erreur lors de la sauvegarde:', error);
-      // TODO: Afficher une notification d'erreur
-    } finally {
-      setIsSaving(false);
+      setSaveStatus('error');
+      setTimeout(() => setSaveStatus('idle'), 3000);
     }
   };
 
@@ -96,32 +114,90 @@ export default function AISettingsPage() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <Brain className="w-8 h-8 text-blue-500" />
-            Paramètres IA
-          </h1>
-          <p className="text-gray-600 mt-2">
-            Configurez le profil IA pour des contenus alignés à votre marque
-          </p>
-        </div>
-        
-        {profile && (
-          <div className="flex items-center gap-3">
-            <Button
-              onClick={() => handleTestVoice('standard')}
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <TestTube className="w-4 h-4" />
-              Tester la voix
-            </Button>
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
+      <Sidebar />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header personnalisé pour la page IA */}
+        <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-6 py-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <h1 className="text-4xl font-semibold text-gray-900 mb-2" style={{ fontSize: '2.25rem' }}>
+                  Paramètres IA
+                </h1>
+                <button
+                  onClick={() => window.history.back()}
+                  className="text-sm text-gray-500 hover:text-gray-700 p-0 h-auto bg-transparent border-none cursor-pointer"
+                >
+                  ← Retour
+                </button>
+              </div>
+              
+              {/* Actions */}
+              <div className="flex items-center space-x-3">
+                {hasUnsavedChanges && (
+                  <span className="text-sm text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
+                    Modifications non enregistrées
+                  </span>
+                )}
+                
+                {saveStatus === 'saving' && (
+                  <div className="flex items-center space-x-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                    <span className="text-sm text-gray-600">Enregistrement...</span>
+                  </div>
+                )}
+                
+                {saveStatus === 'success' && (
+                  <span className="text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                    Enregistré à {new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                )}
+                
+                {saveStatus === 'error' && (
+                  <span className="text-sm text-red-600 bg-red-50 px-3 py-1 rounded-full">
+                    ❌ Erreur
+                  </span>
+                )}
+                
+                {profile && (
+                  <button
+                    onClick={() => handleTestVoice('standard')}
+                    className="text-sm px-4 py-2 rounded-md transition-colors bg-gray-600 text-white hover:bg-gray-700"
+                    title="Tester la voix de marque"
+                  >
+                    🧪 Tester la voix
+                  </button>
+                )}
+                
+                <button
+                  onClick={() => {
+                    const form = document.querySelector('form');
+                    if (form) {
+                      form.requestSubmit();
+                    }
+                  }}
+                  disabled={saveStatus === 'saving' || !hasUnsavedChanges}
+                  className={`text-sm px-4 py-2 rounded-md transition-colors ${
+                    saveStatus === 'saving' || !hasUnsavedChanges
+                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                      : 'bg-gray-600 text-white hover:bg-gray-700'
+                  }`}
+                  title="Sauvegarder le profil IA"
+                >
+                  {saveStatus === 'saving' ? 'Sauvegarde...' : '💾 Sauvegarder'}
+                </button>
+              </div>
+            </div>
           </div>
-        )}
-      </div>
+        </header>
+        <div className="flex-1 p-6 space-y-6 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 120px)' }}>
+          {/* Description */}
+          <div>
+            <p className="text-gray-600">
+              Configurez le profil IA pour des contenus alignés à votre marque
+            </p>
+          </div>
 
       {/* Score de complétude */}
       {profile && (
@@ -171,7 +247,8 @@ export default function AISettingsPage() {
       <AIProfileForm
         initialData={profile}
         onSave={handleSaveProfile}
-        isLoading={isSaving}
+        isLoading={saveStatus === 'saving'}
+        onDataChange={setHasUnsavedChanges}
       />
 
       {/* Modal de test de voix */}
@@ -181,6 +258,8 @@ export default function AISettingsPage() {
           onClose={() => setShowVoiceTest(false)}
         />
       )}
+        </div>
+      </div>
     </div>
   );
 }

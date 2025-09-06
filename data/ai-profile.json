@@ -1,0 +1,74 @@
+{
+  "id": "ai-profile-1757185753721",
+  "siteId": "main-site",
+  "brand": {
+    "name": "Soliva",
+    "baseline": "Creative studio. DigitaI & brand strategy. ",
+    "elevatorPitch": "Le studio réunit une équipe compacte de designers et développeurs basée au Hevre. Nous livrons des sites rapides, accessibles et faciles à maintenir, avec des délais clairs et un budget maîtrisé."
+  },
+  "offer": {
+    "mainServices": [],
+    "usps": []
+  },
+  "audience": {
+    "primary": {
+      "type": "B2B",
+      "sector": ""
+    },
+    "expertiseLevel": "pro"
+  },
+  "tone": {
+    "styles": [],
+    "formality": "vouvoiement",
+    "emojisAllowed": false,
+    "preferredLength": "standard"
+  },
+  "writingRules": {
+    "do": [],
+    "avoid": [],
+    "bannedWords": []
+  },
+  "lexicon": {
+    "brandKeywords": [],
+    "allowedCTAs": []
+  },
+  "localization": {
+    "outputLanguages": [
+      "fr"
+    ],
+    "currency": "EUR",
+    "dateFormat": "DD/MM/YYYY",
+    "numberFormat": "1 234,56",
+    "formalityByLanguage": {}
+  },
+  "seo": {
+    "priorityKeywords": [],
+    "competitors": [],
+    "inspirationSources": []
+  },
+  "compliance": {
+    "forbiddenClauses": [],
+    "requiredDisclaimer": ""
+  },
+  "internalSources": {
+    "existingPages": [],
+    "documents": []
+  },
+  "governance": {
+    "allowedRoles": [
+      "Admin"
+    ],
+    "dailyQuota": 50,
+    "mandatoryReview": false
+  },
+  "consent": {
+    "allowContextualTraining": true,
+    "dataRetentionDays": 90
+  },
+  "metadata": {
+    "version": 1,
+    "updatedBy": "admin",
+    "updatedAt": "2025-09-06T19:09:13.721Z",
+    "completenessScore": 57
+  }
+}

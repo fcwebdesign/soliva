@@ -15,9 +15,10 @@ interface AIProfileFormProps {
   initialData?: AIProfile | null;
   onSave: (data: AIProfileFormData) => void;
   isLoading: boolean;
+  onDataChange?: (hasChanges: boolean) => void;
 }
 
-export default function AIProfileForm({ initialData, onSave, isLoading }: AIProfileFormProps) {
+export default function AIProfileForm({ initialData, onSave, isLoading, onDataChange }: AIProfileFormProps) {
   const [formData, setFormData] = useState<AIProfileFormData>({
     // 1. Marque
     brandName: '',
@@ -76,6 +77,62 @@ export default function AIProfileForm({ initialData, onSave, isLoading }: AIProf
     allowContextualTraining: true,
     dataRetentionDays: 90
   });
+
+  // Détecter les changements dans le formulaire
+  useEffect(() => {
+    if (onDataChange) {
+      if (initialData) {
+        // Comparer avec les données initiales pour détecter les vrais changements
+        const initialFormData = {
+          brandName: initialData.brand.name || '',
+          brandBaseline: initialData.brand.baseline || '',
+          brandElevatorPitch: initialData.brand.elevatorPitch || '',
+          mainServices: [...initialData.offer.mainServices, '', '', ''].slice(0, 3),
+          usps: [...initialData.offer.usps, '', '', ''].slice(0, 3),
+          audienceType: initialData.audience.primary.type || 'B2B',
+          audienceSector: initialData.audience.primary.sector || '',
+          expertiseLevel: initialData.audience.expertiseLevel || 'pro',
+          toneStyles: initialData.tone.styles || [],
+          formality: initialData.tone.formality || 'vouvoiement',
+          emojisAllowed: initialData.tone.emojisAllowed || false,
+          preferredLength: initialData.tone.preferredLength || 'standard',
+          writingDo: [...initialData.writingRules.do, '', '', ''].slice(0, 3),
+          writingAvoid: [...initialData.writingRules.avoid, '', '', ''].slice(0, 3),
+          bannedWords: initialData.writingRules.bannedWords || [],
+          brandKeywords: [...initialData.lexicon.brandKeywords, '', '', '', '', '', ''].slice(0, 6),
+          allowedCTAs: [...initialData.lexicon.allowedCTAs, '', '', ''].slice(0, 3),
+          outputLanguages: initialData.localization.outputLanguages || ['fr'],
+          currency: initialData.localization.currency || 'EUR',
+          dateFormat: initialData.localization.dateFormat || 'DD/MM/YYYY',
+          numberFormat: initialData.localization.numberFormat || '1 234,56',
+          priorityKeywords: [...initialData.seo.priorityKeywords, '', '', '', '', ''].slice(0, 5),
+          competitors: [...initialData.seo.competitors, '', '', ''].slice(0, 3),
+          inspirationSources: [...initialData.seo.inspirationSources, '', ''].slice(0, 2),
+          forbiddenClauses: [...initialData.compliance.forbiddenClauses, '', '', ''].slice(0, 3),
+          requiredDisclaimer: initialData.compliance.requiredDisclaimer || '',
+          existingPages: [...initialData.internalSources.existingPages, '', ''].slice(0, 2),
+          documents: [...initialData.internalSources.documents, '', ''].slice(0, 2),
+          allowedRoles: initialData.governance.allowedRoles || ['Admin'],
+          dailyQuota: initialData.governance.dailyQuota || 50,
+          mandatoryReview: initialData.governance.mandatoryReview || false,
+          allowContextualTraining: initialData.consent.allowContextualTraining || true,
+          dataRetentionDays: initialData.consent.dataRetentionDays || 90
+        };
+        
+        const hasChanges = JSON.stringify(formData) !== JSON.stringify(initialFormData);
+        onDataChange(hasChanges);
+      } else {
+        // Si pas de données initiales, considérer comme modifié si au moins un champ est rempli
+        const hasContent = Object.values(formData).some(value => {
+          if (Array.isArray(value)) {
+            return value.some(item => item && item.trim() !== '');
+          }
+          return value && value.toString().trim() !== '';
+        });
+        onDataChange(hasContent);
+      }
+    }
+  }, [formData, onDataChange, initialData]);
 
   // Charger les données initiales
   useEffect(() => {
@@ -174,7 +231,7 @@ export default function AIProfileForm({ initialData, onSave, isLoading }: AIProf
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6 pb-6">
       {/* 1. Marque */}
       <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
         <div className="mb-4">
@@ -684,13 +741,7 @@ export default function AIProfileForm({ initialData, onSave, isLoading }: AIProf
         </div>
       </div>
 
-      {/* Bouton de sauvegarde */}
-      <div className="flex justify-end">
-        <Button type="submit" disabled={isLoading} className="flex items-center gap-2">
-          <Save className="w-4 h-4" />
-          {isLoading ? 'Sauvegarde...' : 'Sauvegarder le profil'}
-        </Button>
-      </div>
+      {/* Le bouton de sauvegarde est maintenant dans le HeaderAdmin */}
     </form>
   );
 }

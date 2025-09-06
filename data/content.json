@@ -6,7 +6,7 @@
   "nav": {
     "logo": "soliva",
     "logoImage": "",
-    "location": "paris, le havre",
+    "location": "paris, le havre ",
     "items": [
       "work",
       "studio",
@@ -1005,9 +1005,9 @@
   "_previewId": "preview-1755558070217",
   "_originalPage": "blog",
   "footer": {
-    "logo": "soliva",
+    "logo": "soliva ",
     "logoImage": "",
-    "description": "AI-Native Studio",
+    "description": "AI-Native Studio ",
     "links": [
       {
         "title": "Le blog",
