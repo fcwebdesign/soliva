@@ -7,7 +7,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import { isMarkActiveAtCursor } from '@/utils/tiptapToolbar';
 import LinkDialog from './LinkDialog';
 
-const WysiwygEditor = ({ value, onChange, placeholder }) => {
+const WysiwygEditor = ({ value, onChange, placeholder, onAISuggestion, isLoadingAI }) => {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -341,6 +341,26 @@ const WysiwygEditor = ({ value, onChange, placeholder }) => {
           >
             <span style={{fontFamily: 'monospace'}}>≣</span>
           </button>
+          
+          {/* Séparateur */}
+          <div className="w-px bg-gray-300 mx-2"></div>
+          
+          {/* Bouton IA */}
+          {onAISuggestion && (
+            <button
+              type="button"
+              onClick={onAISuggestion}
+              disabled={isLoadingAI}
+              className={`px-3 py-1 text-xs rounded transition-colors ${
+                isLoadingAI 
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                  : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600'
+              }`}
+              title="Suggestion IA"
+            >
+              {isLoadingAI ? '...' : 'IA'}
+            </button>
+          )}
         </div>
 
         {/* Zone d'édition */}

@@ -64,7 +64,7 @@ export function getAutoBlockMetadata() {
 }
 
 // Fonction pour rendre l'éditeur d'un bloc auto-déclaré
-export function renderAutoBlockEditor(block: any, onUpdate?: (updates: any) => void) {
+export function renderAutoBlockEditor(block: any, onUpdate?: (updates: any) => void, context?: any) {
   const autoBlock = getAutoDeclaredBlock(block.type);
   
   if (!autoBlock) {
@@ -81,6 +81,7 @@ export function renderAutoBlockEditor(block: any, onUpdate?: (updates: any) => v
             // Cette fonction sera appelée par le parent
             console.log('🔄 Mise à jour du bloc auto-déclaré:', updates);
           }}
+          context={context}
         />
       ) : (
         <div className="p-4 bg-yellow-50 border border-yellow-200 rounded">

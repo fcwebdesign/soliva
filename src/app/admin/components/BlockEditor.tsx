@@ -617,7 +617,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
             </div>
           </section>`;
         case 'projects':
-          const projectsBlockEditor = renderAutoBlockEditor(block, (updates) => updateBlock(block.id, updates));
+          const projectsBlockEditor = renderAutoBlockEditor(block, (updates) => updateBlock(block.id, updates), localData);
           if (projectsBlockEditor) {
             return projectsBlockEditor;
         }
@@ -1061,7 +1061,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     }
     
     // Rendu automatique via le système scalable
-    return renderAutoBlockEditor(block, (updates) => updateBlock(block.id, updates));
+    return renderAutoBlockEditor(block, (updates) => updateBlock(block.id, updates), localData);
   };
 
   const renderBlockTypeLabel = (type: string) => {
@@ -1264,28 +1264,17 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
           )}
           
           <div>
-            <div className="flex items-center justify-between mb-2">
+            <div className="mb-2">
               <label className="text-sm font-medium text-gray-700">
                 Description
               </label>
-              {(pageKey === 'blog' || pageKey === 'work' || pageKey === 'contact' || pageKey === 'studio' || pageKey === 'custom') && (
-                <button
-                  onClick={getDescriptionSuggestion}
-                  disabled={isLoadingDescriptionAI}
-                  className={`px-3 py-1 text-xs font-medium rounded-lg transition-colors ${
-                    isLoadingDescriptionAI 
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                      : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600'
-                  }`}
-                >
-                  {isLoadingDescriptionAI ? '🤖 Génération...' : '🤖 Suggestion IA'}
-                </button>
-              )}
             </div>
             <WysiwygEditor
               value={descriptionValue || ''}
               onChange={(value) => updateField(descriptionPath, value)}
               placeholder="Description de la page"
+              onAISuggestion={(pageKey === 'blog' || pageKey === 'work' || pageKey === 'contact' || pageKey === 'studio' || pageKey === 'custom') ? getDescriptionSuggestion : undefined}
+              isLoadingAI={isLoadingDescriptionAI}
             />
           </div>
         
