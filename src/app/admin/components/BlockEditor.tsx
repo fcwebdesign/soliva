@@ -7,7 +7,7 @@ import MediaUploader, { LogoUploader } from './MediaUploader';
 import VersionList from './VersionList';
 import { renderAutoBlockEditor } from "@/app/admin/components/AutoBlockIntegration";
 import { getAutoDeclaredBlock, getBlockMetadata, getAvailableBlockTypes, createAutoBlockInstance } from '@/blocks/auto-declared/registry';
-import { FileText, Briefcase, Navigation, Settings, Mail, Footprints, Save, Target, Layout, Tag, Atom, Trash2, Plus, Search, Type, Heading2, Image, Columns, Phone, Grid3x3, FolderOpen, Building2, Quote, ChevronDown, Lock, AlignLeft, GripHorizontal, Grid3x2, List } from 'lucide-react';
+import { FileText, Briefcase, Navigation, Settings, Mail, Footprints, Save, Target, Layout, Tag, Atom, Trash2, Plus, Search, Type, Heading2, Image, Columns, Phone, Grid3x3, FolderOpen, Building2, Quote, ChevronDown, Lock, AlignLeft, GripHorizontal, Grid3x2, List, Brain, AlertTriangle } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -45,6 +45,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     'Pro': true
   });
   const [lastCreatedId, setLastCreatedId] = useState<string | null>(null);
+  const [aiProfileCompleteness, setAiProfileCompleteness] = useState<number | null>(null);
   const [draggedLogoIndex, setDraggedLogoIndex] = useState<number | null>(null);
   const [dragOverLogoIndex, setDragOverLogoIndex] = useState<number | null>(null);
   const [backupLoading, setBackupLoading] = useState(false);
@@ -56,6 +57,23 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       setLocalData(pageData);
     }
   }, [pageData]);
+
+  // Charger le profil IA au montage
+  useEffect(() => {
+    const loadAIProfile = async () => {
+      try {
+        const response = await fetch('/api/admin/ai/profile');
+        const data = await response.json();
+        if (data.completenessScore !== undefined) {
+          setAiProfileCompleteness(data.completenessScore);
+        }
+      } catch (error) {
+        console.warn('Erreur lors du chargement du profil IA:', error);
+      }
+    };
+    
+    loadAIProfile();
+  }, []);
 
   // Calculer la hauteur du header principal pour le positionnement sticky
   useEffect(() => {
@@ -2327,6 +2345,34 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
 
   return (
     <>
+      {/* Bannière profil IA incomplet */}
+      {aiProfileCompleteness !== null && aiProfileCompleteness < 80 && (
+        <div className="mb-6 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2">
+                <Brain className="w-5 h-5 text-blue-600" />
+                <AlertTriangle className="w-4 h-4 text-orange-500" />
+              </div>
+              <div>
+                <h4 className="text-sm font-medium text-gray-900">
+                  Profil IA incomplet ({aiProfileCompleteness}%)
+                </h4>
+                <p className="text-xs text-gray-600">
+                  Complétez votre profil IA pour des suggestions plus précises et personnalisées
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => window.open('/admin/ai', '_blank')}
+              className="px-3 py-1 text-xs font-medium text-blue-600 bg-blue-100 rounded-md hover:bg-blue-200 transition-colors"
+            >
+              Compléter
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-6">
         {/* Rendu conditionnel selon le type de page */}
         {pageKey === 'home' && (

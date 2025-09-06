@@ -136,7 +136,7 @@ const Footer = ({ content, fullContent }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
             {/* Copyright - Colonne gauche */}
             <div className="text-left">
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+              <p className="text-sm text-gray-600">
                 {footerContent.copyright || '© 2024 Soliva. Tous droits réservés.'}
               </p>
             </div>
@@ -144,7 +144,7 @@ const Footer = ({ content, fullContent }) => {
             {/* Liens du site - Colonne droite */}
             {footerContent.bottomLinks && footerContent.bottomLinks.length > 0 && (
               <div className="text-right">
-                <ul className="flex flex-wrap justify-end gap-4 text-sm">
+                <ul className="flex flex-wrap justify-end gap-4 text-sm footer-custom-links">
                   {footerContent.bottomLinks.map((pageKey, index) => {
                     // Construire la liste des pages disponibles de manière dynamique
                     const availablePages = [
@@ -184,8 +184,7 @@ const Footer = ({ content, fullContent }) => {
                         <Link 
                           href={url} 
                           target={target}
-                          className="transition-colors hover:opacity-80 leading-tight"
-                          style={{ color: 'var(--text-secondary)' }}
+                          className="transition-colors hover:opacity-80 leading-tight text-gray-600"
                         >
                           {displayLabel}
                         </Link>

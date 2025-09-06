@@ -1,11 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readContent } from '@/lib/content';
+import fs from 'fs';
+import path from 'path';
+
+const AI_PROFILE_FILE = path.join(process.cwd(), 'data', 'ai-profile.json');
 
 export async function POST(request: NextRequest) {
   try {
     const { type, title } = await request.json();
     
     const content = await readContent();
+    
+    // Charger le profil IA si disponible
+    let aiProfile = null;
+    if (fs.existsSync(AI_PROFILE_FILE)) {
+      try {
+        const profileData = fs.readFileSync(AI_PROFILE_FILE, 'utf8');
+        aiProfile = JSON.parse(profileData);
+      } catch (error) {
+        console.warn('Erreur lors du chargement du profil IA:', error);
+      }
+    }
     let items = [];
     
     if (type === 'work') {
@@ -175,11 +190,35 @@ export async function POST(request: NextRequest) {
         messages: [
           {
             role: 'system',
-            content: `Tu es copywriter senior. 
-Ta mission: rédiger une description de page web (50–70 mots). 
+            content: (() => {
+              let systemPrompt = `Tu es copywriter senior. 
+Ta mission: rédiger une description de page web (50–70 mots).`;
+
+              // Ajouter le profil IA si disponible
+              if (aiProfile && aiProfile.metadata.completenessScore >= 0) {
+                systemPrompt += `
+
+PROFIL DE MARQUE:
+- Marque: ${aiProfile.brand.name}. Baseline: ${aiProfile.brand.baseline}
+- Services: ${aiProfile.offer.mainServices.join(', ')}
+- Cible: ${aiProfile.audience.primary.type} - ${aiProfile.audience.primary.sector}
+- Ton: ${aiProfile.tone.styles.join(', ')}. Formalité: ${aiProfile.tone.formality}
+- À éviter: ${aiProfile.writingRules.avoid.join(', ')}
+- Mots-clés marque: ${aiProfile.lexicon.brandKeywords.join(', ')}
+
+RÈGLES SPÉCIFIQUES:
+- Respecte le ton ${aiProfile.tone.styles.join(', ')}
+- Utilise le ${aiProfile.tone.formality}
+- Évite: ${aiProfile.writingRules.avoid.join(', ')}
+- Utilise ces mots-clés: ${aiProfile.lexicon.brandKeywords.join(', ')}`;
+              } else {
+                systemPrompt += `
 Style: clair, piquant, direct. Ton: confiant, légèrement provocateur. 
 Pas de jargon, pas de langue de bois. 
-Interdits: "nous accompagnons", "notre expertise", "solutions sur-mesure", "partenaire de confiance", "plongez dans", "au cœur de".
+Interdits: "nous accompagnons", "notre expertise", "solutions sur-mesure", "partenaire de confiance", "plongez dans", "au cœur de".`;
+              }
+
+              systemPrompt += `
 
 Spécificités selon le type:
 - home → Accroche forte: qui on est + pourquoi on est différent.
@@ -192,7 +231,10 @@ Spécificités selon le type:
 Contraintes:
 - Phrases courtes (max 12 mots).
 - 50–70 mots au total.
-- Sortie: seulement le texte final, sans explications.`
+- Sortie: seulement le texte final, sans explications.`;
+
+              return systemPrompt;
+            })()
           },
           {
             role: 'user',

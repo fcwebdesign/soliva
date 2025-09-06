@@ -1,11 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readContent } from '@/lib/content';
+import fs from 'fs';
+import path from 'path';
+
+const AI_PROFILE_FILE = path.join(process.cwd(), 'data', 'ai-profile.json');
 
 export async function POST(request: NextRequest) {
   try {
     const { blockType, pageKey, context, existingBlocks, existingTitle, existingOfferings } = await request.json();
     
     const content = await readContent();
+    
+    // Charger le profil IA si disponible
+    let aiProfile = null;
+    if (fs.existsSync(AI_PROFILE_FILE)) {
+      try {
+        const profileData = fs.readFileSync(AI_PROFILE_FILE, 'utf8');
+        aiProfile = JSON.parse(profileData);
+      } catch (error) {
+        console.warn('Erreur lors du chargement du profil IA:', error);
+      }
+    }
     
     // Contexte spécifique selon la page avec plus de détails
     let pageContext = '';
@@ -131,6 +146,49 @@ export async function POST(request: NextRequest) {
         blockInstructions = `Génère du contenu clair et approprié pour ce type de bloc.`;
     }
 
+    // Construire le prompt système avec le profil IA
+    let systemPrompt = `Tu es copywriter senior créatif spécialisé dans la création de contenu web unique et mémorable.`;
+
+    // Ajouter le profil IA si disponible
+    if (aiProfile && aiProfile.metadata.completenessScore >= 0) {
+      systemPrompt += `
+
+PROFIL DE MARQUE:
+- Marque: ${aiProfile.brand.name}. Baseline: ${aiProfile.brand.baseline}. Pitch: ${aiProfile.brand.elevatorPitch}
+- Services: ${aiProfile.offer.mainServices.join(', ')}. USP: ${aiProfile.offer.usps.join(', ')}
+- Cible: ${aiProfile.audience.primary.type} - ${aiProfile.audience.primary.sector}. Niveau: ${aiProfile.audience.expertiseLevel}
+- Ton: ${aiProfile.tone.styles.join(', ')}. Formalité: ${aiProfile.tone.formality}. Émojis: ${aiProfile.tone.emojisAllowed ? 'autorisés' : 'interdits'}
+- À faire: ${aiProfile.writingRules.do.join(', ')}. À éviter: ${aiProfile.writingRules.avoid.join(', ')}
+- Mots-clés marque: ${aiProfile.lexicon.brandKeywords.join(', ')}
+- CTA autorisés: ${aiProfile.lexicon.allowedCTAs.join(', ')}
+
+RÈGLES SPÉCIFIQUES:
+- Respecte le ton ${aiProfile.tone.styles.join(', ')}
+- Utilise le ${aiProfile.tone.formality}
+- ${aiProfile.tone.emojisAllowed ? 'Tu peux utiliser des émojis' : 'N\'utilise PAS d\'émojis'}
+- Évite: ${aiProfile.writingRules.avoid.join(', ')}
+- Utilise ces mots-clés: ${aiProfile.lexicon.brandKeywords.join(', ')}`;
+    } else {
+      systemPrompt += `
+
+Règles de style:
+- Évite absolument les clichés marketing ("nous accompagnons", "expertise", "solutions sur-mesure")
+- Évite les métaphores poétiques et les formulations vagues
+- Utilise des faits concrets, des exemples pratiques, des bénéfices tangibles
+- Phrases courtes et directes, pas de prose fleurie
+- Ton professionnel et authentique, pas corporate`;
+    }
+
+    systemPrompt += `
+
+${blockInstructions}
+
+Contraintes:
+- Contenu en français
+- Style: professionnel, direct, authentique
+- Phrases courtes et percutantes
+- Sortie: seulement le contenu final, sans explications ni balises HTML`;
+
     // Déterminer le bon paramètre selon le modèle
     const model = 'gpt-5'; // Retour à GPT-5 avec la nouvelle configuration
     const isGpt5 = model.startsWith('gpt-5');
@@ -139,22 +197,7 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: 'system',
-          content: `Tu es copywriter senior créatif spécialisé dans la création de contenu web unique et mémorable.
-
-${blockInstructions}
-
-Règles de style:
-- Évite absolument les clichés marketing ("nous accompagnons", "expertise", "solutions sur-mesure")
-- Évite les métaphores poétiques et les formulations vagues
-- Utilise des faits concrets, des exemples pratiques, des bénéfices tangibles
-- Phrases courtes et directes, pas de prose fleurie
-- Ton professionnel et authentique, pas corporate
-
-Contraintes:
-- Contenu en français
-- Style: professionnel, direct, authentique
-- Phrases courtes et percutantes
-- Sortie: seulement le contenu final, sans explications ni balises HTML`
+          content: systemPrompt
         },
         {
           role: 'user',

@@ -13,7 +13,8 @@ import {
   Footprints, 
   Save,
   Globe,
-  LogOut
+  LogOut,
+  Brain
 } from 'lucide-react';
 
 interface Page {
@@ -46,11 +47,14 @@ export default function Sidebar({ currentPage }: SidebarProps) {
     { id: 'templates', label: 'Templates', path: null, icon: Layout },
     { id: 'footer', label: 'Footer', path: null, icon: Footprints },
     { id: 'backup', label: 'Sauvegarde', path: null, icon: Save },
+    { id: 'ai', label: 'IA', path: '/admin/ai', icon: Brain },
   ];
 
   const handlePageChange = (pageId: string) => {
     if (pageId === 'pages') {
       router.push('/admin/pages');
+    } else if (pageId === 'ai') {
+      router.push('/admin/ai');
     } else {
       router.push(`/admin?page=${pageId}`);
     }
