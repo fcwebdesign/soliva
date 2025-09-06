@@ -7,8 +7,18 @@ import MediaUploader, { LogoUploader } from './MediaUploader';
 import VersionList from './VersionList';
 import { renderAutoBlockEditor } from "@/app/admin/components/AutoBlockIntegration";
 import { getAutoDeclaredBlock, getBlockMetadata, getAvailableBlockTypes, createAutoBlockInstance } from '@/blocks/auto-declared/registry';
-import { FileText, Briefcase, Navigation, Settings, Mail, Footprints, Save, Target, Layout, Tag, Atom, Trash2, Plus } from 'lucide-react';
+import { FileText, Briefcase, Navigation, Settings, Mail, Footprints, Save, Target, Layout, Tag, Atom, Trash2, Plus, Search, Type, Heading2, Image, Columns, Phone, Grid3x3, FolderOpen, Building2, Quote, ChevronDown, Lock, AlignLeft } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Block {
   id: string;
@@ -28,6 +38,12 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [blockSearchTerm, setBlockSearchTerm] = useState('');
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
+    'Basique': true,
+    'Pro': true
+  });
   const [draggedLogoIndex, setDraggedLogoIndex] = useState<number | null>(null);
   const [dragOverLogoIndex, setDragOverLogoIndex] = useState<number | null>(null);
   const [backupLoading, setBackupLoading] = useState(false);
@@ -314,6 +330,9 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       
       const newBlocks = [...blocks, newBlock];
       setBlocks(newBlocks);
+      
+      // Fermer le Sheet après ajout
+      setIsSheetOpen(false);
       // Mettre à jour le contenu après ajout
       updateBlocksContent(newBlocks);
     } catch (error) {
@@ -345,6 +364,99 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     setBlocks(newBlocks);
     // Mettre à jour le contenu après suppression
     updateBlocksContent(newBlocks);
+  };
+
+  // Fonction pour filtrer les blocs par terme de recherche
+  const getFilteredBlocks = () => {
+    const allBlocks = getBlockMetadata();
+    if (!blockSearchTerm) return allBlocks;
+    
+    return allBlocks.filter(block => 
+      block.label.toLowerCase().includes(blockSearchTerm.toLowerCase()) ||
+      block.type.toLowerCase().includes(blockSearchTerm.toLowerCase())
+    );
+  };
+
+  // Fonction pour obtenir le label personnalisé d'un bloc
+  const getBlockLabel = (blockType: string) => {
+    const customLabels: Record<string, string> = {
+      'content': 'Éditeur de texte',
+      'h2': 'Titre H2',
+      'h3': 'Titre H3',
+      'image': 'Image',
+      'two-columns': 'Deux colonnes',
+      'contact': 'Contact',
+      'services': 'Services',
+      'projects': 'Projets',
+      'logos': 'Logos',
+      'quote': 'Citation'
+    };
+    return customLabels[blockType] || blockType;
+  };
+
+  // Fonction pour créer une vignette avec icônes Lucide
+  const renderBlockPreview = (blockType: string) => {
+    const iconClass = "h-7 w-7 text-gray-600";
+    
+    switch (blockType) {
+      case 'h2':
+        return <Type className={iconClass} />;
+      case 'h3':
+        return <Heading2 className={iconClass} />;
+      case 'content':
+        return <AlignLeft className={iconClass} />;
+      case 'image':
+        return <Image className={iconClass} />;
+      case 'two-columns':
+        return <Columns className={iconClass} />;
+      case 'contact':
+        return <Phone className={iconClass} />;
+      case 'services':
+        return <Grid3x3 className={iconClass} />;
+      case 'projects':
+        return <FolderOpen className={iconClass} />;
+      case 'logos':
+        return <Building2 className={iconClass} />;
+      case 'quote':
+        return <Quote className={iconClass} />;
+      default:
+        return <FileText className={iconClass} />;
+    }
+  };
+
+  // Fonction pour grouper les blocs par catégorie
+  const getCategorizedBlocks = () => {
+    const filteredBlocks = getFilteredBlocks();
+    const categories = {
+      '📝 Textes': ['h2', 'h3', 'content', 'quote'],
+      '🖼️ Images': ['image'],
+      '🎨 Layout': ['two-columns'],
+      '📞 Contact': ['contact'],
+      '🛠️ Services': ['services'],
+      '💼 Projets': ['projects'],
+      '🏢 Logos': ['logos']
+    };
+
+    const categorized: { [key: string]: any[] } = {};
+    
+    Object.entries(categories).forEach(([categoryName, blockTypes]) => {
+      const categoryBlocks = filteredBlocks.filter(block => 
+        blockTypes.includes(block.type)
+      );
+      if (categoryBlocks.length > 0) {
+        categorized[categoryName] = categoryBlocks;
+      }
+    });
+
+    // Ajouter les blocs non catégorisés
+    const uncategorizedBlocks = filteredBlocks.filter(block => 
+      !Object.values(categories).flat().includes(block.type)
+    );
+    if (uncategorizedBlocks.length > 0) {
+      categorized['🔧 Autres'] = uncategorizedBlocks;
+    }
+
+    return categorized;
   };
 
   const toggleBlockVisibility = (blockId: string) => {
@@ -865,9 +977,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   };
 
   const renderBlockTypeLabel = (type: string) => {
-    // Récupérer automatiquement le label depuis le registre
-    const blockMetadata = getBlockMetadata().find(block => block.type === type);
-    return blockMetadata ? blockMetadata.label : type;
+    // Utiliser les mêmes labels personnalisés que dans le sélecteur
+    return getBlockLabel(type);
   };
 
   const renderHeroBlock = () => (
@@ -1837,23 +1948,71 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         
         {/* Menu pour ajouter des blocs */}
         <div className="flex items-center space-x-2">
-          <select
-            onChange={(e) => {
-              if (e.target.value) {
-                addBlock(e.target.value as Block['type']);
-                e.target.value = '';
-              }
-            }}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="">Ajouter un bloc...</option>
-            {/* Options auto-générées depuis le système scalable */}
-            {getBlockMetadata().map(block => (
-              <option key={block.type} value={block.type}>
-                {block.icon} {block.label}
-              </option>
-            ))}
-          </select>
+          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+            <SheetTrigger asChild>
+              <Button className="flex items-center gap-2">
+                <Plus className="w-4 h-4" />
+                Ajouter un bloc
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="w-[400px] sm:w-[540px]">
+              <SheetHeader>
+                <SheetTitle>Ajouter un bloc</SheetTitle>
+                <SheetDescription>
+                  Choisissez le type de bloc à ajouter à votre page
+                </SheetDescription>
+              </SheetHeader>
+              
+              {/* Barre de recherche */}
+              <div className="mt-6 mb-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Input
+                    placeholder="Rechercher un bloc..."
+                    value={blockSearchTerm}
+                    onChange={(e) => setBlockSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+
+              {/* Liste des blocs par catégorie */}
+              <div className="space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto">
+                {Object.entries(getCategorizedBlocks()).map(([categoryName, categoryBlocks]) => (
+                  <div key={categoryName} className="mb-6">
+                    <button
+                      onClick={() => setOpenGroups(prev => ({ ...prev, [categoryName]: !prev[categoryName] }))}
+                      className="flex w-full items-center justify-between rounded-lg bg-neutral-100/70 px-3 py-2 text-sm font-semibold mb-3"
+                    >
+                      <span>{categoryName}</span>
+                      <ChevronDown className={`h-4 w-4 transition-transform ${openGroups[categoryName] ? "rotate-180" : "rotate-0"}`} />
+                    </button>
+                    
+                    {openGroups[categoryName] && (
+                      <div className="grid grid-cols-2 gap-3 p-3">
+                        {categoryBlocks.map((block) => (
+                          <button
+                            key={block.type}
+                            onClick={() => addBlock(block.type)}
+                            className="relative flex h-28 flex-col items-center justify-center gap-2 rounded-xl border bg-white p-3 text-center transition-shadow outline-none hover:shadow-sm focus-visible:ring"
+                          >
+                            {renderBlockPreview(block.type)}
+                            <span className="text-[13px] leading-tight">{getBlockLabel(block.type)}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+                
+                {Object.keys(getCategorizedBlocks()).length === 0 && blockSearchTerm && (
+                  <div className="text-center py-8 text-gray-500">
+                    <p>Aucun bloc trouvé pour "{blockSearchTerm}"</p>
+                  </div>
+                )}
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
       
