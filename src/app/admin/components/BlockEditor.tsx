@@ -44,6 +44,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     'Basique': true,
     'Pro': true
   });
+  const [lastCreatedId, setLastCreatedId] = useState<string | null>(null);
   const [draggedLogoIndex, setDraggedLogoIndex] = useState<number | null>(null);
   const [dragOverLogoIndex, setDragOverLogoIndex] = useState<number | null>(null);
   const [backupLoading, setBackupLoading] = useState(false);
@@ -331,6 +332,9 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       const newBlocks = [...blocks, newBlock];
       setBlocks(newBlocks);
       
+      // Mémoriser l'ID du bloc créé pour le scroll
+      setLastCreatedId(newBlock.id);
+      
       // Fermer le Sheet après ajout
       setIsSheetOpen(false);
       // Mettre à jour le contenu après ajout
@@ -346,9 +350,59 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       
       const newBlocks = [...blocks, fallbackBlock];
       setBlocks(newBlocks);
+      
+      // Mémoriser l'ID du bloc fallback pour le scroll
+      setLastCreatedId(fallbackBlock.id);
+      
+      setIsSheetOpen(false);
       updateBlocksContent(newBlocks);
     }
   };
+
+  // Fonction pour trouver le parent scrollable
+  const getScrollParent = (node: HTMLElement | null): HTMLElement | Window => {
+    let p: HTMLElement | null = node?.parentElement ?? null;
+    while (p) {
+      const s = getComputedStyle(p);
+      if (/(auto|scroll)/.test(`${s.overflow}${s.overflowY}${s.overflowX}`)) return p;
+      p = p.parentElement;
+    }
+    return window;
+  };
+
+  // Fonction pour scroller vers un élément
+  const scrollToEl = (el: HTMLElement, headerH = 0) => {
+    const scroller = getScrollParent(el);
+    if (scroller === window) {
+      const y = el.getBoundingClientRect().top + window.scrollY - (headerH + 80);
+      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+    } else {
+      const y = el.offsetTop - (headerH + 80);
+      (scroller as HTMLElement).scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+    }
+  };
+
+  // useEffect pour gérer le scroll vers le nouveau bloc
+  useEffect(() => {
+    if (!lastCreatedId) return;
+    
+    const el = document.querySelector<HTMLElement>(`[data-block-id="${lastCreatedId}"]`);
+    if (!el) return;
+
+    // Hauteur d'un header sticky si présent
+    const headerH = document.querySelector<HTMLElement>('[data-fixed-header]')?.offsetHeight ?? 0;
+
+    // Attendre un frame pour que la mise en page se stabilise
+    requestAnimationFrame(() => {
+      scrollToEl(el, headerH);
+      
+      // Optionnel: focus discret dans le bloc sans re-scroller
+      el.querySelector<HTMLElement>('[data-autofocus]')?.focus({ preventScroll: true });
+    });
+
+    // Réinitialiser l'ID après le scroll
+    setLastCreatedId(null);
+  }, [lastCreatedId]);
 
   const updateBlock = (blockId: string, updates: Partial<Block>) => {
     const newBlocks = blocks.map(block => 
@@ -1955,7 +2009,10 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                 Ajouter un bloc
               </Button>
             </SheetTrigger>
-            <SheetContent className="w-[400px] sm:w-[540px]">
+            <SheetContent 
+              className="w-[400px] max-w-[400px]"
+              onCloseAutoFocus={(e) => e.preventDefault()}
+            >
               <SheetHeader>
                 <SheetTitle>Ajouter un bloc</SheetTitle>
                 <SheetDescription>
@@ -2040,6 +2097,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
           (blocks || []).map((block, index) => (
             <div
               key={block.id}
+              data-block-id={block.id}
               onDragOver={(e) => handleDragOver(e, index)}
               onDrop={(e) => handleDrop(e, index)}
               className={`block-container relative ${
