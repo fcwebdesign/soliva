@@ -65,12 +65,6 @@ export default function HeaderAdmin({ title, backButton, actions }: HeaderAdminP
           
           {/* Actions */}
           <div className="flex items-center space-x-3">
-            {hasUnsavedChanges && (
-              <span className="text-sm text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
-                Modifications non enregistrées
-              </span>
-            )}
-            
             {saveStatus === 'saving' && (
               <div className="flex items-center space-x-2">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
@@ -150,6 +144,15 @@ export default function HeaderAdmin({ title, backButton, actions }: HeaderAdminP
             )}
           </div>
         </div>
+        
+        {/* Message de statut - peut aller jusqu'au bord de l'écran */}
+        {hasUnsavedChanges && (
+          <div className="flex justify-end" style={{ marginTop: '-25px' }}>
+            <span className="text-sm text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
+              Modifications non enregistrées
+            </span>
+          </div>
+        )}
       </div>
     </header>
   );

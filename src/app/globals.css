@@ -2883,3 +2883,45 @@ html.preview-mode body {
   }
 }
 
+/* Styles pour les toasts Sonner - configuration idéale */
+[data-sonner-toast][data-styled="true"] {
+  --normal-bg: #1f2937 !important;
+  --normal-border: #374151 !important;
+  --normal-text: #ffffff !important;
+  padding: 16px !important;
+  background: var(--normal-bg) !important;
+  border: 1px solid var(--normal-border) !important;
+  color: var(--normal-text) !important;
+  border-radius: var(--border-radius) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,.1) !important;
+  width: 300px !important;
+  font-size: 13px !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 6px !important;
+}
+
+[data-sonner-toast][data-styled="true"] [data-icon] {
+  display: flex !important;
+  height: 16px !important;
+  width: 16px !important;
+  position: relative !important;
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+  flex-shrink: 0 !important;
+  margin-left: 7px !important;
+  margin-right: 13px !important;
+  margin-top: 1px !important;
+}
+
+[data-sonner-toast][data-styled="true"] *,
+[data-sonner-toast][data-styled="true"] span,
+[data-sonner-toast][data-styled="true"] div,
+[data-sonner-toast][data-styled="true"] p,
+[data-sonner-toast][data-styled="true"] [data-title],
+[data-sonner-toast][data-styled="true"] [data-description],
+[data-sonner-toast][data-styled="true"] .toast-title,
+[data-sonner-toast][data-styled="true"] .toast-description {
+  color: #ffffff !important;
+}
+

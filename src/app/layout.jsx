@@ -9,6 +9,7 @@ import ConditionalFooter from "@/components/ConditionalFooter";
 import { getActiveTemplate } from "@/templates/get-active-template";
 import { TemplateRenderer } from "@/templates/TemplateRenderer";
 import { TemplateProvider } from "@/templates/context";
+import { Toaster } from "@/components/ui/sonner";
 
 export async function generateMetadata() {
   const content = await readContent();
@@ -102,6 +103,20 @@ export default async function RootLayout({ children }) {
               </>
             )}
           </TemplateProvider>
+          <Toaster 
+            position="top-right"
+            toastOptions={{
+              style: {
+                marginTop: '-10px',
+                backgroundColor: '#1f2937',
+                color: '#ffffff',
+                border: '1px solid #374151'
+              },
+              className: 'text-white',
+              duration: 4000
+            }}
+            theme="dark"
+          />
         </body>
       </html>
     </ViewTransitions>

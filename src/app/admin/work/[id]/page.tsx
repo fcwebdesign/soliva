@@ -6,6 +6,7 @@ import HeaderAdmin from '../../components/HeaderAdmin';
 import BlockEditor from '../../components/BlockEditor';
 import MediaUploader from '../../components/MediaUploader';
 import { Checkbox } from '@/components/ui/checkbox';
+import { toast } from 'sonner';
 import type { Content } from '@/types/content';
 
 const PAGES = [
@@ -269,9 +270,16 @@ export default function WorkProjectEdit() {
       // 7. Ouvrir l'URL spéciale d'aperçu
       window.open(`/work/${project.slug || project.id}?preview=${previewId}`, '_blank');
       
+      // Toast de confirmation
+      toast.success('Aperçu créé avec succès', {
+        description: 'L\'aperçu s\'ouvre dans un nouvel onglet'
+      });
+      
     } catch (err) {
       console.error('Erreur aperçu projet:', err);
-      alert('Erreur lors de la création de l\'aperçu');
+      toast.error('Erreur lors de la création de l\'aperçu', {
+        description: 'Veuillez réessayer ou vérifier votre connexion'
+      });
     }
   };
 
@@ -432,12 +440,27 @@ export default function WorkProjectEdit() {
       setSaveStatus('success');
       setHasUnsavedChanges(false);
       
+      // Toast de succès
+      toast.success('Projet sauvegardé avec succès', {
+        description: projectToSave.status === 'published' ? 'Le projet est maintenant publié' : 'Brouillon enregistré'
+      });
+      
       // Réinitialiser le statut après 3 secondes
       setTimeout(() => setSaveStatus('idle'), 3000);
       
     } catch (err) {
       console.error('Erreur:', err);
       setSaveStatus('error');
+      
+      // Toast d'erreur
+      toast.error('Erreur lors de la sauvegarde', {
+        description: 'Veuillez réessayer ou vérifier votre connexion',
+        action: {
+          label: 'Réessayer',
+          onClick: () => handleSaveInternal(projectToSave)
+        }
+      });
+      
       setTimeout(() => setSaveStatus('idle'), 3000);
     }
   };
@@ -605,7 +628,7 @@ export default function WorkProjectEdit() {
               <label className="flex items-center space-x-2">
                 <Checkbox
                   checked={project.featured || false}
-                  onCheckedChange={(checked) => updateProject({ featured: checked })}
+                  onCheckedChange={(checked) => updateProject({ featured: !!checked })}
                   className="rounded-[3px]"
                 />
                 <span className="text-sm font-medium text-gray-700">

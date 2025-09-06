@@ -556,14 +556,14 @@ function AdminPageContent() {
       const currentPageConfig = getPageConfig(currentPage);
 
   // Générer le schéma JSON-LD pour les pages principales
-  const schemaJson = ['home', 'studio', 'contact', 'work', 'blog'].includes(currentPage) && currentPageData ? generateAllSchemas({
-    title: currentPageData?.hero?.title || currentPageData?.title || `${currentPageConfig?.label} - Soliva`,
-    excerpt: currentPageData?.description || currentPageData?.hero?.subtitle || '',
-    content: currentPageData?.blocks ? currentPageData.blocks.map((block: any) => block.content || '').join(' ') : (currentPageData?.content || currentPageData?.description || ''),
+  const schemaJson = ['home', 'studio', 'contact', 'work', 'blog'].includes(currentPage) && currentPageData && typeof currentPageData === 'object' ? generateAllSchemas({
+    title: (currentPageData as any)?.hero?.title || (currentPageData as any)?.title || `${currentPageConfig?.label} - Soliva`,
+    excerpt: (currentPageData as any)?.description || (currentPageData as any)?.hero?.subtitle || '',
+    content: (currentPageData as any)?.blocks ? (currentPageData as any).blocks.map((block: any) => block.content || '').join(' ') : ((currentPageData as any)?.content || (currentPageData as any)?.description || ''),
     publishedAt: undefined,
     updatedAt: undefined,
     slug: currentPageConfig?.path || `/${currentPage}`,
-    schemas: currentPageData?.seo?.schemas
+    schemas: (currentPageData as any)?.seo?.schemas
   }) : '';
 
   return (
@@ -871,17 +871,17 @@ function AdminPageContent() {
                           content={{
                             id: currentPage,
                             type: 'page',
-                            title: currentPageData?.hero?.title || currentPageData?.title || `${currentPageConfig?.label} - Soliva`,
+                            title: (currentPageData as any)?.hero?.title || (currentPageData as any)?.title || `${currentPageConfig?.label} - Soliva`,
                             slug: currentPageConfig?.path || `/${currentPage}`,
-                            contentHtml: currentPageData?.blocks || currentPageData?.content || currentPageData?.description || '',
-                            excerpt: currentPageData?.description || currentPageData?.hero?.subtitle || '',
+                            contentHtml: (currentPageData as any)?.blocks || (currentPageData as any)?.content || (currentPageData as any)?.description || '',
+                            excerpt: (currentPageData as any)?.description || (currentPageData as any)?.hero?.subtitle || '',
                             category: '',
                             tags: [],
                             publishedAt: undefined,
                             updatedAt: undefined,
                             seo: {}
                           }}
-                          seoFields={currentPageData?.seo || {}}
+                          seoFields={(currentPageData as any)?.seo || {}}
                           onSeoChange={(seo) => {
                             console.log('SEO mis à jour pour', currentPage, ':', seo);
                             // Mettre à jour le SEO spécifique à cette page avec une copie profonde

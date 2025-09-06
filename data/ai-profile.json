@@ -1,9 +1,9 @@
 {
-  "id": "ai-profile-1757185753721",
+  "id": "ai-profile-1757191784718",
   "siteId": "main-site",
   "brand": {
     "name": "Soliva",
-    "baseline": "Creative studio. DigitaI & brand strategy. ",
+    "baseline": "Creative studio. DigitaI & brand strategy.  ",
     "elevatorPitch": "Le studio réunit une équipe compacte de designers et développeurs basée au Hevre. Nous livrons des sites rapides, accessibles et faciles à maintenir, avec des délais clairs et un budget maîtrisé."
   },
   "offer": {
@@ -68,7 +68,7 @@
   "metadata": {
     "version": 1,
     "updatedBy": "admin",
-    "updatedAt": "2025-09-06T19:09:13.721Z",
+    "updatedAt": "2025-09-06T20:49:44.718Z",
     "completenessScore": 57
   }
 }
