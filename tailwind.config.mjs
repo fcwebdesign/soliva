@@ -47,6 +47,35 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // ===== COULEURS ADMIN =====
+        admin: {
+          bg: "var(--admin-bg)",
+          "bg-hover": "var(--admin-bg-hover)",
+          "bg-active": "var(--admin-bg-active)",
+          border: "var(--admin-border)",
+          "border-light": "var(--admin-border-light)",
+          text: "var(--admin-text)",
+          "text-secondary": "var(--admin-text-secondary)",
+          "text-muted": "var(--admin-text-muted)",
+          success: "var(--admin-success)",
+          warning: "var(--admin-warning)",
+          error: "var(--admin-error)",
+          info: "var(--admin-info)",
+          button: {
+            bg: "var(--admin-button-bg)",
+            hover: "var(--admin-button-hover)",
+          },
+          input: {
+            bg: "var(--admin-input-bg)",
+            border: "var(--admin-input-border)",
+          },
+          card: {
+            bg: "var(--admin-card-bg)",
+          },
+          sidebar: {
+            bg: "var(--admin-sidebar-bg)",
+          },
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

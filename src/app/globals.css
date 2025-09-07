@@ -195,6 +195,33 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* ===== SYSTÈME DE THÈME ADMIN ===== */
+:root {
+  /* Couleurs admin principales */
+  --admin-bg: #171717;
+  --admin-bg-hover: #2a2a2a;
+  --admin-bg-active: #3a3a3a;
+  --admin-border: #2a2a2a;
+  --admin-border-light: #3a3a3a;
+  --admin-text: #ffffff;
+  --admin-text-secondary: #cccccc;
+  --admin-text-muted: #999999;
+  
+  /* Couleurs admin pour les états */
+  --admin-success: #10b981;
+  --admin-warning: #f59e0b;
+  --admin-error: #ef4444;
+  --admin-info: #3b82f6;
+  
+  /* Couleurs admin pour les composants */
+  --admin-button-bg: var(--admin-bg);
+  --admin-button-hover: var(--admin-bg-hover);
+  --admin-input-bg: var(--admin-bg);
+  --admin-input-border: var(--admin-border);
+  --admin-card-bg: var(--admin-bg);
+  --admin-sidebar-bg: #0f0f0f;
+}
+
 /* Admin en fullscreen */
 body.admin-page,
 .admin-page body {

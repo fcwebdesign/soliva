@@ -7,7 +7,9 @@ import MediaUploader, { LogoUploader } from './MediaUploader';
 import VersionList from './VersionList';
 import { renderAutoBlockEditor } from "@/app/admin/components/AutoBlockIntegration";
 import { getAutoDeclaredBlock, getBlockMetadata, getAvailableBlockTypes, createAutoBlockInstance } from '@/blocks/auto-declared/registry';
-import { FileText, Briefcase, Navigation, Settings, Mail, Footprints, Save, Target, Layout, Tag, Atom, Trash2, Plus, Search, Type, Heading2, Image, Columns, Phone, Grid3x3, FolderOpen, Building2, Quote, ChevronDown, Lock, AlignLeft, GripHorizontal, Grid3x2, List, Brain, AlertTriangle } from 'lucide-react';
+import { FileText, Briefcase, Navigation, Settings, Mail, Footprints, Save, Target, Layout, Tag, Atom, Trash2, Plus, Search, Type, Heading2, Image, Columns, Phone, Grid3x3, FolderOpen, Building2, Quote, ChevronDown, Lock, AlignLeft, GripHorizontal, Grid3x2, List, Brain, AlertTriangle, X } from 'lucide-react';
+import SommairePanel from '@/components/admin/SommairePanel';
+import MobileSommaireButton from '@/components/admin/MobileSommaireButton';
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -16,6 +18,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
+  SheetClose,
 } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -39,6 +42,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isPlanSheetOpen, setIsPlanSheetOpen] = useState(false);
   const [blockSearchTerm, setBlockSearchTerm] = useState('');
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     'Basique': true,
@@ -50,6 +54,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   const [dragOverLogoIndex, setDragOverLogoIndex] = useState<number | null>(null);
   const [backupLoading, setBackupLoading] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(80); // Valeur par défaut
+  const [sommaireTop, setSommaireTop] = useState(96); // Position dynamique du sommaire
   
   // Synchroniser localData avec pageData quand pageData change
   useEffect(() => {
@@ -82,6 +87,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       if (header) {
         const height = header.offsetHeight;
         setHeaderHeight(height);
+        // Calculer la position du sommaire : hauteur du header + 24px de marge
+        setSommaireTop(height + 24);
       }
     };
 
@@ -102,7 +109,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         window.removeEventListener('resize', calculateHeaderHeight);
       };
     }
-
+    
     return () => {
       window.removeEventListener('resize', calculateHeaderHeight);
     };
@@ -2044,20 +2051,69 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
           <div className="flex items-center space-x-2">
             <FileText className="w-6 h-6 text-gray-600" />
             <h3 className="text-lg font-semibold text-gray-900">Éditeur de contenu</h3>
+            {shouldShowPlanSuggestion && (
+              <div className="flex items-center gap-2 ml-4">
+                <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                <span className="text-sm text-yellow-600 font-medium">
+                  {sectionsCount} sections - Ouvrir le Plan ?
+                </span>
+              </div>
+            )}
           </div>
           
-          {/* Menu pour ajouter des blocs */}
-          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-            <SheetTrigger asChild>
-              <Button className="flex items-center gap-2">
-                <Plus className="w-4 h-4" />
-                Ajouter un bloc
-              </Button>
-            </SheetTrigger>
-            <SheetContent 
-              className="w-[400px] max-w-[400px]"
-              onCloseAutoFocus={(e) => e.preventDefault()}
-            >
+          {/* Boutons d'action */}
+          <div className="flex items-center gap-2">
+            {/* Bouton Plan */}
+            <Sheet open={isPlanSheetOpen} onOpenChange={setIsPlanSheetOpen}>
+              <SheetTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  className={`flex items-center gap-2 ${
+                    shouldShowPlanSuggestion 
+                      ? 'border-yellow-300 bg-yellow-50 text-yellow-700 hover:bg-yellow-100' 
+                      : ''
+                  }`}
+                >
+                  <List className="w-4 h-4" />
+                  Plan
+                  {shouldShowPlanSuggestion && (
+                    <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                  )}
+                </Button>
+              </SheetTrigger>
+              <SheetContent 
+                side="right" 
+                className="w-80 p-0 [&>button]:invisible [&>button]:pointer-events-none"
+                style={{ 
+                  backgroundColor: 'var(--admin-bg)',
+                  borderColor: 'var(--admin-border)'
+                }}
+              >
+                <SheetHeader className="sr-only">
+                  <SheetTitle>Plan de la page</SheetTitle>
+                  <SheetDescription>
+                    Navigation et gestion des sections de la page
+                  </SheetDescription>
+                </SheetHeader>
+                
+                <div className="h-full">
+                  <SommairePanel className="border-0" blocks={blocks} />
+                </div>
+              </SheetContent>
+            </Sheet>
+
+            {/* Menu pour ajouter des blocs */}
+            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+              <SheetTrigger asChild>
+                <Button className="flex items-center gap-2">
+                  <Plus className="w-4 h-4" />
+                  Ajouter un bloc
+                </Button>
+              </SheetTrigger>
+              <SheetContent 
+                className="w-[400px] max-w-[400px]"
+                onCloseAutoFocus={(e) => e.preventDefault()}
+              >
               <SheetHeader>
                 <SheetTitle>Ajouter un bloc</SheetTitle>
                 <SheetDescription>
@@ -2113,8 +2169,9 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                   </div>
                 )}
               </div>
-            </SheetContent>
-          </Sheet>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
       
@@ -2343,82 +2400,105 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
 
 
 
-  return (
-    <>
-      {/* Bannière profil IA incomplet */}
-      {aiProfileCompleteness !== null && aiProfileCompleteness < 80 && (
-        <div className="mb-6 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="flex items-center space-x-2">
-                <Brain className="w-5 h-5 text-blue-600" />
-                <AlertTriangle className="w-4 h-4 text-orange-500" />
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-gray-900">
-                  Profil IA incomplet ({aiProfileCompleteness}%)
-                </h4>
-                <p className="text-xs text-gray-600">
-                  Complétez votre profil IA pour des suggestions plus précises et personnalisées
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={() => window.open('/admin/ai', '_blank')}
-              className="px-3 py-1 text-xs font-medium text-blue-600 bg-blue-100 rounded-md hover:bg-blue-200 transition-colors"
-            >
-              Compléter
-            </button>
-          </div>
-        </div>
-      )}
+  // Déterminer si cette page doit afficher le sommaire
+  const shouldShowSommaire = ['home', 'studio', 'contact', 'project', 'article', 'custom'].includes(pageKey) || 
+                            pageKey.startsWith('project-') || pageKey.startsWith('article-');
 
-      <div className="space-y-6">
-        {/* Rendu conditionnel selon le type de page */}
-        {pageKey === 'home' && (
-          <>
-            {renderHeroBlock()}
-            {renderDragDropEditor()}
-          </>
-        )}
-        {pageKey === 'contact' && (
-          <>
-            {renderContentBlock()}
-            {renderContactBlock()}
-          </>
-        )}
-        {pageKey === 'studio' && (
-          <>
-            {renderContentBlock()}
-            {renderDragDropEditor()}
-          </>
-        )}
-        
-        {/* Pour les projets et articles individuels, afficher l'éditeur de blocs */}
-        {(pageKey === 'project' || pageKey === 'article' || pageKey.startsWith('project-') || pageKey.startsWith('article-')) && (
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Éditeur de contenu</h3>
-            {renderDragDropEditor()}
+  // Compter les sections/blocs pour l'auto-suggestion
+  const sectionsCount = blocks.length;
+  const shouldShowPlanSuggestion = sectionsCount >= 6;
+
+  // Écouter l'événement de fermeture du Sheet
+  useEffect(() => {
+    const handleCloseSheet = () => {
+      setIsPlanSheetOpen(false);
+    };
+
+    window.addEventListener('close-sheet', handleCloseSheet);
+    return () => window.removeEventListener('close-sheet', handleCloseSheet);
+  }, []);
+
+  return (
+    <div className="flex h-full">
+      {/* Zone principale d'édition */}
+      <div className="flex-1">
+        {/* Bannière profil IA incomplet */}
+        {aiProfileCompleteness !== null && aiProfileCompleteness < 80 && (
+          <div className="mb-6 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
+                  <Brain className="w-5 h-5 text-blue-600" />
+                  <AlertTriangle className="w-4 h-4 text-orange-500" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-gray-900">
+                    Profil IA incomplet ({aiProfileCompleteness}%)
+                  </h4>
+                  <p className="text-xs text-gray-600">
+                    Complétez votre profil IA pour des suggestions plus précises et personnalisées
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => window.open('/admin/ai', '_blank')}
+                className="px-3 py-1 text-xs font-medium text-blue-600 bg-blue-100 rounded-md hover:bg-blue-200 transition-colors"
+              >
+                Compléter
+              </button>
+            </div>
           </div>
         )}
-        
-        {/* Pour les nouvelles pages personnalisées, afficher l'éditeur de blocs */}
-        {pageKey === 'custom' && (
-          <>
-            {renderContentBlock()}
-            {renderDragDropEditor()}
-          </>
-        )}
-        
-        {/* Pour les autres pages, afficher les blocs classiques */}
-        {!['blog', 'work', 'backup', 'project', 'article', 'contact', 'studio', 'custom'].includes(pageKey) && !pageKey.startsWith('project-') && !pageKey.startsWith('article-') && (
-          <>
-            {renderContentBlock()}
-            {renderMetadataBlock()}
-            {renderNavBlock()}
-          </>
-        )}
+
+
+        <div className="space-y-6">
+          {/* Rendu conditionnel selon le type de page */}
+          {pageKey === 'home' && (
+            <>
+              {renderHeroBlock()}
+              {renderDragDropEditor()}
+            </>
+          )}
+          {pageKey === 'contact' && (
+            <>
+              {renderContentBlock()}
+              {renderContactBlock()}
+            </>
+          )}
+          {pageKey === 'studio' && (
+            <>
+              {renderContentBlock()}
+              {renderDragDropEditor()}
+            </>
+          )}
+          
+          {/* Pour les projets et articles individuels, afficher l'éditeur de blocs */}
+          {(pageKey === 'project' || pageKey === 'article' || pageKey.startsWith('project-') || pageKey.startsWith('article-')) && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Éditeur de contenu</h3>
+              {renderDragDropEditor()}
+            </div>
+          )}
+          
+          {/* Pour les nouvelles pages personnalisées, afficher l'éditeur de blocs */}
+          {pageKey === 'custom' && (
+            <>
+              {renderContentBlock()}
+              {renderDragDropEditor()}
+            </>
+          )}
+          
+          {/* Pour les autres pages, afficher les blocs classiques */}
+          {!['blog', 'work', 'backup', 'project', 'article', 'contact', 'studio', 'custom'].includes(pageKey) && !pageKey.startsWith('project-') && !pageKey.startsWith('article-') && (
+            <>
+              {renderContentBlock()}
+              {renderMetadataBlock()}
+              {renderNavBlock()}
+            </>
+          )}
+        </div>
       </div>
+
 
       {/* Notification modale */}
       {showNotification && createPortal(
@@ -2453,6 +2533,6 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         </div>,
         document.body
       )}
-    </>
+    </div>
   );
 } 
