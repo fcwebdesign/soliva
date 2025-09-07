@@ -172,11 +172,11 @@ export default function ProjectsBlock({ data }: { data: ProjectsData }) {
       <div className="container mx-auto">
         {/* Titre de la section et navigation du carousel */}
         {(() => {
-          const selectedCount = selectedProjects?.length || 0;
+          const actualCount = displayedProjects.length;
           
           // Déterminer si on utilise un carousel ou si on a besoin de navigation
-          const useCarousel = selectedCount > 3;
-          const needsNavigation = selectedCount > 3 || (selectedCount > 1 && selectedCount > 2);
+          const useCarousel = actualCount > 3;
+          const needsNavigation = actualCount > 3;
           
           return (
             <div className="mb-12 flex justify-between items-center">
@@ -190,9 +190,9 @@ export default function ProjectsBlock({ data }: { data: ProjectsData }) {
               {needsNavigation && (() => {
                 
                 let projectsPerPage;
-                if (selectedCount === 1) {
+                if (actualCount === 1) {
                   projectsPerPage = 1;
-                } else if (selectedCount === 2) {
+                } else if (actualCount === 2) {
                   projectsPerPage = windowWidth < 768 ? 1 : 2;
                 } else {
                   projectsPerPage = windowWidth < 768 ? 1 : windowWidth < 1024 ? 2 : 3;
@@ -251,18 +251,18 @@ export default function ProjectsBlock({ data }: { data: ProjectsData }) {
         
         {/* Grille des projets */}
         {(() => {
-          const selectedCount = selectedProjects?.length || 0;
-          const needsNavigation = selectedCount > 3 || (selectedCount > 1 && selectedCount > 2);
+          const actualCount = displayedProjects.length;
+          const needsNavigation = actualCount > 3;
           
           if (needsNavigation) {
             
             let projectsPerPage;
             let gridClass;
             
-            if (selectedCount === 1) {
+            if (actualCount === 1) {
               projectsPerPage = 1;
               gridClass = "grid grid-cols-1 gap-8";
-            } else if (selectedCount === 2) {
+            } else if (actualCount === 2) {
               projectsPerPage = windowWidth < 768 ? 1 : 2;
               gridClass = "flex transition-transform duration-300 ease-in-out";
             } else {
@@ -276,8 +276,8 @@ export default function ProjectsBlock({ data }: { data: ProjectsData }) {
                   <div className={gridClass} id={`carousel-${carouselId}`} style={{ transform: 'translateX(0%)' }}>
                     {displayedProjects.map((project, index) => (
                       <div key={project.id} className={`project-card flex-shrink-0 ${
-                        selectedCount === 1 ? 'w-full' :
-                        selectedCount === 2 ? 'w-full md:w-1/2' :
+                        actualCount === 1 ? 'w-full' :
+                        actualCount === 2 ? 'w-full md:w-1/2' :
                         'w-full md:w-1/2 lg:w-1/3'
                       } px-4`}>
                         <div className="project-image mb-4">
@@ -285,7 +285,7 @@ export default function ProjectsBlock({ data }: { data: ProjectsData }) {
                             src={project.image || '/img1.jpg'} 
                             alt={project.alt || project.title}
                             className={`w-full object-cover rounded-lg cursor-pointer ${
-                              selectedCount === 1 ? 'h-96' : 'aspect-[1/1]'
+                              actualCount === 1 ? 'h-96' : 'aspect-[1/1]'
                             }`}
                             onClick={() => {
                               if (project.slug) {
@@ -311,9 +311,9 @@ export default function ProjectsBlock({ data }: { data: ProjectsData }) {
             );
           } else {
             let gridClass;
-            if (selectedCount === 1) {
+            if (actualCount === 1) {
               gridClass = "grid grid-cols-1 gap-8";
-            } else if (selectedCount === 2) {
+            } else if (actualCount === 2) {
               gridClass = "grid grid-cols-1 md:grid-cols-2 gap-8";
             } else {
               gridClass = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8";
@@ -328,7 +328,7 @@ export default function ProjectsBlock({ data }: { data: ProjectsData }) {
                         src={project.image || '/img1.jpg'} 
                         alt={project.alt || project.title}
                         className={`w-full object-cover rounded-lg cursor-pointer ${
-                          selectedCount === 1 ? 'h-96' : 'aspect-[1/1]'
+                          actualCount === 1 ? 'h-96' : 'aspect-[1/1]'
                         }`}
                         onClick={() => {
                           if (project.slug) {
