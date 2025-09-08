@@ -342,11 +342,13 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
             section.type === 'column' ? 'cursor-default' : 'cursor-pointer'
           } ${
             section.level === 0 && index !== undefined ? 'cursor-grab active:cursor-grabbing' : ''
+          } ${
+            isSelected ? 'border-l-blue-500' : ''
           }`}
           style={{ 
             backgroundColor: isSelected ? 'var(--admin-bg-active)' : 'transparent',
-            borderLeft: isSelected ? '3px solid var(--admin-primary)' : '3px solid transparent',
-            transition: 'background-color 0.2s, border-left 0.2s',
+            borderLeft: '3px solid transparent',
+            transition: 'background-color 0.2s, border-left-color 0.2s',
             paddingLeft: `${section.level === 0 ? 8 : section.level === 1 ? 25 : 25}px`
           }}
           onClick={() => {
@@ -366,30 +368,30 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
           }}
           {...(dragListeners && section.level === 0 ? dragListeners : {})}
         >
-          {/* Flèche d'expansion */}
-          {hasChildren ? (
-            <button
-              type="button"
-              aria-label="Basculer l'expansion"
-              onPointerDownCapture={(e) => e.stopPropagation()}
-              onClick={() => toggleExpanded(section.id)}
-              className="flex-shrink-0 p-0.5 rounded"
-              style={{ 
-                backgroundColor: 'transparent',
-                transition: 'background-color 0.2s'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--admin-bg-active)'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-            >
-              {isExpanded ? (
-                <ChevronDown className="w-3 h-3" style={{ color: 'var(--admin-text-muted)' }} />
-              ) : (
-                <ChevronRight className="w-3 h-3" style={{ color: 'var(--admin-text-muted)' }} />
-              )}
-            </button>
-          ) : (
-            <div className="w-4" />
-          )}
+          {/* Flèche d'expansion - largeur fixe pour alignement */}
+          <div className="w-4 h-4 flex items-center justify-center flex-shrink-0">
+            {hasChildren ? (
+              <button
+                type="button"
+                aria-label="Basculer l'expansion"
+                onPointerDownCapture={(e) => e.stopPropagation()}
+                onClick={() => toggleExpanded(section.id)}
+                className="p-0.5 rounded"
+                style={{ 
+                  backgroundColor: 'transparent',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--admin-bg-active)'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              >
+                {isExpanded ? (
+                  <ChevronDown className="w-3 h-3" style={{ color: 'var(--admin-text-muted)' }} />
+                ) : (
+                  <ChevronRight className="w-3 h-3" style={{ color: 'var(--admin-text-muted)' }} />
+                )}
+              </button>
+            ) : null}
+          </div>
           
           
           {/* Icône du type */}
