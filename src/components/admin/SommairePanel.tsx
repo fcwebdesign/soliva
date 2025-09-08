@@ -18,6 +18,7 @@ import {
   Type,
   Heading2,
   Columns,
+  Trash2,
   Container,
   Square,
   X
@@ -29,16 +30,6 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator 
 } from "@/components/ui/dropdown-menu";
-import { 
-  AlertDialog, 
-  AlertDialogAction, 
-  AlertDialogCancel, 
-  AlertDialogContent, 
-  AlertDialogDescription, 
-  AlertDialogFooter, 
-  AlertDialogHeader, 
-  AlertDialogTitle 
-} from "@/components/ui/alert-dialog";
 
 interface Section {
   id: string;
@@ -128,9 +119,26 @@ interface SommairePanelProps {
   blocks?: any[];
   onSelectBlock?: (blockId: string) => void;
   selectedBlockId?: string;
+  onDeleteBlock?: (blockId: string) => void;
 }
 
-export default function SommairePanel({ className = "", blocks = [], onSelectBlock, selectedBlockId }: SommairePanelProps) {
+export default function SommairePanel({ className = "", blocks = [], onSelectBlock, selectedBlockId, onDeleteBlock }: SommairePanelProps) {
+  
+  // Fonction pour gérer les actions sur les sections
+  const handleSectionAction = (action: string, section: Section) => {
+    switch (action) {
+      case 'edit':
+        if (onSelectBlock && section.type !== 'column') {
+          onSelectBlock(section.id);
+        }
+        break;
+      case 'delete':
+        if (onDeleteBlock && section.type !== 'column') {
+          onDeleteBlock(section.id);
+        }
+        break;
+    }
+  };
   
   // Fonction pour analyser récursivement les blocs et extraire les sous-éléments
   const analyzeBlockStructure = (block: any, level: number = 0): Section => {
@@ -208,8 +216,6 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
   ) : mockSections;
   
   const [sectionsState, setSectionsState] = useState<Section[]>(sections);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [sectionToDelete, setSectionToDelete] = useState<Section | null>(null);
 
   const toggleExpanded = (sectionId: string) => {
     const updateSections = (sections: Section[]): Section[] => {
@@ -226,28 +232,7 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
     setSectionsState(updateSections(sectionsState));
   };
 
-  const handleSectionAction = (action: string, section: Section) => {
-    switch (action) {
-      case "edit":
-        console.log("Éditer", section.id);
-        break;
-      case "duplicate":
-        console.log("Dupliquer", section.id);
-        break;
-      case "delete":
-        setSectionToDelete(section);
-        setDeleteDialogOpen(true);
-        break;
-    }
-  };
 
-  const handleDeleteConfirm = () => {
-    if (sectionToDelete) {
-      // Logique de suppression à implémenter
-      setDeleteDialogOpen(false);
-      setSectionToDelete(null);
-    }
-  };
 
   const getTypeIcon = (type: string) => {
     const IconComponent = typeIcons[type] || typeIcons.default;
@@ -425,28 +410,6 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
       </div>
 
 
-      {/* Dialog de confirmation de suppression */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent className="bg-admin-bg border-admin-border">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-admin-text">Supprimer la section ?</AlertDialogTitle>
-            <AlertDialogDescription className="text-admin-text-secondary">
-              Cette action est définitive. La section "{sectionToDelete?.label}" sera supprimée de la page.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="bg-admin-bg-hover text-admin-text-secondary hover:bg-admin-bg-active">
-              Annuler
-            </AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handleDeleteConfirm} 
-              className="bg-admin-error hover:bg-red-700 text-white"
-            >
-              Supprimer
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }

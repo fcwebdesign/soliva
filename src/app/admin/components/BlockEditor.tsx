@@ -21,6 +21,26 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogPortal,
+} from "@/components/ui/alert-dialog";
+import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -45,6 +65,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isPlanSheetOpen, setIsPlanSheetOpen] = useState(false);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [blockToDelete, setBlockToDelete] = useState<string | null>(null);
   
   // Fonction pour gérer la sélection d'un bloc depuis le plan
   const handleSelectBlock = (blockId: string) => {
@@ -52,7 +74,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     
     // Scroll vers l'élément sélectionné
     setTimeout(() => {
-      const element = document.querySelector(`[data-block-id="${blockId}"]`);
+      const element = document.querySelector(`[data-block-id="${blockId}"]`) as HTMLElement;
       if (element) {
         element.scrollIntoView({ 
           behavior: 'smooth', 
@@ -68,6 +90,28 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         }, 2000);
       }
     }, 100);
+  };
+  
+  // Fonction pour gérer la suppression d'un bloc depuis le plan
+  const handleDeleteBlockFromPlan = (blockId: string) => {
+    setBlockToDelete(blockId);
+    setShowDeleteConfirm(true);
+  };
+  
+  // Fonction pour confirmer la suppression
+  const confirmDelete = () => {
+    if (blockToDelete) {
+      removeBlock(blockToDelete);
+      setSelectedBlockId(null); // Désélectionner le bloc supprimé
+    }
+    setShowDeleteConfirm(false);
+    setBlockToDelete(null);
+  };
+  
+  // Fonction pour annuler la suppression
+  const cancelDelete = () => {
+    setShowDeleteConfirm(false);
+    setBlockToDelete(null);
   };
   
   // Écouter l'événement de fermeture du Sheet
@@ -2067,7 +2111,49 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                     blocks={blocks} 
                     onSelectBlock={handleSelectBlock}
                     selectedBlockId={selectedBlockId}
+                    onDeleteBlock={handleDeleteBlockFromPlan}
                   />
+                  
+                  {/* AlertDialog pour la confirmation de suppression */}
+                  <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+                    <AlertDialogPortal>
+                      <AlertDialogPrimitive.Content
+                        className="fixed left-[50%] top-[50%] z-[100] grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border !bg-white p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:rounded-lg"
+                        style={{ 
+                          backgroundColor: '#ffffff !important',
+                          borderColor: 'var(--admin-border)',
+                          boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
+                        }}
+                      >
+                      <AlertDialogHeader>
+                        <AlertDialogTitle 
+                          className="text-gray-900"
+                        >
+                          Supprimer le bloc
+                        </AlertDialogTitle>
+                        <AlertDialogDescription 
+                          className="text-gray-600"
+                        >
+                          Êtes-vous sûr de vouloir supprimer ce bloc ? Cette action est irréversible.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel 
+                          onClick={cancelDelete}
+                          className="!bg-gray-100 !text-gray-800 hover:!bg-gray-200 !border-gray-300"
+                        >
+                          Annuler
+                        </AlertDialogCancel>
+                        <AlertDialogAction 
+                          onClick={confirmDelete}
+                          className="!bg-gray-900 !text-white hover:!bg-gray-800"
+                        >
+                          Supprimer
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                      </AlertDialogPrimitive.Content>
+                    </AlertDialogPortal>
+                  </AlertDialog>
                 </div>
               </SheetContent>
             </Sheet>
@@ -2496,6 +2582,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         </div>,
         document.body
       )}
+
     </div>
   );
 } 
