@@ -110,6 +110,16 @@ const typeIcons: Record<string, React.ComponentType<any>> = {
   timeline: Type,
   newsletter: Mail,
   footer: Layout,
+  column: Columns,
+  'two-columns': Columns,
+  'three-columns': Grid3x3,
+  'four-columns': Grid3x3,
+  'gallery-grid': Grid3x3,
+  'h2': Heading2,
+  'h3': Type,
+  'services': List,
+  'projects': Grid3x3,
+  'quote': Quote,
   default: FileText
 };
 
@@ -119,14 +129,81 @@ interface SommairePanelProps {
 }
 
 export default function SommairePanel({ className = "", blocks = [] }: SommairePanelProps) {
-  // Convertir les blocs en sections pour l'affichage
-  const sections = blocks.length > 0 ? blocks.map((block, index) => ({
-    id: block.id || `block-${index}`,
-    type: block.type,
-    label: block.type.charAt(0).toUpperCase() + block.type.slice(1),
-    level: 0,
-    expanded: false
-  })) : mockSections;
+  
+  // Fonction pour analyser récursivement les blocs et extraire les sous-éléments
+  const analyzeBlockStructure = (block: any, level: number = 0): Section => {
+    const section: Section = {
+      id: block.id || `block-${Date.now()}`,
+      type: block.type,
+      label: getBlockLabel(block.type),
+      level,
+      expanded: level < 2 // Ouvrir automatiquement les 2 premiers niveaux
+    };
+
+    // Analyser les colonnes pour les blocs de layout
+    if (block.type === 'two-columns' || block.type === 'three-columns' || block.type === 'four-columns') {
+      const children: Section[] = [];
+      
+      // Analyser chaque colonne
+      const columnKeys = block.type === 'two-columns' 
+        ? ['leftColumn', 'rightColumn']
+        : block.type === 'three-columns'
+        ? ['leftColumn', 'middleColumn', 'rightColumn']
+        : ['column1', 'column2', 'column3', 'column4'];
+      
+      columnKeys.forEach((columnKey, columnIndex) => {
+        // Essayer différentes façons d'accéder aux données des colonnes
+        const columnBlocks = block[columnKey] || block.data?.[columnKey] || [];
+        
+        
+        // Créer une section pour la colonne (même si elle est vide)
+        const columnSection: Section = {
+          id: `${section.id}-${columnKey}`,
+          type: 'column',
+          label: `Colonne ${columnIndex + 1}`,
+          level: level + 1,
+          expanded: true,
+          children: columnBlocks.length > 0 
+            ? columnBlocks.map((subBlock: any, subIndex: number) => 
+                analyzeBlockStructure(subBlock, level + 2)
+              )
+            : []
+        };
+        children.push(columnSection);
+      });
+      
+      if (children.length > 0) {
+        section.children = children;
+      }
+    }
+    
+    return section;
+  };
+
+  // Fonction pour obtenir un label plus lisible
+  const getBlockLabel = (type: string): string => {
+    const labels: Record<string, string> = {
+      'content': 'Éditeur de texte',
+      'h2': 'Titre H2',
+      'h3': 'Titre H3',
+      'image': 'Image',
+      'contact': 'Contact',
+      'services': 'Services',
+      'projects': 'Projets',
+      'logos': 'Logos',
+      'quote': 'Citation',
+      'gallery-grid': 'Galerie Grid',
+      'two-columns': 'Deux colonnes',
+      'three-columns': 'Trois colonnes',
+      'four-columns': 'Quatre colonnes'
+    };
+    return labels[type] || type.charAt(0).toUpperCase() + type.slice(1);
+  };
+
+  // Convertir les blocs en sections avec analyse récursive
+  const sections = blocks.length > 0 ? blocks.map((block, index) => 
+    analyzeBlockStructure(block, 0)
+  ) : mockSections;
   
   const [sectionsState, setSectionsState] = useState<Section[]>(sections);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
