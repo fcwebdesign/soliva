@@ -497,7 +497,7 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
         className="flex items-center justify-between p-3 border-b"
         style={{ borderColor: 'var(--admin-border)' }}
       >
-        <h2 className="text-sm font-medium" style={{ color: 'var(--admin-text)' }}>Structure</h2>
+        <h2 className="text-sm font-medium ml-2" style={{ color: 'var(--admin-text)' }}>Structure</h2>
         <button 
           onClick={() => {
             // Fermer le Sheet parent
