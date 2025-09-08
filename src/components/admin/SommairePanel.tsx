@@ -145,6 +145,7 @@ interface SommairePanelProps {
   onSelectBlock?: (blockId: string) => void;
   selectedBlockId?: string;
   onDeleteBlock?: (blockId: string) => void;
+  onDuplicateBlock?: (blockId: string) => void;
   onReorderBlocks?: (newBlocks: any[]) => void;
 }
 
@@ -184,7 +185,7 @@ function SortableItem({
   );
 }
 
-export default function SommairePanel({ className = "", blocks = [], onSelectBlock, selectedBlockId, onDeleteBlock, onReorderBlocks }: SommairePanelProps) {
+export default function SommairePanel({ className = "", blocks = [], onSelectBlock, selectedBlockId, onDeleteBlock, onDuplicateBlock, onReorderBlocks }: SommairePanelProps) {
   
   // Fonction pour gérer les actions sur les sections
   const handleSectionAction = (action: string, section: Section) => {
@@ -192,6 +193,11 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
       case 'edit':
         if (onSelectBlock && section.type !== 'column') {
           onSelectBlock(section.id);
+        }
+        break;
+      case 'duplicate':
+        if (onDuplicateBlock && section.type !== 'column') {
+          onDuplicateBlock(section.id);
         }
         break;
       case 'delete':
