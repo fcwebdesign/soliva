@@ -43,6 +43,17 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isPlanSheetOpen, setIsPlanSheetOpen] = useState(false);
+  
+  // Écouter l'événement de fermeture du Sheet
+  useEffect(() => {
+    const handleCloseSheet = () => {
+      setIsPlanSheetOpen(false);
+    };
+
+    window.addEventListener('close-sheet', handleCloseSheet);
+    return () => window.removeEventListener('close-sheet', handleCloseSheet);
+  }, []);
+
   const [blockSearchTerm, setBlockSearchTerm] = useState('');
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     'Basique': true,
@@ -55,6 +66,10 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   const [backupLoading, setBackupLoading] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(80); // Valeur par défaut
   const [sommaireTop, setSommaireTop] = useState(96); // Position dynamique du sommaire
+  
+  // Compter les sections/blocs pour l'auto-suggestion
+  const sectionsCount = blocks.length;
+  const shouldShowPlanSuggestion = sectionsCount >= 6;
   
   // Synchroniser localData avec pageData quand pageData change
   useEffect(() => {
@@ -2403,20 +2418,6 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   // Déterminer si cette page doit afficher le sommaire
   const shouldShowSommaire = ['home', 'studio', 'contact', 'project', 'article', 'custom'].includes(pageKey) || 
                             pageKey.startsWith('project-') || pageKey.startsWith('article-');
-
-  // Compter les sections/blocs pour l'auto-suggestion
-  const sectionsCount = blocks.length;
-  const shouldShowPlanSuggestion = sectionsCount >= 6;
-
-  // Écouter l'événement de fermeture du Sheet
-  useEffect(() => {
-    const handleCloseSheet = () => {
-      setIsPlanSheetOpen(false);
-    };
-
-    window.addEventListener('close-sheet', handleCloseSheet);
-    return () => window.removeEventListener('close-sheet', handleCloseSheet);
-  }, []);
 
   return (
     <div className="flex h-full">
