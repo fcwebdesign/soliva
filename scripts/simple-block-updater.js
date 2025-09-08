@@ -27,7 +27,10 @@ function detectBlocks() {
   try {
     const items = fs.readdirSync(AUTO_DECLARED_DIR, { withFileTypes: true });
     return items
-      .filter(item => item.isDirectory() && item.name !== 'node_modules')
+      .filter(item => item.isDirectory() && 
+                     item.name !== 'node_modules' && 
+                     item.name !== 'components' && 
+                     item.name !== 'types')
       .map(item => item.name)
       .sort();
   } catch (error) {

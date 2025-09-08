@@ -17,7 +17,10 @@ function generateImports() {
     
     // Filtrer seulement les dossiers (blocs)
     const blockDirs = items
-      .filter(item => item.isDirectory() && item.name !== 'node_modules')
+      .filter(item => item.isDirectory() && 
+                     item.name !== 'node_modules' && 
+                     item.name !== 'components' && 
+                     item.name !== 'types')
       .map(item => item.name)
       .sort(); // Tri alphabétique pour un ordre prévisible
     

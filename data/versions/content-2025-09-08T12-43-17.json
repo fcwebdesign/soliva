@@ -442,7 +442,8 @@
             "category": ""
           }
         ],
-        "enableDownload": false
+        "enableDownload": false,
+        "theme": "auto"
       },
       {
         "id": "three-columns-1757330645006",
@@ -460,7 +461,15 @@
           {
             "id": "content-1757331270102",
             "type": "content",
-            "content": "Soliva conçoit des sites Next.js rapides, accessibles et faciles à maintenir. Nous optimisons la performance et les Core Web Vitals pour booster votre SEO, et animons vos interfaces avec GSAP sans sacrifier la vitesse. IA utile intégrée au CMS: génération de contenus, balises SEO et briefs produits en quelques clics. Parler de votre projet | Obtenir un devis rapide | Voir des réalisations"
+            "content": "<p>Soliva conçoit des sites sur-mesure en Next.js, rapides, accessibles et faciles à maintenir. Nous optimisons la performance et les Core Web Vitals, intégrons GSAP pour des interactions fluides, et livrons un SEO mesurable. IA utile incluse dans votre CMS pour gagner du temps sur les contenus sans alourdir votre équipe.</p>"
+          },
+          {
+            "id": "",
+            "type": "image",
+            "image": {
+              "src": "/uploads/1757331361994-e78ce4f4.png",
+              "alt": ""
+            }
           }
         ],
         "columns": [
@@ -489,7 +498,24 @@
           }
         ],
         "gap": "md",
-        "align": "start"
+        "align": "start",
+        "middleColumn": [
+          {
+            "id": "content-1757334064756",
+            "type": "content",
+            "content": "<p>Chez Soliva, nous concevons des sites sur-mesure en Next.js, rapides, accessibles et faciles à maintenir. Nous optimisons la performance et les Core Web Vitals, intégrons de l’IA utile dans votre CMS pour gagner du temps, et soignons l’impact visuel avec un Creative Developer senior et GSAP. Parler de votre projet ou obtenir un devis rapide.</p>"
+          }
+        ],
+        "rightColumn": [
+          {
+            "id": "",
+            "type": "image",
+            "image": {
+              "src": "/uploads/1757334079054-84de8a0d.png",
+              "alt": ""
+            }
+          }
+        ]
       }
     ],
     "seo": {
@@ -1786,6 +1812,143 @@
           "title": "Politique de confidentialité"
         },
         "layout": "two-columns"
+      },
+      {
+        "id": "nouvelle-page",
+        "title": "Nouvelle page",
+        "content": "<p>lkllhhjh</p>\n<h2>hgggjgjgj</h2>",
+        "slug": "nouvelle-page",
+        "status": "published",
+        "description": "",
+        "blocks": [
+          {
+            "id": "block-1",
+            "type": "content",
+            "content": "<p>lkllhhjh</p>",
+            "title": "Description"
+          },
+          {
+            "id": "block-2",
+            "type": "gallery-grid",
+            "data": {
+              "images": [],
+              "layout": "grid-3",
+              "gap": "medium",
+              "showFilters": true,
+              "showTitles": true,
+              "showDescriptions": true,
+              "enableLightbox": true,
+              "enableDownload": true,
+              "theme": "auto"
+            },
+            "images": [
+              {
+                "id": "image-1757335079401-0",
+                "src": "/uploads/1757335079381-c7e81d79.png",
+                "alt": "",
+                "title": "",
+                "description": "",
+                "category": ""
+              },
+              {
+                "id": "image-1757335079401-1",
+                "src": "/uploads/1757335079386-c22c9cea.png",
+                "alt": "",
+                "title": "",
+                "description": "",
+                "category": "portrait"
+              },
+              {
+                "id": "image-1757335079401-2",
+                "src": "/uploads/1757335079372-e15d791b.png",
+                "alt": "",
+                "title": "",
+                "description": "",
+                "category": ""
+              },
+              {
+                "id": "image-1757335079401-3",
+                "src": "/uploads/1757335079391-26ba7b43.png",
+                "alt": "",
+                "title": "",
+                "description": "",
+                "category": ""
+              },
+              {
+                "id": "image-1757335079401-4",
+                "src": "/uploads/1757335079375-0fb2a224.png",
+                "alt": "",
+                "title": "",
+                "description": "",
+                "category": ""
+              },
+              {
+                "id": "image-1757335079401-5",
+                "src": "/uploads/1757335079380-30a93fb3.png",
+                "alt": "",
+                "title": "",
+                "description": "",
+                "category": ""
+              }
+            ],
+            "layout": "masonry"
+          },
+          {
+            "id": "block-3",
+            "type": "content",
+            "data": {
+              "content": ""
+            }
+          },
+          {
+            "id": "block-4",
+            "type": "three-columns",
+            "data": {
+              "leftColumn": [],
+              "middleColumn": [],
+              "rightColumn": [],
+              "layout": "left-middle-right",
+              "gap": "medium",
+              "alignment": "top",
+              "theme": "auto"
+            },
+            "leftColumn": [
+              {
+                "id": "logos-1757335228773",
+                "type": "logos",
+                "title": "NOS CLIENTS",
+                "theme": "auto",
+                "logos": []
+              },
+              {
+                "id": "content-1757335219613",
+                "type": "content",
+                "content": "<p>jhkjhkhkhkj</p>"
+              }
+            ]
+          },
+          {
+            "id": "h2-1757335183671",
+            "type": "h2",
+            "data": {
+              "content": ""
+            },
+            "content": "hgggjgjgj"
+          },
+          {
+            "id": "two-columns-1757335186171",
+            "type": "two-columns",
+            "data": {
+              "leftColumn": [],
+              "rightColumn": [],
+              "layout": "left-right",
+              "gap": "medium",
+              "alignment": "top",
+              "theme": "auto"
+            }
+          }
+        ],
+        "publishedAt": "2025-09-08T12:41:14.389Z"
       }
     ]
   }

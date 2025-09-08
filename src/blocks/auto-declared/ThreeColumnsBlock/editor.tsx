@@ -6,6 +6,9 @@ import MediaUploader from '../../../app/admin/components/MediaUploader';
 import { getAutoDeclaredBlock } from '../registry';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter } from '../../../components/ui/drawer';
 import { Button } from '../../../components/ui/button';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '../../../components/ui/sheet';
+import { Plus, ChevronDown } from 'lucide-react';
+import { getCategorizedBlocksForColumns } from '../../../utils/blockCategories';
 
 interface ThreeColumnsData {
   leftColumn?: any[];
@@ -31,6 +34,9 @@ export default function ThreeColumnsBlockEditor({ data, onChange }: { data: Thre
   // État pour le Drawer
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const [editingBlock, setEditingBlock] = React.useState<{ block: any; column: string; index: number } | null>(null);
+  
+  // État pour le Sheet de sélection de blocs
+  const [openGroups, setOpenGroups] = React.useState<{ [key: string]: boolean }>({});
 
   const updateField = (field: string, value: any) => {
     onChange({
@@ -51,7 +57,12 @@ export default function ThreeColumnsBlockEditor({ data, onChange }: { data: Thre
     };
     
     const currentBlocks = data[column] || [];
-    updateColumn(column, [...currentBlocks, newBlock]);
+    const newBlocks = [...currentBlocks, newBlock];
+    updateColumn(column, newBlocks);
+    
+    // Ouvrir automatiquement le drawer pour éditer le nouveau bloc
+    const newBlockIndex = newBlocks.length - 1;
+    openDrawer(newBlock, column, newBlockIndex);
   };
 
   const removeBlockFromColumn = (column: 'leftColumn' | 'middleColumn' | 'rightColumn', index: number) => {
@@ -104,6 +115,7 @@ export default function ThreeColumnsBlockEditor({ data, onChange }: { data: Thre
       default: return {};
     }
   };
+
 
   // Drag & drop natif
   const handleDragStart = (e: React.DragEvent, index: number, column: 'leftColumn' | 'middleColumn' | 'rightColumn') => {
@@ -204,29 +216,52 @@ export default function ThreeColumnsBlockEditor({ data, onChange }: { data: Thre
       <div className="border border-gray-200 rounded-lg p-4">
         <div className="flex items-center justify-between mb-4">
           <h4 className="text-sm font-medium text-gray-700">{title}</h4>
-          <select
-            onChange={(e) => {
-              if (e.target.value) {
-                addBlockToColumn(column, e.target.value);
-                e.target.value = '';
-              }
-            }}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-          >
-            <option value="">Ajouter un bloc...</option>
-            {SUPPORTED_BLOCK_TYPES.map(blockType => (
-              <option key={blockType} value={blockType}>
-                {blockType === 'h2' ? 'Titre H2' :
-                 blockType === 'h3' ? 'Sous-titre H3' :
-                 blockType === 'content' ? 'Contenu' :
-                 blockType === 'image' ? 'Image' :
-                 blockType === 'services' ? 'Services' :
-                 blockType === 'projects' ? 'Projets' :
-                 blockType === 'logos' ? 'Logos clients' :
-                 blockType === 'contact' ? 'Contact' : blockType}
-              </option>
-            ))}
-          </select>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="sm" className="flex items-center gap-2">
+                <Plus className="h-4 w-4" />
+                Ajouter un bloc
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="w-[400px] sm:w-[540px]">
+              <SheetHeader>
+                <SheetTitle>Choisir un type de bloc</SheetTitle>
+                <SheetDescription>
+                  Sélectionnez le type de bloc à ajouter dans {title.toLowerCase()}
+                </SheetDescription>
+              </SheetHeader>
+              
+              <div className="space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto mt-6">
+                {Object.entries(getCategorizedBlocksForColumns()).map(([categoryName, categoryBlocks]) => (
+                  <div key={categoryName} className="mb-6">
+                    <button
+                      onClick={() => setOpenGroups(prev => ({ ...prev, [categoryName]: !prev[categoryName] }))}
+                      className="flex w-full items-center justify-between rounded-lg bg-neutral-100/70 px-3 py-2 text-sm font-semibold mb-3"
+                    >
+                      <span>{categoryName}</span>
+                      <ChevronDown className={`h-4 w-4 transition-transform ${openGroups[categoryName] ? "rotate-180" : "rotate-0"}`} />
+                    </button>
+                    
+                    {openGroups[categoryName] && (
+                      <div className="grid grid-cols-2 gap-3 p-3">
+                        {categoryBlocks.map((block) => (
+                          <SheetTrigger asChild key={block.type}>
+                            <button
+                              onClick={() => addBlockToColumn(column, block.type)}
+                              className="relative flex h-28 flex-col items-center justify-center gap-2 rounded-xl border bg-white p-3 text-center transition-shadow outline-none hover:shadow-sm focus-visible:ring"
+                            >
+                              {block.preview}
+                              <span className="text-[13px] leading-tight">{block.label}</span>
+                            </button>
+                          </SheetTrigger>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
         
         <div className="space-y-3">

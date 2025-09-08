@@ -7,6 +7,7 @@ import MediaUploader, { LogoUploader } from './MediaUploader';
 import VersionList from './VersionList';
 import { renderAutoBlockEditor } from "@/app/admin/components/AutoBlockIntegration";
 import { getAutoDeclaredBlock, getBlockMetadata, getAvailableBlockTypes, createAutoBlockInstance } from '@/blocks/auto-declared/registry';
+import { getBlockLabel, renderBlockPreview, getCategorizedBlocks } from '@/utils/blockCategories';
 import { FileText, Briefcase, Navigation, Settings, Mail, Footprints, Save, Target, Layout, Tag, Atom, Trash2, Plus, Search, Type, Heading2, Image, Columns, Phone, Grid3x3, FolderOpen, Building2, Quote, ChevronDown, Lock, AlignLeft, GripHorizontal, Grid3x2, List, Brain, AlertTriangle, X } from 'lucide-react';
 import SommairePanel from '@/components/admin/SommairePanel';
 import MobileSommaireButton from '@/components/admin/MobileSommaireButton';
@@ -505,95 +506,10 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     );
   };
 
-  // Fonction pour obtenir le label personnalisé d'un bloc
-  const getBlockLabel = (blockType: string) => {
-    const customLabels: Record<string, string> = {
-      'contact': 'Contact',
-      'content': 'Éditeur de texte',
-      'four-columns': 'Quatre colonnes',
-      'gallery-grid': 'Galerie Grid',
-      'h2': 'Titre H2',
-      'h3': 'Titre H3',
-      'image': 'Image',
-      'logos': 'Logos',
-      'projects': 'Projets',
-      'quote': 'Citation',
-      'services': 'Liste titre/texte',
-      'three-columns': 'Trois colonnes',
-      'two-columns': 'Deux colonnes',
-    };;
-    return customLabels[blockType] || blockType;
-  };
-
-  // Fonction pour créer une vignette avec icônes Lucide
-  const renderBlockPreview = (blockType: string) => {
-    const iconClass = "h-7 w-7 text-gray-600";
-    
-    switch (blockType) {
-      case 'contact':
-        return <Phone className={iconClass} />;
-      case 'content':
-        return <AlignLeft className={iconClass} />;
-      case 'four-columns':
-        return <Grid3x3 className={iconClass} />;
-      case 'gallery-grid':
-        return <Grid3x3 className={iconClass} />;
-      case 'h2':
-        return <Type className={iconClass} />;
-      case 'h3':
-        return <Heading2 className={iconClass} />;
-      case 'image':
-        return <Image className={iconClass} />;
-      case 'logos':
-        return <GripHorizontal className={iconClass} />;
-      case 'projects':
-        return <Grid3x3 className={iconClass} />;
-      case 'quote':
-        return <Quote className={iconClass} />;
-      case 'services':
-        return <List className={iconClass} />;
-      case 'three-columns':
-        return <Grid3x2 className={iconClass} />;
-      case 'two-columns':
-        return <Columns className={iconClass} />;
-      default:
-        return <FileText className={iconClass} />;
-    }
-  };
-
-  // Fonction pour grouper les blocs par catégorie
-  const getCategorizedBlocks = () => {
+  // Fonction pour grouper les blocs par catégorie (utilise la fonction partagée)
+  const getCategorizedBlocksLocal = () => {
     const filteredBlocks = getFilteredBlocks();
-    const categories = {
-      '📞 Contact': ['contact'],
-      '📝 Textes': ['content', 'h2', 'h3', 'quote'],
-      '🎨 Layout': ['four-columns', 'three-columns', 'two-columns'],
-      '🖼️ Images': ['gallery-grid', 'image'],
-      '🏢 Logos': ['logos'],
-      '💼 Projets': ['projects'],
-      '🛠️ Services': ['services'],
-    };;
-
-    const categorized: { [key: string]: any[] } = {};
-    
-    Object.entries(categories).forEach(([categoryName, blockTypes]) => {
-      const categoryBlocks = filteredBlocks.filter(block => 
-        blockTypes.includes(block.type)
-      );
-      if (categoryBlocks.length > 0) {
-        categorized[categoryName] = categoryBlocks;
-      }
-    });
-
-    // Ajouter les blocs non catégorisés
-    const uncategorizedBlocks = filteredBlocks.filter(block => 
-      !Object.values(categories).flat().includes(block.type)
-    );
-    if (uncategorizedBlocks.length > 0) {
-      categorized['🔧 Autres'] = uncategorizedBlocks;
-    }
-
-    return categorized;
+    return getCategorizedBlocks(filteredBlocks);
   };
 
   const toggleBlockVisibility = (blockId: string) => {
@@ -2160,7 +2076,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
 
               {/* Liste des blocs par catégorie */}
               <div className="space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto">
-                {Object.entries(getCategorizedBlocks()).map(([categoryName, categoryBlocks]) => (
+                {Object.entries(getCategorizedBlocksLocal()).map(([categoryName, categoryBlocks]) => (
                   <div key={categoryName} className="mb-6">
                     <button
                       onClick={() => setOpenGroups(prev => ({ ...prev, [categoryName]: !prev[categoryName] }))}
@@ -2187,7 +2103,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                   </div>
                 ))}
                 
-                {Object.keys(getCategorizedBlocks()).length === 0 && blockSearchTerm && (
+                {Object.keys(getCategorizedBlocksLocal()).length === 0 && blockSearchTerm && (
                   <div className="text-center py-8 text-gray-500">
                     <p>Aucun bloc trouvé pour "{blockSearchTerm}"</p>
                   </div>
