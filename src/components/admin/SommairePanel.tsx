@@ -126,9 +126,11 @@ const typeIcons: Record<string, React.ComponentType<any>> = {
 interface SommairePanelProps {
   className?: string;
   blocks?: any[];
+  onSelectBlock?: (blockId: string) => void;
+  selectedBlockId?: string;
 }
 
-export default function SommairePanel({ className = "", blocks = [] }: SommairePanelProps) {
+export default function SommairePanel({ className = "", blocks = [], onSelectBlock, selectedBlockId }: SommairePanelProps) {
   
   // Fonction pour analyser récursivement les blocs et extraire les sous-éléments
   const analyzeBlockStructure = (block: any, level: number = 0): Section => {
@@ -137,7 +139,7 @@ export default function SommairePanel({ className = "", blocks = [] }: SommaireP
       type: block.type,
       label: getBlockLabel(block.type),
       level,
-      expanded: level < 2 // Ouvrir automatiquement les 2 premiers niveaux
+      expanded: false // Tout replié par défaut
     };
 
     // Analyser les colonnes pour les blocs de layout
@@ -162,7 +164,7 @@ export default function SommairePanel({ className = "", blocks = [] }: SommaireP
           type: 'column',
           label: `Colonne ${columnIndex + 1}`,
           level: level + 1,
-          expanded: true,
+          expanded: false, // Replié par défaut
           children: columnBlocks.length > 0 
             ? columnBlocks.map((subBlock: any, subIndex: number) => 
                 analyzeBlockStructure(subBlock, level + 2)
@@ -255,25 +257,30 @@ export default function SommairePanel({ className = "", blocks = [] }: SommaireP
   const renderSection = (section: Section) => {
     const hasChildren = section.children && section.children.length > 0;
     const isExpanded = section.expanded;
+    const isSelected = selectedBlockId === section.id;
     
     return (
       <div key={section.id}>
         <div 
-          className={`flex items-center gap-1 py-1 px-2 cursor-pointer group transition-colors ${
-            section.id === "3" ? "" : ""
-          }`}
+          className={`flex items-center gap-1 py-1 px-2 cursor-pointer group transition-colors`}
           style={{ 
-            backgroundColor: section.id === "3" ? 'var(--admin-bg-hover)' : 'transparent',
-            transition: 'background-color 0.2s',
+            backgroundColor: isSelected ? 'var(--admin-bg-active)' : 'transparent',
+            borderLeft: isSelected ? '3px solid var(--admin-primary)' : '3px solid transparent',
+            transition: 'background-color 0.2s, border-left 0.2s',
             paddingLeft: `${section.level * 12 + 8}px`
           }}
+          onClick={() => {
+            if (onSelectBlock && section.type !== 'column') {
+              onSelectBlock(section.id);
+            }
+          }}
           onMouseEnter={(e) => {
-            if (section.id !== "3") {
+            if (!isSelected) {
               e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)';
             }
           }}
           onMouseLeave={(e) => {
-            if (section.id !== "3") {
+            if (!isSelected) {
               e.currentTarget.style.backgroundColor = 'transparent';
             }
           }}

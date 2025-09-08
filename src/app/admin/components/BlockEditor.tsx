@@ -44,6 +44,31 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isPlanSheetOpen, setIsPlanSheetOpen] = useState(false);
+  const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
+  
+  // Fonction pour gérer la sélection d'un bloc depuis le plan
+  const handleSelectBlock = (blockId: string) => {
+    setSelectedBlockId(blockId);
+    
+    // Scroll vers l'élément sélectionné
+    setTimeout(() => {
+      const element = document.querySelector(`[data-block-id="${blockId}"]`);
+      if (element) {
+        element.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        });
+        
+        // Mise en surbrillance temporaire avec fond coloré
+        element.style.backgroundColor = 'rgba(59, 130, 246, 0.2)';
+        element.style.transition = 'background-color 0.3s ease';
+        setTimeout(() => {
+          element.style.backgroundColor = '';
+          element.style.transition = '';
+        }, 2000);
+      }
+    }, 100);
+  };
   
   // Écouter l'événement de fermeture du Sheet
   useEffect(() => {
@@ -2037,7 +2062,12 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                 </SheetHeader>
                 
                 <div className="h-full">
-                  <SommairePanel className="border-0" blocks={blocks} />
+                  <SommairePanel 
+                    className="border-0" 
+                    blocks={blocks} 
+                    onSelectBlock={handleSelectBlock}
+                    selectedBlockId={selectedBlockId}
+                  />
                 </div>
               </SheetContent>
             </Sheet>
