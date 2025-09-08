@@ -11,6 +11,7 @@ import './LogosBlock';
 import './ProjectsBlock';
 import './QuoteBlock';
 import './ServicesBlock';
+import './ThreeColumnsBlock';
 import './TwoColumnsBlock';
 
 // Pour ajouter un nouveau bloc :
@@ -18,4 +19,4 @@ import './TwoColumnsBlock';
 // 2. Exécuter: npm run generate-blocks
 // 3. C'est tout !
 
-console.log('🚀 Blocs auto-déclarés chargés (10 blocs)');
+console.log('🚀 Blocs auto-déclarés chargés (11 blocs)');

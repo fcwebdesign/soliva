@@ -508,16 +508,17 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   // Fonction pour obtenir le label personnalisé d'un bloc
   const getBlockLabel = (blockType: string) => {
     const customLabels: Record<string, string> = {
+      'contact': 'Contact',
       'content': 'Éditeur de texte',
       'h2': 'Titre H2',
       'h3': 'Titre H3',
       'image': 'Image',
-      'two-columns': 'Deux colonnes',
-      'contact': 'Contact',
-      'services': 'Liste titre/texte',
-      'projects': 'Projets',
       'logos': 'Logos',
-      'quote': 'Citation'
+      'projects': 'Projets',
+      'quote': 'Citation',
+      'services': 'Liste titre/texte',
+      'three-columns': 'Trois colonnes',
+      'two-columns': 'Deux colonnes',
     };
     return customLabels[blockType] || blockType;
   };
@@ -527,26 +528,28 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     const iconClass = "h-7 w-7 text-gray-600";
     
     switch (blockType) {
+      case 'contact':
+        return <Phone className={iconClass} />;
+      case 'content':
+        return <AlignLeft className={iconClass} />;
       case 'h2':
         return <Type className={iconClass} />;
       case 'h3':
         return <Heading2 className={iconClass} />;
-      case 'content':
-        return <AlignLeft className={iconClass} />;
       case 'image':
         return <Image className={iconClass} />;
-      case 'two-columns':
-        return <Columns className={iconClass} />;
-      case 'contact':
-        return <Phone className={iconClass} />;
-      case 'services':
-        return <List className={iconClass} />;
-      case 'projects':
-        return <Grid3x3 className={iconClass} />;
       case 'logos':
         return <GripHorizontal className={iconClass} />;
+      case 'projects':
+        return <Grid3x3 className={iconClass} />;
       case 'quote':
         return <Quote className={iconClass} />;
+      case 'services':
+        return <List className={iconClass} />;
+      case 'three-columns':
+        return <Grid3x2 className={iconClass} />;
+      case 'two-columns':
+        return <Columns className={iconClass} />;
       default:
         return <FileText className={iconClass} />;
     }
@@ -556,13 +559,13 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
   const getCategorizedBlocks = () => {
     const filteredBlocks = getFilteredBlocks();
     const categories = {
-      '📝 Textes': ['h2', 'h3', 'content', 'quote'],
-      '🖼️ Images': ['image'],
-      '🎨 Layout': ['two-columns'],
       '📞 Contact': ['contact'],
-      '🛠️ Services': ['services'],
+      '📝 Textes': ['content', 'h2', 'h3', 'quote'],
+      '🖼️ Images': ['image'],
+      '🏢 Logos': ['logos'],
       '💼 Projets': ['projects'],
-      '🏢 Logos': ['logos']
+      '🛠️ Services': ['services'],
+      '🎨 Layout': ['three-columns', 'two-columns'],
     };
 
     const categorized: { [key: string]: any[] } = {};
@@ -2490,11 +2493,18 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
           )}
           
           {/* Pour les autres pages, afficher les blocs classiques */}
-          {!['blog', 'work', 'backup', 'project', 'article', 'contact', 'studio', 'custom'].includes(pageKey) && !pageKey.startsWith('project-') && !pageKey.startsWith('article-') && (
+          {!['blog', 'work', 'backup', 'project', 'article', 'contact', 'studio', 'custom', 'metadata'].includes(pageKey) && !pageKey.startsWith('project-') && !pageKey.startsWith('article-') && (
             <>
               {renderContentBlock()}
               {renderMetadataBlock()}
               {renderNavBlock()}
+            </>
+          )}
+          
+          {/* Pour la page metadata, afficher seulement le bloc metadata */}
+          {pageKey === 'metadata' && (
+            <>
+              {renderMetadataBlock()}
             </>
           )}
         </div>

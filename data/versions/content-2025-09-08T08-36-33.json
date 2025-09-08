@@ -122,7 +122,9 @@
           "art-gallery-digital",
           "mode-ethique-collective ",
           "ecotech-solutions",
-          "mode-ethique-collective"
+          "mode-ethique-collective",
+          "mode-ethique-collective  ",
+          "mode-ethique-collective   "
         ],
         "theme": "auto"
       },
@@ -334,17 +336,38 @@
         "alignment": "top"
       },
       {
-        "id": "quote-1756753800786",
-        "type": "quote",
+        "id": "three-columns-1757319966946",
+        "type": "three-columns",
         "data": {
-          "quote": "Une citation inspirante pour votre contenu...",
-          "author": "Nom de l'auteur",
-          "role": "Fonction",
+          "leftColumn": [],
+          "middleColumn": [],
+          "rightColumn": [],
+          "layout": "left-middle-right",
+          "gap": "medium",
+          "alignment": "top",
           "theme": "auto"
         },
-        "quote": "dsdsdf",
-        "author": "dfsdfsd",
-        "role": "dsffdsfds"
+        "leftColumn": [
+          {
+            "id": "content-1757319970849",
+            "type": "content",
+            "content": "<p>wxxcwcxwxcx</p>"
+          }
+        ],
+        "middleColumn": [
+          {
+            "id": "content-1757319973793",
+            "type": "content",
+            "content": "<p>wxccxwwxc</p>"
+          }
+        ],
+        "rightColumn": [
+          {
+            "id": "content-1757319975850",
+            "type": "content",
+            "content": "<p>wxcxwxcxwcxxwccwxcwxcw xcvxc</p>"
+          }
+        ]
       }
     ],
     "seo": {

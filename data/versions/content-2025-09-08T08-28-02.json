@@ -42,7 +42,7 @@
           {
             "id": "block-1756225439361-0.9107021052170442",
             "type": "content",
-            "content": "<p>Le studio réunit une équipe compacte de designers et développeurs basée au Hevre. Nous livrons des sites rapides, accessibles et faciles à maintenir, avec des délais clairs et un budget maîtrisé. Exemples récents: refonte e‑commerce (+28% de conversion) et site vitrine B2B chargé en moins de 1,2 s.</p>"
+            "content": "<p>Soliva est un studio créatif basé au Havre, spécialisé en sites web sur-mesure, IA appliquée et stratégie de marque. Nous livrons des interfaces rapides, accessibles et faciles à maintenir, avec des délais cadrés et un budget maîtrisé. Vous travaillez en direct avec une équipe resserrée de designers et développeurs, pour un résultat clair, fiable et mesurable.</p>"
           }
         ],
         "rightColumn": [],
@@ -84,7 +84,7 @@
           {
             "id": "service-1756056339086",
             "title": "Contenu & Shooting",
-            "description": "<p>Transformez votre vision en réalité. <br>Nous produisons du contenu web captivant et organisons des shootings photo professionnels pour donner vie à votre marque. <br>Profitez d'un rendu visuel haut de gamme et d'un storytelling efficace pour marquer l'esprit de vos clients.</p>",
+            "description": "<p>Boostez votre visibilité en ligne grâce à notre service \"Contenu &amp; Shooting\". Nous produisons du contenu web percutant et organisons des shootings photos pour donner vie à vos produits ou services. Vous bénéficiez d'un contenu unique, hautement partageable et d'images de qualité professionnelle pour captiver votre audience.</p>",
             "icon": ""
           },
           {
@@ -122,7 +122,9 @@
           "art-gallery-digital",
           "mode-ethique-collective ",
           "ecotech-solutions",
-          "mode-ethique-collective"
+          "mode-ethique-collective",
+          "mode-ethique-collective  ",
+          "mode-ethique-collective   "
         ],
         "theme": "auto"
       },
@@ -306,6 +308,13 @@
             "id": "block-1756481774304-0.08598438704230948",
             "type": "content",
             "content": "<p>Poste</p>"
+          },
+          {
+            "id": "logos-1757319474832",
+            "type": "logos",
+            "title": "NOS CLIENTS",
+            "theme": "auto",
+            "logos": []
           }
         ],
         "rightColumn": [
@@ -345,6 +354,40 @@
         "quote": "dsdsdf",
         "author": "dfsdfsd",
         "role": "dsffdsfds"
+      },
+      {
+        "id": "three-columns-1757319966946",
+        "type": "three-columns",
+        "data": {
+          "leftColumn": [],
+          "middleColumn": [],
+          "rightColumn": [],
+          "layout": "left-middle-right",
+          "gap": "medium",
+          "alignment": "top",
+          "theme": "auto"
+        },
+        "leftColumn": [
+          {
+            "id": "content-1757319970849",
+            "type": "content",
+            "content": "<p>wxxcwcxwxcx</p>"
+          }
+        ],
+        "middleColumn": [
+          {
+            "id": "content-1757319973793",
+            "type": "content",
+            "content": "<p>wxccxwwxc</p>"
+          }
+        ],
+        "rightColumn": [
+          {
+            "id": "content-1757319975850",
+            "type": "content",
+            "content": "<p>wxcxwxcxwcxxwccwxcwxcw xcvxc</p>"
+          }
+        ]
       }
     ],
     "seo": {
@@ -410,7 +453,7 @@
         "category": "Digital",
         "image": "/uploads/1755597343554-71ad1faf.jpg",
         "slug": "art-gallery-digital",
-        "excerpt": "Plateforme web immersive pour une galerie d'art contemporain.",
+        "excerpt": "Plateforme web immersive pour une galerie d'art contemporain.  ",
         "content": "<p>Plateforme web immersive pour une galerie d'art contemporain. Interface intuitive permettant aux visiteurs d'explorer les œuvres en 3D et de découvrir les artistes.</p>",
         "client": "Art Gallery Digital",
         "year": "2024",
@@ -530,7 +573,7 @@
         "slug": "art-gallery-digital",
         "status": "published",
         "publishedAt": "2024-02-20T14:30:00.000Z",
-        "excerpt": "Plateforme web immersive pour une galerie d'art contemporain.",
+        "excerpt": "Plateforme web immersive pour une galerie d'art contemporain.  ",
         "client": "Art Gallery Digital",
         "category": "Digital",
         "year": "2024",

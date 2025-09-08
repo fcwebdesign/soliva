@@ -1,0 +1,74 @@
+{
+  "ContactBlock": {
+    "type": "contact",
+    "label": "Contact",
+    "category": "📞 Contact",
+    "icon": "Phone"
+  },
+  "ContentBlock": {
+    "type": "content",
+    "label": "Éditeur de texte",
+    "category": "📝 Textes",
+    "icon": "AlignLeft"
+  },
+  "H2Block": {
+    "type": "h2",
+    "label": "Titre H2",
+    "category": "📝 Textes",
+    "icon": "Type"
+  },
+  "H3Block": {
+    "type": "h3",
+    "label": "Titre H3",
+    "category": "📝 Textes",
+    "icon": "Heading2"
+  },
+  "ImageBlock": {
+    "type": "image",
+    "label": "Image",
+    "category": "🖼️ Images",
+    "icon": "Image"
+  },
+  "LogosBlock": {
+    "type": "logos",
+    "label": "Logos",
+    "category": "🏢 Logos",
+    "icon": "GripHorizontal"
+  },
+  "ProjectsBlock": {
+    "type": "projects",
+    "label": "Projets",
+    "category": "💼 Projets",
+    "icon": "Grid3x3"
+  },
+  "QuoteBlock": {
+    "type": "quote",
+    "label": "Citation",
+    "category": "📝 Textes",
+    "icon": "Quote"
+  },
+  "ServicesBlock": {
+    "type": "services",
+    "label": "Liste titre/texte",
+    "category": "🛠️ Services",
+    "icon": "List"
+  },
+  "ThreeColumnsBlock": {
+    "type": "three-columns",
+    "label": "Trois colonnes",
+    "category": "🎨 Layout",
+    "icon": "Grid3x2"
+  },
+  "TwoColumnsBlock": {
+    "type": "two-columns",
+    "label": "Deux colonnes",
+    "category": "🎨 Layout",
+    "icon": "Columns"
+  },
+  "TestBlock": {
+    "type": "test",
+    "label": "Test",
+    "category": "🔧 Outils",
+    "icon": "FileText"
+  }
+}
