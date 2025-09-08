@@ -354,20 +354,28 @@
         "layout": "masonry",
         "images": [
           {
-            "id": "image-1757322157501",
-            "src": "/uploads/1757322163699-9a7db0e4.png",
-            "alt": "",
-            "title": "",
-            "description": "",
-            "category": "paysage"
-          },
-          {
             "id": "image-1757322176569",
             "src": "/uploads/1757322181370-dd4ab91e.jpg",
             "alt": "",
             "title": "",
             "description": "",
             "category": "nature"
+          },
+          {
+            "id": "image-1757326919028-3",
+            "src": "/uploads/1757326919006-b8e5eeeb.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757322157501",
+            "src": "/uploads/1757322163699-9a7db0e4.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": "paysage"
           },
           {
             "id": "image-1757322280158",
@@ -426,14 +434,6 @@
             "category": ""
           },
           {
-            "id": "image-1757326919028-3",
-            "src": "/uploads/1757326919006-b8e5eeeb.png",
-            "alt": "",
-            "title": "",
-            "description": "",
-            "category": ""
-          },
-          {
             "id": "image-1757326919028-4",
             "src": "/uploads/1757326919010-8f67f2cc.png",
             "alt": "",
@@ -442,7 +442,93 @@
             "category": ""
           }
         ],
-        "enableDownload": false
+        "enableDownload": false,
+        "theme": "auto"
+      },
+      {
+        "id": "three-columns-1757330645006",
+        "type": "three-columns",
+        "data": {
+          "leftColumn": [],
+          "middleColumn": [],
+          "rightColumn": [],
+          "layout": "left-middle-right",
+          "gap": "medium",
+          "alignment": "top",
+          "theme": "auto"
+        },
+        "leftColumn": [
+          {
+            "id": "content-1757331270102",
+            "type": "content",
+            "content": "<p>Soliva conçoit des sites sur-mesure en Next.js, rapides, accessibles et faciles à maintenir. Nous optimisons la performance et les Core Web Vitals, intégrons GSAP pour des interactions fluides, et livrons un SEO mesurable. IA utile incluse dans votre CMS pour gagner du temps sur les contenus sans alourdir votre équipe.</p>"
+          },
+          {
+            "id": "",
+            "type": "image",
+            "image": {
+              "src": "/uploads/1757331361994-e78ce4f4.png",
+              "alt": ""
+            }
+          },
+          {
+            "id": "projects-1757331579820",
+            "type": "projects",
+            "title": "NOS RÉALISATIONS",
+            "maxProjects": 6,
+            "selectedProjects": [],
+            "theme": "auto"
+          }
+        ],
+        "columns": [
+          {
+            "id": "col_1",
+            "type": "image-title-cta",
+            "label": "Colonne 1",
+            "status": "incomplete",
+            "props": {
+              "title": "gyg"
+            }
+          },
+          {
+            "id": "col_2",
+            "type": "text-only",
+            "label": "Colonne 2",
+            "status": "incomplete",
+            "props": {}
+          },
+          {
+            "id": "col_3",
+            "type": "text-only",
+            "label": "Colonne 3",
+            "status": "incomplete",
+            "props": {}
+          }
+        ],
+        "gap": "md",
+        "align": "start",
+        "middleColumn": [
+          {
+            "id": "services-1757333983291",
+            "type": "services",
+            "title": "OUR CORE OFFERINGS",
+            "theme": "auto",
+            "offerings": [
+              {
+                "id": "service-1757333989145",
+                "title": "hello c'est cool ici",
+                "description": "<p>\"Hello c'est cool ici\" transforme votre expérience web en un voyage agréable et captivant. Grâce à notre technique unique de design intuitif et de contenu engageant, votre site web devient un espace accueillant qui favorise la fidélisation des utilisateurs.</p>",
+                "icon": ""
+              },
+              {
+                "id": "service-1757333995154",
+                "title": "on arnaque pas les gens nous !",
+                "description": "<p>\"On arnaque pas les gens nous !\" s'engage à offrir une transparence totale : pas de frais cachés, pas de coûts exorbitants. Nous prônons une communication claire, des tarifs justes et un suivi rigoureux pour garantir votre satisfaction.</p>",
+                "icon": ""
+              }
+            ]
+          }
+        ]
       }
     ],
     "seo": {

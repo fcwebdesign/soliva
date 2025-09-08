@@ -459,22 +459,21 @@ export default function FourColumnsBlockEditor({ data, onChange }: { data: FourC
 
       {/* Drawer pour l'édition des blocs */}
       <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-        <DrawerContent className="h-[70vh] max-h-[600px]">
-          <DrawerHeader>
-            <DrawerTitle>
-              Éditer le bloc - {editingBlock?.block?.type || 'Inconnu'}
-            </DrawerTitle>
-          </DrawerHeader>
-          
-          <div className="flex-1 overflow-y-auto px-4">
-            {editingBlock && renderBlockEditor(editingBlock.block, saveBlockInDrawer)}
+        <DrawerContent className="h-[70vh] max-h-[600px] flex flex-col">
+          <div className="w-full max-w-4xl mx-auto px-4 flex-1 flex flex-col min-h-0">
+            <div className="flex-shrink-0 flex items-center justify-between py-4 px-4">
+              <DrawerTitle className="m-0">
+                Éditer le bloc - {editingBlock?.block?.type || 'Inconnu'}
+              </DrawerTitle>
+              <Button onClick={closeDrawer}>
+                Fermer
+              </Button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto min-h-0">
+              {editingBlock && renderBlockEditor(editingBlock.block, saveBlockInDrawer)}
+            </div>
           </div>
-          
-          <DrawerFooter>
-            <Button onClick={closeDrawer}>
-              Fermer
-            </Button>
-          </DrawerFooter>
         </DrawerContent>
       </Drawer>
     </div>

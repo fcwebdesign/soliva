@@ -461,7 +461,7 @@
           {
             "id": "content-1757331270102",
             "type": "content",
-            "content": "<p>Soliva conçoit des sites sur-mesure en Next.js, rapides à charger et notés vert sur les Core Web Vitals. Nous intégrons une IA utile directement dans votre CMS pour automatiser la rédaction récurrente et gagner du temps, tout en renforçant votre SEO. Animations GSAP maîtrisées, code propre et budget cadré: vous gardez la main, sans surprise.</p>"
+            "content": "<p>Soliva conçoit des sites sur-mesure en Next.js, rapides, accessibles et faciles à maintenir. Nous optimisons la performance et les Core Web Vitals, intégrons GSAP pour des interactions fluides, et livrons un SEO mesurable. IA utile incluse dans votre CMS pour gagner du temps sur les contenus sans alourdir votre équipe.</p>"
           },
           {
             "id": "",
@@ -470,18 +470,6 @@
               "src": "/uploads/1757331361994-e78ce4f4.png",
               "alt": ""
             }
-          },
-          {
-            "id": "projects-1757331579820",
-            "type": "projects",
-            "title": "NOS RÉALISATIONS",
-            "maxProjects": 6,
-            "selectedProjects": [
-              "art-gallery-digital",
-              "mode-ethique-collective ",
-              "mode-ethique-collective  "
-            ],
-            "theme": "auto"
           }
         ],
         "columns": [
@@ -510,7 +498,24 @@
           }
         ],
         "gap": "md",
-        "align": "start"
+        "align": "start",
+        "middleColumn": [
+          {
+            "id": "content-1757334064756",
+            "type": "content",
+            "content": "<p>Chez Soliva, nous concevons des sites sur-mesure en Next.js, rapides, accessibles et faciles à maintenir. Nous optimisons la performance et les Core Web Vitals, intégrons de l’IA utile dans votre CMS pour gagner du temps, et soignons l’impact visuel avec un Creative Developer senior et GSAP. Parler de votre projet ou obtenir un devis rapide.</p>"
+          }
+        ],
+        "rightColumn": [
+          {
+            "id": "",
+            "type": "image",
+            "image": {
+              "src": "/uploads/1757334079054-84de8a0d.png",
+              "alt": ""
+            }
+          }
+        ]
       }
     ],
     "seo": {

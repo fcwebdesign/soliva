@@ -54,6 +54,13 @@ export default function ThreeColumnsBlock({ data }: { data: ThreeColumnsData }) 
 
   // Fonction optimisée pour rendre les sous-blocs en utilisant les blocs scalables
   const renderSubBlock = (subBlock: any) => {
+    // Wrapper div pour contrôler la largeur du contenu
+    const blockWrapper = (content: React.ReactNode) => (
+      <div key={subBlock.id} className="w-full">
+        {content}
+      </div>
+    );
+
     // Essayer d'abord le système scalable
     const scalableBlock = getAutoDeclaredBlock(subBlock.type);
     if (scalableBlock) {
@@ -76,9 +83,8 @@ export default function ThreeColumnsBlock({ data }: { data: ThreeColumnsData }) 
         };
       }
       
-      return (
+      return blockWrapper(
         <BlockComponent 
-          key={subBlock.id}
           data={adaptedData}
         />
       );
@@ -87,28 +93,28 @@ export default function ThreeColumnsBlock({ data }: { data: ThreeColumnsData }) 
     // Fallback pour les blocs non scalables (si nécessaire)
     switch (subBlock.type) {
       case 'content':
-        return (
-          <div key={subBlock.id} className="text-black/70 leading-relaxed max-w-[68ch] mb-6" 
+        return blockWrapper(
+          <div className="text-black/70 leading-relaxed max-w-[68ch] mb-6" 
                dangerouslySetInnerHTML={{ __html: subBlock.content }} />
         );
       
       case 'h2':
-        return (
-          <h2 key={subBlock.id} className="text-3xl font-bold text-gray-900 mb-6">
+        return blockWrapper(
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">
             {subBlock.content}
           </h2>
         );
       
       case 'h3':
-        return (
-          <h3 key={subBlock.id} className="text-xl font-semibold text-gray-900 mb-4">
+        return blockWrapper(
+          <h3 className="text-xl font-semibold text-gray-900 mb-4">
             {subBlock.content}
           </h3>
         );
       
       case 'image':
-        return (
-          <div key={subBlock.id} className="block-image">
+        return blockWrapper(
+          <div className="block-image">
             <img 
               src={subBlock.image?.src} 
               alt={subBlock.image?.alt || ''} 
@@ -118,7 +124,9 @@ export default function ThreeColumnsBlock({ data }: { data: ThreeColumnsData }) 
         );
       
       default:
-        return <div key={subBlock.id} className="text-gray-500">Type de bloc non supporté: {subBlock.type}</div>;
+        return blockWrapper(
+          <div className="text-gray-500">Type de bloc non supporté: {subBlock.type}</div>
+        );
     }
   };
   

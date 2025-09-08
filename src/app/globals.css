@@ -222,7 +222,7 @@ body {
   --admin-sidebar-bg: #0f0f0f;
 }
 
-/* Admin en fullscreen */
+/* Admin en fullscreen - seulement pour le body */
 body.admin-page,
 .admin-page body {
   max-width: none !important;
@@ -230,12 +230,7 @@ body.admin-page,
 }
 
 .admin-page {
-  max-width: none !important;
   margin: 0 !important;
-}
-
-.admin-page * {
-  max-width: none !important;
 }
 
 /* Forcer les couleurs pour l'admin - approche plus ciblée */
