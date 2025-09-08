@@ -347,7 +347,7 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
             backgroundColor: isSelected ? 'var(--admin-bg-active)' : 'transparent',
             borderLeft: isSelected ? '3px solid var(--admin-primary)' : '3px solid transparent',
             transition: 'background-color 0.2s, border-left 0.2s',
-            paddingLeft: `${section.level === 0 ? 8 : section.level === 1 ? 43 : 43}px`
+            paddingLeft: `${section.level === 0 ? 8 : section.level === 1 ? 25 : 25}px`
           }}
           onClick={() => {
             if (onSelectBlock && section.type !== 'column') {
