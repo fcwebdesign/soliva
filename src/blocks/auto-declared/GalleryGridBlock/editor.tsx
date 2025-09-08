@@ -282,19 +282,31 @@ export default function GalleryGridBlockEditor({ data, onChange }: { data: Galle
                 onChange={(e) => e.target.files && handleMultipleUpload(e.target.files)}
                 className="hidden"
                 id="multiple-upload"
+                ref={(input) => {
+                  if (input) {
+                    input.onclick = () => {
+                      // Reset the input value to allow selecting the same files again
+                      input.value = '';
+                    };
+                  }
+                }}
               />
-              <label htmlFor="multiple-upload">
-                <Button 
-                  type="button" 
-                  size="sm" 
-                  variant="outline" 
-                  className="flex items-center gap-2 cursor-pointer"
-                  disabled={isUploading}
-                >
-                  <Upload className="h-4 w-4" />
-                  {isUploading ? 'Upload...' : 'Upload multiple'}
-                </Button>
-              </label>
+              <Button 
+                type="button" 
+                size="sm" 
+                variant="outline" 
+                className="flex items-center gap-2 cursor-pointer"
+                disabled={isUploading}
+                onClick={() => {
+                  const input = document.getElementById('multiple-upload') as HTMLInputElement;
+                  if (input) {
+                    input.click();
+                  }
+                }}
+              >
+                <Upload className="h-4 w-4" />
+                {isUploading ? 'Upload...' : 'Upload multiple'}
+              </Button>
               <Button onClick={addImage} size="sm" className="flex items-center gap-2">
                 <Plus className="h-4 w-4" />
                 Ajouter une image

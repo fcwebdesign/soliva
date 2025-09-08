@@ -351,19 +351,91 @@
         },
         "enableLightbox": true,
         "showTitles": true,
-        "layout": "grid-4",
+        "layout": "grid-3",
         "images": [
           {
-            "id": "image-1757321636481",
-            "src": "/uploads/1757321647244-76f95475.jpg",
+            "id": "image-1757322176569",
+            "src": "/uploads/1757322181370-dd4ab91e.jpg",
             "alt": "",
             "title": "",
             "description": "",
             "category": "nature"
           },
           {
-            "id": "image-1757321736987",
-            "src": "/uploads/1757321742177-5e5af774.jpg",
+            "id": "image-1757326919028-3",
+            "src": "/uploads/1757326919006-b8e5eeeb.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757322157501",
+            "src": "/uploads/1757322163699-9a7db0e4.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": "paysage"
+          },
+          {
+            "id": "image-1757322280158",
+            "src": "/uploads/1757322285442-9593335c.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757322292399",
+            "src": "/uploads/1757322297689-f8b5ea14.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757322461168",
+            "src": "/uploads/1757322467815-099311ab.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757322482590",
+            "src": "/uploads/1757322497319-693e6f77.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757326919028-0",
+            "src": "/uploads/1757326919007-37600b01.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757326919028-1",
+            "src": "/uploads/1757326919015-6bb617ad.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757326919028-2",
+            "src": "/uploads/1757326919013-22deb455.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757326919028-4",
+            "src": "/uploads/1757326919010-8f67f2cc.png",
             "alt": "",
             "title": "",
             "description": "",

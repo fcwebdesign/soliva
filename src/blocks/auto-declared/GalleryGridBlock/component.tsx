@@ -46,11 +46,6 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData }) {
   const enableDownload = data.enableDownload !== false;
   const blockTheme = data.theme || 'auto';
 
-  // Ne rien rendre tant que le composant n'est pas monté
-  if (!mounted) {
-    return <div className="gallery-grid-section py-28" style={{ minHeight: '200px' }}></div>;
-  }
-
   // Obtenir les catégories uniques
   const categories = ['all', ...Array.from(new Set(images.map(img => img.category).filter(Boolean)))];
   
@@ -58,6 +53,9 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData }) {
   const filteredImages = activeFilter === 'all' 
     ? images 
     : images.filter(img => img.category === activeFilter);
+
+  // Utiliser les images dans l'ordre défini dans l'admin
+  const displayImages = filteredImages;
 
   // Classes CSS pour le layout
   const layoutClasses = {
@@ -111,9 +109,9 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData }) {
         )}
 
         {/* Grille d'images */}
-        {filteredImages.length > 0 ? (
+        {displayImages.length > 0 ? (
           <div className={containerClass}>
-            {filteredImages.map((image) => (
+            {displayImages.map((image) => (
               <div key={image.id} className={`group relative overflow-hidden rounded-lg bg-gray-100 ${isMasonry ? 'break-inside-avoid mb-4' : ''}`}>
                 {/* Image */}
                 <div className={`${isMasonry ? 'relative' : 'aspect-square relative'} overflow-hidden`}>

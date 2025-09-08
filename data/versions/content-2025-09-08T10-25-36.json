@@ -351,7 +351,7 @@
         },
         "enableLightbox": true,
         "showTitles": true,
-        "layout": "grid-4",
+        "layout": "masonry",
         "images": [
           {
             "id": "image-1757322157501",
@@ -368,6 +368,78 @@
             "title": "",
             "description": "",
             "category": "nature"
+          },
+          {
+            "id": "image-1757322280158",
+            "src": "/uploads/1757322285442-9593335c.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757322292399",
+            "src": "/uploads/1757322297689-f8b5ea14.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757322461168",
+            "src": "/uploads/1757322467815-099311ab.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757322482590",
+            "src": "/uploads/1757322497319-693e6f77.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757326919028-0",
+            "src": "/uploads/1757326919007-37600b01.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757326919028-1",
+            "src": "/uploads/1757326919015-6bb617ad.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757326919028-2",
+            "src": "/uploads/1757326919013-22deb455.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757326919028-3",
+            "src": "/uploads/1757326919006-b8e5eeeb.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757326919028-4",
+            "src": "/uploads/1757326919010-8f67f2cc.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
           }
         ],
         "enableDownload": false
