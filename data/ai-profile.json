@@ -1,36 +1,65 @@
 {
-  "id": "ai-profile-1757191784718",
+  "id": "ai-profile-1757315285596",
   "siteId": "main-site",
   "brand": {
-    "name": "Soliva",
-    "baseline": "Creative studio. DigitaI & brand strategy.  ",
+    "name": "Soliva ",
+    "baseline": "Creative studio. DigitaI & brand strategy.",
     "elevatorPitch": "Le studio réunit une équipe compacte de designers et développeurs basée au Hevre. Nous livrons des sites rapides, accessibles et faciles à maintenir, avec des délais clairs et un budget maîtrisé."
   },
   "offer": {
-    "mainServices": [],
-    "usps": []
+    "mainServices": [
+      "Site web sur-mesure",
+      "IA appliquée",
+      "Stratégie de marque"
+    ],
+    "usps": [
+      "Performance & SEO mesurables, pas “au feeling”",
+      "IA utile intégrée au CMS (gain de temps réel)",
+      "Creative Developper senior qui fait la différence visuelle"
+    ]
   },
   "audience": {
     "primary": {
-      "type": "B2B",
-      "sector": ""
+      "type": "B2C",
+      "sector": "mode, luxe, culture, retail"
     },
     "expertiseLevel": "pro"
   },
   "tone": {
-    "styles": [],
+    "styles": [
+      "fun"
+    ],
     "formality": "vouvoiement",
     "emojisAllowed": false,
-    "preferredLength": "standard"
+    "preferredLength": "court"
   },
   "writingRules": {
     "do": [],
-    "avoid": [],
-    "bannedWords": []
+    "avoid": [
+      "sur-promesses",
+      "anglicismes gratuits"
+    ],
+    "bannedWords": [
+      "révolutionner",
+      "disruptif",
+      "360°",
+      "ultra-innovant"
+    ]
   },
   "lexicon": {
-    "brandKeywords": [],
-    "allowedCTAs": []
+    "brandKeywords": [
+      "Next.js",
+      "performance",
+      "Core Web Vitals",
+      "GSAP",
+      "SEO",
+      "IA utile"
+    ],
+    "allowedCTAs": [
+      "Parler de votre projet",
+      "Obtenir un devis rapide",
+      "Voir des réalisations"
+    ]
   },
   "localization": {
     "outputLanguages": [
@@ -43,7 +72,10 @@
   },
   "seo": {
     "priorityKeywords": [],
-    "competitors": [],
+    "competitors": [
+      "https://www.colorz.fr/",
+      "https://www.dragonrouge.com/fr/"
+    ],
     "inspirationSources": []
   },
   "compliance": {
@@ -63,12 +95,12 @@
   },
   "consent": {
     "allowContextualTraining": true,
-    "dataRetentionDays": 90
+    "dataRetentionDays": null
   },
   "metadata": {
     "version": 1,
     "updatedBy": "admin",
-    "updatedAt": "2025-09-06T20:49:44.718Z",
-    "completenessScore": 57
+    "updatedAt": "2025-09-08T07:08:05.596Z",
+    "completenessScore": 83
   }
 }

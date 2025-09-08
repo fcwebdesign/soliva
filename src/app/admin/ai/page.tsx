@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { AIProfile, AIProfileFormData } from '@/types/ai-profile';
 import { Button } from '@/components/ui/button';
-// import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -21,13 +20,7 @@ export default function AISettingsPage() {
   const [testResult, setTestResult] = useState<any>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
-  // Supprimer le scroll du body
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, []);
+  // Pas besoin de gérer le scroll du body - laissons le layout admin s'en occuper
 
   // Charger le profil IA au montage
   useEffect(() => {
@@ -102,11 +95,14 @@ export default function AISettingsPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto p-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <Brain className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-500" />
-            <p className="text-gray-600">Chargement du profil IA...</p>
+      <div className="admin-page min-h-screen bg-gray-50">
+        <Sidebar currentPage="ai" />
+        <div className="lg:ml-64 flex flex-col">
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center">
+              <Brain className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-500" />
+              <p className="text-gray-600">Chargement du profil IA...</p>
+            </div>
           </div>
         </div>
       </div>
@@ -114,27 +110,27 @@ export default function AISettingsPage() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header personnalisé pour la page IA */}
+    <div className="admin-page min-h-screen bg-gray-50">
+      {/* Sidebar */}
+      <Sidebar currentPage="ai" />
+
+      {/* Zone principale */}
+      <div className="lg:ml-64 flex flex-col">
+        {/* Header avec SaveBar sticky */}
         <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-start justify-between">
+          <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4">
+            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
               <div>
-                <h1 className="text-4xl font-semibold text-gray-900 mb-2" style={{ fontSize: '2.25rem' }}>
+                <h1 className="text-2xl lg:text-4xl font-semibold text-gray-900 mb-2" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.25rem)' }}>
                   Paramètres IA
                 </h1>
-                <button
-                  onClick={() => window.history.back()}
-                  className="text-sm text-gray-500 hover:text-gray-700 p-0 h-auto bg-transparent border-none cursor-pointer"
-                >
-                  ← Retour
-                </button>
+                <p className="text-sm text-gray-500">
+                  Configuration
+                </p>
               </div>
-              
-              {/* Actions */}
-              <div className="flex items-center space-x-3">
+                
+              {/* Status bar et boutons d'action */}
+              <div className="flex flex-wrap items-center gap-2 lg:gap-4">
                 {hasUnsavedChanges && (
                   <span className="text-sm text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
                     Modifications non enregistrées
@@ -163,7 +159,7 @@ export default function AISettingsPage() {
                 {profile && (
                   <button
                     onClick={() => handleTestVoice('standard')}
-                    className="text-sm px-4 py-2 rounded-md transition-colors bg-gray-600 text-white hover:bg-gray-700"
+                    className="text-sm px-4 py-2 rounded-md transition-colors bg-blue-600 text-white hover:bg-blue-700"
                     title="Tester la voix de marque"
                   >
                     🧪 Tester la voix
@@ -191,73 +187,77 @@ export default function AISettingsPage() {
             </div>
           </div>
         </header>
-        <div className="flex-1 p-6 space-y-6 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 120px)' }}>
-          {/* Description */}
-          <div>
-            <p className="text-gray-600">
-              Configurez le profil IA pour des contenus alignés à votre marque
-            </p>
-          </div>
 
-      {/* Score de complétude */}
-      {profile && (
-        <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              <Settings className="w-5 h-5" />
-              Progression du profil
-            </h3>
-            <p className="text-sm text-gray-600">
-              Complétez votre profil pour des suggestions IA plus précises
-            </p>
-          </div>
-          <div>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Complétude</span>
-                <Badge variant={completenessScore >= 80 ? "default" : "secondary"}>
-                  {completenessScore}%
-                </Badge>
-              </div>
-              <Progress value={completenessScore} className="h-2" />
-              
-              {completenessScore < 80 && (
-                <Alert>
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertDescription>
-                    Votre profil IA est incomplet. Complétez au moins 80% des champs pour des suggestions optimales.
-                  </AlertDescription>
-                </Alert>
-              )}
-              
-              {completenessScore >= 80 && (
-                <Alert>
-                  <CheckCircle className="h-4 w-4" />
-                  <AlertDescription>
-                    Excellent ! Votre profil IA est complet et prêt à générer des contenus personnalisés.
-                  </AlertDescription>
-                </Alert>
-              )}
+        {/* Contenu principal */}
+        <div className="flex-1 p-4 lg:p-6">
+          <div className="space-y-6">
+            {/* Description */}
+            <div>
+              <p className="text-gray-600">
+                Configurez le profil IA pour des contenus alignés à votre marque
+              </p>
             </div>
+
+            {/* Score de complétude */}
+            {profile && (
+              <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+                <div className="mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                    <Settings className="w-5 h-5" />
+                    Progression du profil
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Complétez votre profil pour des suggestions IA plus précises
+                  </p>
+                </div>
+                <div>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Complétude</span>
+                      <Badge variant={completenessScore >= 80 ? "default" : "secondary"}>
+                        {completenessScore}%
+                      </Badge>
+                    </div>
+                    <Progress value={completenessScore} className="h-2" />
+                    
+                    {completenessScore < 80 && (
+                      <Alert>
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertDescription>
+                          Votre profil IA est incomplet. Complétez au moins 80% des champs pour des suggestions optimales.
+                        </AlertDescription>
+                      </Alert>
+                    )}
+                    
+                    {completenessScore >= 80 && (
+                      <Alert>
+                        <CheckCircle className="h-4 w-4" />
+                        <AlertDescription>
+                          Excellent ! Votre profil IA est complet et prêt à générer des contenus personnalisés.
+                        </AlertDescription>
+                      </Alert>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Formulaire de profil */}
+            <AIProfileForm
+              initialData={profile}
+              onSave={handleSaveProfile}
+              isLoading={saveStatus === 'saving'}
+              onDataChange={setHasUnsavedChanges}
+            />
+
+            {/* Modal de test de voix */}
+            {showVoiceTest && testResult && (
+              <VoiceTestModal
+                result={testResult}
+                onClose={() => setShowVoiceTest(false)}
+              />
+            )}
           </div>
-        </div>
-      )}
-
-      {/* Formulaire de profil */}
-      <AIProfileForm
-        initialData={profile}
-        onSave={handleSaveProfile}
-        isLoading={saveStatus === 'saving'}
-        onDataChange={setHasUnsavedChanges}
-      />
-
-      {/* Modal de test de voix */}
-      {showVoiceTest && testResult && (
-        <VoiceTestModal
-          result={testResult}
-          onClose={() => setShowVoiceTest(false)}
-        />
-      )}
         </div>
       </div>
     </div>

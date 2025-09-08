@@ -42,7 +42,7 @@
           {
             "id": "block-1756225439361-0.9107021052170442",
             "type": "content",
-            "content": "<p>Le studio réunit une équipe compacte de designers et développeurs basée au Hevre. Nous livrons des sites rapides, accessibles et faciles à maintenir, avec des délais clairs et un budget maîtrisé. Exemples récents: refonte e‑commerce (+28% de conversion) et site vitrine B2B chargé en moins de 1,2 s.</p>"
+            "content": "<p>Soliva est un studio créatif basé au Havre, spécialisé en sites web sur-mesure, IA appliquée et stratégie de marque. Nous livrons des interfaces rapides, accessibles et faciles à maintenir, avec des délais cadrés et un budget maîtrisé. Vous travaillez en direct avec une équipe resserrée de designers et développeurs, pour un résultat clair, fiable et mesurable.</p>"
           }
         ],
         "rightColumn": [],
@@ -84,7 +84,7 @@
           {
             "id": "service-1756056339086",
             "title": "Contenu & Shooting",
-            "description": "<p>Transformez votre vision en réalité. <br>Nous produisons du contenu web captivant et organisons des shootings photo professionnels pour donner vie à votre marque. <br>Profitez d'un rendu visuel haut de gamme et d'un storytelling efficace pour marquer l'esprit de vos clients.</p>",
+            "description": "<p>Boostez votre visibilité en ligne grâce à notre service \"Contenu &amp; Shooting\". Nous produisons du contenu web percutant et organisons des shootings photos pour donner vie à vos produits ou services. Vous bénéficiez d'un contenu unique, hautement partageable et d'images de qualité professionnelle pour captiver votre audience.</p>",
             "icon": ""
           },
           {
@@ -122,7 +122,9 @@
           "art-gallery-digital",
           "mode-ethique-collective ",
           "ecotech-solutions",
-          "mode-ethique-collective"
+          "mode-ethique-collective",
+          "mode-ethique-collective  ",
+          "mode-ethique-collective   "
         ],
         "theme": "auto"
       },
@@ -217,7 +219,7 @@
   },
   "studio": {
     "hero": {
-      "title": "Le studio",
+      "title": "Le studio k",
       "subtitle": "Notre approche créative"
     },
     "content": {
@@ -410,7 +412,7 @@
         "category": "Digital",
         "image": "/uploads/1755597343554-71ad1faf.jpg",
         "slug": "art-gallery-digital",
-        "excerpt": "Plateforme web immersive pour une galerie d'art contemporain.",
+        "excerpt": "Plateforme web immersive pour une galerie d'art contemporain.  ",
         "content": "<p>Plateforme web immersive pour une galerie d'art contemporain. Interface intuitive permettant aux visiteurs d'explorer les œuvres en 3D et de découvrir les artistes.</p>",
         "client": "Art Gallery Digital",
         "year": "2024",
@@ -478,18 +480,18 @@
         "image": "/uploads/1757196749496-b2215471.png"
       },
       {
-        "title": " Nouveau projet  ",
+        "title": "Nouveau projet",
         "content": "",
         "category": "",
         "client": "",
         "year": "2025",
         "featured": false,
         "status": "published",
-        "publishedAt": "2025-09-06T23:09:24.189Z",
+        "publishedAt": "2025-09-06T23:17:20.820Z",
         "slug": "ecotech-solutions "
       },
       {
-        "title": " Nouveau projet  ",
+        "title": " Nouveau projet   ",
         "content": "",
         "category": "",
         "client": "",
@@ -524,89 +526,13 @@
     ],
     "adminProjects": [
       {
-        "id": "ecotech-solutions ",
-        "title": "EcoTech Solutions",
-        "content": "<h3>test H3</h3>\n<img src=\"/uploads/1755556322957-c5ae9812.jpg\" alt=\"\">\n<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>\n<h2>Défis du projet</h2>\n<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>",
-        "slug": "ecotech-solutions ",
-        "status": "published",
-        "publishedAt": "2025-08-19T09:54:32.476Z",
-        "excerpt": "Identité de marque complète pour une startup spécialisée dans les technologies vertes. ",
-        "client": "EcoTech Solutions",
-        "category": "Identité",
-        "year": "2024",
-        "featured": true,
-        "blocks": [
-          {
-            "id": "block-1",
-            "type": "h3",
-            "content": "test H3"
-          },
-          {
-            "id": "block-2",
-            "type": "image",
-            "content": "",
-            "image": {
-              "src": "/uploads/1755556322957-c5ae9812.jpg",
-              "alt": ""
-            }
-          },
-          {
-            "id": "block-3",
-            "type": "content",
-            "content": "<p>Identité de marque complète pour une startup spécialisée dans les technologies vertes. Création d'un logo moderne, d'une palette de couleurs écologiques et d'une stratégie de communication cohérente.cxwxcxwcx</p><p></p><p>test</p>"
-          },
-          {
-            "id": "block-4",
-            "type": "h2",
-            "content": "Défis du projet"
-          },
-          {
-            "id": "block-5",
-            "type": "content",
-            "content": "<p>Ce projet a permis à EcoTech Solutions de se positionner comme un leader innovant dans le secteur des technologies durables.</p>"
-          },
-          {
-            "id": "quote-1756796142950",
-            "type": "quote",
-            "data": {
-              "quote": "Une citation inspirante pour votre contenu...",
-              "author": "Nom de l'auteur",
-              "role": "Fonction",
-              "theme": "auto"
-            },
-            "quote": "ddd",
-            "author": "gdgdgd",
-            "role": "gddg"
-          },
-          {
-            "id": "services-1756798314423",
-            "type": "services",
-            "data": {
-              "title": "OUR CORE OFFERINGS",
-              "theme": "auto",
-              "offerings": []
-            },
-            "title": "test services",
-            "offerings": [
-              {
-                "id": "service-1756798319784",
-                "title": "hello",
-                "description": "<p>sdfsddf</p>",
-                "icon": ""
-              }
-            ]
-          }
-        ],
-        "image": "/uploads/1756854873729-ae4aa905.png"
-      },
-      {
         "id": "art-gallery-digital",
         "title": "Art Gallery Digital",
         "content": "<p>Plateforme web immersive pour une galerie d'art contemporain. Interface intuitive permettant aux visiteurs d'explorer les œuvres en 3D et de découvrir les artistes.</p>",
         "slug": "art-gallery-digital",
         "status": "published",
         "publishedAt": "2024-02-20T14:30:00.000Z",
-        "excerpt": "Plateforme web immersive pour une galerie d'art contemporain.",
+        "excerpt": "Plateforme web immersive pour une galerie d'art contemporain.  ",
         "client": "Art Gallery Digital",
         "category": "Digital",
         "year": "2024",
@@ -702,18 +628,6 @@
         "slug": "mode-ethique-collective   "
       },
       {
-        "id": "ecotech-solutions ",
-        "title": "Nouveau projet",
-        "content": "",
-        "status": "published",
-        "client": "",
-        "category": "",
-        "year": "2025",
-        "featured": false,
-        "slug": "ecotech-solutions ",
-        "publishedAt": "2025-09-06T22:33:57.096Z"
-      },
-      {
         "id": "ecotech-solutions  ",
         "title": "Nouveau projet",
         "content": "",
@@ -736,18 +650,6 @@
         "featured": false,
         "slug": "ecotech-solutions  ",
         "publishedAt": "2025-09-06T22:33:57.096Z"
-      },
-      {
-        "id": "ecotech-solutions ",
-        "title": "Nouveau projet",
-        "content": "",
-        "status": "published",
-        "client": "",
-        "category": "",
-        "year": "2025",
-        "featured": false,
-        "slug": "ecotech-solutions ",
-        "publishedAt": "2025-09-06T22:45:24.605Z"
       },
       {
         "id": "ecotech-solutions  ",
@@ -808,30 +710,6 @@
         "featured": false,
         "slug": "ecotech-solutions  g",
         "publishedAt": "2025-09-06T22:45:24.605Z"
-      },
-      {
-        "id": "ecotech-solutions ",
-        "title": "Nouveau projet",
-        "content": "",
-        "status": "published",
-        "client": "",
-        "category": "",
-        "year": "2025",
-        "featured": false,
-        "slug": "ecotech-solutions ",
-        "publishedAt": "2025-09-06T22:47:47.835Z"
-      },
-      {
-        "id": "ecotech-solutions ",
-        "title": "Nouveau projet ",
-        "content": "",
-        "status": "published",
-        "client": "",
-        "category": "",
-        "year": "2025",
-        "featured": false,
-        "slug": "ecotech-solutions ",
-        "publishedAt": "2025-09-06T22:47:47.835Z"
       },
       {
         "id": "ecotech-solutions   ",
@@ -898,42 +776,6 @@
         "excerpt": "   "
       },
       {
-        "id": "ecotech-solutions ",
-        "title": "Nouveau projet    ",
-        "content": "",
-        "status": "published",
-        "client": "",
-        "category": "",
-        "year": "2025",
-        "featured": false,
-        "publishedAt": "2025-09-06T22:51:14.238Z",
-        "slug": "ecotech-solutions "
-      },
-      {
-        "id": "ecotech-solutions ",
-        "title": " Nouveau projet    ",
-        "content": "",
-        "status": "published",
-        "client": "",
-        "category": "",
-        "year": "2025",
-        "featured": false,
-        "publishedAt": "2025-09-06T22:51:14.238Z",
-        "slug": "ecotech-solutions "
-      },
-      {
-        "id": "ecotech-solutions ",
-        "title": " Nouveau projet     ",
-        "content": "",
-        "status": "published",
-        "client": "",
-        "category": "",
-        "year": "2025",
-        "featured": false,
-        "publishedAt": "2025-09-06T22:51:14.238Z",
-        "slug": "ecotech-solutions "
-      },
-      {
         "id": "ecotech-solutions  ",
         "title": " Nouveau projet     ",
         "content": "",
@@ -957,18 +799,6 @@
         "publishedAt": "2025-09-06T22:51:14.238Z",
         "slug": "ecotech-solutions  ",
         "excerpt": "v"
-      },
-      {
-        "id": "ecotech-solutions ",
-        "title": "Nouveau projet   ",
-        "content": "",
-        "status": "published",
-        "client": "",
-        "category": "",
-        "year": "2025",
-        "featured": false,
-        "publishedAt": "2025-09-06T22:56:18.601Z",
-        "slug": "ecotech-solutions "
       },
       {
         "id": "ecotech-solutions  ",
@@ -1115,42 +945,6 @@
         "slug": "ecotech-solutions   "
       },
       {
-        "id": "ecotech-solutions ",
-        "title": "Nouveau projet ",
-        "content": "",
-        "status": "published",
-        "client": "",
-        "category": "",
-        "year": "2025",
-        "featured": false,
-        "publishedAt": "2025-09-06T23:09:24.189Z",
-        "slug": "ecotech-solutions "
-      },
-      {
-        "id": "ecotech-solutions ",
-        "title": " Nouveau projet ",
-        "content": "",
-        "status": "published",
-        "client": "",
-        "category": "",
-        "year": "2025",
-        "featured": false,
-        "publishedAt": "2025-09-06T23:09:24.189Z",
-        "slug": "ecotech-solutions "
-      },
-      {
-        "id": "ecotech-solutions ",
-        "title": " Nouveau projet  ",
-        "content": "",
-        "status": "published",
-        "client": "",
-        "category": "",
-        "year": "2025",
-        "featured": false,
-        "publishedAt": "2025-09-06T23:09:24.189Z",
-        "slug": "ecotech-solutions "
-      },
-      {
         "id": "ecotech-solutions  ",
         "title": " Nouveau projet  ",
         "content": "",
@@ -1161,6 +955,30 @@
         "featured": false,
         "publishedAt": "2025-09-06T23:09:24.189Z",
         "slug": "ecotech-solutions  "
+      },
+      {
+        "id": "ecotech-solutions  ",
+        "title": " Nouveau projet   ",
+        "content": "",
+        "status": "published",
+        "client": "",
+        "category": "",
+        "year": "2025",
+        "featured": false,
+        "publishedAt": "2025-09-06T23:09:24.189Z",
+        "slug": "ecotech-solutions  "
+      },
+      {
+        "id": "ecotech-solutions ",
+        "title": "Nouveau projet",
+        "content": "",
+        "status": "published",
+        "client": "",
+        "category": "",
+        "year": "2025",
+        "featured": false,
+        "slug": "ecotech-solutions ",
+        "publishedAt": "2025-09-06T23:17:20.820Z"
       }
     ],
     "seo": {
