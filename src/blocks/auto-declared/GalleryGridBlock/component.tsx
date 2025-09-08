@@ -64,7 +64,7 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData }) {
     'grid-2': 'grid-cols-1 md:grid-cols-2',
     'grid-3': 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
     'grid-4': 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
-    'masonry': 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+    'masonry': 'columns-1 md:columns-2 lg:columns-3 xl:columns-4'
   };
 
   const gapClasses = {
@@ -75,6 +75,10 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData }) {
 
   const gridClass = layoutClasses[layout] || 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
   const gapClass = gapClasses[gap] || 'gap-4';
+  
+  // Pour le masonry, utiliser columns au lieu de grid
+  const isMasonry = layout === 'masonry';
+  const containerClass = isMasonry ? `${gridClass} ${gapClass}` : `grid ${gridClass} ${gapClass}`;
 
   // Fonction pour télécharger une image
   const downloadImage = (image: GalleryImage) => {
@@ -108,18 +112,26 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData }) {
 
         {/* Grille d'images */}
         {filteredImages.length > 0 ? (
-          <div className={`grid ${gridClass} ${gapClass}`}>
+          <div className={containerClass}>
             {filteredImages.map((image) => (
-              <div key={image.id} className="group relative overflow-hidden rounded-lg bg-gray-100">
+              <div key={image.id} className={`group relative overflow-hidden rounded-lg bg-gray-100 ${isMasonry ? 'break-inside-avoid mb-4' : ''}`}>
                 {/* Image */}
-                <div className="aspect-square relative overflow-hidden">
-                  <Image
-                    src={image.src}
-                    alt={image.alt}
-                    fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-                  />
+                <div className={`${isMasonry ? 'relative' : 'aspect-square relative'} overflow-hidden`}>
+                  {isMasonry ? (
+                    <img
+                      src={image.src}
+                      alt={image.alt}
+                      className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <Image
+                      src={image.src}
+                      alt={image.alt}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                    />
+                  )}
                   
                   {/* Overlay avec actions */}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
