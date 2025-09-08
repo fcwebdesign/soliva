@@ -40,7 +40,8 @@ import {
   Trash2,
   Container,
   Square,
-  X
+  X,
+  Info
 } from 'lucide-react';
 import { 
   DropdownMenu, 
@@ -49,6 +50,11 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator 
 } from "@/components/ui/dropdown-menu";
+import { 
+  HoverCard, 
+  HoverCardContent, 
+  HoverCardTrigger 
+} from "@/components/ui/hover-card";
 
 interface Section {
   id: string;
@@ -531,6 +537,36 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
             ))}
           </SortableContext>
         </DndContext>
+      </div>
+
+      {/* Footer avec info */}
+      <div className="border-t pt-3 mt-3" style={{ borderColor: 'var(--admin-border)' }}>
+        <HoverCard openDelay={200} closeDelay={100}>
+          <HoverCardTrigger asChild>
+            <button 
+              className="flex items-center gap-2 w-full p-2 rounded transition-colors"
+              style={{ 
+                backgroundColor: 'transparent',
+                transition: 'background-color 0.2s'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+            >
+              <Info className="w-4 h-4" style={{ color: 'var(--admin-text-muted)' }} />
+              <span className="text-xs" style={{ color: 'var(--admin-text-muted)' }}>
+                Aide
+              </span>
+            </button>
+          </HoverCardTrigger>
+          <HoverCardContent className="w-64">
+            <div className="flex items-start gap-2">
+              <Info className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
+              <p className="text-sm text-muted-foreground">
+                Glissez-déposez pour réorganiser les éléments de votre page.
+              </p>
+            </div>
+          </HoverCardContent>
+        </HoverCard>
       </div>
 
       </div>
