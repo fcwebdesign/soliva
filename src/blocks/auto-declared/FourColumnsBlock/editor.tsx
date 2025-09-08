@@ -4,6 +4,8 @@ import React from 'react';
 import WysiwygEditor from '../../../app/admin/components/WysiwygEditor';
 import MediaUploader from '../../../app/admin/components/MediaUploader';
 import { getAutoDeclaredBlock } from '../registry';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter } from '../../../components/ui/drawer';
+import { Button } from '../../../components/ui/button';
 
 interface FourColumnsData {
   column1?: any[];
@@ -26,6 +28,10 @@ export default function FourColumnsBlockEditor({ data, onChange }: { data: FourC
   const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = React.useState<number | null>(null);
   const [draggedColumn, setDraggedColumn] = React.useState<'column1' | 'column2' | 'column3' | 'column4' | null>(null);
+  
+  // État pour le Drawer
+  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
+  const [editingBlock, setEditingBlock] = React.useState<{ block: any; column: string; index: number } | null>(null);
 
   const updateField = (field: string, value: any) => {
     onChange({
@@ -60,6 +66,28 @@ export default function FourColumnsBlockEditor({ data, onChange }: { data: FourC
     const newBlocks = [...currentBlocks];
     newBlocks[index] = { ...newBlocks[index], ...updates };
     updateColumn(column, newBlocks);
+  };
+
+  // Fonctions pour le Drawer
+  const openDrawer = (block: any, column: string, index: number) => {
+    setEditingBlock({ block, column, index });
+    setIsDrawerOpen(true);
+  };
+
+  const closeDrawer = () => {
+    setIsDrawerOpen(false);
+    setEditingBlock(null);
+  };
+
+  const saveBlockInDrawer = (updates: any) => {
+    if (editingBlock) {
+      updateBlockInColumn(editingBlock.column as any, editingBlock.index, updates);
+      // Mettre à jour l'état du bloc en cours d'édition
+      setEditingBlock({
+        ...editingBlock,
+        block: { ...editingBlock.block, ...updates }
+      });
+    }
   };
 
   const getDefaultBlockData = (blockType: string) => {
@@ -243,7 +271,18 @@ export default function FourColumnsBlockEditor({ data, onChange }: { data: FourC
                   </button>
                 </div>
                 
-                {renderBlockEditor(block, (updates) => updateBlockInColumn(column, index, updates))}
+                {/* Remplacer l'édition inline par un clic qui ouvre le Drawer */}
+                <div 
+                  className="block-content cursor-pointer p-3 border border-gray-200 rounded hover:bg-gray-50 transition-colors"
+                  onClick={() => openDrawer(block, column, index)}
+                >
+                  <div className="text-sm text-gray-600 mb-2">
+                    Cliquez pour éditer ce bloc
+                  </div>
+                  <div className="text-xs text-gray-400">
+                    Type: {block.type}
+                  </div>
+                </div>
               </div>
             ))
           )}
@@ -417,6 +456,27 @@ export default function FourColumnsBlockEditor({ data, onChange }: { data: FourC
           {renderColumnEditor('column4', 'Colonne 4')}
         </div>
       </div>
+
+      {/* Drawer pour l'édition des blocs */}
+      <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+        <DrawerContent className="h-[70vh] max-h-[600px]">
+          <DrawerHeader>
+            <DrawerTitle>
+              Éditer le bloc - {editingBlock?.block?.type || 'Inconnu'}
+            </DrawerTitle>
+          </DrawerHeader>
+          
+          <div className="flex-1 overflow-y-auto px-4">
+            {editingBlock && renderBlockEditor(editingBlock.block, saveBlockInDrawer)}
+          </div>
+          
+          <DrawerFooter>
+            <Button onClick={closeDrawer}>
+              Fermer
+            </Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 }

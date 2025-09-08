@@ -354,20 +354,28 @@
         "layout": "masonry",
         "images": [
           {
-            "id": "image-1757322157501",
-            "src": "/uploads/1757322163699-9a7db0e4.png",
-            "alt": "",
-            "title": "",
-            "description": "",
-            "category": "paysage"
-          },
-          {
             "id": "image-1757322176569",
             "src": "/uploads/1757322181370-dd4ab91e.jpg",
             "alt": "",
             "title": "",
             "description": "",
             "category": "nature"
+          },
+          {
+            "id": "image-1757326919028-3",
+            "src": "/uploads/1757326919006-b8e5eeeb.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757322157501",
+            "src": "/uploads/1757322163699-9a7db0e4.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": "paysage"
           },
           {
             "id": "image-1757322280158",
@@ -392,9 +400,117 @@
             "title": "",
             "description": "",
             "category": ""
+          },
+          {
+            "id": "image-1757322482590",
+            "src": "/uploads/1757322497319-693e6f77.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757326919028-0",
+            "src": "/uploads/1757326919007-37600b01.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757326919028-1",
+            "src": "/uploads/1757326919015-6bb617ad.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757326919028-2",
+            "src": "/uploads/1757326919013-22deb455.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757326919028-4",
+            "src": "/uploads/1757326919010-8f67f2cc.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
           }
         ],
-        "enableDownload": false
+        "enableDownload": false,
+        "theme": "dark"
+      },
+      {
+        "id": "three-columns-1757330645006",
+        "type": "three-columns",
+        "data": {
+          "leftColumn": [],
+          "middleColumn": [],
+          "rightColumn": [],
+          "layout": "left-middle-right",
+          "gap": "medium",
+          "alignment": "top",
+          "theme": "auto"
+        },
+        "leftColumn": [
+          {
+            "id": "content-1757331270102",
+            "type": "content",
+            "content": "<p>Soliva conçoit des sites sur-mesure en Next.js, rapides à charger et notés vert sur les Core Web Vitals. Nous intégrons une IA utile directement dans votre CMS pour automatiser la rédaction récurrente et gagner du temps, tout en renforçant votre SEO. Animations GSAP maîtrisées, code propre et budget cadré: vous gardez la main, sans surprise.</p>"
+          },
+          {
+            "id": "",
+            "type": "image",
+            "image": {
+              "src": "/uploads/1757331361994-e78ce4f4.png",
+              "alt": ""
+            }
+          },
+          {
+            "id": "projects-1757331579820",
+            "type": "projects",
+            "title": "NOS RÉALISATIONS",
+            "maxProjects": 6,
+            "selectedProjects": [
+              "art-gallery-digital",
+              "mode-ethique-collective ",
+              "mode-ethique-collective  "
+            ],
+            "theme": "auto"
+          }
+        ],
+        "columns": [
+          {
+            "id": "col_1",
+            "type": "image-title-cta",
+            "label": "Colonne 1",
+            "status": "incomplete",
+            "props": {
+              "title": "gyg"
+            }
+          },
+          {
+            "id": "col_2",
+            "type": "text-only",
+            "label": "Colonne 2",
+            "status": "incomplete",
+            "props": {}
+          },
+          {
+            "id": "col_3",
+            "type": "text-only",
+            "label": "Colonne 3",
+            "status": "incomplete",
+            "props": {}
+          }
+        ],
+        "gap": "md",
+        "align": "start"
       }
     ],
     "seo": {

@@ -354,20 +354,28 @@
         "layout": "masonry",
         "images": [
           {
-            "id": "image-1757322157501",
-            "src": "/uploads/1757322163699-9a7db0e4.png",
-            "alt": "",
-            "title": "",
-            "description": "",
-            "category": "paysage"
-          },
-          {
             "id": "image-1757322176569",
             "src": "/uploads/1757322181370-dd4ab91e.jpg",
             "alt": "",
             "title": "",
             "description": "",
             "category": "nature"
+          },
+          {
+            "id": "image-1757326919028-3",
+            "src": "/uploads/1757326919006-b8e5eeeb.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757322157501",
+            "src": "/uploads/1757322163699-9a7db0e4.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": "paysage"
           },
           {
             "id": "image-1757322280158",
@@ -396,6 +404,38 @@
           {
             "id": "image-1757322482590",
             "src": "/uploads/1757322497319-693e6f77.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757326919028-0",
+            "src": "/uploads/1757326919007-37600b01.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757326919028-1",
+            "src": "/uploads/1757326919015-6bb617ad.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757326919028-2",
+            "src": "/uploads/1757326919013-22deb455.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1757326919028-4",
+            "src": "/uploads/1757326919010-8f67f2cc.png",
             "alt": "",
             "title": "",
             "description": "",
