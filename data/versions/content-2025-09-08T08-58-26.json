@@ -336,36 +336,38 @@
         "alignment": "top"
       },
       {
-        "id": "three-columns-1757319966946",
-        "type": "three-columns",
+        "id": "gallery-grid-1757321610089",
+        "type": "gallery-grid",
         "data": {
-          "leftColumn": [],
-          "middleColumn": [],
-          "rightColumn": [],
-          "layout": "left-middle-right",
+          "images": [],
+          "layout": "grid-3",
           "gap": "medium",
-          "alignment": "top",
+          "showFilters": true,
+          "showTitles": true,
+          "showDescriptions": true,
+          "enableLightbox": true,
+          "enableDownload": true,
           "theme": "auto"
         },
-        "leftColumn": [
+        "enableLightbox": true,
+        "showTitles": true,
+        "layout": "grid-4",
+        "images": [
           {
-            "id": "content-1757319970849",
-            "type": "content",
-            "content": "<p>wxxcwcxwxcx</p>"
-          }
-        ],
-        "middleColumn": [
+            "id": "image-1757321636481",
+            "src": "/uploads/1757321647244-76f95475.jpg",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
           {
-            "id": "content-1757319973793",
-            "type": "content",
-            "content": "<p>wxccxwwxc</p>"
-          }
-        ],
-        "rightColumn": [
-          {
-            "id": "content-1757319975850",
-            "type": "content",
-            "content": "<p>wxcxwxcxwcxxwccwxcwxcw xcvxc</p>"
+            "id": "image-1757321736987",
+            "src": "/uploads/1757321742177-5e5af774.jpg",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
           }
         ]
       }

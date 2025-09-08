@@ -510,6 +510,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     const customLabels: Record<string, string> = {
       'contact': 'Contact',
       'content': 'Éditeur de texte',
+      'four-columns': 'Quatre colonnes',
+      'gallery-grid': 'Galerie Grid',
       'h2': 'Titre H2',
       'h3': 'Titre H3',
       'image': 'Image',
@@ -519,7 +521,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       'services': 'Liste titre/texte',
       'three-columns': 'Trois colonnes',
       'two-columns': 'Deux colonnes',
-    };
+    };;
     return customLabels[blockType] || blockType;
   };
 
@@ -532,6 +534,10 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
         return <Phone className={iconClass} />;
       case 'content':
         return <AlignLeft className={iconClass} />;
+      case 'four-columns':
+        return <Grid3x3 className={iconClass} />;
+      case 'gallery-grid':
+        return <Grid3x3 className={iconClass} />;
       case 'h2':
         return <Type className={iconClass} />;
       case 'h3':
@@ -561,12 +567,12 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     const categories = {
       '📞 Contact': ['contact'],
       '📝 Textes': ['content', 'h2', 'h3', 'quote'],
-      '🖼️ Images': ['image'],
+      '🎨 Layout': ['four-columns', 'three-columns', 'two-columns'],
+      '🖼️ Images': ['gallery-grid', 'image'],
       '🏢 Logos': ['logos'],
       '💼 Projets': ['projects'],
       '🛠️ Services': ['services'],
-      '🎨 Layout': ['three-columns', 'two-columns'],
-    };
+    };;
 
     const categorized: { [key: string]: any[] } = {};
     

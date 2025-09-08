@@ -113,7 +113,7 @@
         "type": "projects",
         "content": "",
         "title": "Projets selectionnés",
-        "maxProjects": 2,
+        "maxProjects": 4,
         "selectedProjects": [
           "project-1",
           "project-3",
@@ -122,7 +122,9 @@
           "art-gallery-digital",
           "mode-ethique-collective ",
           "ecotech-solutions",
-          "mode-ethique-collective"
+          "mode-ethique-collective",
+          "mode-ethique-collective  ",
+          "mode-ethique-collective   "
         ],
         "theme": "auto"
       },
@@ -217,7 +219,7 @@
   },
   "studio": {
     "hero": {
-      "title": "Le studio k",
+      "title": "Le studio",
       "subtitle": "Notre approche créative"
     },
     "content": {
@@ -334,17 +336,41 @@
         "alignment": "top"
       },
       {
-        "id": "quote-1756753800786",
-        "type": "quote",
+        "id": "gallery-grid-1757321610089",
+        "type": "gallery-grid",
         "data": {
-          "quote": "Une citation inspirante pour votre contenu...",
-          "author": "Nom de l'auteur",
-          "role": "Fonction",
+          "images": [],
+          "layout": "grid-3",
+          "gap": "medium",
+          "showFilters": true,
+          "showTitles": true,
+          "showDescriptions": true,
+          "enableLightbox": true,
+          "enableDownload": true,
           "theme": "auto"
         },
-        "quote": "dsdsdf",
-        "author": "dfsdfsd",
-        "role": "dsffdsfds"
+        "enableLightbox": true,
+        "showTitles": true,
+        "layout": "grid-2",
+        "images": [
+          {
+            "id": "image-1757322157501",
+            "src": "/uploads/1757322163699-9a7db0e4.png",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": "paysage"
+          },
+          {
+            "id": "image-1757322176569",
+            "src": "/uploads/1757322181370-dd4ab91e.jpg",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": "nature"
+          }
+        ],
+        "enableDownload": false
       }
     ],
     "seo": {

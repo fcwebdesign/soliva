@@ -219,7 +219,7 @@
   },
   "studio": {
     "hero": {
-      "title": "Le studio k",
+      "title": "Le studio",
       "subtitle": "Notre approche créative"
     },
     "content": {
@@ -336,17 +336,32 @@
         "alignment": "top"
       },
       {
-        "id": "quote-1756753800786",
-        "type": "quote",
+        "id": "gallery-grid-1757321610089",
+        "type": "gallery-grid",
         "data": {
-          "quote": "Une citation inspirante pour votre contenu...",
-          "author": "Nom de l'auteur",
-          "role": "Fonction",
+          "images": [],
+          "layout": "grid-3",
+          "gap": "medium",
+          "showFilters": true,
+          "showTitles": true,
+          "showDescriptions": true,
+          "enableLightbox": true,
+          "enableDownload": true,
           "theme": "auto"
         },
-        "quote": "dsdsdf",
-        "author": "dfsdfsd",
-        "role": "dsffdsfds"
+        "enableLightbox": true,
+        "showTitles": true,
+        "layout": "grid-4",
+        "images": [
+          {
+            "id": "image-1757321636481",
+            "src": "/uploads/1757321647244-76f95475.jpg",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          }
+        ]
       }
     ],
     "seo": {

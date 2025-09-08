@@ -7,8 +7,8 @@ const AUTO_DECLARED_DIR = 'src/blocks/auto-declared';
 const INDEX_FILE = path.join(AUTO_DECLARED_DIR, 'index.ts');
 const BLOCK_EDITOR_FILE = 'src/app/admin/components/BlockEditor.tsx';
 
-// Importer la détection automatique
-const { autoDetectBlocks, loadBlockConfig } = require('./auto-detect-blocks');
+// Importer la mise à jour simple
+const { main } = require('./simple-block-updater');
 
 function generateImports() {
   try {
@@ -129,16 +129,8 @@ function updateBlockEditor(blockDirs) {
 
 // Exécuter si appelé directement
 if (require.main === module) {
-  // 1. Détecter automatiquement les nouveaux blocs
-  autoDetectBlocks();
-  
-  // 2. Générer les imports
-  const blockDirs = generateImports();
-  
-  // 3. Mettre à jour l'interface admin
-  updateBlockEditor(blockDirs);
-  
-  console.log('🎉 Génération complète terminée !');
+  // Utiliser la mise à jour intelligente
+  main();
 }
 
 module.exports = { generateImports, updateBlockEditor };
