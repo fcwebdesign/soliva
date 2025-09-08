@@ -81,7 +81,6 @@ export function renderAutoBlockEditor(block: any, onUpdate?: (updates: any) => v
             // Cette fonction sera appelée par le parent
             console.log('🔄 Mise à jour du bloc auto-déclaré:', updates);
           }}
-          context={context}
         />
       ) : (
         <div className="p-4 bg-yellow-50 border border-yellow-200 rounded">
