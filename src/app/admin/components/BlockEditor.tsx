@@ -43,6 +43,7 @@ import {
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 
 interface Block {
   id: string;
@@ -103,6 +104,12 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     if (blockToDelete) {
       removeBlock(blockToDelete);
       setSelectedBlockId(null); // Désélectionner le bloc supprimé
+      
+      // Notification de succès
+      toast.success("Bloc supprimé", {
+        description: "Le bloc a été supprimé avec succès.",
+        duration: 3000,
+      });
     }
     setShowDeleteConfirm(false);
     setBlockToDelete(null);
@@ -2107,6 +2114,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                 
                 <div className="h-full">
                   <SommairePanel 
+                    key={`sommaire-${blocks.length}-${blocks.map(b => b.id).join('-')}`}
                     className="border-0" 
                     blocks={blocks} 
                     onSelectBlock={handleSelectBlock}
@@ -2461,6 +2469,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                             pageKey.startsWith('project-') || pageKey.startsWith('article-');
 
   return (
+    <>
     <div className="flex h-full">
       {/* Zone principale d'édition */}
       <div className="flex-1">
@@ -2584,5 +2593,6 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
       )}
 
     </div>
+    </>
   );
 } 

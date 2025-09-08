@@ -104,7 +104,7 @@ export default async function RootLayout({ children }) {
             )}
           </TemplateProvider>
           <Toaster 
-            position="top-right"
+            position="top-center"
             toastOptions={{
               style: {
                 marginTop: '-10px',
