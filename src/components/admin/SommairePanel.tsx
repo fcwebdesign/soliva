@@ -1,5 +1,24 @@
 "use client";
 import React, { useState } from 'react';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import {
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { 
   ChevronDown, 
   ChevronRight, 
@@ -120,9 +139,46 @@ interface SommairePanelProps {
   onSelectBlock?: (blockId: string) => void;
   selectedBlockId?: string;
   onDeleteBlock?: (blockId: string) => void;
+  onReorderBlocks?: (newBlocks: any[]) => void;
 }
 
-export default function SommairePanel({ className = "", blocks = [], onSelectBlock, selectedBlockId, onDeleteBlock }: SommairePanelProps) {
+// Composant pour les éléments sortables - garde le design original
+function SortableItem({ 
+  section, 
+  index, 
+  renderSection 
+}: {
+  section: Section;
+  index: number;
+  renderSection: (section: Section, index?: number, dragListeners?: any) => React.ReactNode;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: section.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition: isDragging ? 'none' : 'transform 200ms ease',
+    opacity: isDragging ? 0.6 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+    >
+      {renderSection(section, index, listeners)}
+    </div>
+  );
+}
+
+export default function SommairePanel({ className = "", blocks = [], onSelectBlock, selectedBlockId, onDeleteBlock, onReorderBlocks }: SommairePanelProps) {
   
   // Fonction pour gérer les actions sur les sections
   const handleSectionAction = (action: string, section: Section) => {
@@ -216,20 +272,55 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
   ) : mockSections;
   
   const [sectionsState, setSectionsState] = useState<Section[]>(sections);
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
+  
+  // Configuration des capteurs pour dnd-kit avec contraintes d'activation
+  const mouseSensor = useSensor(PointerSensor, {
+    activationConstraint: { distance: 6 }, // drag uniquement si on bouge la souris
+  });
+  const keyboardSensor = useSensor(KeyboardSensor, {
+    coordinateGetter: sortableKeyboardCoordinates,
+  });
+  
+  const sensors = useSensors(mouseSensor, keyboardSensor);
+
+  // Fonction pour convertir les sections en blocs
+  const convertSectionsToBlocks = (sections: Section[]): any[] => {
+    return sections.map(section => {
+      const block = blocks.find(b => b.id === section.id);
+      return block || { id: section.id, type: section.type, label: section.label };
+    });
+  };
 
   const toggleExpanded = (sectionId: string) => {
-    const updateSections = (sections: Section[]): Section[] => {
-      return sections.map(section => {
-        if (section.id === sectionId) {
-          return { ...section, expanded: !section.expanded };
-        }
-        if (section.children) {
-          return { ...section, children: updateSections(section.children) };
-        }
-        return section;
-      });
-    };
-    setSectionsState(updateSections(sectionsState));
+    setExpandedSections(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(sectionId)) {
+        newSet.delete(sectionId);
+      } else {
+        newSet.add(sectionId);
+      }
+      return newSet;
+    });
+  };
+
+  // Fonction de gestion du drag & drop avec dnd-kit
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = sectionsState.findIndex(section => section.id === active.id);
+      const newIndex = sectionsState.findIndex(section => section.id === over.id);
+
+      const newSections = arrayMove(sectionsState, oldIndex, newIndex);
+      setSectionsState(newSections);
+
+      // Notifier le parent pour mettre à jour les blocs
+      if (onReorderBlocks) {
+        const newBlocks = convertSectionsToBlocks(newSections);
+        onReorderBlocks(newBlocks);
+      }
+    }
   };
 
 
@@ -239,20 +330,24 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
     return <IconComponent className="w-3 h-3" style={{ color: 'var(--admin-text-muted)' }} />;
   };
 
-  const renderSection = (section: Section) => {
+  const renderSection = (section: Section, index?: number, dragListeners?: any) => {
     const hasChildren = section.children && section.children.length > 0;
-    const isExpanded = section.expanded;
+    const isExpanded = expandedSections.has(section.id);
     const isSelected = selectedBlockId === section.id;
     
     return (
       <div key={section.id}>
         <div 
-          className={`flex items-center gap-1 py-1 px-2 cursor-pointer group transition-colors`}
+          className={`flex items-center gap-1 py-1 px-2 group transition-colors ${
+            section.type === 'column' ? 'cursor-default' : 'cursor-pointer'
+          } ${
+            section.level === 0 && index !== undefined ? 'cursor-grab active:cursor-grabbing' : ''
+          }`}
           style={{ 
             backgroundColor: isSelected ? 'var(--admin-bg-active)' : 'transparent',
             borderLeft: isSelected ? '3px solid var(--admin-primary)' : '3px solid transparent',
             transition: 'background-color 0.2s, border-left 0.2s',
-            paddingLeft: `${section.level * 12 + 8}px`
+            paddingLeft: `${section.level === 0 ? 8 : section.level === 1 ? 43 : 43}px`
           }}
           onClick={() => {
             if (onSelectBlock && section.type !== 'column') {
@@ -269,10 +364,14 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
               e.currentTarget.style.backgroundColor = 'transparent';
             }
           }}
+          {...(dragListeners && section.level === 0 ? dragListeners : {})}
         >
           {/* Flèche d'expansion */}
           {hasChildren ? (
             <button
+              type="button"
+              aria-label="Basculer l'expansion"
+              onPointerDownCapture={(e) => e.stopPropagation()}
               onClick={() => toggleExpanded(section.id)}
               className="flex-shrink-0 p-0.5 rounded"
               style={{ 
@@ -291,6 +390,7 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
           ) : (
             <div className="w-4" />
           )}
+          
           
           {/* Icône du type */}
           <div className="flex-shrink-0">
@@ -311,6 +411,7 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
                   backgroundColor: 'transparent',
                   transition: 'background-color 0.2s'
                 }}
+                onClick={(e) => e.stopPropagation()}
                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--admin-bg-active)'}
                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
               >
@@ -376,10 +477,13 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
   };
 
   return (
-    <div 
-      className={`w-full h-full flex flex-col ${className}`}
-      style={{ backgroundColor: 'var(--admin-bg)' }}
-    >
+    <>
+      {/* Styles CSS pour le drag & drop */}
+      
+      <div 
+        className={`w-full h-full flex flex-col ${className}`}
+        style={{ backgroundColor: 'var(--admin-bg)' }}
+      >
       {/* En-tête minimal */}
       <div 
         className="flex items-center justify-between p-3 border-b"
@@ -404,12 +508,30 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
         </button>
       </div>
 
-      {/* Liste des sections */}
-      <div className="flex-1 overflow-y-auto pt-2">
-        {sectionsState.map(section => renderSection(section))}
+      {/* Liste des sections avec dnd-kit */}
+      <div className="flex-1 overflow-y-auto pt-2 space-y-1">
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={sectionsState.map(section => section.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            {sectionsState.map((section, index) => (
+              <SortableItem
+                key={section.id}
+                section={section}
+                index={index}
+                renderSection={renderSection}
+              />
+            ))}
+          </SortableContext>
+        </DndContext>
       </div>
 
-
-    </div>
+      </div>
+    </>
   );
 }

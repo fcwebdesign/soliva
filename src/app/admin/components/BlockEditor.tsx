@@ -2120,6 +2120,10 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                     onSelectBlock={handleSelectBlock}
                     selectedBlockId={selectedBlockId}
                     onDeleteBlock={handleDeleteBlockFromPlan}
+                    onReorderBlocks={(newBlocks) => {
+                      setBlocks(newBlocks);
+                      updateBlocksContent(newBlocks);
+                    }}
                   />
                   
                   {/* AlertDialog pour la confirmation de suppression */}
