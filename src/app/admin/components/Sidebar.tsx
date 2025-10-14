@@ -14,8 +14,7 @@ import {
   Save,
   Globe,
   LogOut,
-  Brain,
-  Download
+  Brain
 } from 'lucide-react';
 
 interface Page {
@@ -48,7 +47,6 @@ export default function Sidebar({ currentPage }: SidebarProps) {
     { id: 'templates', label: 'Templates', path: null, icon: Layout },
     { id: 'footer', label: 'Footer', path: null, icon: Footprints },
     { id: 'backup', label: 'Sauvegarde', path: null, icon: Save },
-    { id: 'export', label: 'Export Statique', path: null, icon: Download },
     { id: 'ai', label: 'IA', path: '/admin/ai', icon: Brain },
   ];
 

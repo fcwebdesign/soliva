@@ -121,7 +121,7 @@ export default function ColumnsRowCard({
   const handleToggleColumnVisibility = (columnId: string) => {
     const newColumns = row.columns.map(col => 
       col.id === columnId 
-        ? { ...col, status: col.status === 'hidden' ? 'incomplete' : 'hidden' as const }
+        ? { ...col, status: col.status === 'hidden' ? 'incomplete' : 'hidden' }
         : col
     );
     

@@ -7,7 +7,6 @@ import TemplateManager from './components/TemplateManager';
 import HeaderManager from './components/HeaderManager';
 import FooterManager from './components/FooterManager';
 import MinimalisteManager from './components/MinimalisteManager';
-import StaticExportManager from './components/StaticExportManager';
 import SeoBlock from '@/components/admin/SeoBlock';
 import SchemaScript from '@/components/SchemaScript';
 import { generateAllSchemas } from '@/lib/schema';
@@ -49,8 +48,7 @@ function AdminPageContent() {
       metadata: { label: 'Métadonnées', path: null, icon: '⚙️' },
       templates: { label: 'Templates', path: null, icon: '🎨' },
       footer: { label: 'Footer', path: null, icon: '🦶' },
-      backup: { label: 'Sauvegarde', path: null, icon: '💾' },
-      export: { label: 'Export Statique', path: null, icon: '📦' }
+      backup: { label: 'Sauvegarde', path: null, icon: '💾' }
     };
     return pageConfigs[pageId as keyof typeof pageConfigs];
   };
@@ -84,7 +82,7 @@ function AdminPageContent() {
   // Initialiser la page depuis l'URL (une seule fois)
   useEffect(() => {
     const pageFromUrl = searchParams.get('page');
-    if (pageFromUrl && ['home', 'studio', 'contact', 'work', 'blog', 'nav', 'metadata', 'templates', 'footer', 'backup', 'export'].includes(pageFromUrl)) {
+    if (pageFromUrl && ['home', 'studio', 'contact', 'work', 'blog', 'nav', 'metadata', 'templates', 'footer', 'backup'].includes(pageFromUrl)) {
       setCurrentPage(pageFromUrl);
     } else {
       // Vérifier s'il y a une page par défaut à afficher
@@ -191,7 +189,7 @@ function AdminPageContent() {
   // Détecter les changements d'URL (boutons précédent/suivant du navigateur)
   useEffect(() => {
     const pageFromUrl = searchParams.get('page') || 'home';
-          if (pageFromUrl !== currentPage && ['home', 'studio', 'contact', 'work', 'blog', 'nav', 'metadata', 'templates', 'footer', 'backup', 'export'].includes(pageFromUrl)) {
+          if (pageFromUrl !== currentPage && ['home', 'studio', 'contact', 'work', 'blog', 'nav', 'metadata', 'templates', 'footer', 'backup'].includes(pageFromUrl)) {
       if (hasUnsavedChanges) {
         const confirmLeave = window.confirm(
           'Vous avez des modifications non enregistrées.\n\nÊtes-vous sûr de vouloir quitter cette page sans enregistrer ?'
@@ -858,8 +856,6 @@ function AdminPageContent() {
                       setHasUnsavedChanges(false);
                     }}
                   />
-                ) : currentPage === 'export' ? (
-                  <StaticExportManager content={content} />
                 ) : (
                   <div>
                     <BlockEditor

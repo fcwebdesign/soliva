@@ -11,6 +11,15 @@ interface InsertLinksRequest {
   title: string;
 }
 
+interface InsertLinksResponse {
+  enhancedBlocks: any[];
+  insertedLinks: Array<{
+    url: string;
+    anchor: string;
+    position: string;
+  }>;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const data: InsertLinksRequest = await request.json();
@@ -61,8 +70,8 @@ export async function POST(request: NextRequest) {
     );
 
     console.log('📤 Résultat final API:', {
-      enhancedBlocks: result.enhancedBlocks?.length || 0,
-      insertedLinks: result.insertedLinks?.length || 0
+      enhancedBlocks: (result as any).enhancedBlocks?.length || 0,
+      insertedLinks: (result as any).insertedLinks?.length || 0
     });
 
     return NextResponse.json(result);
@@ -81,7 +90,7 @@ async function enhanceContentWithLinks(
   internalLinks: any[],
   focusKeyword: string,
   title: string
-): Promise<any[]> {
+): Promise<InsertLinksResponse> {
   
   const model = 'gpt-4o-mini';
   
@@ -182,8 +191,8 @@ EXEMPLE DE LIEN À INSÉRER:
     });
 
     return {
-      enhancedBlocks: result.enhancedBlocks || contentBlocks,
-      insertedLinks: result.insertedLinks || []
+      enhancedBlocks: (result as any).enhancedBlocks || contentBlocks,
+      insertedLinks: (result as any).insertedLinks || []
     };
 
   } catch (error) {

@@ -571,6 +571,39 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
     updateBlocksContent(newBlocks);
   };
 
+  const duplicateBlock = (blockId: string) => {
+    const blockToDuplicate = blocks.find(block => block.id === blockId);
+    if (!blockToDuplicate) return;
+
+    // Créer une copie du bloc avec un nouvel ID
+    const duplicatedBlock: Block = {
+      ...blockToDuplicate,
+      id: `block-${Date.now()}`,
+      // Ajouter " (copie)" au titre si il existe
+      ...(blockToDuplicate.title && { title: `${blockToDuplicate.title} (copie)` }),
+      // Ajouter " (copie)" au contenu si il existe
+      ...(blockToDuplicate.content && { content: `${blockToDuplicate.content} (copie)` })
+    };
+
+    // Trouver l'index du bloc original
+    const originalIndex = blocks.findIndex(block => block.id === blockId);
+    
+    // Insérer la copie juste après l'original
+    const newBlocks = [
+      ...blocks.slice(0, originalIndex + 1),
+      duplicatedBlock,
+      ...blocks.slice(originalIndex + 1)
+    ];
+
+    setBlocks(newBlocks);
+    updateBlocksContent(newBlocks);
+    
+    // Sélectionner le bloc dupliqué
+    setSelectedBlockId(duplicatedBlock.id);
+    
+    toast.success("Bloc dupliqué avec succès");
+  };
+
   // Fonction pour filtrer les blocs par terme de recherche
   const getFilteredBlocks = () => {
     const allBlocks = getBlockMetadata();
@@ -2120,6 +2153,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
                     onSelectBlock={handleSelectBlock}
                     selectedBlockId={selectedBlockId}
                     onDeleteBlock={handleDeleteBlockFromPlan}
+                    onDuplicateBlock={duplicateBlock}
                     onReorderBlocks={(newBlocks) => {
                       setBlocks(newBlocks);
                       updateBlocksContent(newBlocks);
