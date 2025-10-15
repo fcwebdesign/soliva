@@ -1,0 +1,214 @@
+/* ===== KODZA EXPANDABLE CARD COMPONENT ===== */
+.kodza-expandable {
+  width: 100%;
+  max-width: 1150px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1rem, 3vw, 2.25rem);
+  align-items: stretch;
+}
+
+.kodza-expandable-card {
+  --card-radius: clamp(0.9rem, 2.6vw, 1.4rem);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --card-border-active: rgba(255, 255, 255, 0.22);
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 0fr;
+  row-gap: clamp(0.9rem, 2.6vw, 1.3rem);
+  min-height: clamp(240px, 32vw, 320px);
+  border-radius: var(--card-radius);
+  border: 1px solid var(--card-border);
+  background: linear-gradient(145deg, rgba(24, 24, 27, 0.85), rgba(12, 12, 14, 0.9));
+  padding: clamp(1.4rem, 3.6vw, 2.2rem);
+  cursor: pointer;
+  transition: border-color 0.4s ease, background 0.4s ease, filter 0.4s ease, grid-template-rows 0.4s ease;
+  isolation: isolate;
+  outline: none;
+  will-change: transform;
+}
+
+.kodza-expandable-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 58%),
+    radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.06), transparent 62%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.kodza-expandable-card::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: calc(var(--card-radius) - 1px);
+  background: var(--card-accent, radial-gradient(circle at top, rgba(87, 96, 255, 0.18), rgba(21, 21, 23, 0.85)));
+  opacity: 0;
+  transition: opacity 0.55s ease;
+  z-index: -2;
+}
+
+.kodza-expandable-card[aria-expanded="true"] {
+  border-color: var(--card-border-active);
+  background: linear-gradient(140deg, rgba(26, 26, 30, 0.95), rgba(9, 9, 11, 0.9));
+  grid-template-rows: auto 1fr;
+  min-height: clamp(320px, 48vw, 520px);
+  grid-column: span 2;
+  filter: drop-shadow(0 24px 46px rgba(0, 0, 0, 0.35));
+}
+
+.kodza-expandable-card[aria-expanded="true"]::before,
+.kodza-expandable-card[aria-expanded="true"]::after {
+  opacity: 1;
+}
+
+.kodza-expandable-card:focus-visible {
+  outline: 2px solid rgba(120, 143, 255, 0.85);
+  outline-offset: 4px;
+}
+
+.kodza-expandable-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.5rem, 1.8vw, 0.75rem);
+}
+
+.kodza-expandable-card-label {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: clamp(0.65rem, 1.4vw, 0.65rem);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(245, 245, 245, 0.82);
+}
+
+.kodza-expandable-card-title {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.kodza-expandable-card-summary {
+  font-size: clamp(0.95rem, 1.9vw, 1.05rem);
+  color: rgba(245, 245, 245, 0.65);
+  max-width: 38ch;
+}
+
+.kodza-expandable-card-body {
+  position: relative;
+  display: grid;
+  gap: clamp(0.85rem, 2.2vw, 1.25rem);
+  color: rgba(245, 245, 245, 0.85);
+  font-size: clamp(0.9rem, 1.8vw, 1rem);
+  line-height: 1.6;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease 0.1s, transform 0.5s ease 0.1s;
+  clip-path: inset(0 0 100% 0);
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.kodza-expandable-card[aria-expanded="true"] .kodza-expandable-card-body {
+  opacity: 1;
+  transform: translateY(0);
+  clip-path: inset(0 0 0 0);
+  pointer-events: auto;
+}
+
+.kodza-expandable-card-body ul {
+  list-style: none;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.kodza-expandable-card-body li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.6rem;
+  color: rgba(245, 245, 245, 0.75);
+}
+
+.kodza-expandable-card-bullet {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.06);
+}
+
+.kodza-expandable-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: clamp(0.8rem, 1.6vw, 0.95rem);
+  color: rgba(245, 245, 245, 0.6);
+}
+
+.kodza-expandable-card[data-theme="automation"] {
+  --card-accent: radial-gradient(circle at top, rgba(107, 126, 255, 0.18), rgba(18, 18, 19, 0.92));
+}
+
+.kodza-expandable-card[data-theme="research"] {
+  --card-accent: radial-gradient(circle at top, rgba(162, 212, 255, 0.2), rgba(16, 16, 18, 0.92));
+}
+
+.kodza-expandable-card[data-theme="marketing"] {
+  --card-accent: radial-gradient(circle at top, rgba(255, 178, 107, 0.22), rgba(19, 15, 11, 0.95));
+}
+
+.kodza-expandable-card[data-theme="go-to-market"] {
+  --card-accent: radial-gradient(circle at top, rgba(255, 104, 140, 0.22), rgba(21, 11, 15, 0.94));
+}
+
+.kodza-expandable-card-media {
+  height: clamp(160px, 32vw, 220px);
+  border-radius: clamp(0.75rem, 2vw, 1.1rem);
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: rgba(245, 245, 245, 0.6);
+  font-size: clamp(0.8rem, 1.8vw, 0.95rem);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1100px) {
+  .kodza-expandable {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .kodza-expandable {
+    grid-template-columns: 1fr;
+  }
+
+  .kodza-expandable-card {
+    min-height: auto;
+  }
+
+  .kodza-expandable-card[aria-expanded="true"] {
+    grid-column: span 1;
+    min-height: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
+}

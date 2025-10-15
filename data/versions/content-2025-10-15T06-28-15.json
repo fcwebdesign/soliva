@@ -8,8 +8,8 @@
     "logoImage": "",
     "location": "paris, le havre ",
     "items": [
-      "work",
       "studio",
+      "work",
       "contact",
       "blog"
     ],
@@ -165,6 +165,24 @@
         "ctaText": "Yes, sign me up",
         "ctaLink": "https://google.com",
         "theme": "auto"
+      },
+      {
+        "id": "expandable-card-1760505441514",
+        "type": "expandable-card",
+        "data": {
+          "title": "Titre de la carte",
+          "content": "Contenu de la carte qui s'affiche quand elle est étendue.",
+          "isExpanded": false,
+          "theme": "auto"
+        },
+        "isExpanded": false,
+        "title": "One file. One effect.",
+        "content": "<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>fdsdsfsdfdsfds</p></li><li class=\"mb-1\"><p>jjj</p></li><li class=\"mb-1\"><p>k</p></li></ul><p></p>",
+        "label": "vcxxvcxc",
+        "summary": "xvcvcxcxvvxc",
+        "features": [
+          "xvcxc"
+        ]
       }
     ],
     "seo": {
@@ -328,7 +346,7 @@
           {
             "id": "block-1756481800400-0.2609483852161575",
             "type": "content",
-            "content": "<p>Poste</p>"
+            "content": "<p>Poste dev</p>"
           }
         ],
         "layout": "left-right",
@@ -470,14 +488,6 @@
               "src": "/uploads/1757331361994-e78ce4f4.png",
               "alt": ""
             }
-          },
-          {
-            "id": "projects-1757331579820",
-            "type": "projects",
-            "title": "NOS RÉALISATIONS",
-            "maxProjects": 6,
-            "selectedProjects": [],
-            "theme": "auto"
           }
         ],
         "columns": [
@@ -509,24 +519,19 @@
         "align": "start",
         "middleColumn": [
           {
-            "id": "services-1757333983291",
-            "type": "services",
-            "title": "OUR CORE OFFERINGS",
-            "theme": "auto",
-            "offerings": [
-              {
-                "id": "service-1757333989145",
-                "title": "hello c'est cool ici",
-                "description": "<p>\"Hello c'est cool ici\" transforme votre expérience web en un voyage agréable et captivant. Grâce à notre technique unique de design intuitif et de contenu engageant, votre site web devient un espace accueillant qui favorise la fidélisation des utilisateurs.</p>",
-                "icon": ""
-              },
-              {
-                "id": "service-1757333995154",
-                "title": "on arnaque pas les gens nous !",
-                "description": "<p>\"On arnaque pas les gens nous !\" s'engage à offrir une transparence totale : pas de frais cachés, pas de coûts exorbitants. Nous prônons une communication claire, des tarifs justes et un suivi rigoureux pour garantir votre satisfaction.</p>",
-                "icon": ""
-              }
-            ]
+            "id": "content-1757334064756",
+            "type": "content",
+            "content": "<p>Chez Soliva, nous concevons des sites sur-mesure en Next.js, rapides, accessibles et faciles à maintenir. Nous optimisons la performance et les Core Web Vitals, intégrons de l’IA utile dans votre CMS pour gagner du temps, et soignons l’impact visuel avec un Creative Developer senior et GSAP. Parler de votre projet ou obtenir un devis rapide.</p>"
+          }
+        ],
+        "rightColumn": [
+          {
+            "id": "",
+            "type": "image",
+            "image": {
+              "src": "/uploads/1757334079054-84de8a0d.png",
+              "alt": ""
+            }
           }
         ]
       }
@@ -1824,6 +1829,145 @@
         "hero": {
           "title": "Politique de confidentialité"
         },
+        "layout": "two-columns"
+      },
+      {
+        "id": "nouvelle-page",
+        "title": "Nouvelle page",
+        "content": "<p>lkllhhjh</p>\n<h2>hgggjgjgj</h2>",
+        "slug": "nouvelle-page",
+        "status": "published",
+        "description": "",
+        "blocks": [
+          {
+            "id": "block-1",
+            "type": "content",
+            "content": "<p>lkllhhjh</p>",
+            "title": "Description"
+          },
+          {
+            "id": "block-2",
+            "type": "gallery-grid",
+            "data": {
+              "images": [],
+              "layout": "grid-3",
+              "gap": "medium",
+              "showFilters": true,
+              "showTitles": true,
+              "showDescriptions": true,
+              "enableLightbox": true,
+              "enableDownload": true,
+              "theme": "auto"
+            },
+            "images": [
+              {
+                "id": "image-1757335079401-0",
+                "src": "/uploads/1757335079381-c7e81d79.png",
+                "alt": "",
+                "title": "",
+                "description": "",
+                "category": ""
+              },
+              {
+                "id": "image-1757335079401-1",
+                "src": "/uploads/1757335079386-c22c9cea.png",
+                "alt": "",
+                "title": "",
+                "description": "",
+                "category": "portrait"
+              },
+              {
+                "id": "image-1757335079401-2",
+                "src": "/uploads/1757335079372-e15d791b.png",
+                "alt": "",
+                "title": "",
+                "description": "",
+                "category": ""
+              },
+              {
+                "id": "image-1757335079401-3",
+                "src": "/uploads/1757335079391-26ba7b43.png",
+                "alt": "",
+                "title": "",
+                "description": "",
+                "category": ""
+              },
+              {
+                "id": "image-1757335079401-4",
+                "src": "/uploads/1757335079375-0fb2a224.png",
+                "alt": "",
+                "title": "",
+                "description": "",
+                "category": ""
+              },
+              {
+                "id": "image-1757335079401-5",
+                "src": "/uploads/1757335079380-30a93fb3.png",
+                "alt": "",
+                "title": "",
+                "description": "",
+                "category": ""
+              }
+            ],
+            "layout": "masonry",
+            "theme": "dark"
+          },
+          {
+            "id": "block-3",
+            "type": "content",
+            "data": {
+              "content": ""
+            }
+          },
+          {
+            "id": "block-4",
+            "type": "three-columns",
+            "data": {
+              "leftColumn": [],
+              "middleColumn": [],
+              "rightColumn": [],
+              "layout": "left-middle-right",
+              "gap": "medium",
+              "alignment": "top",
+              "theme": "auto"
+            },
+            "leftColumn": [
+              {
+                "id": "logos-1757335228773",
+                "type": "logos",
+                "title": "NOS CLIENTS",
+                "theme": "auto",
+                "logos": []
+              },
+              {
+                "id": "content-1757335219613",
+                "type": "content",
+                "content": "<p>jhkjhkhkhkj</p>"
+              }
+            ]
+          },
+          {
+            "id": "h2-1757335183671",
+            "type": "h2",
+            "data": {
+              "content": ""
+            },
+            "content": "hgggjgjgj"
+          },
+          {
+            "id": "two-columns-1757335186171",
+            "type": "two-columns",
+            "data": {
+              "leftColumn": [],
+              "rightColumn": [],
+              "layout": "left-right",
+              "gap": "medium",
+              "alignment": "top",
+              "theme": "auto"
+            }
+          }
+        ],
+        "publishedAt": "2025-09-08T12:41:14.389Z",
         "layout": "two-columns"
       }
     ]

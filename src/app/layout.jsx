@@ -58,7 +58,7 @@ export default async function RootLayout({ children }) {
           <meta name="pragma" content="no-cache" />
           <meta name="expires" content="0" />
         </head>
-        <body className={isDraftMode ? 'preview-mode' : ''}>
+        <body className={`site ${isDraftMode ? 'preview-mode' : ''}`}>
           {/* Preloader */}
           <Preloader />
           

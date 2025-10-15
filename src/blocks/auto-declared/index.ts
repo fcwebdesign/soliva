@@ -4,6 +4,7 @@
 
 import './ContactBlock';
 import './ContentBlock';
+import './ExpandableCard';
 import './FourColumnsBlock';
 import './GalleryGridBlock';
 import './H2Block';
@@ -21,4 +22,4 @@ import './TwoColumnsBlock';
 // 2. Exécuter: npm run generate-blocks
 // 3. C'est tout !
 
-console.log('🚀 Blocs auto-déclarés chargés (13 blocs)');
+console.log('🚀 Blocs auto-déclarés chargés (14 blocs)');

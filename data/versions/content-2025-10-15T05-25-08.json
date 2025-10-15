@@ -8,8 +8,8 @@
     "logoImage": "",
     "location": "paris, le havre ",
     "items": [
-      "work",
       "studio",
+      "work",
       "contact",
       "blog"
     ],
@@ -165,6 +165,19 @@
         "ctaText": "Yes, sign me up",
         "ctaLink": "https://google.com",
         "theme": "auto"
+      },
+      {
+        "id": "expandable-card-1760505441514",
+        "type": "expandable-card",
+        "data": {
+          "title": "Titre de la carte",
+          "content": "Contenu de la carte qui s'affiche quand elle est étendue.",
+          "isExpanded": false,
+          "theme": "auto"
+        },
+        "isExpanded": false,
+        "title": "test",
+        "content": "fdsdsfsdfdsfds"
       }
     ],
     "seo": {

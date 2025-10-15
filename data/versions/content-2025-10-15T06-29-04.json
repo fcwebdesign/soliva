@@ -8,8 +8,8 @@
     "logoImage": "",
     "location": "paris, le havre ",
     "items": [
-      "work",
       "studio",
+      "work",
       "contact",
       "blog"
     ],
@@ -165,6 +165,25 @@
         "ctaText": "Yes, sign me up",
         "ctaLink": "https://google.com",
         "theme": "auto"
+      },
+      {
+        "id": "expandable-card-1760505441514",
+        "type": "expandable-card",
+        "data": {
+          "title": "Titre de la carte",
+          "content": "Contenu de la carte qui s'affiche quand elle est étendue.",
+          "isExpanded": false,
+          "theme": "auto"
+        },
+        "isExpanded": false,
+        "title": "One file. One effect.",
+        "content": "<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>fdsdsfsdfdsfds</p></li><li class=\"mb-1\"><p>jjj</p></li><li class=\"mb-1\"><p>k</p></li></ul><p></p>",
+        "label": "vcxxvcxc",
+        "summary": "xvcvcxcxvvxc",
+        "features": [
+          "xvcxc"
+        ],
+        "theme": "marketing"
       }
     ],
     "seo": {
@@ -328,7 +347,7 @@
           {
             "id": "block-1756481800400-0.2609483852161575",
             "type": "content",
-            "content": "<p>Poste</p>"
+            "content": "<p>Poste dev</p>"
           }
         ],
         "layout": "left-right",
@@ -1891,7 +1910,8 @@
                 "category": ""
               }
             ],
-            "layout": "masonry"
+            "layout": "masonry",
+            "theme": "dark"
           },
           {
             "id": "block-3",
