@@ -2947,3 +2947,103 @@ html.preview-mode body {
   color: #ffffff !important;
 }
 
+/* ===== SYSTÈME DE PRELOADER SIMPLE ===== */
+.preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: var(--bg);
+  z-index: 9999;
+  transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+}
+
+/* ===== ANIMATION STAGGER POUR LE NAV ===== */
+.nav {
+  opacity: 0;
+  transform: translateY(20px);
+  filter: blur(3px);
+  animation: navFadeIn 0.5s ease-out forwards;
+  animation-delay: 1.5s;
+}
+
+/* Animation pour le logo */
+.nav-logo {
+  opacity: 0;
+  transform: translateY(10px);
+  filter: blur(2px);
+  animation: navLogoFadeIn 0.4s ease-out forwards;
+  animation-delay: 1.6s;
+}
+
+/* Animation pour les liens de navigation */
+.nav-items {
+  opacity: 0;
+  transform: translateY(15px);
+  filter: blur(2px);
+  animation: navItemsFadeIn 0.4s ease-out forwards;
+  animation-delay: 1.8s;
+}
+
+/* Animation pour le texte "Paris, Le Havre" */
+.nav-copy {
+  opacity: 0;
+  transform: translateY(10px);
+  filter: blur(2px);
+  animation: navCopyFadeIn 0.4s ease-out forwards;
+  animation-delay: 2.0s;
+}
+
+@keyframes navFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(3px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0px);
+  }
+}
+
+@keyframes navLogoFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0px);
+  }
+}
+
+@keyframes navItemsFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(15px);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0px);
+  }
+}
+
+@keyframes navCopyFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0px);
+  }
+}
+

@@ -10,6 +10,7 @@ import { getActiveTemplate } from "@/templates/get-active-template";
 import { TemplateRenderer } from "@/templates/TemplateRenderer";
 import { TemplateProvider } from "@/templates/context";
 import { Toaster } from "@/components/ui/sonner";
+import Preloader from "@/components/Preloader";
 
 export async function generateMetadata() {
   const content = await readContent();
@@ -58,6 +59,9 @@ export default async function RootLayout({ children }) {
           <meta name="expires" content="0" />
         </head>
         <body className={isDraftMode ? 'preview-mode' : ''}>
+          {/* Preloader */}
+          <Preloader />
+          
           <TemplateProvider value={{ key: templateKey }}>
             {isAutonomous ? (
               // DÉLÉGATION TOTALE AU TEMPLATE
