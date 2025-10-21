@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import WysiwygEditor from '../../../app/admin/components/WysiwygEditor';
+import WysiwygEditorWrapper from '../../../components/WysiwygEditorWrapper';
 
 interface ServicesBlockEditorProps {
   data: any;
@@ -147,7 +147,7 @@ export default function ServicesBlockEditor({ data, onChange }: ServicesBlockEdi
                   </button>
                 </div>
                 <div className="mb-2">
-                  <WysiwygEditor
+                  <WysiwygEditorWrapper
                     value={offering.description || ''}
                     onChange={(description: string) => updateOffering(index, 'description', description)}
                     placeholder="Description du service"

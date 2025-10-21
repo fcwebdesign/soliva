@@ -7,7 +7,7 @@ import { Label } from '../../../components/ui/label';
 import { Plus, ArrowUpDown } from 'lucide-react';
 import ColumnListItem from './ColumnListItem';
 import ColumnDrawer from './ColumnDrawer';
-import { ColumnsRowCardProps, Column, ColumnType } from '../types/columns';
+import { ColumnsRowCardProps, Column, ColumnType, ColumnStatus } from '../types/columns';
 
 const generateColumnId = () => `col_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -121,7 +121,7 @@ export default function ColumnsRowCard({
   const handleToggleColumnVisibility = (columnId: string) => {
     const newColumns = row.columns.map(col => 
       col.id === columnId 
-        ? { ...col, status: col.status === 'hidden' ? 'incomplete' : 'hidden' }
+        ? { ...col, status: (col.status === 'hidden' ? 'incomplete' : 'hidden') as ColumnStatus }
         : col
     );
     

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import WysiwygEditor from '../../../app/admin/components/WysiwygEditor';
+import WysiwygEditor from '../../../components/WysiwygEditorWrapper';
 import MediaUploader from '../../../app/admin/components/MediaUploader';
 import { getAutoDeclaredBlock } from '../registry';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter } from '../../../components/ui/drawer';

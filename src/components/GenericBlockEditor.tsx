@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { FieldConfig, FieldType } from '@/utils/blockUtils';
+import { FieldConfig, FieldType } from '@/blocks/auto-declared/types/fields';
 
 interface GenericBlockEditorProps {
   blockData: any;

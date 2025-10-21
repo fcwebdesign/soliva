@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import WysiwygEditor from '../../../app/admin/components/WysiwygEditor';
+import WysiwygEditor from '../../../components/WysiwygEditorWrapper';
 
 interface ContentData {
+  id?: string;
   content: string;
   theme?: 'light' | 'dark' | 'auto';
 }

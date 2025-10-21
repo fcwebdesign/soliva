@@ -115,13 +115,19 @@ export default function ExpandableCardEditor({ data, onChange }: ExpandableCardE
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Contenu</label>
-              <WysiwygEditor value={card.content || ''} onChange={(content: string) => updateCard(index, { content })} />
+              <WysiwygEditor 
+                value={card.content || ''} 
+                onChange={(content: string) => updateCard(index, { content })} 
+                placeholder="Description du service..."
+                onAISuggestion={null}
+                isLoadingAI={false}
+              />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Média (optionnel)</label>
-              <MediaUploader currentUrl={card.media?.src || ''} onUpload={(src) => updateCard(index, { media: { ...(card.media || {}), src } })} />
-              <input type="text" value={card.media?.alt || ''} onChange={(e) => updateCard(index, { media: { ...(card.media || {}), alt: e.target.value } })} placeholder="Alt" className="block-input" />
+              <MediaUploader currentUrl={card.media?.src || ''} onUpload={(src) => updateCard(index, { media: { ...(card.media || { alt: '' }), src } })} />
+              <input type="text" value={card.media?.alt || ''} onChange={(e) => updateCard(index, { media: { ...(card.media || { src: '' }), alt: e.target.value } })} placeholder="Alt" className="block-input" />
             </div>
 
             <div>
