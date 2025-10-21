@@ -8,8 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Brain, Settings, TestTube, Save, AlertTriangle, CheckCircle } from 'lucide-react';
 import AIProfileForm from './components/AIProfileForm';
 import VoiceTestModal from './components/VoiceTestModal';
-import Sidebar from '../components/Sidebar';
-import HeaderAdmin from '../components/HeaderAdmin';
+import AdminPageLayout from '../components/AdminPageLayout';
 
 export default function AISettingsPage() {
   const [profile, setProfile] = useState<AIProfile | null>(null);
@@ -100,119 +99,71 @@ export default function AISettingsPage() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="admin-page min-h-screen bg-gray-50">
-        <Sidebar currentPage="ai" />
-        <div className="lg:ml-64 flex flex-col">
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <Brain className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-500" />
-              <p className="text-gray-600">Chargement du profil IA...</p>
-            </div>
-          </div>
+  // Actions pour le header
+  const headerActions = (
+    <>
+      {hasUnsavedChanges && (
+        <span className="text-sm text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
+          Modifications non enregistrées
+        </span>
+      )}
+      
+      {saveStatus === 'saving' && (
+        <div className="flex items-center space-x-2">
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+          <span className="text-sm text-gray-600">Enregistrement...</span>
         </div>
-      </div>
-    );
-  }
+      )}
+      
+      {saveStatus === 'success' && (
+        <span className="text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full">
+          Enregistré à {new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+        </span>
+      )}
+      
+      {saveStatus === 'error' && (
+        <span className="text-sm text-red-600 bg-red-50 px-3 py-1 rounded-full">
+          ❌ Erreur
+        </span>
+      )}
+      
+      {profile && (
+        <Button
+          onClick={() => handleTestVoice('standard')}
+          variant="default"
+          size="sm"
+        >
+          <TestTube className="w-4 h-4 mr-1" />
+          Tester la voix
+        </Button>
+      )}
+      
+      <Button
+        onClick={() => {
+          const form = document.querySelector('form');
+          if (form) {
+            form.requestSubmit();
+          }
+        }}
+        disabled={saveStatus === 'saving' || !hasUnsavedChanges}
+        variant="secondary"
+        size="sm"
+      >
+        <Save className="w-4 h-4 mr-1" />
+        {saveStatus === 'saving' ? 'Sauvegarde...' : 'Sauvegarder'}
+      </Button>
+    </>
+  );
 
   return (
-    <div className="admin-page min-h-screen bg-gray-50">
-      {/* Styles admin pour s'assurer du fullscreen */}
-      <style dangerouslySetInnerHTML={{
-        __html: `
-          .nav {
-            display: none !important;
-          }
-          body.admin-page {
-            background-color: #f9fafb;
-            margin: 0;
-            padding: 0;
-          }
-        `
-      }} />
-      
-      {/* Sidebar */}
-      <Sidebar currentPage="ai" />
-
-      {/* Zone principale */}
-      <div className="lg:ml-64 flex flex-col">
-        {/* Header avec SaveBar sticky */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4">
-            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-              <div>
-                <h1 className="text-2xl lg:text-4xl font-semibold text-gray-900 mb-2" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.25rem)' }}>
-                  Paramètres IA
-                </h1>
-                <p className="text-sm text-gray-500">
-                  Configuration
-                </p>
-              </div>
-                
-              {/* Status bar et boutons d'action */}
-              <div className="flex flex-wrap items-center gap-2 lg:gap-4">
-                {hasUnsavedChanges && (
-                  <span className="text-sm text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
-                    Modifications non enregistrées
-                  </span>
-                )}
-                
-                {saveStatus === 'saving' && (
-                  <div className="flex items-center space-x-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                    <span className="text-sm text-gray-600">Enregistrement...</span>
-                  </div>
-                )}
-                
-                {saveStatus === 'success' && (
-                  <span className="text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full">
-                    Enregistré à {new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                )}
-                
-                {saveStatus === 'error' && (
-                  <span className="text-sm text-red-600 bg-red-50 px-3 py-1 rounded-full">
-                    ❌ Erreur
-                  </span>
-                )}
-                
-                {profile && (
-                  <button
-                    onClick={() => handleTestVoice('standard')}
-                    className="text-sm px-4 py-2 rounded-md transition-colors bg-blue-600 text-white hover:bg-blue-700"
-                    title="Tester la voix de marque"
-                  >
-                    🧪 Tester la voix
-                  </button>
-                )}
-                
-                <button
-                  onClick={() => {
-                    const form = document.querySelector('form');
-                    if (form) {
-                      form.requestSubmit();
-                    }
-                  }}
-                  disabled={saveStatus === 'saving' || !hasUnsavedChanges}
-                  className={`text-sm px-4 py-2 rounded-md transition-colors ${
-                    saveStatus === 'saving' || !hasUnsavedChanges
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : 'bg-gray-600 text-white hover:bg-gray-700'
-                  }`}
-                  title="Sauvegarder le profil IA"
-                >
-                  {saveStatus === 'saving' ? 'Sauvegarde...' : '💾 Sauvegarder'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Contenu principal */}
-        <main className="flex-1 p-6">
-          <div className="w-full">
-            <div className="space-y-6">
+    <AdminPageLayout
+      title="Paramètres IA"
+      description="Configuration du profil IA pour générer des contenus alignés à votre marque"
+      currentPage="ai"
+      loading={isLoading}
+      actions={headerActions}
+    >
+      <div className="space-y-6">
               {/* Description */}
               <div>
                 <p className="text-gray-600">
@@ -272,17 +223,14 @@ export default function AISettingsPage() {
                 onDataChange={setHasUnsavedChanges}
               />
 
-              {/* Modal de test de voix */}
-              {showVoiceTest && testResult && (
-                <VoiceTestModal
-                  result={testResult}
-                  onClose={() => setShowVoiceTest(false)}
-                />
-              )}
-            </div>
-          </div>
-        </main>
+        {/* Modal de test de voix */}
+        {showVoiceTest && testResult && (
+          <VoiceTestModal
+            result={testResult}
+            onClose={() => setShowVoiceTest(false)}
+          />
+        )}
       </div>
-    </div>
+    </AdminPageLayout>
   );
 }

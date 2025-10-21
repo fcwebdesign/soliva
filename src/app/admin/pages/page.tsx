@@ -7,6 +7,8 @@ import { Home, Mail, Palette, FileText, Settings, Layout, Plus } from 'lucide-re
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useConfirmDialog } from '@/hooks/useConfirmDialog';
+import ActionButtons from '../components/ActionButtons';
+import StatusBadge from '../components/StatusBadge';
 
 interface Page {
   id: string;
@@ -317,13 +319,10 @@ export default function PagesAdmin() {
                               <h4 className="text-md font-semibold text-gray-900 truncate">
                                 {page.title}
                               </h4>
-                              <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                                page.status === 'published' 
-                                  ? 'bg-green-100 text-green-800' 
-                                  : 'bg-yellow-100 text-yellow-800'
-                              }`}>
-                                {page.status === 'published' ? 'Publié' : 'Brouillon'}
-                              </span>
+                              <StatusBadge 
+                                status={page.status}
+                                size="sm"
+                              />
                             </div>
                             <div className="flex items-center space-x-4 mt-1">
                               <p className="text-sm text-gray-500">
@@ -338,39 +337,14 @@ export default function PagesAdmin() {
                             </div>
                           </div>
                           
-                          <div className="flex space-x-2 ml-4">
-                            <Button
-                              onClick={() => handleEditPage(page.id)}
+                          <div className="ml-4">
+                            <ActionButtons
+                              onEdit={() => handleEditPage(page.id)}
+                              onPreview={() => handlePreviewPage(page.id)}
+                              onDuplicate={() => handleDuplicatePage(page.id)}
+                              onDelete={() => handleDeletePage(page.id)}
                               size="sm"
-                              className="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 border-0 rounded-md"
-                              title="Éditer la page"
-                            >
-                              Éditer
-                            </Button>
-                            <Button
-                              onClick={() => handlePreviewPage(page.id)}
-                              size="sm"
-                              className="text-xs bg-gray-100 text-gray-700 hover:bg-gray-200 border-0 rounded-md"
-                              title="Aperçu de la page"
-                            >
-                              Aperçu
-                            </Button>
-                            <Button
-                              onClick={() => handleDuplicatePage(page.id)}
-                              size="sm"
-                              className="text-xs bg-purple-100 text-purple-700 hover:bg-purple-200 border-0 rounded-md"
-                              title="Dupliquer cette page"
-                            >
-                              Dupliquer
-                            </Button>
-                            <Button
-                              onClick={() => handleDeletePage(page.id)}
-                              size="sm"
-                              className="text-xs bg-red-100 text-red-700 hover:bg-red-200 border-0 rounded-md"
-                              title="Supprimer cette page"
-                            >
-                              Supprimer
-                            </Button>
+                            />
                           </div>
                         </div>
                       </div>
