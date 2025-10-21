@@ -12,6 +12,7 @@ import { FileText, Briefcase, Navigation, Settings, Mail, Footprints, Save, Targ
 import SommairePanel from '@/components/admin/SommairePanel';
 import MobileSommaireButton from '@/components/admin/MobileSommaireButton';
 import { Button } from "@/components/ui/button";
+import StatusBadge from './StatusBadge';
 import {
   Sheet,
   SheetContent,
@@ -1400,12 +1401,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
               <h3 className="text-lg font-semibold text-gray-900">Articles ({articles.length})</h3>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
-                {publishedCount} publié{publishedCount !== 1 ? 's' : ''}
-              </span>
-              <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">
-                {draftCount} brouillon{draftCount !== 1 ? 's' : ''}
-              </span>
+              <StatusBadge status="published" label={`${publishedCount} publié${publishedCount !== 1 ? 's' : ''}`} />
+              <StatusBadge status="draft" label={`${draftCount} brouillon${draftCount !== 1 ? 's' : ''}`} />
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -1444,13 +1441,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
                     <h4 className="text-md font-semibold text-gray-900 truncate">
                       {article.title || `Article ${index + 1}`}
                     </h4>
-                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                      article.status === 'published' 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {article.status === 'published' ? 'Publié' : 'Brouillon'}
-                    </span>
+                    <StatusBadge status={article.status === 'published' ? 'published' : 'draft'} size="sm" />
                   </div>
                   <div className="flex items-center space-x-4 mt-1">
                     <p className="text-sm text-gray-500">
@@ -1468,7 +1459,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
                   <Button 
                     onClick={() => router.push(`/admin/blog/${article.id}`)}
                     size="sm"
-                    className="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 border-0 rounded-md"
+                    variant="secondary"
                     title="Éditer l'article complet"
                   >
                     Éditer
@@ -1476,7 +1467,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
                   <Button 
                     onClick={() => window.open(`/blog/${article.slug || article.id}`, '_blank')}
                     size="sm"
-                    className="text-xs bg-gray-100 text-gray-700 hover:bg-gray-200 border-0 rounded-md"
+                    variant="outline"
                     title="Aperçu de l'article"
                   >
                     Aperçu
@@ -1531,15 +1522,11 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
               <h3 className="text-lg font-semibold text-gray-900">Projets ({projects.length})</h3>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
-                {publishedCount} publié{publishedCount !== 1 ? 's' : ''}
-              </span>
-              <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">
-                {draftCount} brouillon{draftCount !== 1 ? 's' : ''}
-              </span>
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
-                {featuredCount} en vedette
-              </span>
+              <StatusBadge status="published" label={`${publishedCount} publié${publishedCount !== 1 ? 's' : ''}`} />
+              <StatusBadge status="draft" label={`${draftCount} brouillon${draftCount !== 1 ? 's' : ''}`} />
+              {featuredCount > 0 && (
+                <StatusBadge status="pending" label={`${featuredCount} en vedette`} />
+              )}
             </div>
           </div>
                     <Button
@@ -1563,17 +1550,9 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
                     <h4 className="text-md font-semibold text-gray-900 truncate">
                       {project.title || `Projet ${index + 1}`}
                     </h4>
-                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                      project.status === 'published' 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {project.status === 'published' ? 'Publié' : 'Brouillon'}
-                    </span>
+                    <StatusBadge status={project.status === 'published' ? 'published' : 'draft'} size="sm" />
                     {project.featured && (
-                      <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">
-                        Vedette
-                      </span>
+                      <StatusBadge status="pending" size="sm" label="Vedette" />
                     )}
                   </div>
                   <div className="flex items-center space-x-4 mt-1">
@@ -1607,7 +1586,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
                   <Button 
                     onClick={() => router.push(`/admin/work/${project.id}`)}
                     size="sm"
-                    className="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 border-0 rounded-md"
+                    variant="secondary"
                     title="Éditer le projet complet"
                   >
                     Éditer
@@ -1615,7 +1594,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
                   <Button 
                     onClick={() => window.open(`/work/${project.slug || project.id}`, '_blank')}
                     size="sm"
-                    className="text-xs bg-gray-100 text-gray-700 hover:bg-gray-200 border-0 rounded-md"
+                    variant="outline"
                     title="Aperçu du projet"
                   >
                     Aperçu

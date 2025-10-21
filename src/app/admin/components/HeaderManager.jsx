@@ -410,7 +410,7 @@ const HeaderManager = ({ content, onSave }) => {
                                   type="button"
                                   onClick={() => setEditingPage(null)}
                                   size="sm"
-                                  className="text-xs bg-green-100 text-green-700 hover:bg-green-200 border-0 rounded-md"
+                                  variant="default"
                                 >
                                   ✓
                                 </Button>
@@ -447,7 +447,7 @@ const HeaderManager = ({ content, onSave }) => {
                           <Button
                             onClick={() => movePage(index, index - 1)}
                             size="sm"
-                            className="text-xs bg-gray-100 text-gray-700 hover:bg-gray-200 border-0 rounded-md"
+                            variant="ghost"
                             title="Déplacer vers le haut"
                           >
                             <ChevronUp className="w-3 h-3 mr-0" />
@@ -457,7 +457,7 @@ const HeaderManager = ({ content, onSave }) => {
                           <Button
                             onClick={() => movePage(index, index + 1)}
                             size="sm"
-                            className="text-xs bg-gray-100 text-gray-700 hover:bg-gray-200 border-0 rounded-md"
+                            variant="ghost"
                             title="Déplacer vers le bas"
                           >
                             <ChevronDown className="w-3 h-3 mr-0" />
@@ -468,7 +468,7 @@ const HeaderManager = ({ content, onSave }) => {
                             type="button"
                             onClick={() => setEditingPage(pageKey)}
                             size="sm"
-                            className="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 border-0 rounded-md"
+                            variant="secondary"
                           >
                             Éditer
                           </Button>
@@ -476,7 +476,8 @@ const HeaderManager = ({ content, onSave }) => {
                         <Button
                           onClick={() => togglePage(pageKey)}
                           size="sm"
-                          className="text-xs bg-red-100 text-red-700 hover:bg-red-200 border-0 rounded-md"
+                          variant="outline"
+                          className="text-red-600 hover:bg-red-50 hover:text-red-700"
                           title="Retirer cette page"
                         >
                           <Trash2 className="w-3 h-3 mr-0" />

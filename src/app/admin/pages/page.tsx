@@ -294,13 +294,9 @@ export default function PagesAdmin() {
                         <h3 className="text-lg font-semibold text-gray-900">Pages ({stats.total})</h3>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
-                          {stats.published} publié{stats.published !== 1 ? 's' : ''}
-                        </span>
+                        <StatusBadge status="published" label={`${stats.published} publié${stats.published !== 1 ? 's' : ''}`} />
                         {stats.drafts > 0 && (
-                          <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">
-                            {stats.drafts} brouillon{stats.drafts !== 1 ? 's' : ''}
-                          </span>
+                          <StatusBadge status="draft" label={`${stats.drafts} brouillon${stats.drafts !== 1 ? 's' : ''}`} />
                         )}
                       </div>
                     </div>

@@ -1,8 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import Sidebar from '../../components/Sidebar';
-import HeaderAdmin from '../../components/HeaderAdmin';
+import AdminPageLayout from '../../components/AdminPageLayout';
 import BlockEditor from '../../components/BlockEditor';
 import SeoBlock from '@/components/admin/SeoBlock';
 import SchemaScript from '@/components/SchemaScript';
@@ -10,20 +9,9 @@ import { generateAllSchemas } from '@/lib/schema';
 import type { Content } from '@/types/content';
 import slugify from 'slugify';
 import { toast } from 'sonner';
-
-const PAGES = [
-  { id: 'home', label: 'Accueil', path: '/', icon: '🏠' },
-  { id: 'studio', label: 'Studio', path: '/studio', icon: '🎨' },
-  { id: 'contact', label: 'Contact', path: '/contact', icon: '📧' },
-  { id: 'work', label: 'Portfolio', path: '/work', icon: '💼' },
-  { id: 'blog', label: 'Blog', path: '/blog', icon: '📝' },
-];
-
-const SETTINGS = [
-  { id: 'nav', label: 'Navigation', path: null, icon: '🧭' },
-  { id: 'metadata', label: 'Métadonnées', path: null, icon: '⚙️' },
-  { id: 'backup', label: 'Sauvegarde', path: null, icon: '💾' },
-];
+import { Button } from '@/components/ui/button';
+import StatusBadge from '../../components/StatusBadge';
+import { Eye, Save, Send, ArrowLeft } from 'lucide-react';
 
 interface Article {
   id: string;
@@ -87,13 +75,6 @@ export default function BlogArticleEdit() {
     });
   }, [hasUnsavedChanges, article, loading]);
 
-  // Ajouter la classe admin-page au body
-  useEffect(() => {
-    document.body.classList.add('admin-page');
-    return () => {
-      document.body.classList.remove('admin-page');
-    };
-  }, []);
 
   const fetchContent = async () => {
     try {
@@ -461,42 +442,78 @@ export default function BlogArticleEdit() {
     schemas: article.seo?.schemas
   }) : '';
 
+  // Actions pour le header
+  const headerActions = (
+    <>
+      <Button
+        onClick={() => router.push('/admin?page=blog')}
+        variant="outline"
+        size="sm"
+        className="flex items-center gap-2"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        Retour au blog
+      </Button>
+      
+      <StatusBadge status={article.status === 'published' ? 'published' : 'draft'} />
+      
+      {hasUnsavedChanges && (
+        <StatusBadge status="pending" />
+      )}
+      
+      <Button
+        onClick={hasUnsavedChanges ? handlePreview : () => window.open(`/blog/${article.slug || article.id}`, '_blank')}
+        variant="outline"
+        size="sm"
+        disabled={saveStatus === 'saving'}
+        title={hasUnsavedChanges ? "Aperçu avec les modifications non sauvegardées" : "Voir l'article publié"}
+      >
+        <Eye className="w-4 h-4 mr-1" />
+        Aperçu
+      </Button>
+      
+      <Button
+        onClick={() => handleSaveWithStatus('draft')}
+        variant="secondary"
+        size="sm"
+        disabled={saveStatus === 'saving'}
+        title={article.status === 'published' ? "Repasser l'article en brouillon" : "Enregistrer comme brouillon"}
+      >
+        <Save className="w-4 h-4 mr-1" />
+        {saveStatus === 'saving' ? 'Sauvegarde...' : 'Brouillon'}
+      </Button>
+      
+      <Button
+        onClick={() => handleSaveWithStatus('published')}
+        variant="default"
+        size="sm"
+        disabled={saveStatus === 'saving'}
+      >
+        <Send className="w-4 h-4 mr-1" />
+        {article.status === 'published' ? 'Mettre à jour' : 'Publier'}
+      </Button>
+    </>
+  );
+
   return (
-    <div className="min-h-screen bg-gray-50 grid grid-cols-1 xl:grid-cols-[256px_1fr]">
+    <>
       {/* Injection du schéma JSON-LD */}
       {schemaJson && <SchemaScript schema={schemaJson} />}
       
-      {/* Sidebar gauche */}
-      <Sidebar 
+      <AdminPageLayout
+        title={article.title || 'Nouvel article'}
+        description={article.publishedAt ? `Publié le ${new Date(article.publishedAt).toLocaleDateString('fr-FR', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        })}` : 'Article en cours de création'}
         currentPage="blog"
-      />
-
-      {/* Zone principale */}
-      <div className="flex flex-col">
-        {/* Header avec SaveBar sticky */}
-        <HeaderAdmin
-          title={article.title || 'Nouvel article'}
-          backButton={{
-            text: '← Retour au blog',
-            onClick: () => router.push('/admin?page=blog')
-          }}
-          actions={{
-            hasUnsavedChanges,
-            saveStatus,
-            onPreview: hasUnsavedChanges ? handlePreview : () => window.open(`/blog/${article.slug || article.id}`, '_blank'),
-            onSaveDraft: () => handleSaveWithStatus('draft'),
-            onPublish: () => handleSaveWithStatus('published'),
-            previewDisabled: saveStatus === 'saving',
-            saveDisabled: saveStatus === 'saving',
-            publishDisabled: saveStatus === 'saving',
-            previewTitle: hasUnsavedChanges ? "Aperçu avec les modifications non sauvegardées" : "Voir l'article publié",
-            draftTitle: article.status === 'published' ? "Repasser l'article en brouillon" : "Enregistrer comme brouillon"
-          }}
-        />
-
-        {/* Contenu principal */}
-        <main className="flex-1 p-6">
-          <div className="max-w-7xl mx-auto space-y-6">
+        loading={loading}
+        actions={headerActions}
+      >
+        <div className="space-y-6">
             {/* Titre */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -558,32 +575,6 @@ export default function BlogArticleEdit() {
               )}
             </div>
 
-            {/* Informations de statut */}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-sm font-medium text-gray-700">Statut :</span>
-                  <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${
-                    article.status === 'published' 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {article.status === 'published' ? '✅ Publié' : '📝 Brouillon'}
-                  </span>
-                </div>
-                {article.publishedAt && (
-                  <div className="text-sm text-gray-500">
-                    Publié le {new Date(article.publishedAt).toLocaleDateString('fr-FR', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </div>
-                )}
-              </div>
-            </div>
 
             {/* Éditeur de blocs */}
             <div>
@@ -633,9 +624,8 @@ export default function BlogArticleEdit() {
                 updateArticle({ seo });
               }}
             />
-          </div>
-        </main>
-      </div>
-    </div>
+        </div>
+      </AdminPageLayout>
+    </>
   );
 } 
