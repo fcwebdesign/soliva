@@ -2,6 +2,7 @@ import { promises as fs } from 'node:fs';
 import { join } from 'node:path';
 import type { Content } from '@/types/content';
 import { cleanContentLinks } from '@/utils/cleanLinks';
+import { logger } from '@/utils/logger';
 
 export const runtime = "nodejs";
 
@@ -225,7 +226,7 @@ export async function ensureDataFile(): Promise<void> {
   try {
     // Vérifier si le fichier existe
     await fs.access(DATA_FILE_PATH);
-    console.log('✅ Fichier content.json existe déjà');
+    logger.debug('✅ Fichier content.json existe déjà');
   } catch {
     // Le fichier n'existe pas, créer le dossier et le fichier
     try {
@@ -238,9 +239,9 @@ export async function ensureDataFile(): Promise<void> {
         'utf-8'
       );
       
-      console.log('✅ Fichier content.json créé avec le seed');
+      logger.info('✅ Fichier content.json créé avec le seed');
     } catch (error) {
-      console.error('❌ Erreur lors de la création du fichier content.json:', error);
+      logger.error('❌ Erreur lors de la création du fichier content.json:', error);
       throw new Error('Impossible de créer le fichier content.json');
     }
   }
@@ -252,65 +253,65 @@ export async function ensureDataFile(): Promise<void> {
  */
 export async function readContent(): Promise<Content> {
   try {
-    console.log('📖 Lecture du fichier content.json...');
+    logger.debug('📖 Lecture du fichier content.json...');
     
     // S'assurer que le fichier existe
     await ensureDataFile();
     
     // Lire le fichier
     const fileContent = await fs.readFile(DATA_FILE_PATH, 'utf-8');
-    console.log('📄 Fichier lu, taille:', fileContent.length, 'caractères');
+    logger.debug('📄 Fichier lu, taille:', fileContent.length, 'caractères');
     
     const content: Content = JSON.parse(fileContent);
-    console.log('✅ JSON parsé avec succès');
+    logger.debug('✅ JSON parsé avec succès');
     
     // Nettoyer les liens internes qui ont target="_blank" incorrectement
     const cleanedContent = cleanContentLinks(content);
-    console.log('🔧 Liens internes nettoyés');
+    logger.debug('🔧 Liens internes nettoyés');
     
     // Validation plus souple - fusionner avec le seed si des pages manquent
     const requiredPages = ['home', 'contact', 'studio', 'work', 'blog', 'nav', 'metadata'];
     const missingPages = requiredPages.filter(page => !(page in cleanedContent));
     
     if (missingPages.length > 0) {
-      console.log('⚠️ Pages manquantes détectées:', missingPages);
-      console.log('🔄 Fusion avec le seed pour les pages manquantes...');
+      logger.warn('⚠️ Pages manquantes détectées:', missingPages);
+      logger.info('🔄 Fusion avec le seed pour les pages manquantes...');
       
       // Fusionner avec le seed pour les pages manquantes
       const mergedContent = { ...SEED_DATA, ...cleanedContent };
       
       // Sauvegarder la version fusionnée
       await fs.writeFile(DATA_FILE_PATH, JSON.stringify(mergedContent, null, 2), 'utf-8');
-      console.log('✅ Fichier mis à jour avec les pages manquantes');
+      logger.info('✅ Fichier mis à jour avec les pages manquantes');
       
       return mergedContent;
     }
     
     // Validation des sections critiques (plus souple)
     if (!cleanedContent.home?.hero?.title) {
-      console.log('⚠️ home.hero.title manquant, utilisation du seed');
+      logger.debug('⚠️ home.hero.title manquant, utilisation du seed');
       const mergedContent = { ...SEED_DATA, ...cleanedContent };
       await fs.writeFile(DATA_FILE_PATH, JSON.stringify(mergedContent, null, 2), 'utf-8');
       return mergedContent;
     }
     
     if (!cleanedContent.nav?.items || !Array.isArray(cleanedContent.nav.items)) {
-      console.log('⚠️ nav.items manquant ou invalide, utilisation du seed');
-      console.log('🔍 cleanedContent.nav:', JSON.stringify(cleanedContent.nav, null, 2));
+      logger.debug('⚠️ nav.items manquant ou invalide, utilisation du seed');
+      logger.debug('🔍 cleanedContent.nav:', JSON.stringify(cleanedContent.nav, null, 2));
       const mergedContent = { ...SEED_DATA, ...cleanedContent };
       await fs.writeFile(DATA_FILE_PATH, JSON.stringify(mergedContent, null, 2), 'utf-8');
       return mergedContent;
     }
     
-    console.log('✅ nav.items valide:', JSON.stringify(cleanedContent.nav.items, null, 2));
+    logger.debug('✅ nav.items valide:', JSON.stringify(cleanedContent.nav.items, null, 2));
     
-    console.log('✅ Validation réussie, retour du contenu');
+    logger.debug('✅ Validation réussie, retour du contenu');
     return cleanedContent;
   } catch (error) {
-    console.error('❌ Erreur dans readContent:', error);
+    logger.error('❌ Erreur dans readContent:', error);
     
     if (error instanceof SyntaxError) {
-      console.log('🔄 Erreur de syntaxe JSON, recréation du fichier...');
+      logger.debug('🔄 Erreur de syntaxe JSON, recréation du fichier...');
       // Recréer le fichier avec le seed
       await fs.writeFile(DATA_FILE_PATH, JSON.stringify(SEED_DATA, null, 2), 'utf-8');
       return SEED_DATA;
@@ -319,7 +320,7 @@ export async function readContent(): Promise<Content> {
     if (error instanceof Error) {
       // Si c'est une erreur de validation, essayer de fusionner avec le seed
       if (error.message.includes('Pages manquantes') || error.message.includes('manquante')) {
-        console.log('🔄 Erreur de validation, fusion avec le seed...');
+        logger.debug('🔄 Erreur de validation, fusion avec le seed...');
         const mergedContent = { ...SEED_DATA, ...JSON.parse(await fs.readFile(DATA_FILE_PATH, 'utf-8')) };
         await fs.writeFile(DATA_FILE_PATH, JSON.stringify(mergedContent, null, 2), 'utf-8');
         return mergedContent;
@@ -345,15 +346,15 @@ export async function writeContent(next: Content, opts?: { actor?: string }): Pr
   try {
     isWriting = true;
 
-    console.log('🔄 Début de writeContent, validation...');
+    logger.debug('🔄 Début de writeContent, validation...');
 
     // Validation plus souple - fusionner avec le seed si des pages manquent
     const requiredPages = ['home', 'contact', 'studio', 'work', 'blog', 'nav', 'metadata'];
     const missingPages = requiredPages.filter(page => !(page in next));
     
     if (missingPages.length > 0) {
-      console.log('⚠️ Pages manquantes détectées:', missingPages);
-      console.log('🔄 Fusion avec le seed pour les pages manquantes...');
+      logger.debug('⚠️ Pages manquantes détectées:', missingPages);
+      logger.debug('🔄 Fusion avec le seed pour les pages manquantes...');
       
       // Fusionner avec le seed pour les pages manquantes
       const mergedContent: Content = { ...SEED_DATA, ...next };
@@ -364,19 +365,19 @@ export async function writeContent(next: Content, opts?: { actor?: string }): Pr
 
     // Validation plus souple pour home.hero.title
     if (!next.home?.hero?.title) {
-      console.log('⚠️ home.hero.title manquant, utilisation du seed');
+      logger.debug('⚠️ home.hero.title manquant, utilisation du seed');
       const mergedContent: Content = { ...SEED_DATA, ...next };
       next = mergedContent;
     }
 
     // Validation plus souple pour nav.items
     if (!next.nav?.items || !Array.isArray(next.nav.items)) {
-      console.log('⚠️ nav.items manquant ou invalide, utilisation du seed');
+      logger.debug('⚠️ nav.items manquant ou invalide, utilisation du seed');
       const mergedContent: Content = { ...SEED_DATA, ...next };
       next = mergedContent;
     }
 
-    console.log('✅ Validation réussie, préparation de la sauvegarde...');
+    logger.debug('✅ Validation réussie, préparation de la sauvegarde...');
 
     // Créer le dossier versions s'il n'existe pas
     const versionsDir = join(process.cwd(), 'data', 'versions');
@@ -389,7 +390,7 @@ export async function writeContent(next: Content, opts?: { actor?: string }): Pr
       const backupPath = join(versionsDir, `content-${timestamp}.json`);
       
       await fs.writeFile(backupPath, currentContent, 'utf-8');
-      console.log(`✅ Version sauvegardée: ${backupPath}`);
+      logger.debug(`✅ Version sauvegardée: ${backupPath}`);
 
       // Nettoyage automatique : garder seulement les 15 plus récentes
       try {
@@ -411,13 +412,13 @@ export async function writeContent(next: Content, opts?: { actor?: string }): Pr
         }
 
         if (toDelete.length > 0) {
-          console.log(`🧹 Auto-nettoyage: ${toDelete.length} anciennes versions supprimées`);
+          logger.debug(`🧹 Auto-nettoyage: ${toDelete.length} anciennes versions supprimées`);
         }
       } catch (cleanupError) {
-        console.warn('⚠️ Erreur lors du nettoyage automatique:', cleanupError);
+        logger.warn('⚠️ Erreur lors du nettoyage automatique:', cleanupError);
       }
     } catch (error) {
-      console.warn('⚠️ Impossible de sauvegarder la version actuelle:', error);
+      logger.warn('⚠️ Impossible de sauvegarder la version actuelle:', error);
     }
 
     // Écriture atomique
@@ -425,18 +426,18 @@ export async function writeContent(next: Content, opts?: { actor?: string }): Pr
     await fs.writeFile(tempPath, JSON.stringify(next, null, 2), 'utf-8');
     await fs.rename(tempPath, DATA_FILE_PATH);
 
-    console.log(`✅ Contenu mis à jour par ${opts?.actor || 'admin'}`);
+    logger.debug(`✅ Contenu mis à jour par ${opts?.actor || 'admin'}`);
   } catch (error) {
-    console.error('❌ Erreur dans writeContent:', error);
-    console.error('❌ Stack trace:', error instanceof Error ? error.stack : 'Pas de stack trace');
+    logger.error('❌ Erreur dans writeContent:', error);
+    logger.error('❌ Stack trace:', error instanceof Error ? error.stack : 'Pas de stack trace');
     
     // En cas d'erreur critique, essayer de restaurer depuis le seed
     try {
-      console.log('🔄 Tentative de restauration depuis le seed...');
+      logger.debug('🔄 Tentative de restauration depuis le seed...');
       await fs.writeFile(DATA_FILE_PATH, JSON.stringify(SEED_DATA, null, 2), 'utf-8');
-      console.log('✅ Restauration depuis le seed réussie');
+      logger.debug('✅ Restauration depuis le seed réussie');
     } catch (restoreError) {
-      console.error('❌ Impossible de restaurer depuis le seed:', restoreError);
+      logger.error('❌ Impossible de restaurer depuis le seed:', restoreError);
     }
     
     throw error;
@@ -506,10 +507,10 @@ export async function revertTo(filename: string): Promise<void> {
     const backupPath = join(versionsDir, `content-before-revert-${timestamp}.json`);
     await fs.writeFile(backupPath, currentContent, 'utf-8');
   } catch (error) {
-    console.warn('⚠️ Impossible de sauvegarder avant revert:', error);
+    logger.warn('⚠️ Impossible de sauvegarder avant revert:', error);
   }
 
   // Restaurer la version
   await writeContent(content, { actor: 'revert' });
-  console.log(`✅ Revenu à la version: ${filename}`);
+  logger.debug(`✅ Revenu à la version: ${filename}`);
 } 

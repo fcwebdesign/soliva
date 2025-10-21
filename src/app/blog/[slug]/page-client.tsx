@@ -48,6 +48,7 @@ export default function BlogArticle() {
         document.documentElement.classList.remove('preview-mode');
       };
     }
+    return undefined;
   }, [isPreviewMode]);
 
   useTransition();

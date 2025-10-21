@@ -11,8 +11,6 @@ const Nav = ({ content }) => {
   const pathname = usePathname();
   const logoRef = useRef();
 
-  // Debug: log des données reçues
-  console.log('🎯 Nav: Données reçues', content);
 
   const isSafari = () => {
     const ua = navigator.userAgent.toLowerCase();

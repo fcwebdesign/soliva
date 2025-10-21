@@ -42,14 +42,6 @@ export default async function RootLayout({ children }) {
   const isAutonomous = !!activeTemplate?.autonomous;
   const templateKey = activeTemplate?.key ?? 'default';
   
-  console.log('🔍 Layout Debug:', {
-    isDraftMode,
-    activeTemplate: activeTemplate?.key || 'none',
-    autonomous: activeTemplate?.autonomous || false,
-    isAutonomous,
-    contentTemplate: content._template || 'none'
-  });
-  
   return (
     <ViewTransitions>
       <html lang="fr" className={isDraftMode ? 'preview-mode' : ''} data-template={templateKey}>

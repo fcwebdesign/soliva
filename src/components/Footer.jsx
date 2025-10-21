@@ -13,7 +13,6 @@ const Footer = ({ content, fullContent }) => {
         const response = await fetch('/api/content');
         const data = await response.json();
         setAllPages(data.pages?.pages || []);
-        console.log('🔍 Footer - Pages récupérées:', data.pages?.pages);
       } catch (error) {
         console.error('Erreur lors de la récupération des pages:', error);
       }
@@ -30,14 +29,12 @@ const Footer = ({ content, fullContent }) => {
   useEffect(() => {
     const handleContentUpdate = (event) => {
       if (event.detail?.footer) {
-        console.log('🔄 Footer: Mise à jour reçue', event.detail.footer);
         setFooterContent(event.detail.footer);
       }
     };
 
     const handleStorageChange = (event) => {
       if (event.key === 'footer-updated') {
-        console.log('🔄 Footer: Changement détecté via localStorage, rechargement...');
         window.location.reload();
       }
     };
@@ -55,11 +52,6 @@ const Footer = ({ content, fullContent }) => {
     return null;
   }
 
-  console.log('🔍 Footer Debug:', {
-    bottomLinks: footerContent.bottomLinks,
-    legalPageLabels: footerContent.legalPageLabels,
-    footerContent
-  });
 
 
 
