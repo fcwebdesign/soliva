@@ -1,8 +1,10 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import { useConfirmDialog } from '@/hooks/useConfirmDialog';
 
 const TemplateManager = ({ onTemplateChange }) => {
+  const { confirm, ConfirmDialog } = useConfirmDialog();
   const [templates, setTemplates] = useState([]);
   const [currentTemplate, setCurrentTemplate] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -25,9 +27,13 @@ const TemplateManager = ({ onTemplateChange }) => {
   };
 
   const applyTemplate = async (templateId) => {
-    if (!confirm(`Êtes-vous sûr de vouloir appliquer le template "${templateId}" ?`)) {
-      return;
-    }
+    const confirmed = await confirm({
+      title: 'Appliquer ce template ?',
+      description: `Le template "${templateId}" sera appliqué à votre site. Vous pourrez revenir en arrière ultérieurement.`,
+      confirmText: 'Appliquer'
+    });
+    
+    if (!confirmed) return;
 
     setLoading(true);
     try {
@@ -57,9 +63,14 @@ const TemplateManager = ({ onTemplateChange }) => {
   };
 
   const restoreOriginal = async () => {
-    if (!confirm('Êtes-vous sûr de vouloir restaurer votre site original ?')) {
-      return;
-    }
+    const confirmed = await confirm({
+      title: 'Restaurer le site original ?',
+      description: 'Le template actuel sera supprimé et votre site reviendra à sa configuration d\'origine.',
+      confirmText: 'Restaurer',
+      variant: 'destructive'
+    });
+    
+    if (!confirmed) return;
 
     setLoading(true);
     try {
@@ -161,6 +172,8 @@ const TemplateManager = ({ onTemplateChange }) => {
           </p>
         </div>
       </div>
+      {/* Dialogue de confirmation */}
+      <ConfirmDialog />
     </div>
   );
 };

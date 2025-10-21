@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import { useConfirmDialog } from '@/hooks/useConfirmDialog';
 
 interface Version {
   filename: string;
@@ -12,6 +13,7 @@ interface VersionListProps {
 }
 
 export default function VersionList({ onRevert }: VersionListProps) {
+  const { confirm, ConfirmDialog } = useConfirmDialog();
   const [versions, setVersions] = useState<Version[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -39,9 +41,14 @@ export default function VersionList({ onRevert }: VersionListProps) {
   }, []);
 
   const handleRevert = async (filename: string) => {
-    if (!confirm('Êtes-vous sûr de vouloir revenir à cette version ?')) {
-      return;
-    }
+    const confirmed = await confirm({
+      title: 'Restaurer cette version ?',
+      description: 'Le contenu actuel sera remplacé par cette version. Cette action est irréversible.',
+      confirmText: 'Restaurer',
+      variant: 'destructive'
+    });
+    
+    if (!confirmed) return;
 
     try {
       const response = await fetch('/api/admin/versions', {
@@ -198,6 +205,9 @@ export default function VersionList({ onRevert }: VersionListProps) {
           align-self: flex-start;
         }
       `}</style>
+      
+      {/* Dialogue de confirmation */}
+      <ConfirmDialog />
     </div>
   );
 } 

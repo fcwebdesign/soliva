@@ -6,6 +6,7 @@ import AdminPageLayout from '../components/AdminPageLayout';
 import { Home, Mail, Palette, FileText, Settings, Layout, Plus } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useConfirmDialog } from '@/hooks/useConfirmDialog';
 
 interface Page {
   id: string;
@@ -19,6 +20,7 @@ interface Page {
 
 export default function PagesAdmin() {
   const router = useRouter();
+  const { confirm, ConfirmDialog } = useConfirmDialog();
   const [loading, setLoading] = useState(true);
   const [content, setContent] = useState<any>(null);
   const [activeTab, setActiveTab] = useState('content');
@@ -174,7 +176,14 @@ export default function PagesAdmin() {
   };
 
   const handleDeletePage = async (pageId: string) => {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cette page ?')) {
+    const confirmed = await confirm({
+      title: 'Supprimer cette page ?',
+      description: 'Cette action est irréversible. La page sera définitivement supprimée.',
+      confirmText: 'Supprimer',
+      variant: 'destructive'
+    });
+    
+    if (confirmed) {
       try {
         // Supprimer la page du contenu
         const newContent = { ...content };
@@ -382,6 +391,9 @@ export default function PagesAdmin() {
                 </div>
               )}
       </div>
+      
+      {/* Dialogue de confirmation */}
+      <ConfirmDialog />
     </AdminPageLayout>
   );
 } 

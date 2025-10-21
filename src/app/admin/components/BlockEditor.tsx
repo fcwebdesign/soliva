@@ -44,6 +44,7 @@ import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { useConfirmDialog } from '@/hooks/useConfirmDialog';
 
 interface Block {
   id: string;
@@ -60,6 +61,7 @@ interface BlockEditorProps {
 
 export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticleGenerator }: BlockEditorProps) {
   const router = useRouter();
+  const { confirm, ConfirmDialog } = useConfirmDialog();
   const [localData, setLocalData] = useState(pageData || {});
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -1069,9 +1071,14 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
 
   // Fonction pour supprimer un contenu
   const handleDelete = async (type: 'work' | 'blog', id: string, title: string) => {
-    if (!confirm(`Êtes-vous sûr de vouloir supprimer "${title}" ? Cette action est irréversible.`)) {
-      return;
-    }
+    const confirmed = await confirm({
+      title: `Supprimer "${title}" ?`,
+      description: 'Cette action est irréversible. Le contenu sera définitivement supprimé.',
+      confirmText: 'Supprimer',
+      variant: 'destructive'
+    });
+    
+    if (!confirmed) return;
 
     try {
       setIsDeleting(id);
@@ -2435,9 +2442,13 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
     };
 
     const handleCleanupVersions = async () => {
-      if (!confirm('Nettoyer les anciennes versions ? (garde les 10 plus récentes)')) {
-        return;
-      }
+      const confirmed = await confirm({
+        title: 'Nettoyer les anciennes versions ?',
+        description: 'Seules les 10 versions les plus récentes seront conservées. Les autres seront supprimées.',
+        confirmText: 'Nettoyer'
+      });
+      
+      if (!confirmed) return;
       
       try {
         const response = await fetch('/api/admin/versions/cleanup', {
@@ -2647,6 +2658,9 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
       )}
 
     </div>
+    
+    {/* Dialogue de confirmation */}
+    <ConfirmDialog />
     </>
   );
 } 

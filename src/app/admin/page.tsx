@@ -16,12 +16,14 @@ import { Eye, Save, Rocket } from 'lucide-react';
 import ArticleGeneratorModal from './components/ArticleGeneratorModal';
 import { createPortal } from 'react-dom';
 import { toast } from 'sonner';
+import { useConfirmDialog } from '@/hooks/useConfirmDialog';
 
 
 
 function AdminPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { confirm, ConfirmDialog } = useConfirmDialog();
   
   // State pour le modal de génération d'articles
   const [showArticleGenerator, setShowArticleGenerator] = useState(false);
@@ -195,36 +197,49 @@ function AdminPageContent() {
   // Détecter les changements d'URL (boutons précédent/suivant du navigateur)
   useEffect(() => {
     const pageFromUrl = searchParams.get('page') || 'home';
-          if (pageFromUrl !== currentPage && ['home', 'studio', 'contact', 'work', 'blog', 'nav', 'metadata', 'templates', 'footer', 'backup'].includes(pageFromUrl)) {
-      if (hasUnsavedChanges) {
-        const confirmLeave = window.confirm(
-          'Vous avez des modifications non enregistrées.\n\nÊtes-vous sûr de vouloir quitter cette page sans enregistrer ?'
-        );
-        
-        if (!confirmLeave) {
-          // Restaurer l'URL précédente sans déclencher de re-render
-          window.history.pushState(null, '', `/admin?page=${currentPage}`);
-          return;
+    
+    const handleNavigationChange = async () => {
+      if (pageFromUrl !== currentPage && ['home', 'studio', 'contact', 'work', 'blog', 'nav', 'metadata', 'templates', 'footer', 'backup'].includes(pageFromUrl)) {
+        if (hasUnsavedChanges) {
+          const confirmLeave = await confirm({
+            title: 'Modifications non enregistrées',
+            description: 'Vous avez des modifications non enregistrées. Voulez-vous vraiment quitter cette page sans enregistrer ?',
+            confirmText: 'Quitter sans enregistrer',
+            cancelText: 'Rester sur la page',
+            variant: 'destructive'
+          });
+          
+          if (!confirmLeave) {
+            // Restaurer l'URL précédente sans déclencher de re-render
+            window.history.pushState(null, '', `/admin?page=${currentPage}`);
+            return;
+          }
+          
+          // L'utilisateur confirme, on supprime les modifications
+          setHasUnsavedChanges(false);
+          setSaveStatus('idle');
+          if (originalContent) {
+            setContent(originalContent);
+          }
         }
         
-        // L'utilisateur confirme, on supprime les modifications
-        setHasUnsavedChanges(false);
-        setSaveStatus('idle');
-        if (originalContent) {
-          setContent(originalContent);
-        }
+        setCurrentPage(pageFromUrl);
       }
-      
-      setCurrentPage(pageFromUrl);
-    }
+    };
+    
+    handleNavigationChange();
   }, [searchParams]); // Seulement searchParams comme dépendance
 
   // Fonction pour changer de page avec confirmation si modifications non sauvegardées
-  const handlePageChange = (newPage: string) => {
+  const handlePageChange = async (newPage: string) => {
     if (hasUnsavedChanges) {
-      const confirmLeave = window.confirm(
-        'Vous avez des modifications non enregistrées.\n\nÊtes-vous sûr de vouloir quitter cette page sans enregistrer ?'
-      );
+      const confirmLeave = await confirm({
+        title: 'Modifications non enregistrées',
+        description: 'Vous avez des modifications non enregistrées. Voulez-vous vraiment quitter cette page sans enregistrer ?',
+        confirmText: 'Quitter sans enregistrer',
+        cancelText: 'Rester sur la page',
+        variant: 'destructive'
+      });
       
       if (!confirmLeave) {
         return; // L'utilisateur annule, on reste sur la page
@@ -954,6 +969,9 @@ function AdminPageContent() {
           }
         }}
       />
+      
+      {/* Dialogue de confirmation */}
+      <ConfirmDialog />
     </div>
   );
 }
