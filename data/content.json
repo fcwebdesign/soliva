@@ -202,7 +202,7 @@
             "title": "Automatisation",
             "label": "Service",
             "summary": "Optimisez vos processus avec nos automatisations.",
-            "content": "<ul><li>Audit des flux</li><li>Zaps/Make scénarios</li><li>Intégrations API</li></ul>",
+            "content": "<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>Audit des flux</p></li><li class=\"mb-1\"><p>Zaps/Make scénarios</p></li><li class=\"mb-1\"><p>Intégrations API</p></li></ul><p></p>",
             "media": {
               "src": "/uploads/1760517875393-702c3d5e.png",
               "alt": ""
@@ -235,6 +235,20 @@
             "isExpanded": false
           }
         ]
+      },
+      {
+        "id": "quote-1761032830699",
+        "type": "quote",
+        "data": {
+          "quote": "Une citation inspirante pour votre contenu...",
+          "author": "Nom de l'auteur",
+          "role": "Fonction",
+          "theme": "auto"
+        },
+        "quote": "qsdsqdqsds",
+        "author": "dsqqsdsddsqqds",
+        "role": "qsdsqsqdsq",
+        "theme": "dark"
       }
     ],
     "seo": {

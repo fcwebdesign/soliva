@@ -1,0 +1,186 @@
+# 🤖 Règles Cursor pour le Projet Soliva
+
+## 📋 Vue d'ensemble du projet
+
+Ce projet est un **CMS Next.js** avec un système de blocs modulaires auto-déclarés.
+
+---
+
+## 🎯 Agents disponibles
+
+### 🧱 **Agent BLOCKS** - Création et maintenance des blocs
+
+**Quand l'utiliser** : Pour créer, modifier ou débugger des blocs de contenu
+
+**Compétences** :
+- Créer de nouveaux blocs auto-déclarés
+- Modifier des blocs existants
+- Débugger les erreurs de rendu
+- Optimiser les performances des blocs
+
+**Localisation** : `src/blocks/auto-declared/`
+
+**Documentation** : `docs/agents/AGENT-BLOCKS.md`
+
+**Conventions** :
+- Toujours créer 3 fichiers : `component.tsx`, `editor.tsx`, `index.ts`
+- Typer les interfaces avec TypeScript
+- Utiliser `registerAutoBlock()` dans `index.ts`
+- Ajouter l'import dans `src/blocks/auto-declared/index.ts`
+- Utiliser `MediaUploader` avec `currentUrl` et `onUpload`
+- Support obligatoire du thème : `light | dark | auto`
+- Classes Tailwind pour le style
+- Labels en français dans l'éditeur
+
+---
+
+### 📝 **Agent CONTENT** - Gestion du contenu et des pages
+
+**Quand l'utiliser** : Pour gérer le contenu, les pages, le blog
+
+**Compétences** :
+- Modifier `data/content.json`
+- Créer/éditer des articles de blog
+- Gérer les pages personnalisées
+- Optimiser le SEO
+
+**Localisation** : `data/`, `src/app/blog/`
+
+**Documentation** : `README-CONTENT-SYSTEM.md`
+
+---
+
+### 🎨 **Agent UI** - Interface admin et composants UI
+
+**Quand l'utiliser** : Pour modifier l'interface admin ou les composants UI
+
+**Compétences** :
+- Modifier l'admin (`src/app/admin/`)
+- Créer des composants UI réutilisables
+- Améliorer l'UX
+- Gérer les thèmes
+
+**Localisation** : `src/app/admin/`, `src/components/ui/`
+
+**Documentation** : `docs/ADMIN-THEME-SYSTEM.md`
+
+---
+
+### 🔧 **Agent API** - Backend et APIs
+
+**Quand l'utiliser** : Pour les routes API, l'authentification, les webhooks
+
+**Compétences** :
+- Créer/modifier des routes API
+- Gérer l'authentification
+- Intégrations externes
+- Upload de fichiers
+
+**Localisation** : `src/app/api/`
+
+---
+
+### 🏗️ **Agent ARCHITECTURE** - Structure et configuration
+
+**Quand l'utiliser** : Pour la config, les migrations, l'architecture globale
+
+**Compétences** :
+- Modifier la configuration (Next.js, TypeScript, Tailwind)
+- Migrations de données
+- Scripts d'automatisation
+- Refactoring global
+
+**Localisation** : Racine du projet, `scripts/`
+
+**Documentation** : `docs/AGENTS-GUIDE.md`
+
+---
+
+## 🚨 Règles générales
+
+### Pour TOUS les agents
+
+1. **Toujours lire la doc** : Consulter `docs/agents/AGENT-[DOMAINE].md` avant de commencer
+2. **TypeScript strict** : Typer correctement toutes les variables
+3. **Pas de console.log** en production : Nettoyer les logs de debug
+4. **Tester avant de commit** : Lancer `npm run build` pour valider
+5. **Convention de nommage** : PascalCase pour composants, camelCase pour fonctions
+6. **Français** : Labels, commentaires et messages en français
+7. **Responsive** : Tout doit être mobile-first
+
+### Workflow de création de bloc
+
+```bash
+1. Créer le dossier : src/blocks/auto-declared/MonBloc/
+2. Créer component.tsx (rendu frontend)
+3. Créer editor.tsx (interface admin)
+4. Créer index.ts (enregistrement)
+5. Ajouter l'import dans src/blocks/auto-declared/index.ts
+6. Tester : npm run dev
+7. Valider : npm run build
+```
+
+### Interdictions
+
+❌ Ne JAMAIS modifier `data/content.json` directement (passer par l'API)  
+❌ Ne JAMAIS supprimer des blocs utilisés dans le contenu  
+❌ Ne JAMAIS commit sans tester la compilation  
+❌ Ne JAMAIS utiliser `any` en TypeScript (sauf cas exceptionnels)  
+❌ Ne JAMAIS hardcoder des URLs ou des chemins absolus
+
+---
+
+## 📚 Documentation principale
+
+- **Guide agents** : `docs/AGENTS-GUIDE.md`
+- **Système de blocs** : `README-SCALABLE-BLOCKS.md`
+- **Système de contenu** : `README-CONTENT-SYSTEM.md`
+- **Admin** : `README-ADMIN-SYSTEM.md`
+
+---
+
+## 🎯 Exemples de prompts
+
+### Pour créer un bloc
+```
+@AGENT-BLOCKS Crée un bloc FAQ avec questions/réponses déroulantes,
+support du thème et édition facile dans l'admin
+```
+
+### Pour modifier le contenu
+```
+@AGENT-CONTENT Ajoute un nouvel article de blog sur [sujet]
+avec meta description et images optimisées
+```
+
+### Pour améliorer l'UI
+```
+@AGENT-UI Améliore l'interface d'upload d'images dans l'admin
+avec preview et drag & drop
+```
+
+---
+
+## ✅ Checklist avant commit
+
+- [ ] `npm run build` passe sans erreur
+- [ ] Aucun console.log restant
+- [ ] Types TypeScript corrects
+- [ ] Testé en dev
+- [ ] Documentation mise à jour si nécessaire
+- [ ] Responsive vérifié
+
+---
+
+## 🆘 En cas de problème
+
+1. Consulter `docs/agents/AGENT-[DOMAINE].md`
+2. Vérifier les erreurs TypeScript : `npm run build`
+3. Chercher dans le code existant des exemples similaires
+4. Lire les commentaires dans le code
+
+---
+
+**Version** : 1.0  
+**Dernière mise à jour** : 21 octobre 2025
+
