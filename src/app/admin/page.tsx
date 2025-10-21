@@ -448,7 +448,7 @@ function AdminPageContent() {
       
     } catch (err) {
       console.error('Erreur aperçu:', err);
-      alert('Erreur lors de la création de l\'aperçu');
+      toast.error('Erreur lors de la création de l\'aperçu');
     }
   };
 

@@ -5,6 +5,7 @@ import Sidebar from '../../components/Sidebar';
 import HeaderAdmin from '../../components/HeaderAdmin';
 import BlockEditor from '../../components/BlockEditor';
 import type { Content } from '@/types/content';
+import { toast } from 'sonner';
 
 interface Page {
   id: string;
@@ -342,7 +343,7 @@ export default function PageEdit() {
       
     } catch (err) {
       console.error('Erreur aperçu page:', err);
-      alert('Erreur lors de la création de l\'aperçu');
+      toast.error('Erreur lors de la création de l\'aperçu');
     }
   };
 

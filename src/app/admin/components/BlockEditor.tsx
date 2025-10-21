@@ -1210,7 +1210,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
       
     } catch (error) {
       console.error('Erreur suggestion description IA:', error);
-      alert(`❌ Erreur: ${error.message}`);
+      toast.error(`Erreur: ${error.message}`);
     } finally {
       setIsLoadingDescriptionAI(false);
     }
@@ -1263,7 +1263,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
       
     } catch (error) {
       console.error('Erreur suggestion contenu bloc IA:', error);
-      alert(`❌ Erreur: ${error.message}`);
+      toast.error(`Erreur: ${error.message}`);
     } finally {
       setIsLoadingBlockAI(null);
     }
@@ -1302,7 +1302,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
       
     } catch (error) {
       console.error('Erreur suggestion description service IA:', error);
-      alert(`❌ Erreur: ${error.message}`);
+      toast.error(`Erreur: ${error.message}`);
     } finally {
       setIsLoadingBlockAI(null);
     }
@@ -1985,11 +1985,11 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
         setSuggestions(newSuggestions);
         
         if (newSuggestions.length === 0) {
-          alert('🤖 L\'IA n\'a pas trouvé de nouveaux filtres à suggérer. Vos filtres actuels semblent déjà très complets !');
+          toast.info('L\'IA n\'a pas trouvé de nouveaux filtres à suggérer. Vos filtres actuels semblent déjà très complets !');
         }
       } catch (error) {
         console.error('Erreur suggestions IA:', error);
-        alert(`❌ Erreur: ${error.message}`);
+        toast.error(`Erreur: ${error.message}`);
       } finally {
         setLoading(false);
       }
@@ -2423,12 +2423,12 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
         });
         
         if (response.ok) {
-          alert('Sauvegarde créée avec succès !');
+          toast.success('Sauvegarde créée avec succès !');
         } else {
-          alert('Erreur lors de la création de la sauvegarde');
+          toast.error('Erreur lors de la création de la sauvegarde');
         }
       } catch (err) {
-        alert('Erreur lors de la création de la sauvegarde');
+        toast.error('Erreur lors de la création de la sauvegarde');
       } finally {
         setBackupLoading(false);
       }
@@ -2446,14 +2446,14 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
         
         if (response.ok) {
           const result = await response.json();
-          alert(`✅ ${result.deleted} anciennes versions supprimées !`);
+          toast.success(`${result.deleted} anciennes versions supprimées !`);
           // Recharger la liste des versions
           window.location.reload();
         } else {
-          alert('Erreur lors du nettoyage');
+          toast.error('Erreur lors du nettoyage');
         }
       } catch (err) {
-        alert('Erreur lors du nettoyage');
+        toast.error('Erreur lors du nettoyage');
       }
     };
 
@@ -2489,7 +2489,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
           <div>
             <h4 className="text-md font-semibold text-gray-900 mb-4">Versions sauvegardées</h4>
             <VersionList onRevert={(filename) => {
-              alert(`Version ${filename} restaurée !`);
+              toast.success(`Version ${filename} restaurée !`);
               window.location.reload();
             }} />
           </div>

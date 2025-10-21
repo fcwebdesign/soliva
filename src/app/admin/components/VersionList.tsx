@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 
 interface Version {
   filename: string;
@@ -56,9 +57,9 @@ export default function VersionList({ onRevert }: VersionListProps) {
       }
 
       onRevert(filename);
-      alert('Version restaurée avec succès !');
+      toast.success('Version restaurée avec succès !');
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Erreur lors du revert');
+      toast.error(err instanceof Error ? err.message : 'Erreur lors du revert');
     }
   };
 

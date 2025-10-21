@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 
 const TemplateManager = ({ onTemplateChange }) => {
   const [templates, setTemplates] = useState([]);
@@ -43,13 +44,13 @@ const TemplateManager = ({ onTemplateChange }) => {
         const data = await response.json();
         setCurrentTemplate(templateId);
         onTemplateChange(data.content);
-        alert('Template appliqué avec succès ! Visitez la page d\'accueil pour voir le nouveau design.');
+        toast.success('Template appliqué avec succès ! Visitez la page d\'accueil pour voir le nouveau design.');
       } else {
         throw new Error('Erreur lors de l\'application du template');
       }
     } catch (error) {
       console.error('Erreur:', error);
-      alert('Erreur lors de l\'application du template');
+      toast.error('Erreur lors de l\'application du template');
     } finally {
       setLoading(false);
     }
@@ -70,14 +71,14 @@ const TemplateManager = ({ onTemplateChange }) => {
         const data = await response.json();
         setCurrentTemplate(null);
         onTemplateChange(data.content);
-        alert('Site original restauré !');
+        toast.success('Site original restauré !');
       } else {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || `Erreur ${response.status}: ${response.statusText}`);
       }
     } catch (error) {
       console.error('Erreur:', error);
-      alert(`Erreur lors de la restauration: ${error.message}`);
+      toast.error(`Erreur lors de la restauration: ${error.message}`);
     } finally {
       setLoading(false);
     }

@@ -9,6 +9,7 @@ import SchemaScript from '@/components/SchemaScript';
 import { generateAllSchemas } from '@/lib/schema';
 import type { Content } from '@/types/content';
 import slugify from 'slugify';
+import { toast } from 'sonner';
 
 const PAGES = [
   { id: 'home', label: 'Accueil', path: '/', icon: '🏠' },
@@ -315,7 +316,7 @@ export default function BlogArticleEdit() {
       
     } catch (err) {
       console.error('Erreur aperçu article:', err);
-      alert('Erreur lors de la création de l\'aperçu');
+      toast.error('Erreur lors de la création de l\'aperçu');
     }
   };
 

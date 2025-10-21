@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Sidebar from '../components/Sidebar';
 import { Home, Mail, Palette, FileText, Settings, Layout, Plus } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface Page {
   id: string;
@@ -129,7 +130,7 @@ export default function PagesAdmin() {
       );
       
       if (!pageToDuplicate) {
-        alert('Page non trouvée');
+        toast.error('Page non trouvée');
         return;
       }
       
@@ -164,11 +165,11 @@ export default function PagesAdmin() {
       const updatedPagesList = generatePagesList(newContent);
       setPages(updatedPagesList);
       
-      alert('Page dupliquée avec succès !');
+      toast.success('Page dupliquée avec succès !');
       
     } catch (err) {
       console.error('Erreur duplication:', err);
-      alert('Erreur lors de la duplication de la page');
+      toast.error('Erreur lors de la duplication de la page');
     }
   };
 
@@ -180,7 +181,7 @@ export default function PagesAdmin() {
         
         if (pageId === 'home' || pageId === 'contact' || pageId === 'studio') {
           // Ne pas permettre la suppression des pages système
-          alert('Impossible de supprimer une page système.');
+          toast.error('Impossible de supprimer une page système.');
           return;
         }
         
@@ -207,11 +208,11 @@ export default function PagesAdmin() {
         const updatedPagesList = generatePagesList(newContent);
         setPages(updatedPagesList);
         
-        alert('Page supprimée avec succès !');
+        toast.success('Page supprimée avec succès !');
         
       } catch (err) {
         console.error('Erreur suppression:', err);
-        alert('Erreur lors de la suppression de la page');
+        toast.error('Erreur lors de la suppression de la page');
       }
     }
   };
