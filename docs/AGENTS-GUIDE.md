@@ -63,6 +63,28 @@ npm run dev              # Tester visuellement
 
 ---
 
+### 🎨 Agent UI/UX
+
+**Mission :** Gardien de l'harmonie visuelle - assurer la cohérence et la scalabilité de l'interface admin.
+
+**Responsabilités :**
+- Documenter les patterns UI existants
+- Standardiser progressivement les incohérences
+- Guidelines pour les nouveaux développements
+- Checklist de validation UI
+
+**Stack validée :**
+- shadcn/ui (Button, Sheet, Dialog, AlertDialog, Input)
+- Tailwind CSS (utility-first)
+- lucide-react (icônes)
+- sonner (notifications toast)
+
+**Principe :** Capitaliser sur l'existant, pas de refonte globale. Améliorer progressivement.
+
+**Guide détaillé :** [AGENT-UI.md](./agents/AGENT-UI.md)
+
+---
+
 ### 🔌 Agent API
 
 **Mission :** Gérer les endpoints et la logique backend.

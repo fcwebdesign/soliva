@@ -61,19 +61,27 @@ Ce projet est un **CMS Next.js** avec un système de blocs modulaires auto-décl
 
 ---
 
-### 🎨 **Agent UI** - Interface admin et composants UI
+### 🎨 **Agent UI/UX** - Gardien de l'harmonie visuelle
 
-**Quand l'utiliser** : Pour modifier l'interface admin ou les composants UI
+**Quand l'utiliser** : Pour modifier l'interface admin, créer des composants UI, ou valider l'UX
 
 **Compétences** :
-- Modifier l'admin (`src/app/admin/`)
-- Créer des composants UI réutilisables
-- Améliorer l'UX
-- Gérer les thèmes
+- Assurer la cohérence visuelle de l'admin
+- Standardiser les composants UI (boutons, inputs, modals)
+- Améliorer la scalabilité et l'harmonie
+- Valider que les nouveaux blocs respectent les patterns
+
+**Stack validée** :
+- shadcn/ui (Button, Sheet, Dialog, AlertDialog, Input)
+- Tailwind CSS (classes standards)
+- lucide-react (icônes)
+- sonner (toast notifications)
 
 **Localisation** : `src/app/admin/`, `src/components/ui/`
 
-**Documentation** : `docs/ADMIN-THEME-SYSTEM.md`
+**Documentation** : `docs/agents/AGENT-UI.md`
+
+**Principe** : Capitaliser sur l'existant, améliorer progressivement. Pas de refonte globale.
 
 ---
 
