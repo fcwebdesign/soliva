@@ -167,28 +167,74 @@
         "theme": "auto"
       },
       {
-        "id": "expandable-card-1760505441514",
+        "id": "expandable-card-1760516187804",
         "type": "expandable-card",
         "data": {
-          "title": "Titre de la carte",
-          "content": "Contenu de la carte qui s'affiche quand elle est étendue.",
-          "isExpanded": false,
-          "theme": "auto"
+          "cards": [
+            {
+              "title": "Automatisation",
+              "label": "Service",
+              "summary": "Optimisez vos processus avec nos automatisations.",
+              "content": "<ul><li>Audit des flux</li><li>Zaps/Make scénarios</li><li>Intégrations API</li></ul>",
+              "media": {
+                "src": "",
+                "alt": ""
+              },
+              "theme": "automation",
+              "isExpanded": false
+            },
+            {
+              "title": "Go-to-market",
+              "label": "Service",
+              "summary": "Accélérez votre lancement et vos revenus.",
+              "content": "<ul><li>Positionnement</li><li>Acquisition</li><li>Onboarding</li></ul>",
+              "media": {
+                "src": "",
+                "alt": ""
+              },
+              "theme": "go-to-market",
+              "isExpanded": false
+            }
+          ]
         },
-        "isExpanded": false,
-        "title": "One file. One effect.",
-        "content": "<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>fdsdsfsdfdsfds</p></li><li class=\"mb-1\"><p>jjj</p></li><li class=\"mb-1\"><p>k</p></li></ul><p></p>",
-        "label": "vcxxvcxc",
-        "summary": "xvcvcxcxvvxc",
-        "features": [
-          "xvcxc"
-        ],
-        "theme": "automation",
-        "footer": "kjlkjjkljkjl",
-        "media": {
-          "src": "/uploads/1760512876431-d2ed0c57.jpg",
-          "alt": "dsdfdfs"
-        }
+        "cards": [
+          {
+            "title": "Automatisation",
+            "label": "Service",
+            "summary": "Optimisez vos processus avec nos automatisations.",
+            "content": "<ul><li>Audit des flux</li><li>Zaps/Make scénarios</li><li>Intégrations API</li></ul>",
+            "media": {
+              "src": "/uploads/1760517875393-702c3d5e.png",
+              "alt": ""
+            },
+            "theme": "automation",
+            "isExpanded": false
+          },
+          {
+            "title": "Automatisation",
+            "label": "Service",
+            "summary": "Optimisez vos processus avec nos automatisations.",
+            "content": "<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>Audit des flux</p></li><li class=\"mb-1\"><p>Zaps/Make scénarios</p></li><li class=\"mb-1\"><p>Intégrations API</p></li></ul><p></p>",
+            "media": {
+              "src": "",
+              "alt": ""
+            },
+            "theme": "automation",
+            "isExpanded": false
+          },
+          {
+            "title": "Nouveau service",
+            "label": "Service",
+            "summary": "",
+            "content": "",
+            "media": {
+              "src": "",
+              "alt": ""
+            },
+            "theme": "automation",
+            "isExpanded": false
+          }
+        ]
       }
     ],
     "seo": {

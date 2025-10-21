@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useTheme } from '../../../hooks/useTheme';
 import './styles.css';
 
-interface ExpandableCardData {
+interface CardItem {
   title: string;
   label: string;
   summary: string;
@@ -17,14 +17,16 @@ interface ExpandableCardData {
   isExpanded?: boolean;
 }
 
+interface ExpandableCardData {
+  cards?: CardItem[];
+}
+
 export default function ExpandableCard({ data }: { data: ExpandableCardData }) {
   const { mounted } = useTheme();
-  const [isExpanded, setIsExpanded] = useState(data.isExpanded || false);
+  const [cards, setCards] = useState<CardItem[]>(data.cards || []);
   const [isAnimating, setIsAnimating] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
-
-  const blockTheme = data.theme || 'automation';
 
   // Durée de l'animation FLIP (déplacement des cartes)
   const ANIMATION_DURATION = 500;
@@ -72,95 +74,78 @@ export default function ExpandableCard({ data }: { data: ExpandableCardData }) {
     });
   }, [isAnimating, ANIMATION_DURATION]);
 
-  const toggleExpansion = useCallback(() => {
+  const toggleCard = useCallback((index: number) => {
     if (isAnimating) return;
-
     animateWithFlip(() => {
-      setIsExpanded(!isExpanded);
+      setCards(prev => prev.map((c, i) => {
+        if (i === index) return { ...c, isExpanded: !c.isExpanded };
+        // fermer les autres
+        return { ...c, isExpanded: false };
+      }));
     });
-  }, [isExpanded, isAnimating, animateWithFlip]);
+  }, [isAnimating, animateWithFlip]);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    switch (e.key) {
-      case 'Enter':
-      case ' ':
-        e.preventDefault();
-        toggleExpansion();
-        break;
-      case 'ArrowRight':
-      case 'ArrowDown': {
-        e.preventDefault();
-        // Navigation vers la carte suivante (si plusieurs cartes)
-        break;
-      }
-      case 'ArrowLeft':
-      case 'ArrowUp': {
-        e.preventDefault();
-        // Navigation vers la carte précédente (si plusieurs cartes)
-        break;
-      }
-      default:
-        break;
-    }
-  }, [toggleExpansion]);
+  // Gestion clavier sera attachée par carte avec l'index
 
-  // Appliquer le thème
-  useEffect(() => {
-    if (!mounted) return;
-    
-    if (blockTheme !== 'auto') {
-      document.documentElement.setAttribute('data-theme', blockTheme);
-    }
-  }, [blockTheme, mounted]);
-
-  // Gérer l'état initial
-  useEffect(() => {
-    if (data.isExpanded) {
-      setIsExpanded(true);
-    }
-  }, [data.isExpanded]);
+  // Rien à appliquer globalement: chaque carte porte son propre thème via attribut
 
   if (!mounted) {
     return null;
   }
 
   return (
-    <article 
-      ref={cardRef}
-      className="kodza-expandable-card"
-      data-theme={blockTheme}
-      role="button"
-      tabIndex={0}
-      aria-expanded={isExpanded}
-      onClick={toggleExpansion}
-      onKeyDown={handleKeyDown}
-      data-block-type="expandable-card"
-      data-block-theme={blockTheme}
-    >
-      <div className="kodza-expandable-card-header">
-        <span className="kodza-expandable-card-label">{data.label}</span>
-        <h2 className="kodza-expandable-card-title">{data.title}</h2>
-        <p className="kodza-expandable-card-summary">{data.summary}</p>
-      </div>
-      
-      <div 
-        ref={bodyRef}
-        className="kodza-expandable-card-body"
-        aria-hidden={!isExpanded}
-      >
-        <div>
-          {data.media?.src && (
-            <div className="kodza-expandable-card-media">
-              <img 
-                src={data.media.src} 
-                alt={data.media.alt || ''} 
-                className="w-full h-full object-cover rounded-lg"
-              />
+    <section className="kodza-expandable">
+      {cards.map((card, index) => (
+        <article
+          key={index}
+          ref={cardRef}
+          className="kodza-expandable-card"
+          data-theme={card.theme || 'automation'}
+          role="button"
+          tabIndex={0}
+          aria-expanded={!!card.isExpanded}
+          onClick={() => toggleCard(index)}
+          onKeyDown={(e) => {
+            switch (e.key) {
+              case 'Enter':
+              case ' ': {
+                e.preventDefault();
+                toggleCard(index);
+                break;
+              }
+              default:
+                break;
+            }
+          }}
+          data-block-type="expandable-card"
+          data-block-theme={card.theme || 'automation'}
+        >
+          <div className="kodza-expandable-card-header">
+            <span className="kodza-expandable-card-label">{card.label}</span>
+            <h2 className="kodza-expandable-card-title">{card.title}</h2>
+            <p className="kodza-expandable-card-summary">{card.summary}</p>
+          </div>
+
+          <div
+            ref={bodyRef}
+            className="kodza-expandable-card-body"
+            aria-hidden={!card.isExpanded}
+          >
+            <div>
+              {card.media?.src && (
+                <div className="kodza-expandable-card-media">
+                  <img
+                    src={card.media.src}
+                    alt={card.media.alt || ''}
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                </div>
+              )}
+              <div dangerouslySetInnerHTML={{ __html: card.content }} />
             </div>
-          )}
-          <div dangerouslySetInnerHTML={{ __html: data.content }} />
-        </div>
-      </div>
-    </article>
+          </div>
+        </article>
+      ))}
+    </section>
   );
 }

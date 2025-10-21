@@ -176,8 +176,19 @@
           "theme": "auto"
         },
         "isExpanded": false,
-        "title": "test",
-        "content": "fdsdsfsdfdsfds"
+        "title": "One file. One effect.",
+        "content": "<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>fdsdsfsdfdsfds</p></li><li class=\"mb-1\"><p>jjj</p></li><li class=\"mb-1\"><p>k</p></li></ul><p></p>",
+        "label": "vcxxvcxc",
+        "summary": "xvcvcxcxvvxc",
+        "features": [
+          "xvcxc"
+        ],
+        "theme": "automation",
+        "footer": "kjlkjjkljkjl",
+        "media": {
+          "src": "/uploads/1760512876431-d2ed0c57.jpg",
+          "alt": "dsdfdfs"
+        }
       }
     ],
     "seo": {

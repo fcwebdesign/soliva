@@ -183,7 +183,96 @@
         "features": [
           "xvcxc"
         ],
-        "theme": "marketing"
+        "theme": "automation",
+        "footer": "kjlkjjkljkjl",
+        "media": {
+          "src": "/uploads/1760512876431-d2ed0c57.jpg",
+          "alt": "dsdfdfs"
+        },
+        "cards": [
+          {
+            "title": "Automatisation",
+            "label": "Service",
+            "summary": "Optimisez vos processus avec nos automatisations.",
+            "content": "<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>Audit des flux</p></li><li class=\"mb-1\"><p>Zaps/Make scénarios</p></li><li class=\"mb-1\"><p>Intégrations API</p></li></ul><p></p>",
+            "media": {
+              "src": "",
+              "alt": ""
+            },
+            "theme": "automation",
+            "isExpanded": false
+          },
+          {
+            "title": "Automatisation",
+            "label": "Service",
+            "summary": "Optimisez vos processus avec nos automatisations.",
+            "content": "<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>Audit des flux</p></li><li class=\"mb-1\"><p>Zaps/Make scénarios</p></li><li class=\"mb-1\"><p>Intégrations API</p></li></ul><p></p>",
+            "media": {
+              "src": "",
+              "alt": ""
+            },
+            "theme": "automation",
+            "isExpanded": false
+          }
+        ]
+      },
+      {
+        "id": "expandable-card-1760515893229",
+        "type": "expandable-card",
+        "data": {
+          "cards": [
+            {
+              "title": "Automatisation",
+              "label": "Service",
+              "summary": "Optimisez vos processus avec nos automatisations.",
+              "content": "<ul><li>Audit des flux</li><li>Zaps/Make scénarios</li><li>Intégrations API</li></ul>",
+              "media": {
+                "src": "",
+                "alt": ""
+              },
+              "theme": "automation",
+              "isExpanded": false
+            },
+            {
+              "title": "Go-to-market",
+              "label": "Service",
+              "summary": "Accélérez votre lancement et vos revenus.",
+              "content": "<ul><li>Positionnement</li><li>Acquisition</li><li>Onboarding</li></ul>",
+              "media": {
+                "src": "",
+                "alt": ""
+              },
+              "theme": "go-to-market",
+              "isExpanded": false
+            }
+          ]
+        },
+        "cards": [
+          {
+            "title": "Automatisation",
+            "label": "Service",
+            "summary": "Optimisez vos processus avec nos automatisations.",
+            "content": "<ul><li>Audit des flux</li><li>Zaps/Make scénarios</li><li>Intégrations API</li></ul>",
+            "media": {
+              "src": "",
+              "alt": ""
+            },
+            "theme": "automation",
+            "isExpanded": false
+          },
+          {
+            "title": "Automatisation",
+            "label": "Service",
+            "summary": "Optimisez vos processus avec nos automatisations.",
+            "content": "<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>Audit des flux</p></li><li class=\"mb-1\"><p>Zaps/Make scénarios</p></li><li class=\"mb-1\"><p>Intégrations API</p></li></ul><p></p>",
+            "media": {
+              "src": "",
+              "alt": ""
+            },
+            "theme": "automation",
+            "isExpanded": false
+          }
+        ]
       }
     ],
     "seo": {
