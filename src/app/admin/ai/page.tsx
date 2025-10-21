@@ -20,7 +20,14 @@ export default function AISettingsPage() {
   const [testResult, setTestResult] = useState<any>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
-  // Pas besoin de gérer le scroll du body - laissons le layout admin s'en occuper
+  // Appliquer les styles admin au body
+  useEffect(() => {
+    document.body.classList.add('admin-page');
+    
+    return () => {
+      document.body.classList.remove('admin-page');
+    };
+  }, []);
 
   // Charger le profil IA au montage
   useEffect(() => {
@@ -111,6 +118,20 @@ export default function AISettingsPage() {
 
   return (
     <div className="admin-page min-h-screen bg-gray-50">
+      {/* Styles admin pour s'assurer du fullscreen */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .nav {
+            display: none !important;
+          }
+          body.admin-page {
+            background-color: #f9fafb;
+            margin: 0;
+            padding: 0;
+          }
+        `
+      }} />
+      
       {/* Sidebar */}
       <Sidebar currentPage="ai" />
 
@@ -189,76 +210,78 @@ export default function AISettingsPage() {
         </header>
 
         {/* Contenu principal */}
-        <div className="flex-1 p-4 lg:p-6">
-          <div className="space-y-6">
-            {/* Description */}
-            <div>
-              <p className="text-gray-600">
-                Configurez le profil IA pour des contenus alignés à votre marque
-              </p>
-            </div>
+        <main className="flex-1 p-6">
+          <div className="w-full">
+            <div className="space-y-6">
+              {/* Description */}
+              <div>
+                <p className="text-gray-600">
+                  Configurez le profil IA pour des contenus alignés à votre marque
+                </p>
+              </div>
 
-            {/* Score de complétude */}
-            {profile && (
-              <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-                <div className="mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    <Settings className="w-5 h-5" />
-                    Progression du profil
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    Complétez votre profil pour des suggestions IA plus précises
-                  </p>
-                </div>
-                <div>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Complétude</span>
-                      <Badge variant={completenessScore >= 80 ? "default" : "secondary"}>
-                        {completenessScore}%
-                      </Badge>
+              {/* Score de complétude */}
+              {profile && (
+                <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+                  <div className="mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                      <Settings className="w-5 h-5" />
+                      Progression du profil
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Complétez votre profil pour des suggestions IA plus précises
+                    </p>
+                  </div>
+                  <div>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">Complétude</span>
+                        <Badge variant={completenessScore >= 80 ? "default" : "secondary"}>
+                          {completenessScore}%
+                        </Badge>
+                      </div>
+                      <Progress value={completenessScore} className="h-2" />
+                      
+                      {completenessScore < 80 && (
+                        <Alert>
+                          <AlertTriangle className="h-4 w-4" />
+                          <AlertDescription>
+                            Votre profil IA est incomplet. Complétez au moins 80% des champs pour des suggestions optimales.
+                          </AlertDescription>
+                        </Alert>
+                      )}
+                      
+                      {completenessScore >= 80 && (
+                        <Alert>
+                          <CheckCircle className="h-4 w-4" />
+                          <AlertDescription>
+                            Excellent ! Votre profil IA est complet et prêt à générer des contenus personnalisés.
+                          </AlertDescription>
+                        </Alert>
+                      )}
                     </div>
-                    <Progress value={completenessScore} className="h-2" />
-                    
-                    {completenessScore < 80 && (
-                      <Alert>
-                        <AlertTriangle className="h-4 w-4" />
-                        <AlertDescription>
-                          Votre profil IA est incomplet. Complétez au moins 80% des champs pour des suggestions optimales.
-                        </AlertDescription>
-                      </Alert>
-                    )}
-                    
-                    {completenessScore >= 80 && (
-                      <Alert>
-                        <CheckCircle className="h-4 w-4" />
-                        <AlertDescription>
-                          Excellent ! Votre profil IA est complet et prêt à générer des contenus personnalisés.
-                        </AlertDescription>
-                      </Alert>
-                    )}
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Formulaire de profil */}
-            <AIProfileForm
-              initialData={profile}
-              onSave={handleSaveProfile}
-              isLoading={saveStatus === 'saving'}
-              onDataChange={setHasUnsavedChanges}
-            />
-
-            {/* Modal de test de voix */}
-            {showVoiceTest && testResult && (
-              <VoiceTestModal
-                result={testResult}
-                onClose={() => setShowVoiceTest(false)}
+              {/* Formulaire de profil */}
+              <AIProfileForm
+                initialData={profile}
+                onSave={handleSaveProfile}
+                isLoading={saveStatus === 'saving'}
+                onDataChange={setHasUnsavedChanges}
               />
-            )}
+
+              {/* Modal de test de voix */}
+              {showVoiceTest && testResult && (
+                <VoiceTestModal
+                  result={testResult}
+                  onClose={() => setShowVoiceTest(false)}
+                />
+              )}
+            </div>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );
