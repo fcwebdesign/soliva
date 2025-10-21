@@ -34,19 +34,30 @@ Ce projet est un **CMS Next.js** avec un système de blocs modulaires auto-décl
 
 ---
 
-### 📝 **Agent CONTENT** - Gestion du contenu et des pages
+### 📝 **Agent CONTENT** - Rédacteur + SEO Expert
 
-**Quand l'utiliser** : Pour gérer le contenu, les pages, le blog
+**Quand l'utiliser** : Pour créer et gérer tout le contenu du site
 
 **Compétences** :
-- Modifier `data/content.json`
-- Créer/éditer des articles de blog
-- Gérer les pages personnalisées
-- Optimiser le SEO
+- Créer des articles de blog complets (structure, ton, SEO)
+- Modifier le contenu des pages (home, studio, work, etc.)
+- Optimiser le SEO (meta, schemas, liens internes)
+- Utiliser les blocs existants pour structurer le contenu
+- Générer du contenu dans le ton Soliva (direct, concret, sans bullshit)
 
-**Localisation** : `data/`, `src/app/blog/`
+**Localisation** : `data/content.json`, `src/types/content.ts`
 
-**Documentation** : `README-CONTENT-SYSTEM.md`
+**Documentation** : `docs/agents/AGENT-CONTENT.md`
+
+**Article de référence** : `http://localhost:3006/blog/les-faux-outils-ia-qui-sont-juste-des-scripts`
+
+**Conventions** :
+- Respecter le template de référence (structure H2, ton direct, ~2000 mots)
+- Toujours optimiser le SEO complet (keyword, meta, schemas, liens internes)
+- Utiliser les blocs auto-déclarés existants (ContentBlock, H2Block, ExpandableCard, etc.)
+- Valider le JSON avant de sauvegarder
+- Créer des backups automatiques
+- Signature éditoriale en italique en fin d'article
 
 ---
 
@@ -147,10 +158,11 @@ Ce projet est un **CMS Next.js** avec un système de blocs modulaires auto-décl
 support du thème et édition facile dans l'admin
 ```
 
-### Pour modifier le contenu
+### Pour créer du contenu
 ```
-@AGENT-CONTENT Ajoute un nouvel article de blog sur [sujet]
-avec meta description et images optimisées
+@AGENT-CONTENT Crée un article "Les erreurs SEO courantes en 2025"
+avec structure H2, exemples concrets, FAQ en ExpandableCard,
+et SEO complet optimisé
 ```
 
 ### Pour améliorer l'UI

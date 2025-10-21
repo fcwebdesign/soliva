@@ -29,17 +29,25 @@ Ce projet utilise une **approche multi-agents** pour améliorer l'efficacité du
 ---
 
 ### 📝 **Agent CONTENT**
-**Domaine** : Gestion du contenu et des pages  
-**Documentation** : `README-CONTENT-SYSTEM.md`  
-**Localisation** : `data/`, `src/app/blog/`
+**Domaine** : Rédaction et SEO  
+**Documentation** : `docs/agents/AGENT-CONTENT.md`  
+**Localisation** : `data/content.json`, `src/types/content.ts`
 
 **Responsabilités** :
-- Modifier `data/content.json`
-- Créer/éditer des articles de blog
-- Gérer les pages personnalisées
-- Optimiser le SEO
+- ✅ Créer des articles de blog complets (structure, ton, SEO)
+- ✅ Modifier le contenu des pages
+- ✅ Optimiser le SEO (meta, schemas, liens internes)
+- ✅ Utiliser les blocs existants pour structurer
+- ✅ Générer du contenu dans le ton Soliva
 
-**Status** : 🔄 En cours de documentation
+**Status** : ✅ **Opérationnel** (21/10/2025)
+
+**Article de référence** : `http://localhost:3006/blog/les-faux-outils-ia-qui-sont-juste-des-scripts`
+
+**Exemples de tâches** :
+- "Crée un article 'Les erreurs SEO 2025' avec SEO complet"
+- "Modifie la page studio : change le hero title"
+- "Optimise le SEO de l'article existant sur l'IA"
 
 ---
 
