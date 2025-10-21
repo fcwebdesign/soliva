@@ -13,12 +13,18 @@ import { generateAllSchemas } from '@/lib/schema';
 import type { Content } from '@/types/content';
 import { Button } from '@/components/ui/button';
 import { Eye, Save, Rocket } from 'lucide-react';
+import ArticleGeneratorModal from './components/ArticleGeneratorModal';
+import { createPortal } from 'react-dom';
+import { toast } from 'sonner';
 
 
 
 function AdminPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  
+  // State pour le modal de génération d'articles
+  const [showArticleGenerator, setShowArticleGenerator] = useState(false);
   
   // Fonction helper pour obtenir le chemin d'une page
   const getPagePath = (pageId: string) => {
@@ -862,6 +868,7 @@ function AdminPageContent() {
                       pageData={currentPageData}
                       pageKey={currentPage}
                       onUpdate={(updates) => updateContent(currentPage, updates)}
+                      onShowArticleGenerator={() => setShowArticleGenerator(true)}
                     />
                     
                     {/* Bloc SEO pour les pages principales */}
@@ -897,6 +904,56 @@ function AdminPageContent() {
           </div>
         </main>
       </div>
+      
+      {/* Modal de génération d'articles */}
+      <ArticleGeneratorModal
+        isOpen={showArticleGenerator}
+        onClose={() => setShowArticleGenerator(false)}
+        onArticleGenerated={async (article) => {
+          // Ajouter l'article à la liste des articles (copie profonde)
+          const updatedContent = JSON.parse(JSON.stringify(content));
+          if (!updatedContent.blog) {
+            updatedContent.blog = { hero: { title: '', subtitle: '' }, description: '', articles: [] };
+          }
+          if (!updatedContent.blog.articles) {
+            updatedContent.blog.articles = [];
+          }
+          updatedContent.blog.articles.push(article);
+          
+          // Sauvegarder via l'API
+          try {
+            const response = await fetch('/api/admin/content', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ content: updatedContent })
+            });
+            
+            if (response.ok) {
+              setContent(updatedContent);
+              setOriginalContent(updatedContent);
+              toast.success('Article créé avec succès !');
+              setShowArticleGenerator(false);
+              router.push(`/admin/blog/${article.id}`);
+            } else {
+              const errorText = await response.text();
+              console.error('❌ Erreur API (status):', response.status);
+              console.error('❌ Erreur API (texte):', errorText);
+              
+              let errorData;
+              try {
+                errorData = JSON.parse(errorText);
+              } catch {
+                errorData = { error: errorText || 'Erreur inconnue' };
+              }
+              
+              toast.error(`Erreur lors de la sauvegarde: ${errorData.error || 'Erreur inconnue'}`);
+            }
+          } catch (error) {
+            console.error('❌ Erreur sauvegarde:', error);
+            toast.error(`Erreur: ${error instanceof Error ? error.message : 'Erreur inconnue'}`);
+          }
+        }}
+      />
     </div>
   );
 }

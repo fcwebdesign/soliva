@@ -5,6 +5,7 @@
 import './ContactBlock';
 import './ContentBlock';
 import './ExpandableCard';
+import './FAQBlock';
 import './FourColumnsBlock';
 import './GalleryGridBlock';
 import './H2Block';
@@ -23,4 +24,4 @@ import './TwoColumnsBlock';
 // 2. Exécuter: npm run generate-blocks
 // 3. C'est tout !
 
-// 15 blocs auto-déclarés disponibles
+// 16 blocs auto-déclarés disponibles

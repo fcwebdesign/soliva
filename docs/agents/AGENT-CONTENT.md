@@ -198,22 +198,51 @@ Règles:
 
 ## 🧱 Utilisation des blocs
 
+### ⚠️ RÈGLE CRITIQUE : Structure des blocs auto-déclarés
+
+**Les blocs auto-déclarés n'utilisent PAS de wrapper `data`** ❌
+
+```json
+// ❌ INCORRECT - Ne fonctionne PAS
+{
+  "id": "faq-1",
+  "type": "faq",
+  "data": {
+    "items": [...],
+    "theme": "auto"
+  }
+}
+
+// ✅ CORRECT - Structure à la racine
+{
+  "id": "faq-1",
+  "type": "faq",
+  "items": [...],
+  "theme": "auto"
+}
+```
+
+**Pourquoi ?** Les blocs auto-déclarés reçoivent directement le bloc complet comme `data` dans leur éditeur. Imbriquer dans un objet `data` crée une double imbrication qui casse l'accès aux propriétés.
+
 ### Blocs disponibles
 
 **Blocs de texte :**
-- `ContentBlock` : Paragraphe riche (texte standard)
-- `H2Block` : Titre de section
-- `H3Block` : Sous-titre
+- `content` : Paragraphe riche (texte standard)
+- `h2` : Titre de section
+- `h3` : Sous-titre
 
 **Blocs visuels :**
-- `ImageBlock` : Image seule avec légende
-- `TwoColumnsBlock` : Texte + image côte à côte
-- `ThreeColumnsBlock` : 3 colonnes de contenu
-- `GalleryGridBlock` : Grille d'images
+- `image` : Image seule avec légende
+- `two-columns` : Texte + image côte à côte
+- `three-columns` : 3 colonnes de contenu
+- `gallery-grid` : Grille d'images
 
 **Blocs interactifs :**
-- `ExpandableCard` : Cartes dépliables (FAQ)
-- `TestimonialBlock` : Témoignages clients
+- `expandable-card` : Cartes dépliables
+- `testimonial` : Témoignages clients
+- `faq` : Questions/Réponses (nouveau !)
+- `quote` : Citations
+- `logos` : Logos de clients
 
 ### Exemple de structure d'article
 
@@ -227,53 +256,53 @@ Règles:
   "blocks": [
     {
       "id": "intro-1",
-      "type": "ContentBlock",
-      "data": {
-        "content": "<p>Choisir un CMS en 2025...</p>"
-      }
+      "type": "content",
+      "content": "<p>Choisir un CMS en 2025...</p>"
     },
     {
       "id": "section-1",
-      "type": "H2Block",
-      "data": {
-        "text": "Les critères essentiels"
-      }
+      "type": "h2",
+      "content": "Les critères essentiels"
     },
     {
       "id": "content-1",
-      "type": "ContentBlock",
-      "data": {
-        "content": "<p>Avant de choisir...</p>"
-      }
+      "type": "content",
+      "content": "<p>Avant de choisir...</p>"
     },
     {
       "id": "comparison-1",
-      "type": "TwoColumnsBlock",
-      "data": {
-        "leftColumn": [{
-          "id": "left-1",
-          "type": "content",
-          "content": "<h3>WordPress</h3><p>Avantages...</p>"
-        }],
-        "rightColumn": [{
-          "id": "right-1",
-          "type": "content",
-          "content": "<h3>Headless CMS</h3><p>Avantages...</p>"
-        }]
-      }
+      "type": "two-columns",
+      "leftColumn": [{
+        "id": "left-1",
+        "type": "content",
+        "content": "<h3>WordPress</h3><p>Avantages...</p>"
+      }],
+      "rightColumn": [{
+        "id": "right-1",
+        "type": "content",
+        "content": "<h3>Headless CMS</h3><p>Avantages...</p>"
+      }],
+      "layout": "left-right",
+      "gap": "medium",
+      "alignment": "top",
+      "theme": "auto"
     },
     {
       "id": "faq-1",
-      "type": "ExpandableCard",
-      "data": {
-        "cards": [
-          {
-            "id": "q1",
-            "title": "Quel CMS pour l'e-commerce ?",
-            "content": "<p>Pour l'e-commerce...</p>"
-          }
-        ]
-      }
+      "type": "faq",
+      "items": [
+        {
+          "id": "q1",
+          "question": "Quel CMS pour l'e-commerce ?",
+          "answer": "<p>Pour l'e-commerce, plusieurs options...</p>"
+        },
+        {
+          "id": "q2",
+          "question": "Quelle différence entre CMS et site sur-mesure ?",
+          "answer": "<p>Un CMS est une plateforme prête à l'emploi...</p>"
+        }
+      ],
+      "theme": "auto"
     }
   ],
   "seo": {
@@ -376,6 +405,7 @@ L'agent va:
 5. **Générer des slugs uniques** (vérifier les doublons)
 6. **Optimiser le SEO** sur chaque contenu
 7. **Tester le contenu** en mode preview avant publication
+8. ⚠️ **STRUCTURE CRITIQUE** : Les blocs auto-déclarés utilisent les propriétés **à la racine**, PAS dans un objet `data`
 
 ### ❌ NE JAMAIS faire
 
@@ -526,6 +556,29 @@ Solution: Vérifier la structure du type Content
 ```
 Cause: Utilisation d'un type de bloc inexistant
 Solution: Utiliser uniquement les blocs listés dans ce guide
+```
+
+### 🔥 Erreur : "Aucune question pour le moment" (ou données vides dans l'éditeur)
+```
+Cause: Structure incorrecte avec wrapper "data"
+  
+❌ Structure incorrecte:
+{
+  "type": "faq",
+  "data": {
+    "items": [...]  ← Double imbrication !
+  }
+}
+
+✅ Structure correcte:
+{
+  "type": "faq",
+  "items": [...],  ← Directement à la racine
+  "theme": "auto"
+}
+
+Solution: Remonter les propriétés à la racine du bloc, 
+supprimer le wrapper "data"
 ```
 
 ---

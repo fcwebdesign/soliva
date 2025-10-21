@@ -167,57 +167,7 @@
         "theme": "auto"
       },
       {
-        "id": "expandable-card-1760505441514",
-        "type": "expandable-card",
-        "data": {
-          "title": "Titre de la carte",
-          "content": "Contenu de la carte qui s'affiche quand elle est étendue.",
-          "isExpanded": false,
-          "theme": "auto"
-        },
-        "isExpanded": false,
-        "title": "One file. One effect.",
-        "content": "<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>fdsdsfsdfdsfds</p></li><li class=\"mb-1\"><p>jjj</p></li><li class=\"mb-1\"><p>k</p></li></ul><p></p>",
-        "label": "vcxxvcxc",
-        "summary": "xvcvcxcxvvxc",
-        "features": [
-          "xvcxc"
-        ],
-        "theme": "automation",
-        "footer": "kjlkjjkljkjl",
-        "media": {
-          "src": "/uploads/1760512876431-d2ed0c57.jpg",
-          "alt": "dsdfdfs"
-        },
-        "cards": [
-          {
-            "title": "Automatisation",
-            "label": "Service",
-            "summary": "Optimisez vos processus avec nos automatisations.",
-            "content": "<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>Audit des flux</p></li><li class=\"mb-1\"><p>Zaps/Make scénarios</p></li><li class=\"mb-1\"><p>Intégrations API</p></li></ul><p></p>",
-            "media": {
-              "src": "",
-              "alt": ""
-            },
-            "theme": "automation",
-            "isExpanded": false
-          },
-          {
-            "title": "Automatisation",
-            "label": "Service",
-            "summary": "Optimisez vos processus avec nos automatisations.",
-            "content": "<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>Audit des flux</p></li><li class=\"mb-1\"><p>Zaps/Make scénarios</p></li><li class=\"mb-1\"><p>Intégrations API</p></li></ul><p></p>",
-            "media": {
-              "src": "",
-              "alt": ""
-            },
-            "theme": "automation",
-            "isExpanded": false
-          }
-        ]
-      },
-      {
-        "id": "expandable-card-1760515893229",
+        "id": "expandable-card-1760516187804",
         "type": "expandable-card",
         "data": {
           "cards": [
@@ -252,9 +202,9 @@
             "title": "Automatisation",
             "label": "Service",
             "summary": "Optimisez vos processus avec nos automatisations.",
-            "content": "<ul><li>Audit des flux</li><li>Zaps/Make scénarios</li><li>Intégrations API</li></ul>",
+            "content": "<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>Audit des flux</p></li><li class=\"mb-1\"><p>Zaps/Make scénarios</p></li><li class=\"mb-1\"><p>Intégrations API</p></li></ul><p></p>",
             "media": {
-              "src": "",
+              "src": "/uploads/1760517875393-702c3d5e.png",
               "alt": ""
             },
             "theme": "automation",
@@ -271,8 +221,34 @@
             },
             "theme": "automation",
             "isExpanded": false
+          },
+          {
+            "title": "Nouveau service",
+            "label": "Service",
+            "summary": "",
+            "content": "",
+            "media": {
+              "src": "",
+              "alt": ""
+            },
+            "theme": "automation",
+            "isExpanded": false
           }
         ]
+      },
+      {
+        "id": "quote-1761032830699",
+        "type": "quote",
+        "data": {
+          "quote": "Une citation inspirante pour votre contenu...",
+          "author": "Nom de l'auteur",
+          "role": "Fonction",
+          "theme": "auto"
+        },
+        "quote": "qsdsqdqsds",
+        "author": "dsqqsdsddsqqds",
+        "role": "qsdsqsqdsq",
+        "theme": "dark"
       }
     ],
     "seo": {
@@ -1390,36 +1366,6 @@
         "title": "La personnalisation à la Amazon arrive pour toutes les marques"
       },
       {
-        "id": "ceci-est-mon-nouveal-id",
-        "title": "Nouvel article",
-        "content": "<h2>test de section ok</h2>\n<p><strong>test contenu</strong></p><p><em>ça marche pas</em></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\"><em>yepddsfd</em></a></p><p></p><ul><li><p>test</p></li></ul><ol><li><p>ok je crois que c'est bon</p></li></ol><blockquote><p>citation</p></blockquote><p></p><p>hello c'est vraiment cool ce CMS</p><p>mais aloirs très cool</p><p>wai bof</p><p>xcvvcxcvx</p><p>fsfdsfdsdfsfds</p>\n<img src=\"/uploads/1755521225223-9689ec4e.png\" alt=\"test image\">",
-        "status": "published",
-        "slug": "ceci-est-mon-nouveal-id",
-        "excerpt": "wxcxwcwxc xcccfffd cv",
-        "blocks": [
-          {
-            "id": "block-1",
-            "type": "h2",
-            "content": "test de section ok"
-          },
-          {
-            "id": "block-2",
-            "type": "content",
-            "content": "<p><strong>test contenu</strong></p><p><em>ça marche pas</em></p><p><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-blue-600 underline hover:text-blue-800 transition-colors duration-300\" href=\"/contact\"><em>yepddsfd</em></a></p><p></p><ul><li><p>test</p></li></ul><ol><li><p>ok je crois que c'est bon</p></li></ol><blockquote><p>citation</p></blockquote><p></p><p>hello c'est vraiment cool ce CMS</p><p>mais aloirs très cool</p><p>wai bof</p><p>xcvvcxcvx</p><p>fsfdsfdsdfsfds</p>"
-          },
-          {
-            "id": "block-3",
-            "type": "image",
-            "content": "",
-            "image": {
-              "src": "/uploads/1755521225223-9689ec4e.png",
-              "alt": "test image"
-            }
-          }
-        ],
-        "publishedAt": "2025-08-18T13:25:59.640Z"
-      },
-      {
         "id": "recette",
         "title": "recette",
         "content": "<p>Découvrez l’essentiel du sujet en 2 minutes. Points clés, exemples concrets, et actions à mettre en place dès aujourd’hui. Pas de théorie inutile, uniquement ce qui vous aide à avancer.</p>\n<img src=\"/uploads/1756796114538-67a6d89c.jpg\" alt=\"\">",
@@ -1461,75 +1407,6 @@
             }
           }
         ]
-      },
-      {
-        "id": "slug",
-        "title": "Test d'un nouvel article",
-        "content": "<h2>test de contenu</h2>\n<p>Vous avez besoin d’un contenu clair, utile et facile à parcourir. Je propose des textes structurés, avec des phrases courtes, des exemples concrets et des appels à l’action précis. Objectif: aider vos visiteurs à comprendre en 10 secondes ce que vous faites, pourquoi c’est pertinent pour eux et comment passer à l’étape suivante.</p>",
-        "status": "published",
-        "blocks": [
-          {
-            "id": "block-1",
-            "type": "h2",
-            "data": {
-              "content": ""
-            },
-            "content": "test de contenu"
-          },
-          {
-            "id": "block-2",
-            "type": "content",
-            "content": "<p>Vous avez besoin d’un contenu clair, utile et facile à parcourir. Je propose des textes structurés, avec des phrases courtes, des exemples concrets et des appels à l’action précis. Objectif: aider vos visiteurs à comprendre en 10 secondes ce que vous faites, pourquoi c’est pertinent pour eux et comment passer à l’étape suivante.</p>"
-          },
-          {
-            "id": "quote-1756797763692",
-            "type": "quote",
-            "data": {
-              "quote": "Une citation inspirante pour votre contenu...",
-              "author": "Nom de l'auteur",
-              "role": "Fonction",
-              "theme": "auto"
-            },
-            "quote": "erzezer",
-            "author": "erzeerz",
-            "role": "er"
-          },
-          {
-            "id": "services-1756797772120",
-            "type": "services",
-            "data": {
-              "title": "OUR CORE OFFERINGS",
-              "theme": "auto",
-              "offerings": []
-            },
-            "title": "zeerzrzerez",
-            "offerings": [
-              {
-                "id": "service-1756797775510",
-                "title": "zerzerer",
-                "description": "<p>Zerzerer, le service qui transforme votre présence en ligne. Bénéficiez d'un contenu web unique et mémorable, créé via une méthodologie rigoureuse pour optimiser votre visibilité et engagement. Profitez d'une stratégie claire et mesurable, sans jargon ni clichés.</p>",
-                "icon": ""
-              }
-            ]
-          },
-          {
-            "id": "logos-1756797906179",
-            "type": "logos",
-            "data": {
-              "title": "NOS CLIENTS",
-              "theme": "auto",
-              "logos": []
-            },
-            "logos": [
-              {
-                "src": "/uploads/1756797911175-89d96d2d.jpg",
-                "alt": ""
-              }
-            ]
-          }
-        ],
-        "slug": "slug",
-        "publishedAt": "2025-09-02T07:23:13.331Z"
       },
       {
         "id": "les-faux-outils-ia-qui-sont-juste-des-scripts",
@@ -1696,6 +1573,350 @@
             }
           ]
         }
+      },
+      {
+        "id": "pourquoi-les-sites-wordpress-sont-ils-si-lents",
+        "title": "Pourquoi les sites WordPress sont-ils si lents ?",
+        "slug": "pourquoi-les-sites-wordpress-sont-ils-si-lents",
+        "status": "published",
+        "publishedAt": "2025-10-21T10:16:49.735Z",
+        "content": "<p>Parlons cash. Votre site WordPress met 5 secondes à charger, vos visiteurs partent avant même de voir votre contenu, et Google vous pénalise dans les résultats de recherche. Bienvenue dans le club des sites WordPress lents, un problème tellement courant qu'il en devient presque banal.</p><p>Pourtant, WordPress n'est pas lent par nature. C'est la <strong>façon dont on l'utilise</strong> qui pose problème. Entre les plugins accumulés, les thèmes surchargés et les hébergements au rabais, on finit avec des sites qui rament. Et le pire ? La plupart des propriétaires de sites ne comprennent même pas pourquoi.</p><p>Alors décortiquons le problème, sans langue de bois.</p>\n<h2>La multiplication des plugins : le fléau</h2>\n<p>WordPress, c'est comme une voiture. Plus vous ajoutez d'accessoires, plus elle devient lourde. Et avec les plugins, on ne se prive pas.</p><p>Un formulaire de contact ? Un plugin. Un carrousel ? Un plugin. Du SEO ? Un plugin. Des réseaux sociaux ? Encore un plugin. Résultat : <strong>certains sites tournent avec 40, 50, voire 60 plugins installés</strong>. Chacun ajoute son lot de CSS, de JavaScript, de requêtes à la base de données.</p><p>Le problème n'est pas qu'un plugin soit mauvais en soi. C'est l'accumulation qui tue. Chaque plugin ralentit un peu plus, et personne ne se demande si c'est vraiment nécessaire. On installe d'abord, on réfléchit après. Ou jamais.</p>\n<h2>Les thèmes bourrés de fonctions inutiles</h2>\n<p>Les thèmes WordPress \"tout-en-un\" sont un piège. Ils promettent des dizaines de layouts, des builders intégrés, des animations partout. Mais derrière cette promesse de flexibilité, il y a une réalité : <strong>vous n'utilisez que 10 % de ce qui est chargé</strong>.</p><p>Ces thèmes embarquent des frameworks entiers, des bibliothèques JavaScript lourdes, des centaines de lignes de CSS dont vous n'avez pas besoin. Tout ça pour afficher une page simple avec un titre et trois paragraphes.</p><p>Le pire ? Ces thèmes sont souvent mal codés. Optimisations inexistantes, requêtes redondantes, fichiers non minifiés. Tout est fait pour impressionner visuellement, rien n'est pensé pour la performance.</p>\n<h2>L'hébergement mutualisé : économie de bout de chandelle</h2>\n<p>Un hébergement à 3€ par mois, c'est tentant. Mais vous partagez le serveur avec des dizaines, voire des centaines d'autres sites. Quand l'un d'eux explose en trafic, tout le monde ralentit. Quand un site bouffe les ressources CPU, tout le monde trinque.</p><p>Les hébergements mutualisés ne sont pas faits pour WordPress, et encore moins pour des sites qui veulent performer. Pas de cache serveur digne de ce nom, pas de CDN inclus, pas d'optimisation PHP. Vous êtes sur un serveur au rabais, et ça se voit.</p><p>La différence avec un hébergement optimisé WordPress ? Facile <strong>2 à 3 fois plus rapide</strong>. Juste en changeant d'hébergeur.</p>\n<h2>Les images non optimisées : le poids mort</h2>\n<p>Combien de sites WordPress affichent des images de 5 Mo en pleine page ? Trop. Parce que personne ne prend le temps de les compresser avant de les uploader.</p><p>Une image de produit à 4000x3000 pixels pour un affichage de 800x600 ? Une photo de bannière en PNG alors qu'un JPEG suffirait ? Des icônes en image plutôt qu'en SVG ? Tout ça ralentit, et ça se cumule.</p><p>Le format WebP existe, la compression intelligente existe, les outils automatiques existent. Mais <strong>90 % des sites WordPress n'en profitent pas</strong>. Résultat : des pages qui pèsent 10 Mo alors qu'elles pourraient peser 1 Mo.</p>\n<h2>Les requêtes SQL mal optimisées</h2>\n<p>WordPress interroge sa base de données pour tout. Afficher un article ? 20 requêtes. Charger la sidebar ? 15 requêtes. Afficher les derniers commentaires ? 10 requêtes. Et ça s'additionne.</p><p>Quand un plugin est mal codé, il peut déclencher des dizaines de requêtes inutiles. Quand un thème est mal conçu, il charge des données dont personne n'a besoin. Et personne ne s'en rend compte… jusqu'à ce que le site rame.</p><p>La mise en cache aide, mais elle ne règle pas tout. Si les requêtes sont mal optimisées à la base, même le meilleur système de cache finira par montrer ses limites.</p>\n<h2>Les mises à jour négligées</h2>\n<p>Un WordPress pas à jour, c'est un WordPress qui accumule les problèmes. Des failles de sécurité, oui. Mais aussi <strong>des bugs de performance</strong>. Parce que chaque nouvelle version de WordPress, de PHP, des plugins apporte son lot d'optimisations.</p><p>Rester sur PHP 7.2 alors que PHP 8.2 est disponible, c'est perdre entre 20 et 40 % de performances. Ne pas mettre à jour ses plugins, c'est risquer de traîner du code obsolète, mal optimisé, parfois carrément buggé.</p><p>Les mises à jour ne sont pas juste pour la sécurité. Elles sont aussi pour la vitesse.</p>\n<h2>Conclusion : WordPress n'est pas le problème</h2>\n<p>WordPress n'est pas lent. Ce sont les choix qu'on fait autour qui le rendent lent. Trop de plugins, des thèmes surchargés, un hébergement au rabais, des images non optimisées… tout ça s'accumule.</p><p>La bonne nouvelle ? Chaque problème a sa solution. Et ça ne demande pas forcément de tout refaire. Souvent, un bon audit, quelques optimisations ciblées et un hébergement correct suffisent pour transformer un site qui rame en site qui vole.</p><blockquote><p><strong>\"Un site WordPress lent n'est jamais une fatalité. C'est un choix qu'on peut défaire.\"</strong></p></blockquote><p><br>✨ <em>Cet article fait partie de notre ligne éditoriale : démystifier les idées reçues sur le web et proposer des solutions concrètes. Parce qu'au final, la seule promesse qui compte, c'est celle qu'on peut tenir.</em></p>",
+        "blocks": [
+          {
+            "id": "intro-1",
+            "type": "content",
+            "content": "<p>Parlons cash. Votre site WordPress met 5 secondes à charger, vos visiteurs partent avant même de voir votre contenu, et Google vous pénalise dans les résultats de recherche. Bienvenue dans le club des sites WordPress lents, un problème tellement courant qu'il en devient presque banal.</p><p>Pourtant, WordPress n'est pas lent par nature. C'est la <strong>façon dont on l'utilise</strong> qui pose problème. Entre les plugins accumulés, les thèmes surchargés et les hébergements au rabais, on finit avec des sites qui rament. Et le pire ? La plupart des propriétaires de sites ne comprennent même pas pourquoi.</p><p>Alors décortiquons le problème, sans langue de bois.</p>"
+          },
+          {
+            "id": "section-1",
+            "type": "h2",
+            "content": "La multiplication des plugins : le fléau"
+          },
+          {
+            "id": "content-1",
+            "type": "content",
+            "content": "<p>WordPress, c'est comme une voiture. Plus vous ajoutez d'accessoires, plus elle devient lourde. Et avec les plugins, on ne se prive pas.</p><p>Un formulaire de contact ? Un plugin. Un carrousel ? Un plugin. Du SEO ? Un plugin. Des réseaux sociaux ? Encore un plugin. Résultat : <strong>certains sites tournent avec 40, 50, voire 60 plugins installés</strong>. Chacun ajoute son lot de CSS, de JavaScript, de requêtes à la base de données.</p><p>Le problème n'est pas qu'un plugin soit mauvais en soi. C'est l'accumulation qui tue. Chaque plugin ralentit un peu plus, et personne ne se demande si c'est vraiment nécessaire. On installe d'abord, on réfléchit après. Ou jamais.</p>"
+          },
+          {
+            "id": "section-2",
+            "type": "h2",
+            "content": "Les thèmes bourrés de fonctions inutiles"
+          },
+          {
+            "id": "content-2",
+            "type": "content",
+            "content": "<p>Les thèmes WordPress \"tout-en-un\" sont un piège. Ils promettent des dizaines de layouts, des builders intégrés, des animations partout. Mais derrière cette promesse de flexibilité, il y a une réalité : <strong>vous n'utilisez que 10 % de ce qui est chargé</strong>.</p><p>Ces thèmes embarquent des frameworks entiers, des bibliothèques JavaScript lourdes, des centaines de lignes de CSS dont vous n'avez pas besoin. Tout ça pour afficher une page simple avec un titre et trois paragraphes.</p><p>Le pire ? Ces thèmes sont souvent mal codés. Optimisations inexistantes, requêtes redondantes, fichiers non minifiés. Tout est fait pour impressionner visuellement, rien n'est pensé pour la performance.</p>"
+          },
+          {
+            "id": "section-3",
+            "type": "h2",
+            "content": "L'hébergement mutualisé : économie de bout de chandelle"
+          },
+          {
+            "id": "content-3",
+            "type": "content",
+            "content": "<p>Un hébergement à 3€ par mois, c'est tentant. Mais vous partagez le serveur avec des dizaines, voire des centaines d'autres sites. Quand l'un d'eux explose en trafic, tout le monde ralentit. Quand un site bouffe les ressources CPU, tout le monde trinque.</p><p>Les hébergements mutualisés ne sont pas faits pour WordPress, et encore moins pour des sites qui veulent performer. Pas de cache serveur digne de ce nom, pas de CDN inclus, pas d'optimisation PHP. Vous êtes sur un serveur au rabais, et ça se voit.</p><p>La différence avec un hébergement optimisé WordPress ? Facile <strong>2 à 3 fois plus rapide</strong>. Juste en changeant d'hébergeur.</p>"
+          },
+          {
+            "id": "section-4",
+            "type": "h2",
+            "content": "Les images non optimisées : le poids mort"
+          },
+          {
+            "id": "content-4",
+            "type": "content",
+            "content": "<p>Combien de sites WordPress affichent des images de 5 Mo en pleine page ? Trop. Parce que personne ne prend le temps de les compresser avant de les uploader.</p><p>Une image de produit à 4000x3000 pixels pour un affichage de 800x600 ? Une photo de bannière en PNG alors qu'un JPEG suffirait ? Des icônes en image plutôt qu'en SVG ? Tout ça ralentit, et ça se cumule.</p><p>Le format WebP existe, la compression intelligente existe, les outils automatiques existent. Mais <strong>90 % des sites WordPress n'en profitent pas</strong>. Résultat : des pages qui pèsent 10 Mo alors qu'elles pourraient peser 1 Mo.</p>"
+          },
+          {
+            "id": "section-5",
+            "type": "h2",
+            "content": "Les requêtes SQL mal optimisées"
+          },
+          {
+            "id": "content-5",
+            "type": "content",
+            "content": "<p>WordPress interroge sa base de données pour tout. Afficher un article ? 20 requêtes. Charger la sidebar ? 15 requêtes. Afficher les derniers commentaires ? 10 requêtes. Et ça s'additionne.</p><p>Quand un plugin est mal codé, il peut déclencher des dizaines de requêtes inutiles. Quand un thème est mal conçu, il charge des données dont personne n'a besoin. Et personne ne s'en rend compte… jusqu'à ce que le site rame.</p><p>La mise en cache aide, mais elle ne règle pas tout. Si les requêtes sont mal optimisées à la base, même le meilleur système de cache finira par montrer ses limites.</p>"
+          },
+          {
+            "id": "section-6",
+            "type": "h2",
+            "content": "Les mises à jour négligées"
+          },
+          {
+            "id": "content-6",
+            "type": "content",
+            "content": "<p>Un WordPress pas à jour, c'est un WordPress qui accumule les problèmes. Des failles de sécurité, oui. Mais aussi <strong>des bugs de performance</strong>. Parce que chaque nouvelle version de WordPress, de PHP, des plugins apporte son lot d'optimisations.</p><p>Rester sur PHP 7.2 alors que PHP 8.2 est disponible, c'est perdre entre 20 et 40 % de performances. Ne pas mettre à jour ses plugins, c'est risquer de traîner du code obsolète, mal optimisé, parfois carrément buggé.</p><p>Les mises à jour ne sont pas juste pour la sécurité. Elles sont aussi pour la vitesse.</p>"
+          },
+          {
+            "id": "conclusion-1",
+            "type": "h2",
+            "content": "Conclusion : WordPress n'est pas le problème"
+          },
+          {
+            "id": "conclusion-content",
+            "type": "content",
+            "content": "<p>WordPress n'est pas lent. Ce sont les choix qu'on fait autour qui le rendent lent. Trop de plugins, des thèmes surchargés, un hébergement au rabais, des images non optimisées… tout ça s'accumule.</p><p>La bonne nouvelle ? Chaque problème a sa solution. Et ça ne demande pas forcément de tout refaire. Souvent, un bon audit, quelques optimisations ciblées et un hébergement correct suffisent pour transformer un site qui rame en site qui vole.</p><blockquote><p><strong>\"Un site WordPress lent n'est jamais une fatalité. C'est un choix qu'on peut défaire.\"</strong></p></blockquote><p><br>✨ <em>Cet article fait partie de notre ligne éditoriale : démystifier les idées reçues sur le web et proposer des solutions concrètes. Parce qu'au final, la seule promesse qui compte, c'est celle qu'on peut tenir.</em></p>"
+          },
+          {
+            "id": "faq-wordpress",
+            "type": "faq",
+            "items": [
+              {
+                "id": "faq-q1",
+                "question": "Combien de plugins WordPress est-ce trop ?",
+                "answer": "<p>Il n'y a pas de nombre magique, mais en règle générale, <strong>plus de 20 plugins actifs</strong> commence à être problématique. L'important n'est pas le nombre, mais la qualité. Un plugin mal codé peut ralentir plus que 10 plugins bien optimisés. Faites le tri : désinstallez ce qui ne sert pas vraiment.</p>"
+              },
+              {
+                "id": "faq-q2",
+                "question": "Mon hébergeur dit que mon site est rapide, pourquoi mes visiteurs se plaignent ?",
+                "answer": "<p>Parce que votre hébergeur mesure probablement depuis son propre serveur, pas depuis la localisation de vos visiteurs. Un site peut être rapide en France et lent au Brésil. Utilisez des outils comme <strong>GTmetrix ou PageSpeed Insights</strong> pour mesurer depuis différents endroits.</p>"
+              },
+              {
+                "id": "faq-q3",
+                "question": "Comment savoir quels plugins ralentissent mon site ?",
+                "answer": "<p>Utilisez <strong>Query Monitor</strong> (plugin gratuit) pour identifier les plugins qui prennent le plus de temps. Vous pouvez aussi désactiver les plugins un par un et tester la vitesse avec GTmetrix. Les coupables habituels : page builders lourds, sliders, plugins sociaux mal codés.</p>"
+              },
+              {
+                "id": "faq-q4",
+                "question": "Est-ce que passer à un hébergement plus cher va vraiment changer quelque chose ?",
+                "answer": "<p>Oui, <strong>radicalement</strong>. Un hébergement optimisé WordPress (comme Kinsta, WP Engine, ou même un VPS bien configuré) peut diviser vos temps de chargement par 2 ou 3. Le cache serveur, le CDN intégré, PHP 8+ et les optimisations MySQL font une différence énorme.</p>"
+              },
+              {
+                "id": "faq-q5",
+                "question": "Quelle différence entre un thème gratuit et premium en termes de vitesse ?",
+                "answer": "<p>Un thème premium <strong>n'est pas forcément plus rapide</strong>. Au contraire, beaucoup sont surchargés de fonctionnalités inutiles. Privilégiez les thèmes légers et bien codés (GeneratePress, Astra, Kadence) plutôt que les \"tout-en-un\" bourrés d'options. Un bon thème gratuit optimisé battra toujours un thème premium mal conçu.</p>"
+              },
+              {
+                "id": "faq-q6",
+                "question": "Faut-il abandonner WordPress pour un site rapide ?",
+                "answer": "<p>Non. WordPress <strong>peut être ultra-rapide</strong> quand il est bien configuré. Le problème n'est pas WordPress, c'est la façon dont il est utilisé. Avec les bons plugins, le bon hébergement et les bonnes pratiques, WordPress tient la comparaison avec n'importe quelle solution.</p>"
+              }
+            ],
+            "theme": "auto"
+          }
+        ],
+        "seo": {
+          "focusKeyword": "wordpress lent",
+          "metaTitle": "Pourquoi les sites WordPress sont-ils si lents ? — Soliva",
+          "metaDescription": "Découvrez les vraies raisons qui ralentissent votre site WordPress : plugins, thèmes, hébergement. Solutions concrètes pour accélérer votre site.",
+          "canonicalUrl": "http://localhost:3006/blog/pourquoi-sites-wordpress-si-lents",
+          "schemas": [
+            "Article",
+            "FAQPage"
+          ],
+          "suggestedInternalLinks": [
+            {
+              "url": "/studio",
+              "label": "Nos services de développement web",
+              "reason": "Pour voir notre approche en matière de sites rapides et performants"
+            },
+            {
+              "url": "/blog/site-lent-site-mort",
+              "label": "Un site lent est un site mort",
+              "reason": "Pour comprendre l'impact business d'un site lent"
+            },
+            {
+              "url": "/contact",
+              "label": "Discuter de votre projet",
+              "reason": "Pour obtenir un audit de performance gratuit"
+            }
+          ]
+        },
+        "hasCustomSlug": true
+      },
+      {
+        "title": "Le drop shipping : pourquoi il ne vous rendra pas riche ",
+        "slug": "le-drop-shipping-pourquoi-il-ne-vous-rendra-pas-riche",
+        "status": "published",
+        "blocks": [
+          {
+            "id": "intro-1",
+            "type": "content",
+            "content": "<p>Parlons cash : le drop shipping est souvent vendu comme un eldorado où l'on peut gagner de l'argent depuis son canapé sans rien faire. La vérité, c'est que la réalité est bien différente. Vous avez sûrement vu ces publicités YouTube vous promettant des revenus passifs en quelques clics. Mais pourquoi, alors, si c'était si facile, tout le monde n'est-il pas déjà millionnaire grâce au drop shipping ?</p><p>Dans cet article, nous allons décortiquer les raisons pour lesquelles le drop shipping ne vous rendra probablement pas riche. Nous allons voir ensemble les illusions, les limites et les obstacles réels de ce modèle économique. Alors, attachez vos ceintures et préparez-vous à une dose de réalité.</p>"
+          },
+          {
+            "id": "section-1",
+            "type": "h2",
+            "content": "Des marges de profit faméliques"
+          },
+          {
+            "id": "content-1",
+            "type": "content",
+            "content": "<p>La première chose à comprendre, c'est que le drop shipping fonctionne avec des marges très serrées. Dans 80% des cas, la concurrence féroce sur les plateformes comme Shopify et Amazon pousse les prix vers le bas. Par exemple, si vous vendez un produit à 30 euros et que vous avez payé 25 euros à votre fournisseur, vos 5 euros de profit s'envolent vite en frais de publicité, frais de transaction et autres coûts imprévus.</p><p>Netflix et Nike ont des marges qui dépassent souvent les 50% grâce à leur marque et leur différenciation. Dans le drop shipping, les produits sont souvent génériques et interchangeables, ce qui rend difficile la création d'une valeur ajoutée. Soyons clairs, sans marge significative, l'accumulation de richesse devient quasi impossible.</p>"
+          },
+          {
+            "id": "section-2",
+            "type": "h2",
+            "content": "Dépendance aux fournisseurs"
+          },
+          {
+            "id": "content-2",
+            "type": "content",
+            "content": "<p>Un autre problème majeur du drop shipping est la dépendance aux fournisseurs tiers. Vous n'avez aucun contrôle sur la qualité des produits, les délais de livraison ou même la disponibilité. Supposons que votre fournisseur décide soudainement d'augmenter ses prix ou de cesser la production d'un produit populaire. Votre entreprise peut en souffrir gravement du jour au lendemain.</p><p>Comparez cela à WordPress qui, malgré ses lenteurs parfois agaçantes (voir <a href=\"/blog/pourquoi-les-sites-wordpress-sont-ils-si-lents\">notre article</a>), vous offre un contrôle total sur vos sites. Dans le drop shipping, vous êtes à la merci de décisions qui ne dépendent pas de vous.</p>"
+          },
+          {
+            "id": "section-3",
+            "type": "h2",
+            "content": "La saturation du marché"
+          },
+          {
+            "id": "content-3",
+            "type": "content",
+            "content": "<p>Le drop shipping n'est pas un concept nouveau. Depuis des années, des milliers d'entrepreneurs se sont lancés, pensant avoir trouvé la recette secrète du succès. Mais comme toute opportunité de marché, quand tout le monde fait la même chose, la valeur s'érode. Les produits deviennent des commodités, et vous entrez dans une guerre des prix où seuls les plus gros survivent.</p><p>Regardez Shopify, qui a vu une explosion de magasins en ligne ces dernières années. La concurrence est devenue si intense que se démarquer est désormais un défi monumental. La question n'est pas de savoir si vous pouvez vendre, mais si vous pouvez encore faire des profits significatifs une fois les coûts déduits.</p>"
+          },
+          {
+            "id": "section-4",
+            "type": "h2",
+            "content": "Les faux outils et promesses"
+          },
+          {
+            "id": "content-4",
+            "type": "content",
+            "content": "<p>Sur Internet, vous trouverez une multitude de logiciels prétendant vous aider à automatiser et à optimiser votre activité de drop shipping. La vérité, c'est que beaucoup de ces outils ne sont que des scripts déguisés en solutions IA (lire à ce sujet : <a href=\"/blog/les-faux-outils-ia-qui-sont-juste-des-scripts\">Les faux outils \"IA\"</a>). Ils promettent monts et merveilles, mais en réalité, ils ne font que vous compliquer la tâche et vous faire perdre de l'argent.</p><p>Soyons clairs, il n'y a pas de raccourci magique. Comme toute entreprise, le drop shipping demande du travail acharné, de la stratégie et une gestion rigoureuse. Compter sur des outils douteux pour compenser un manque d'effort n'est pas une stratégie gagnante.</p>"
+          },
+          {
+            "id": "section-5",
+            "type": "h2",
+            "content": "Les véritables coûts cachés"
+          },
+          {
+            "id": "content-5",
+            "type": "content",
+            "content": "<p>Le drop shipping est souvent présenté comme un modèle sans frais initiaux. Cependant, les coûts cachés sont nombreux : publicité en ligne, retours produits, litiges clients, etc. Prenons par exemple un entrepreneur qui dépense 1000 euros en publicité pour générer 2000 euros de ventes. Après déduction des coûts des produits, des frais de transaction et autres, le profit réel peut être presque nul.</p><p>En regardant des entreprises comme Nike, on comprend l'importance d'investir dans la marque et la notoriété pour augmenter les marges. Dans le drop shipping, sans investissement stratégique, vous restez dans une logique de survie plutôt que de croissance.</p>"
+          },
+          {
+            "id": "section-6",
+            "type": "h2",
+            "content": "Conclusion : Pourquoi le drop shipping n'est pas la solution miracle"
+          },
+          {
+            "id": "conclusion-content",
+            "type": "content",
+            "content": "<p>Soyons réalistes : le drop shipping est une opportunité parmi d'autres, mais ce n'est pas la solution miracle qu'on veut vous faire croire. Entre la faible rentabilité, la dépendance aux fournisseurs et la saturation du marché, les défis sont nombreux et souvent sous-estimés.</p><blockquote><p><strong>\"Le succès en affaires ne vient pas de la facilité, mais de la persévérance et de l'innovation.\"</strong></p></blockquote><p><br>✨ <em>Cet article fait partie de notre ligne éditoriale : déconstruire les mythes pour mieux vous armer. Parce qu'au final, la seule promesse qui compte, c'est celle qu'on peut tenir.</em></p>"
+          }
+        ],
+        "seo": {
+          "focusKeyword": "drop shipping",
+          "metaTitle": "Le drop shipping : pourquoi il ne vous rendra pas riche — Soliva",
+          "metaDescription": "Découvrez pourquoi le drop shipping ne vous rendra probablement pas riche. Mieux comprendre les défis et réalités de ce modèle économique.",
+          "canonicalUrl": "http://localhost:3006/blog/le-drop-shipping-pourquoi-il-ne-vous-rendra-pas-riche",
+          "schemas": [
+            "Article"
+          ],
+          "suggestedInternalLinks": [
+            {
+              "url": "/studio",
+              "label": "Nos services",
+              "reason": "Pertinence contextuelle"
+            }
+          ]
+        },
+        "id": "article-le-drop-shipping-pourquoi-il-ne-vous-rendra-pas-riche-099340",
+        "publishedAt": "2025-10-21T17:02:27.975Z",
+        "hasCustomSlug": true,
+        "content": "<p>Parlons cash : le drop shipping est souvent vendu comme un eldorado où l'on peut gagner de l'argent depuis son canapé sans rien faire. La vérité, c'est que la réalité est bien différente. Vous avez sûrement vu ces publicités YouTube vous promettant des revenus passifs en quelques clics. Mais pourquoi, alors, si c'était si facile, tout le monde n'est-il pas déjà millionnaire grâce au drop shipping ?</p><p>Dans cet article, nous allons décortiquer les raisons pour lesquelles le drop shipping ne vous rendra probablement pas riche. Nous allons voir ensemble les illusions, les limites et les obstacles réels de ce modèle économique. Alors, attachez vos ceintures et préparez-vous à une dose de réalité.</p>\n<h2>Des marges de profit faméliques</h2>\n<p>La première chose à comprendre, c'est que le drop shipping fonctionne avec des marges très serrées. Dans 80% des cas, la concurrence féroce sur les plateformes comme Shopify et Amazon pousse les prix vers le bas. Par exemple, si vous vendez un produit à 30 euros et que vous avez payé 25 euros à votre fournisseur, vos 5 euros de profit s'envolent vite en frais de publicité, frais de transaction et autres coûts imprévus.</p><p>Netflix et Nike ont des marges qui dépassent souvent les 50% grâce à leur marque et leur différenciation. Dans le drop shipping, les produits sont souvent génériques et interchangeables, ce qui rend difficile la création d'une valeur ajoutée. Soyons clairs, sans marge significative, l'accumulation de richesse devient quasi impossible.</p>\n<h2>Dépendance aux fournisseurs</h2>\n<p>Un autre problème majeur du drop shipping est la dépendance aux fournisseurs tiers. Vous n'avez aucun contrôle sur la qualité des produits, les délais de livraison ou même la disponibilité. Supposons que votre fournisseur décide soudainement d'augmenter ses prix ou de cesser la production d'un produit populaire. Votre entreprise peut en souffrir gravement du jour au lendemain.</p><p>Comparez cela à WordPress qui, malgré ses lenteurs parfois agaçantes (voir <a href=\"/blog/pourquoi-les-sites-wordpress-sont-ils-si-lents\">notre article</a>), vous offre un contrôle total sur vos sites. Dans le drop shipping, vous êtes à la merci de décisions qui ne dépendent pas de vous.</p>\n<h2>La saturation du marché</h2>\n<p>Le drop shipping n'est pas un concept nouveau. Depuis des années, des milliers d'entrepreneurs se sont lancés, pensant avoir trouvé la recette secrète du succès. Mais comme toute opportunité de marché, quand tout le monde fait la même chose, la valeur s'érode. Les produits deviennent des commodités, et vous entrez dans une guerre des prix où seuls les plus gros survivent.</p><p>Regardez Shopify, qui a vu une explosion de magasins en ligne ces dernières années. La concurrence est devenue si intense que se démarquer est désormais un défi monumental. La question n'est pas de savoir si vous pouvez vendre, mais si vous pouvez encore faire des profits significatifs une fois les coûts déduits.</p>\n<h2>Les faux outils et promesses</h2>\n<p>Sur Internet, vous trouverez une multitude de logiciels prétendant vous aider à automatiser et à optimiser votre activité de drop shipping. La vérité, c'est que beaucoup de ces outils ne sont que des scripts déguisés en solutions IA (lire à ce sujet : <a href=\"/blog/les-faux-outils-ia-qui-sont-juste-des-scripts\">Les faux outils \"IA\"</a>). Ils promettent monts et merveilles, mais en réalité, ils ne font que vous compliquer la tâche et vous faire perdre de l'argent.</p><p>Soyons clairs, il n'y a pas de raccourci magique. Comme toute entreprise, le drop shipping demande du travail acharné, de la stratégie et une gestion rigoureuse. Compter sur des outils douteux pour compenser un manque d'effort n'est pas une stratégie gagnante.</p>\n<h2>Les véritables coûts cachés</h2>\n<p>Le drop shipping est souvent présenté comme un modèle sans frais initiaux. Cependant, les coûts cachés sont nombreux : publicité en ligne, retours produits, litiges clients, etc. Prenons par exemple un entrepreneur qui dépense 1000 euros en publicité pour générer 2000 euros de ventes. Après déduction des coûts des produits, des frais de transaction et autres, le profit réel peut être presque nul.</p><p>En regardant des entreprises comme Nike, on comprend l'importance d'investir dans la marque et la notoriété pour augmenter les marges. Dans le drop shipping, sans investissement stratégique, vous restez dans une logique de survie plutôt que de croissance.</p>\n<h2>Conclusion : Pourquoi le drop shipping n'est pas la solution miracle</h2>\n<p>Soyons réalistes : le drop shipping est une opportunité parmi d'autres, mais ce n'est pas la solution miracle qu'on veut vous faire croire. Entre la faible rentabilité, la dépendance aux fournisseurs et la saturation du marché, les défis sont nombreux et souvent sous-estimés.</p><blockquote><p><strong>\"Le succès en affaires ne vient pas de la facilité, mais de la persévérance et de l'innovation.\"</strong></p></blockquote><p><br>✨ <em>Cet article fait partie de notre ligne éditoriale : déconstruire les mythes pour mieux vous armer. Parce qu'au final, la seule promesse qui compte, c'est celle qu'on peut tenir.</em></p>"
+      },
+      {
+        "title": "Pourquoi votre site mobile pourrait être votre pire ennemi",
+        "slug": "pourquoi-votre-site-mobile-pourrait-etre-votre-pire-ennemi",
+        "status": "draft",
+        "blocks": [
+          {
+            "id": "intro-1",
+            "type": "content",
+            "content": "<p>La vérité, c'est que votre site mobile pourrait être votre pire ennemi. Vous avez investi dans un superbe design et des fonctionnalités dernier cri, mais si votre site mobile n'est pas performant, vous perdez des clients avant même qu'ils aient vu votre page d'accueil. Dans un monde où 80% des utilisateurs naviguent sur leur téléphone, ne pas avoir un site mobile performant, c'est comme ouvrir une boutique sans vitrine.</p><p>Imaginez Netflix avec une interface lente et buguée. Vous vous désabonneriez immédiatement ! Pourtant, c'est exactement ce que vos clients font si votre site mobile ne répond pas à leurs attentes. Parlons cash : votre objectif est de convertir ces visiteurs en clients, pas de les frustrer.</p>"
+          },
+          {
+            "id": "section-1",
+            "type": "h2",
+            "content": "Vitesse de chargement : le nerf de la guerre"
+          },
+          {
+            "id": "content-1",
+            "type": "content",
+            "content": "<p>La vitesse de chargement est cruciale. Dans 80% des cas, les utilisateurs abandonnent un site qui met plus de trois secondes à se charger. Shopify, par exemple, optimise constamment ses pages pour garantir un temps de chargement rapide, car ils savent que chaque seconde compte. Si votre site mobile n'est pas rapide, vos visiteurs iront voir ailleurs, c'est garanti.</p><p>Un site mobile performant, c'est aussi un site léger. Réduisez la taille de vos images, minimisez les scripts et utilisez des technologies comme AMP pour booster la vitesse. Un conseil : testez votre site sur des outils de mesure comme PageSpeed Insights pour identifier les points à améliorer.</p>"
+          },
+          {
+            "id": "section-2",
+            "type": "h2",
+            "content": "UX mobile : L'expérience qui fidélise"
+          },
+          {
+            "id": "content-2",
+            "type": "content",
+            "content": "<p>L'expérience utilisateur (UX) sur mobile est essentielle. Prenez exemple sur Nike : leur site mobile est intuitif, fluide et engageant. Un bon UX mobile doit être simple, avec une navigation claire et des boutons facilement cliquables. Si vos utilisateurs doivent zoomer ou galérer pour cliquer sur un lien, vous avez perdu la bataille.</p><p>Soyons clairs, un site mobile performant est un site qui pense d'abord à l'utilisateur. Réduisez le nombre de clicks nécessaires pour réaliser une action et assurez-vous que toutes les informations importantes soient facilement accessibles. Un design responsive n'est pas une option, c'est une nécessité.</p>"
+          },
+          {
+            "id": "section-3",
+            "type": "h2",
+            "content": "SEO mobile : Ne négligez pas votre visibilité"
+          },
+          {
+            "id": "content-3",
+            "type": "content",
+            "content": "<p>Le SEO mobile est crucial pour votre visibilité. Google privilégie les sites mobiles performants dans ses résultats de recherche. Si votre site mobile est lent ou mal optimisé, votre classement en souffrira, et par conséquent, votre trafic aussi. Utilisez des outils comme Google Search Console pour surveiller votre performance mobile.</p><p>Assurez-vous que vos balises méta, titres et descriptions soient optimisés pour le mobile. Un contenu bien structuré et des mots-clés pertinents sont vos meilleurs alliés pour un SEO efficace. Un exemple à suivre ? WordPress, qui propose des plugins SEO spécialement conçus pour optimiser la performance mobile.</p>"
+          },
+          {
+            "id": "section-4",
+            "type": "h2",
+            "content": "Sécurité mobile : Protéger vos utilisateurs"
+          },
+          {
+            "id": "content-4",
+            "type": "content",
+            "content": "<p>La sécurité mobile est un aspect souvent négligé mais crucial. Un site mobile performant est aussi un site sécurisé. Vos utilisateurs doivent pouvoir naviguer sans craindre pour leurs données personnelles. Implémentez des certificats SSL et assurez-vous que toutes les transactions soient sécurisées.</p><p>Dans les cas où la sécurité est compromise, vous risquez de perdre la confiance de vos utilisateurs, ce qui est difficile à regagner. Prenez exemple sur les grandes plateformes comme PayPal, qui investissent massivement dans la sécurité pour assurer une expérience utilisateur sans faille.</p>"
+          },
+          {
+            "id": "section-5",
+            "type": "h2",
+            "content": "Le design adaptatif : Une nécessité, pas un luxe"
+          },
+          {
+            "id": "content-5",
+            "type": "content",
+            "content": "<p>Un design adaptatif est impératif pour un site mobile performant. Il doit s'adapter à toutes les tailles d'écran, des smartphones aux tablettes. Un design qui ne s'ajuste pas correctement peut rendre votre contenu illisible et frustrer vos utilisateurs.</p><p>Regardez comment des entreprises comme Apple s'assurent que chaque élément de leur site est parfaitement visible et utilisable, peu importe le dispositif. Investir dans un design adaptatif, c'est garantir une expérience utilisateur cohérente et agréable, augmentant ainsi votre taux de conversion.</p>"
+          },
+          {
+            "id": "section-6",
+            "type": "h2",
+            "content": "Contenu mobile : Le roi reste le contenu"
+          },
+          {
+            "id": "content-6",
+            "type": "content",
+            "content": "<p>Le contenu est toujours roi, même sur mobile. Un site mobile performant doit proposer un contenu pertinent et engageant. Évitez les blocs de texte trop longs et privilégiez un contenu visuel et interactif. Utilisez des vidéos, des infographies et des animations pour captiver votre audience.</p><p>Un bon exemple est BuzzFeed, qui sait comment adapter son contenu pour qu'il soit facilement consommable sur mobile. Intégrez des éléments interactifs pour retenir vos visiteurs plus longtemps sur votre site et les inciter à revenir.</p>"
+          },
+          {
+            "id": "conclusion-1",
+            "type": "h2",
+            "content": "Conclusion : Prenez le mobile au sérieux"
+          },
+          {
+            "id": "conclusion-content",
+            "type": "content",
+            "content": "<p>Un site mobile performant n'est pas une option, c'est une nécessité. En optimisant votre site pour le mobile, vous assurez non seulement une meilleure expérience utilisateur, mais aussi une meilleure visibilité et sécurité. Ne laissez pas votre site mobile devenir votre pire ennemi.</p><blockquote><p><strong>\"Un site mobile performant est un investissement dans votre succès futur.\"</strong></p></blockquote><p><br>✨ <em>Cet article fait partie de notre ligne éditoriale : Soyons clairs et efficaces. Parce qu'au final, la seule promesse qui compte, c'est celle qu'on peut tenir.</em></p>"
+          }
+        ],
+        "seo": {
+          "focusKeyword": "site mobile performant",
+          "metaTitle": "Pourquoi votre site mobile est votre pire ennemi — Soliva",
+          "metaDescription": "Découvrez pourquoi votre site mobile pourrait saboter votre succès et comment y remédier.",
+          "canonicalUrl": "http://localhost:3006/blog/pourquoi-votre-site-mobile-pourrait-etre-votre-pire-ennemi",
+          "schemas": [
+            "Article",
+            "FAQPage"
+          ],
+          "suggestedInternalLinks": [
+            {
+              "url": "/studio",
+              "label": "Nos services",
+              "reason": "Pertinence contextuelle"
+            }
+          ]
+        },
+        "id": "article-pourquoi-votre-site-mobile-pourrait-etre-votre-pire-ennemi-457294",
+        "publishedAt": "2025-10-21T17:07:37.294Z",
+        "hasCustomSlug": true
       }
     ],
     "filters": [

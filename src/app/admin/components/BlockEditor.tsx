@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { createPortal } from 'react-dom';
 import WysiwygEditor from './WysiwygEditor';
 import MediaUploader, { LogoUploader } from './MediaUploader';
 import VersionList from './VersionList';
@@ -55,9 +54,10 @@ interface BlockEditorProps {
   pageData: any;
   pageKey: string;
   onUpdate: (updates: any) => void;
+  onShowArticleGenerator?: () => void;
 }
 
-export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditorProps) {
+export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticleGenerator }: BlockEditorProps) {
   const router = useRouter();
   const [localData, setLocalData] = useState(pageData || {});
   const [blocks, setBlocks] = useState<Block[]>([]);
@@ -1400,16 +1400,31 @@ export default function BlockEditor({ pageData, pageKey, onUpdate }: BlockEditor
               </span>
             </div>
           </div>
-                    <Button
-            onClick={() => {
-              const newId = `article-${Date.now()}`;
-              router.push(`/admin/blog/${newId}`);
-            }}
-            className="flex items-center gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            Nouvel article
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => {
+                if (onShowArticleGenerator) {
+                  onShowArticleGenerator();
+                }
+              }}
+              variant="outline"
+              className="flex items-center gap-2"
+              type="button"
+            >
+              <Brain className="w-4 h-4" />
+              💡 Idées d'articles
+            </Button>
+            <Button
+              onClick={() => {
+                const newId = `article-${Date.now()}`;
+                router.push(`/admin/blog/${newId}`);
+              }}
+              className="flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              Nouvel article
+            </Button>
+          </div>
         </div>
         
         <div className="space-y-3">
