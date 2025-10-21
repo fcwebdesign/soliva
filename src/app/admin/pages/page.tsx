@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Sidebar from '../components/Sidebar';
+import AdminPageLayout from '../components/AdminPageLayout';
 import { Home, Mail, Palette, FileText, Settings, Layout, Plus } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -234,54 +234,14 @@ export default function PagesAdmin() {
 
 
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 admin-page">
-        <div className="flex">
-          <Sidebar 
-            currentPage="pages" 
-          />
-          <div className="flex-1 p-6">
-            <div className="animate-pulse">
-              <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2 mb-8"></div>
-              <div className="space-y-4">
-                {[1, 2, 3].map(i => (
-                  <div key={i} className="h-20 bg-gray-200 rounded"></div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50 admin-page">
-      <div className="flex">
-        <Sidebar 
-          currentPage="pages" 
-        />
-        
-        <div className="flex-1">
-          {/* Header */}
-          <header className="bg-white shadow-sm border-b border-gray-200">
-            <div className="px-6 py-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-2xl lg:text-4xl font-semibold text-gray-900 mb-2" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.25rem)' }}>
-                    Pages
-                  </h1>
-                  <p className="text-sm text-gray-500">Page: /pages</p>
-                </div>
-              </div>
-            </div>
-          </header>
-
-          {/* Content */}
-          <div className="p-6">
-            <div className="space-y-6">
+    <AdminPageLayout
+      title="Pages"
+      description="Gestion des pages du site"
+      currentPage="pages"
+      loading={loading}
+    >
+      <div className="space-y-6">
               {/* Tabs */}
               <div className="border-b border-gray-200">
                 <nav className="-mb-px flex space-x-8">
@@ -421,10 +381,7 @@ export default function PagesAdmin() {
                   </div>
                 </div>
               )}
-            </div>
-          </div>
-        </div>
       </div>
-    </div>
+    </AdminPageLayout>
   );
 } 
