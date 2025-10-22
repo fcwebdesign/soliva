@@ -46,6 +46,14 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { useConfirmDialog } from '@/hooks/useConfirmDialog';
+import VersionManagerSection from './sections/VersionManagerSection';
+import { useAIAssistant } from './hooks/useAIAssistant';
+import HeroSection from './sections/HeroSection';
+import ContentSection from './sections/ContentSection';
+import NavSection from './sections/NavSection';
+import MetadataSection from './sections/MetadataSection';
+import ContactSection from './sections/ContactSection';
+import FooterSection from './sections/FooterSection';
 
 interface Block {
   id: string;
@@ -144,7 +152,6 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
   const [aiProfileCompleteness, setAiProfileCompleteness] = useState<number | null>(null);
   const [draggedLogoIndex, setDraggedLogoIndex] = useState<number | null>(null);
   const [dragOverLogoIndex, setDragOverLogoIndex] = useState<number | null>(null);
-  const [backupLoading, setBackupLoading] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(80); // Valeur par défaut
   const [sommaireTop, setSommaireTop] = useState(96); // Position dynamique du sommaire
   
@@ -236,11 +243,6 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
   const [workIsLoadingAI, setWorkIsLoadingAI] = useState(false);
   const [blogIsLoadingAI, setBlogIsLoadingAI] = useState(false);
   
-  // États pour les suggestions de description IA
-  const [isLoadingDescriptionAI, setIsLoadingDescriptionAI] = useState(false);
-  
-  // États pour les suggestions de contenu de blocs IA
-  const [isLoadingBlockAI, setIsLoadingBlockAI] = useState<string | null>(null);
   
   // États pour les actions de duplication et suppression
   const [isDuplicating, setIsDuplicating] = useState<string | null>(null);
@@ -574,6 +576,21 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
     // Mettre à jour le contenu après suppression
     updateBlocksContent(newBlocks);
   };
+
+  // Hook pour l'assistant IA
+  const {
+    isLoadingDescriptionAI,
+    isLoadingBlockAI,
+    getDescriptionSuggestion,
+    getBlockContentSuggestion,
+    getServiceDescriptionSuggestion
+  } = useAIAssistant({
+    pageKey,
+    localData,
+    blocks,
+    updateField,
+    updateBlock
+  });
 
   const duplicateBlock = (blockId: string) => {
     const blockToDuplicate = blocks.find(block => block.id === blockId);
@@ -1152,238 +1169,8 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
     return getBlockLabel(type);
   };
 
-  const renderHeroBlock = () => (
-    <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-      <div className="flex items-center space-x-2 mb-4">
-        <Target className="w-6 h-6 text-gray-600" />
-        <h3 className="text-lg font-semibold text-gray-900">Hero</h3>
-      </div>
-      
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Titre
-          </label>
-          <input
-            type="text"
-            value={localData?.hero?.title || ''}
-            onChange={(e) => updateField('hero.title', e.target.value)}
-            placeholder="Titre de la page"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-          />
-        </div>
-        
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Sous-titre
-          </label>
-          <textarea
-            value={localData?.hero?.subtitle || ''}
-            onChange={(e) => updateField('hero.subtitle', e.target.value)}
-            placeholder="Sous-titre de la page"
-            rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-          />
-          <p className="text-xs text-gray-500 mt-1">
-            Utilisez \n pour les retours à la ligne
-          </p>
-        </div>
-      </div>
-    </div>
-  );
 
-  const getDescriptionSuggestion = async () => {
-    if (pageKey !== 'blog' && pageKey !== 'work' && pageKey !== 'contact' && pageKey !== 'studio' && pageKey !== 'custom') return;
-    
-    setIsLoadingDescriptionAI(true);
-    try {
-      const response = await fetch('/api/admin/ai/suggest-description', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          type: pageKey === 'work' ? 'work' : pageKey === 'blog' ? 'blog' : pageKey === 'contact' ? 'contact' : pageKey === 'custom' ? 'custom' : 'studio',
-          title: pageKey === 'custom' ? localData.title : undefined
-        })
-      });
 
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Erreur API');
-      }
-
-      // Appliquer la suggestion
-      const descriptionPath = 'description';
-      updateField(descriptionPath, data.suggestedDescription);
-      
-    } catch (error) {
-      console.error('Erreur suggestion description IA:', error);
-      toast.error(`Erreur: ${error.message}`);
-    } finally {
-      setIsLoadingDescriptionAI(false);
-    }
-  };
-
-  const getBlockContentSuggestion = async (blockId: string, blockType: string) => {
-    setIsLoadingBlockAI(blockId);
-    try {
-      // Récupérer le bloc actuel pour avoir le titre existant
-      const currentBlock = blocks.find(block => block.id === blockId);
-      
-      const response = await fetch('/api/admin/ai/suggest-block-content', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          blockType,
-          pageKey,
-          existingBlocks: blocks,
-          existingTitle: currentBlock?.title || '',
-          existingOfferings: currentBlock?.offerings || [],
-          context: `Bloc ${blockType} dans la page ${pageKey}`
-        })
-      });
-
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Erreur API');
-      }
-
-      // Appliquer la suggestion au bloc selon le type
-      if (blockType === 'services') {
-        // Pour services, garder le titre existant et mettre à jour seulement les descriptions
-        const suggestion = data.suggestedContent;
-        if (suggestion.offerings && currentBlock?.offerings) {
-          // Mettre à jour seulement les descriptions des services existants
-          const updatedOfferings = currentBlock.offerings.map((offering, index) => ({
-            ...offering,
-            description: suggestion.offerings[index]?.description || offering.description
-          }));
-          updateBlock(blockId, { offerings: updatedOfferings });
-        } else if (suggestion.offerings) {
-          // Si pas d'offerings existants, utiliser les nouveaux
-          updateBlock(blockId, { offerings: suggestion.offerings });
-        }
-      } else {
-        // Pour les autres types, mettre à jour le contenu
-        updateBlock(blockId, { content: data.suggestedContent });
-      }
-      
-    } catch (error) {
-      console.error('Erreur suggestion contenu bloc IA:', error);
-      toast.error(`Erreur: ${error.message}`);
-    } finally {
-      setIsLoadingBlockAI(null);
-    }
-  };
-
-  const getServiceDescriptionSuggestion = async (blockId: string, serviceIndex: number, serviceTitle: string) => {
-    const loadingId = `${blockId}-${serviceIndex}`;
-    setIsLoadingBlockAI(loadingId);
-    try {
-      const response = await fetch('/api/admin/ai/suggest-service-description', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          serviceTitle,
-          pageKey,
-          context: `Description pour le service "${serviceTitle}" dans la page ${pageKey}`
-        })
-      });
-
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Erreur API');
-      }
-
-      // Mettre à jour seulement la description du service spécifique
-      const currentBlock = blocks.find(block => block.id === blockId);
-      if (currentBlock?.offerings) {
-        const updatedOfferings = [...currentBlock.offerings];
-        updatedOfferings[serviceIndex] = {
-          ...updatedOfferings[serviceIndex],
-          description: data.suggestedDescription
-        };
-        updateBlock(blockId, { offerings: updatedOfferings });
-      }
-      
-    } catch (error) {
-      console.error('Erreur suggestion description service IA:', error);
-      toast.error(`Erreur: ${error.message}`);
-    } finally {
-      setIsLoadingBlockAI(null);
-    }
-  };
-
-  const renderContentBlock = () => {
-    // Pour les pages blog, work, contact, studio et custom, la description est directement à la racine
-    const isDirectDescription = pageKey === 'blog' || pageKey === 'work' || pageKey === 'contact' || pageKey === 'studio' || pageKey === 'custom';
-    const descriptionPath = isDirectDescription ? 'description' : 'content.description';
-    const descriptionValue = isDirectDescription ? localData.description : localData.content?.description;
-    
-    return (
-      <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-        <div className="flex items-center space-x-2 mb-4">
-          <Target className="w-6 h-6 text-gray-600" />
-          <h3 className="text-lg font-semibold text-gray-900">Hero</h3>
-        </div>
-        
-        <div className="space-y-4">
-          {/* Titre pour les pages blog, work, contact, studio et custom */}
-          {(pageKey === 'blog' || pageKey === 'work' || pageKey === 'contact' || pageKey === 'studio' || pageKey === 'custom') && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Titre
-              </label>
-              <input
-                type="text"
-                value={localData.hero?.title || ''}
-                onChange={(e) => updateField('hero.title', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                placeholder={`Titre de la page ${pageKey}`}
-              />
-            </div>
-          )}
-          
-          <div>
-            <div className="mb-2">
-              <label className="text-sm font-medium text-gray-700">
-                Description
-              </label>
-            </div>
-            <WysiwygEditor
-              value={descriptionValue || ''}
-              onChange={(value) => updateField(descriptionPath, value)}
-              placeholder="Description de la page"
-              onAISuggestion={(pageKey === 'blog' || pageKey === 'work' || pageKey === 'contact' || pageKey === 'studio' || pageKey === 'custom') ? getDescriptionSuggestion : undefined}
-              isLoadingAI={isLoadingDescriptionAI}
-            />
-          </div>
-        
-        {/* Section image seulement si ce n'est pas la page contact ou studio */}
-        {pageKey !== 'contact' && pageKey !== 'studio' && localData.content?.image && (
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Image
-            </label>
-            <MediaUploader
-              currentUrl={localData.content.image.src}
-              onUpload={(url) => updateField('content.image.src', url)}
-            />
-            <input
-              type="text"
-              value={localData.content.image.alt || ''}
-              onChange={(e) => updateField('content.image.alt', e.target.value)}
-              placeholder="Texte alternatif de l'image"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors mt-2"
-            />
-          </div>
-        )}
-      </div>
-    </div>
-    );
-  };
 
 
 
@@ -1634,175 +1421,9 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
     );
   };
 
-  const renderNavBlock = () => (
-    <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-      <div className="flex items-center space-x-2 mb-4">
-        <Navigation className="w-6 h-6 text-gray-600" />
-        <h3 className="text-lg font-semibold text-gray-900">Navigation</h3>
-      </div>
-      
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Logo
-          </label>
-          <input
-            type="text"
-            value={localData.logo || ''}
-            onChange={(e) => updateField('logo', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-          />
-        </div>
-        
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Items de menu
-          </label>
-          <textarea
-            value={localData.items?.join('\n') || ''}
-            onChange={(e) => updateField('items', e.target.value.split('\n').filter(Boolean))}
-            placeholder="Un item par ligne"
-            rows={5}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-          />
-        </div>
-        
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Localisation
-          </label>
-          <input
-            type="text"
-            value={localData.location || ''}
-            onChange={(e) => updateField('location', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-          />
-        </div>
-      </div>
-    </div>
-  );
 
-  const renderMetadataBlock = () => (
-    <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-      <div className="flex items-center space-x-2 mb-4">
-        <Settings className="w-6 h-6 text-gray-600" />
-        <h3 className="text-lg font-semibold text-gray-900">Métadonnées</h3>
-      </div>
-      
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Titre
-          </label>
-          <input
-            type="text"
-            value={localData.title || ''}
-            onChange={(e) => updateField('title', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-          />
-        </div>
-        
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Description
-          </label>
-          <textarea
-            value={localData.description || ''}
-            onChange={(e) => updateField('description', e.target.value)}
-            rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-          />
-        </div>
-      </div>
-    </div>
-  );
 
-  const renderContactBlock = () => (
-    <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-      <div className="flex items-center space-x-2 mb-4">
-        <Mail className="w-6 h-6 text-gray-600" />
-        <h3 className="text-lg font-semibold text-gray-900">Contact</h3>
-      </div>
-      
-      <div className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Collaborations - Titre
-            </label>
-            <input
-              type="text"
-              value={localData.sections?.collaborations?.title || ''}
-              onChange={(e) => updateField('sections.collaborations.title', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Collaborations - Email
-            </label>
-            <input
-              type="email"
-              value={localData.sections?.collaborations?.email || ''}
-              onChange={(e) => updateField('sections.collaborations.email', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-            />
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Inquiries - Titre
-            </label>
-            <input
-              type="text"
-              value={localData.sections?.inquiries?.title || ''}
-              onChange={(e) => updateField('sections.inquiries.title', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Inquiries - Email
-            </label>
-            <input
-              type="email"
-              value={localData.sections?.inquiries?.email || ''}
-              onChange={(e) => updateField('sections.inquiries.email', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 
-  const renderFooterBlock = () => (
-    <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-      <div className="flex items-center space-x-2 mb-4">
-        <Footprints className="w-6 h-6 text-gray-600" />
-        <h3 className="text-lg font-semibold text-gray-900">Footer</h3>
-      </div>
-      
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Réseaux sociaux
-          </label>
-          <textarea
-            value={localData.socials?.join('\n') || ''}
-            onChange={(e) => updateField('socials', e.target.value.split('\n').filter(Boolean))}
-            placeholder="Un réseau par ligne"
-            rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-          />
-        </div>
-      </div>
-    </div>
-  );
 
   const renderBlogTabs = () => {
     return (
@@ -1856,7 +1477,13 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
         {blogActiveTab === 'content' && renderArticlesBlock()}
         {blogActiveTab === 'settings' && (
           <div className="space-y-6">
-            {renderContentBlock()}
+            <ContentSection 
+              pageKey={pageKey} 
+              localData={localData} 
+              updateField={updateField} 
+              getDescriptionSuggestion={getDescriptionSuggestion}
+              isLoadingDescriptionAI={isLoadingDescriptionAI}
+            />
           </div>
         )}
         {blogActiveTab === 'filters' && renderFiltersBlock()}
@@ -1916,7 +1543,13 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
         {workActiveTab === 'content' && renderProjectsBlock()}
         {workActiveTab === 'settings' && (
           <div className="space-y-6">
-            {renderContentBlock()}
+            <ContentSection 
+              pageKey={pageKey} 
+              localData={localData} 
+              updateField={updateField} 
+              getDescriptionSuggestion={getDescriptionSuggestion}
+              isLoadingDescriptionAI={isLoadingDescriptionAI}
+            />
           </div>
         )}
         {workActiveTab === 'filters' && renderFiltersBlock()}
@@ -2398,101 +2031,12 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
   //   saveBlocksContent
   // }), [blocks]);
 
-  const renderBackupBlock = () => {
-    const handleCreateBackup = async () => {
-      setBackupLoading(true);
-      try {
-        const response = await fetch('/api/admin/content', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'backup' }),
-        });
-        
-        if (response.ok) {
-          toast.success('Sauvegarde créée avec succès !');
-        } else {
-          toast.error('Erreur lors de la création de la sauvegarde');
-        }
-      } catch (err) {
-        toast.error('Erreur lors de la création de la sauvegarde');
-      } finally {
-        setBackupLoading(false);
-      }
-    };
-
-    const handleCleanupVersions = async () => {
-      const confirmed = await confirm({
-        title: 'Nettoyer les anciennes versions ?',
-        description: 'Seules les 10 versions les plus récentes seront conservées. Les autres seront supprimées.',
-        confirmText: 'Nettoyer'
-      });
-      
-      if (!confirmed) return;
-      
-      try {
-        const response = await fetch('/api/admin/versions/cleanup', {
-          method: 'POST',
-        });
-        
-        if (response.ok) {
-          const result = await response.json();
-          toast.success(`${result.deleted} anciennes versions supprimées !`);
-          // Recharger la liste des versions
-          window.location.reload();
-        } else {
-          toast.error('Erreur lors du nettoyage');
-        }
-      } catch (err) {
-        toast.error('Erreur lors du nettoyage');
-      }
-    };
-
-    return (
-      <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-        <div className="flex items-center space-x-2 mb-6">
-          <Save className="w-6 h-6 text-gray-600" />
-          <h3 className="text-lg font-semibold text-gray-900">Gestion des sauvegardes</h3>
-        </div>
-
-        <div className="space-y-6">
-          {/* Actions rapides */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <button
-              onClick={handleCreateBackup}
-              disabled={backupLoading}
-              className="flex items-center justify-center space-x-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
-            >
-              <Save className="w-4 h-4" />
-              <span>{backupLoading ? 'Création...' : 'Créer une sauvegarde'}</span>
-            </button>
-
-            <button
-              onClick={handleCleanupVersions}
-              className="flex items-center justify-center space-x-2 bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors"
-            >
-              <span>🧹</span>
-              <span>Nettoyer les versions</span>
-            </button>
-          </div>
-
-          {/* Liste des versions */}
-          <div>
-            <h4 className="text-md font-semibold text-gray-900 mb-4">Versions sauvegardées</h4>
-            <VersionList onRevert={(filename) => {
-              toast.success(`Version ${filename} restaurée !`);
-              window.location.reload();
-            }} />
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   // Si c'est la page backup, afficher la gestion des sauvegardes
   if (pageKey === 'backup') {
     return (
       <div className="space-y-6">
-        {renderBackupBlock()}
+        <VersionManagerSection />
       </div>
     );
   }
@@ -2501,7 +2045,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
   if (pageKey === 'footer') {
     return (
       <div className="space-y-6">
-        {renderFooterBlock()}
+        <FooterSection localData={localData} updateField={updateField} />
       </div>
     );
   }
@@ -2550,19 +2094,31 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
           {/* Rendu conditionnel selon le type de page */}
           {pageKey === 'home' && (
             <>
-              {renderHeroBlock()}
+              <HeroSection localData={localData} updateField={updateField} />
               {renderDragDropEditor()}
             </>
           )}
           {pageKey === 'contact' && (
             <>
-              {renderContentBlock()}
-              {renderContactBlock()}
+              <ContentSection 
+                pageKey={pageKey} 
+                localData={localData} 
+                updateField={updateField} 
+                getDescriptionSuggestion={getDescriptionSuggestion}
+                isLoadingDescriptionAI={isLoadingDescriptionAI}
+              />
+              <ContactSection localData={localData} updateField={updateField} />
             </>
           )}
           {pageKey === 'studio' && (
             <>
-              {renderContentBlock()}
+              <ContentSection 
+                pageKey={pageKey} 
+                localData={localData} 
+                updateField={updateField} 
+                getDescriptionSuggestion={getDescriptionSuggestion}
+                isLoadingDescriptionAI={isLoadingDescriptionAI}
+              />
               {renderDragDropEditor()}
             </>
           )}
@@ -2578,7 +2134,13 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
           {/* Pour les nouvelles pages personnalisées, afficher l'éditeur de blocs */}
           {pageKey === 'custom' && (
             <>
-              {renderContentBlock()}
+              <ContentSection 
+                pageKey={pageKey} 
+                localData={localData} 
+                updateField={updateField} 
+                getDescriptionSuggestion={getDescriptionSuggestion}
+                isLoadingDescriptionAI={isLoadingDescriptionAI}
+              />
               {renderDragDropEditor()}
             </>
           )}
@@ -2586,16 +2148,22 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
           {/* Pour les autres pages, afficher les blocs classiques */}
           {!['blog', 'work', 'backup', 'project', 'article', 'contact', 'studio', 'custom', 'metadata'].includes(pageKey) && !pageKey.startsWith('project-') && !pageKey.startsWith('article-') && (
             <>
-              {renderContentBlock()}
-              {renderMetadataBlock()}
-              {renderNavBlock()}
+              <ContentSection 
+                pageKey={pageKey} 
+                localData={localData} 
+                updateField={updateField} 
+                getDescriptionSuggestion={getDescriptionSuggestion}
+                isLoadingDescriptionAI={isLoadingDescriptionAI}
+              />
+              <MetadataSection localData={localData} updateField={updateField} />
+              <NavSection localData={localData} updateField={updateField} />
             </>
           )}
           
           {/* Pour la page metadata, afficher seulement le bloc metadata */}
           {pageKey === 'metadata' && (
             <>
-              {renderMetadataBlock()}
+              <MetadataSection localData={localData} updateField={updateField} />
             </>
           )}
         </div>
