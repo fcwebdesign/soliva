@@ -1,10 +1,9 @@
-import { promises as fs } from 'node:fs';
-import { join } from 'node:path';
+
+import { promises as fs } from 'fs';
+import { join } from 'path';
 import type { Content } from '@/types/content';
 import { cleanContentLinks } from '@/utils/cleanLinks';
 import { logger } from '@/utils/logger';
-
-export const runtime = "nodejs";
 
 const DATA_FILE_PATH = join(process.cwd(), 'data', 'content.json');
 

@@ -56,6 +56,7 @@ export interface StudioContent {
 export interface Studio {
   hero: Hero;
   content: StudioContent;
+  blocks?: any[];
 }
 
 export interface Project {
@@ -93,6 +94,9 @@ export interface Work {
 export interface Article {
   id: string;
   title: string;
+  slug?: string;
+  publishedAt?: string;
+  excerpt?: string;
 }
 
 export interface Blog {
@@ -133,6 +137,15 @@ export interface StorytellingBlock {
 // Étendre les types de blocs existants
 export type BlockType = 'h2' | 'h3' | 'content' | 'image' | 'cta' | 'hero-signature' | 'storytelling';
 
+export interface Footer {
+  socials?: Array<{
+    name: string;
+    url: string;
+    target?: string;
+    platform?: string;
+  }>;
+}
+
 export interface Content {
   metadata: Metadata;
   nav: Nav;
@@ -141,6 +154,7 @@ export interface Content {
   studio: Studio;
   work: Work;
   blog: Blog;
+  footer?: Footer;
   _template?: string;
   _templateVersion?: string;
 } 
