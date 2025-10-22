@@ -460,6 +460,46 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
   };
 
   const updateField = (path: string, value: any) => {
+    // Helper pour récupérer la valeur courante à un chemin donné
+    const getValueAtPath = (obj: any, p: string) => {
+      try {
+        return p.split('.')
+          .reduce((acc: any, key: string) => (acc && typeof acc === 'object') ? acc[key] : undefined, obj);
+      } catch {
+        return undefined;
+      }
+    };
+
+    // Normalisation minimaliste des contenus HTML vides provenant de l'éditeur
+    const normalizeHtmlEmpty = (s: any) => {
+      if (typeof s !== 'string') return s;
+      const t = s.replace(/&nbsp;/g, ' ').replace(/\u00A0/g, ' ').trim();
+      const emptyRegex = /^<(p|div)>\s*(<br\s*\/?>(\s*)?)?\s*<\/\1>$/i;
+      if (!t) return '';
+      if (emptyRegex.test(t)) return '';
+      return t;
+    };
+
+    // Helper d'égalité simple (string/deep JSON) avec normalisation HTML vide
+    const isEqual = (a: any, b: any) => {
+      const aNorm = normalizeHtmlEmpty(a);
+      const bNorm = normalizeHtmlEmpty(b);
+      if (aNorm === bNorm) return true;
+      try {
+        return JSON.stringify(aNorm) === JSON.stringify(bNorm);
+      } catch {
+        return false;
+      }
+    };
+
+    const prev = getValueAtPath(localData, path);
+    const next = value;
+
+    // Éviter de déclencher onUpdate si aucune modification réelle
+    if (isEqual(prev, next)) {
+      return;
+    }
+
     const pathArray = path.split('.');
     const newData = { ...localData };
     let current = newData;
@@ -472,7 +512,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
       current = current[pathArray[i]];
     }
     
-    current[pathArray[pathArray.length - 1]] = value;
+    current[pathArray[pathArray.length - 1]] = next;
     setLocalData(newData);
     onUpdate(newData);
   };

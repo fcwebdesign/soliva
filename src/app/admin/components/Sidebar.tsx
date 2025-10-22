@@ -26,9 +26,10 @@ interface Page {
 
 interface SidebarProps {
   currentPage: string;
+  onPageChange?: (newPage: string) => void;
 }
 
-export default function Sidebar({ currentPage }: SidebarProps) {
+export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const router = useRouter();
 
@@ -51,12 +52,17 @@ export default function Sidebar({ currentPage }: SidebarProps) {
   ];
 
   const handlePageChange = (pageId: string) => {
-    if (pageId === 'pages') {
-      router.push('/admin/pages');
-    } else if (pageId === 'ai') {
-      router.push('/admin/ai');
+    if (onPageChange) {
+      onPageChange(pageId);
     } else {
-      router.push(`/admin?page=${pageId}`);
+      // Fallback si onPageChange n'est pas fourni
+      if (pageId === 'pages') {
+        router.push('/admin/pages');
+      } else if (pageId === 'ai') {
+        router.push('/admin/ai');
+      } else {
+        router.push(`/admin?page=${pageId}`);
+      }
     }
   };
 

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
@@ -16,6 +16,8 @@ interface WysiwygEditorProps {
 }
 
 const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ value, onChange, placeholder, onAISuggestion, isLoadingAI }) => {
+  const didFirstUpdateRef = useRef(false);
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -63,6 +65,8 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ value, onChange, placehol
     onUpdate: ({ editor }) => {
       // Laisser TipTap travailler naturellement avec son schéma par défaut
       const html = editor.getHTML();
+      const isInitial = !didFirstUpdateRef.current;
+      didFirstUpdateRef.current = true;
       onChange(html);
     },
     editorProps: {
