@@ -170,6 +170,7 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
                     >
                       <FileText className="w-5 h-5" />
                       <span className="truncate">{p.label}</span>
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] border ${p.type === 'system' ? 'bg-gray-50 text-gray-700 border-gray-200' : 'bg-blue-50 text-blue-700 border-blue-200'}`}>{p.type === 'system' ? 'Système' : 'Custom'}</span>
                     </button>
                   </li>
                 ))}
@@ -314,6 +315,7 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
                         >
                           <FileText className="w-5 h-5" />
                           <span className="truncate">{p.label}</span>
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] border ${p.type === 'system' ? 'bg-gray-50 text-gray-700 border-gray-200' : 'bg-blue-50 text-blue-700 border-blue-200'}`}>{p.type === 'system' ? 'Système' : 'Custom'}</span>
                         </button>
                       </li>
                     ))}
