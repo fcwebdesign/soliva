@@ -49,6 +49,8 @@ interface ActionButtonsProps {
   disableDelete?: boolean;
   /** Icône du bouton Supprimer (par défaut: trash) */
   deleteIcon?: 'trash' | 'eye-off' | 'circle' | 'circle-dot' | 'none';
+  /** Classes pour styler le bouton Supprimer (ex: succès) */
+  deleteClassName?: string;
   
   /**
    * Masquer les icônes
@@ -98,6 +100,7 @@ export default function ActionButtons({
   disabled = false,
   disableDelete = false,
   deleteIcon = 'trash',
+  deleteClassName,
   labels,
   hideIcons = false,
   compact = false
@@ -167,7 +170,7 @@ export default function ActionButtons({
           size={size}
           disabled={disabled || disableDelete}
           variant="ghost"
-          className="bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800"
+          className={deleteClassName ?? 'bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800'}
           title={finalLabels.delete}
         >
           {!hideIcons && deleteIcon !== 'none' && (

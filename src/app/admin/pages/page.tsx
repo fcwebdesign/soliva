@@ -547,6 +547,7 @@ export default function PagesAdmin() {
                               disableDelete={false}
                               labels={{ delete: isSystem ? (isDisabledFront ? 'Activer' : 'Désactiver') : 'Supprimer' }}
                               deleteIcon={isSystem ? 'none' : 'trash'}
+                              deleteClassName={isSystem ? (isDisabledFront ? 'bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800' : 'bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800') : undefined}
                               size="sm"
                             />
                             <div className="mt-2 flex items-center justify-end gap-2 text-xs text-gray-700">
