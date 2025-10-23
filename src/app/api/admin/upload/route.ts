@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { promises as fs } from 'node:fs';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
+import sharp from 'sharp';
 
 export const runtime = "nodejs";
 
@@ -46,7 +47,15 @@ export async function POST(request: NextRequest) {
     // Générer un nom unique
     const timestamp = Date.now();
     const hash = createHash('md5').update(fileName + timestamp).digest('hex').slice(0, 8);
-    const uniqueFileName = `${timestamp}-${hash}${extension}`;
+    
+    // Lire le fichier
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    
+    // Déterminer le format de sortie
+    const isImage = ['.jpg', '.jpeg', '.png', '.webp'].includes(extension);
+    const outputExtension = isImage ? '.webp' : extension;
+    const uniqueFileName = `${timestamp}-${hash}${outputExtension}`;
     const filePath = join(UPLOADS_DIR, uniqueFileName);
 
     // Normaliser le nom de fichier (éviter path traversal)
@@ -58,18 +67,42 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Lire et écrire le fichier
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    await fs.writeFile(filePath, buffer);
+    // Traitement de l'image
+    if (isImage && extension !== '.svg') {
+      try {
+        // Optimiser et convertir en WebP avec Sharp
+        const optimizedBuffer = await sharp(buffer)
+          .webp({ 
+            quality: 85, // Qualité optimale pour WebP
+            effort: 6   // Effort de compression (0-6, 6 = meilleure compression)
+          })
+          .toBuffer();
+        
+        await fs.writeFile(filePath, optimizedBuffer);
+      } catch (sharpError) {
+        console.warn('Erreur Sharp, sauvegarde du fichier original:', sharpError);
+        // En cas d'erreur Sharp, sauvegarder le fichier original
+        await fs.writeFile(filePath, buffer);
+      }
+    } else {
+      // Pour les SVG et autres formats, sauvegarder tel quel
+      await fs.writeFile(filePath, buffer);
+    }
 
     const url = `/uploads/${uniqueFileName}`;
+
+    // Obtenir la taille du fichier final
+    const finalStats = await fs.stat(filePath);
+    const finalSize = finalStats.size;
 
     return NextResponse.json({
       url,
       filename: uniqueFileName,
-      size: file.size,
-      type: file.type,
+      size: finalSize,
+      originalSize: file.size,
+      type: isImage ? 'image/webp' : file.type,
+      optimized: isImage && extension !== '.svg',
+      compressionRatio: isImage ? Math.round((1 - finalSize / file.size) * 100) : 0,
     }, {
       status: 200,
       headers: {
