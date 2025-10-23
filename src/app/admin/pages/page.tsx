@@ -495,7 +495,7 @@ export default function PagesAdmin() {
                                 size="sm"
                               />
                               {/* Badge type de page */}
-                              {(['work','blog'].includes(page.type)) ? (
+                              {(['home','work','blog'].includes(page.type)) ? (
                                 <span className="px-2 py-0.5 rounded-full text-[11px] border bg-gray-50 text-gray-700 border-gray-200">Système</span>
                               ) : (
                                 <span className="px-2 py-0.5 rounded-full text-[11px] border bg-blue-50 text-blue-700 border-blue-200">Custom</span>
