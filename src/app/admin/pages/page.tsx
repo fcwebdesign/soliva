@@ -34,37 +34,39 @@ export default function PagesAdmin() {
   // Fonction pour générer la liste des pages dynamiquement
   const generatePagesList = (content: any): Page[] => {
     const pinnedSystem: string[] = content?.pages?.pinnedSystem || [];
+    const hiddenSystem: string[] = content?.pages?.hiddenSystem || [];
     const pagesList: Page[] = [
-      {
+      // Ces trois pages peuvent être masquées (supprimées) côté liste
+      ...(!hiddenSystem.includes('home') ? [{
         id: 'home',
         title: 'Accueil',
         description: 'Page d\'accueil du site',
-        type: 'home',
+        type: 'home' as const,
         icon: Home,
-        status: 'published',
+        status: 'published' as const,
         lastModified: '2024-01-15',
         pinned: pinnedSystem.includes('home')
-      },
-      {
+      }] : []),
+      ...(!hiddenSystem.includes('contact') ? [{
         id: 'contact',
         title: 'Contact',
         description: 'Page de contact et coordonnées',
-        type: 'contact',
+        type: 'contact' as const,
         icon: Mail,
-        status: 'published',
+        status: 'published' as const,
         lastModified: '2024-01-10',
         pinned: pinnedSystem.includes('contact')
-      },
-      {
+      }] : []),
+      ...(!hiddenSystem.includes('studio') ? [{
         id: 'studio',
         title: 'Studio',
         description: 'Présentation du studio',
-        type: 'studio',
+        type: 'studio' as const,
         icon: Palette,
-        status: 'published',
+        status: 'published' as const,
         lastModified: '2024-01-12',
         pinned: pinnedSystem.includes('studio')
-      },
+      }] : []),
       {
         id: 'work',
         title: 'Portfolio',
@@ -252,9 +254,29 @@ export default function PagesAdmin() {
         // Supprimer la page du contenu
         const newContent = { ...content };
         
-        if (pageId === 'home' || pageId === 'contact' || pageId === 'studio' || pageId === 'work' || pageId === 'blog') {
-          // Ne pas permettre la suppression des pages système
-          toast.error('Impossible de supprimer une page système.');
+        if (pageId === 'work' || pageId === 'blog') {
+          // Ne pas permettre la suppression des pages système (work/blog)
+          toast.error('Impossible de supprimer cette page système.');
+          return;
+        }
+
+        // Masquer les pages "home/studio/contact" au lieu de les supprimer réellement
+        if (['home','contact','studio'].includes(pageId)) {
+          const newContent = { ...content };
+          if (!newContent.pages) newContent.pages = { pages: [] };
+          const hidden: string[] = Array.isArray(newContent.pages.hiddenSystem) ? [...newContent.pages.hiddenSystem] : [];
+          if (!hidden.includes(pageId)) hidden.push(pageId);
+          newContent.pages.hiddenSystem = hidden;
+          
+          const response = await fetch('/api/admin/content', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: newContent })
+          });
+          if (!response.ok) throw new Error('Erreur lors de la suppression');
+          setContent(newContent);
+          setPages(generatePagesList(newContent));
+          toast.success('Page masquée avec succès !');
           return;
         }
         
@@ -382,7 +404,7 @@ export default function PagesAdmin() {
                                 size="sm"
                               />
                               {page.pinned && (
-                                <Pin title="Épinglée" className="w-4 h-4 text-yellow-600" />
+                                <Pin title="Épinglée" className="w-4 h-4 text-black" />
                               )}
                             </div>
                             <div className="flex items-center space-x-4 mt-1">
@@ -406,7 +428,7 @@ export default function PagesAdmin() {
                               onDelete={() => handleDeletePage(page.id)}
                               size="sm"
                             />
-                            <div className="mt-2 flex items-center gap-2 text-sm text-gray-700">
+                            <div className="mt-2 flex items-center justify-end gap-2 text-xs text-gray-700">
                               <Checkbox
                                 id={`pin-${page.id}`}
                                 checked={!!page.pinned}

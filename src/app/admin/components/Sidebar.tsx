@@ -79,8 +79,9 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
           blog: 'Blog',
         };
         const pinnedSystem: string[] = data?.pages?.pinnedSystem || [];
+        const hiddenSystem: string[] = data?.pages?.hiddenSystem || [];
         const systemItems = pinnedSystem
-          .filter((id) => systemMap[id])
+          .filter((id) => systemMap[id] && !hiddenSystem.includes(id))
           .map((id) => ({ id, label: systemMap[id], type: 'system' as const }));
         setPinnedPages([...systemItems, ...pinnedCustom]);
       } catch {}
