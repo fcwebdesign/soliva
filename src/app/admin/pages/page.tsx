@@ -482,6 +482,30 @@ export default function PagesAdmin() {
                   <div className="space-y-3">
                     {pages.map((page, index) => {
                       const isSystem = ['home','studio','contact','work','blog'].includes(page.type);
+                      const hidden = Array.isArray((content as any)?.pages?.hiddenSystem) ? (content as any).pages.hiddenSystem : [];
+                      const isDisabledFront = isSystem && hidden.includes(page.id);
+                      // Toggle désactivation côté front pour pages système
+                      const toggleDisableFront = async () => {
+                        try {
+                          const newContent = { ...(content as any) };
+                          if (!newContent.pages) newContent.pages = { pages: [] };
+                          const arr: string[] = Array.isArray(newContent.pages.hiddenSystem) ? [...newContent.pages.hiddenSystem] : [];
+                          const idx = arr.indexOf(page.id);
+                          if (idx === -1) arr.push(page.id); else arr.splice(idx, 1);
+                          newContent.pages.hiddenSystem = arr;
+                          const res = await fetch('/api/admin/content', {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ content: newContent })
+                          });
+                          if (!res.ok) throw new Error('save');
+                          setContent(newContent);
+                          setPages(generatePagesList(newContent));
+                          toast.success(idx === -1 ? 'Page désactivée sur le front' : 'Page réactivée');
+                        } catch {
+                          toast.error('Impossible de basculer l\'état');
+                        }
+                      };
                       return (
                       <div key={`${page.id}-${index}`} className={`bg-gray-50 rounded-lg border border-gray-200 p-4 hover:border-gray-300 transition-colors`}>
                         <div className="flex items-center justify-between">
@@ -490,7 +514,7 @@ export default function PagesAdmin() {
                               <h4 className="text-md font-semibold text-gray-900 truncate">
                                 {page.title}
                               </h4>
-                              <StatusBadge status={page.status} size="sm" />
+                              <StatusBadge status={isDisabledFront ? 'archived' : page.status} label={isDisabledFront ? 'Désactivée' : undefined} size="sm" />
                               {/* Badge type de page */}
                               {(['home','studio','contact','work','blog'].includes(page.type)) ? (
                                 <span className="px-2 py-0.5 rounded-full text-[11px] border bg-gray-50 text-gray-700 border-gray-200">Système</span>
@@ -519,9 +543,9 @@ export default function PagesAdmin() {
                               onEdit={() => handleEditPage(page.id)}
                               onPreview={() => handlePreviewPage(page.id)}
                               onDuplicate={!isSystem ? () => handleDuplicatePage(page.id) : undefined}
-                              onDelete={() => { /* noop for system pages when disabled */ }}
-                              disableDelete={isSystem}
-                              labels={{ delete: isSystem ? 'Désactivé' : 'Supprimer' }}
+                              onDelete={isSystem ? toggleDisableFront : () => handleDeletePage(page.id)}
+                              disableDelete={false}
+                              labels={{ delete: isSystem ? (isDisabledFront ? 'Activer' : 'Désactiver') : 'Supprimer' }}
                               size="sm"
                             />
                             <div className="mt-2 flex items-center justify-end gap-2 text-xs text-gray-700">

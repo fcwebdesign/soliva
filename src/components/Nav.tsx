@@ -171,7 +171,9 @@ const Nav: React.FC<NavProps> = ({ content }) => {
       }
     });
     
-    return uniqueItems;
+    // Exclure les pages système désactivées si présent dans nav content
+    const hiddenSystem: string[] = (content as any)?.hiddenSystem || [];
+    return uniqueItems.filter((k) => !hiddenSystem.includes(k));
   };
 
   const navigationItems = getNavigationItems();
