@@ -18,6 +18,7 @@ interface Page {
   icon: React.ComponentType<{ className?: string }>;
   lastModified?: string;
   status: 'published' | 'draft';
+  pinned?: boolean;
 }
 
 export default function PagesAdmin() {
@@ -72,7 +73,8 @@ export default function PagesAdmin() {
             type: 'custom',
             icon: FileText,
             status: customPage.status || 'published',
-            lastModified: customPage.publishedAt ? new Date(customPage.publishedAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
+            lastModified: customPage.publishedAt ? new Date(customPage.publishedAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+            pinned: !!customPage.pinned
           });
         }
       });
@@ -116,6 +118,37 @@ export default function PagesAdmin() {
     } else {
       // Pour les pages personnalisées, rediriger vers l'éditeur avec le slug
       router.push(`/admin/pages/${pageId}`);
+    }
+  };
+
+  const handleTogglePin = async (page: Page, nextPinned: boolean) => {
+    try {
+      // Pages système (home, contact, studio) n'ont pas besoin d'être épinglées: elles existent déjà dans la sidebar
+      if (page.type !== 'custom') {
+        toast.info('Les pages système sont déjà dans la barre latérale.');
+        return;
+      }
+
+      const newContent = { ...content };
+      if (newContent.pages?.pages && Array.isArray(newContent.pages.pages)) {
+        newContent.pages.pages = newContent.pages.pages.map((p: any) =>
+          p.id === page.id ? { ...p, pinned: nextPinned } : p
+        );
+      }
+
+      const response = await fetch('/api/admin/content', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: newContent })
+      });
+      if (!response.ok) throw new Error('Échec sauvegarde');
+
+      setContent(newContent);
+      setPages(generatePagesList(newContent));
+      toast.success(nextPinned ? 'Page épinglée' : 'Page désépinglée');
+    } catch (e) {
+      console.error(e);
+      toast.error('Impossible de mettre à jour l\'épinglage');
     }
   };
 
@@ -319,6 +352,9 @@ export default function PagesAdmin() {
                                 status={page.status}
                                 size="sm"
                               />
+                              {page.pinned && (
+                                <span title="Épinglée" className="text-yellow-600 text-xs">📌</span>
+                              )}
                             </div>
                             <div className="flex items-center space-x-4 mt-1">
                               <p className="text-sm text-gray-500">
@@ -341,6 +377,18 @@ export default function PagesAdmin() {
                               onDelete={() => handleDeletePage(page.id)}
                               size="sm"
                             />
+                            {page.type === 'custom' && (
+                              <div className="mt-2 flex items-center gap-2 text-xs text-gray-600">
+                                <input
+                                  id={`pin-${page.id}`}
+                                  type="checkbox"
+                                  checked={!!page.pinned}
+                                  onChange={(e) => handleTogglePin(page, e.target.checked)}
+                                  className="rounded border-gray-300"
+                                />
+                                <label htmlFor={`pin-${page.id}`}>Épingler dans la barre latérale</label>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
