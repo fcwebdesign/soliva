@@ -390,6 +390,97 @@ export default function PagesAdmin() {
                     </Button>
                   </div>
 
+                  {/* Sélection de la page d'accueil */}
+                  <div className="mb-6 p-4 border rounded-lg bg-gray-50">
+                    <h4 className="text-sm font-semibold text-gray-800 mb-3">Page d'accueil</h4>
+                    <div className="flex items-center gap-4">
+                      <label className="flex items-center gap-2 text-sm text-gray-700">
+                        <input
+                          type="radio"
+                          name="homeMode"
+                          value="system"
+                          defaultChecked={(content as any)?.pages?.home?.mode !== 'custom'}
+                          onChange={async () => {
+                            try {
+                              const newContent = { ...(content as any) };
+                              if (!newContent.pages) newContent.pages = { pages: [] };
+                              newContent.pages.home = { mode: 'system' };
+                              const res = await fetch('/api/admin/content', {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ content: newContent })
+                              });
+                              if (!res.ok) throw new Error('save');
+                              setContent(newContent);
+                              toast.success("Page d'accueil mise à jour");
+                            } catch {
+                              toast.error("Impossible de mettre à jour la page d'accueil");
+                            }
+                          }}
+                        />
+                        Page système (par défaut)
+                      </label>
+                      <label className="flex items-center gap-2 text-sm text-gray-700">
+                        <input
+                          type="radio"
+                          name="homeMode"
+                          value="custom"
+                          defaultChecked={(content as any)?.pages?.home?.mode === 'custom'}
+                          onChange={async () => {
+                            try {
+                              const newContent = { ...(content as any) };
+                              if (!newContent.pages) newContent.pages = { pages: [] };
+                              const previous = newContent.pages.home?.id;
+                              newContent.pages.home = { mode: 'custom', id: previous || '' };
+                              const res = await fetch('/api/admin/content', {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ content: newContent })
+                              });
+                              if (!res.ok) throw new Error('save');
+                              setContent(newContent);
+                            } catch {
+                              toast.error("Impossible de basculer en mode personnalisé");
+                            }
+                          }}
+                        />
+                        Utiliser une page personnalisée
+                      </label>
+                    </div>
+                    {(content as any)?.pages?.home?.mode === 'custom' && (
+                      <div className="mt-3">
+                        <label className="text-xs text-gray-500 mb-1 block">Sélectionner la page</label>
+                        <select
+                          className="border rounded px-2 py-1 text-sm"
+                          value={(content as any)?.pages?.home?.id || ''}
+                          onChange={async (e) => {
+                            const val = e.target.value;
+                            try {
+                              const newContent = { ...(content as any) };
+                              if (!newContent.pages) newContent.pages = { pages: [] };
+                              newContent.pages.home = { mode: 'custom', id: val };
+                              const res = await fetch('/api/admin/content', {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ content: newContent })
+                              });
+                              if (!res.ok) throw new Error('save');
+                              setContent(newContent);
+                              toast.success('Page d\'accueil sélectionnée');
+                            } catch {
+                              toast.error('Impossible de sélectionner la page');
+                            }
+                          }}
+                        >
+                          <option value="">— Choisir une page —</option>
+                          {(content as any)?.pages?.pages?.map((p: any) => (
+                            <option key={p.id} value={p.id}>{p.title || p.id}</option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                  </div>
+
                   <div className="space-y-3">
                     {pages.map((page, index) => (
                       <div key={`${page.id}-${index}`} className="bg-gray-50 rounded-lg border border-gray-200 p-4 hover:border-gray-300 transition-colors">
