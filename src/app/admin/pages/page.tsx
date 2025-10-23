@@ -482,21 +482,15 @@ export default function PagesAdmin() {
                   <div className="space-y-3">
                     {pages.map((page, index) => {
                       const isSystem = ['home','studio','contact','work','blog'].includes(page.type);
-                      const isHardSystem = ['work','blog'].includes(page.type);
-                      const isHidden = isSystem && Array.isArray((content as any)?.pages?.hiddenSystem) && (content as any).pages.hiddenSystem.includes(page.id);
                       return (
-                      <div key={`${page.id}-${index}`} className={`bg-gray-50 rounded-lg border border-gray-200 p-4 hover:border-gray-300 transition-colors ${isHidden ? 'opacity-60' : ''}`}>
+                      <div key={`${page.id}-${index}`} className={`bg-gray-50 rounded-lg border border-gray-200 p-4 hover:border-gray-300 transition-colors`}>
                         <div className="flex items-center justify-between">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center space-x-3">
                               <h4 className="text-md font-semibold text-gray-900 truncate">
                                 {page.title}
                               </h4>
-                              <StatusBadge 
-                                status={isHidden ? 'archived' : page.status}
-                                label={isHidden ? 'Désactivée' : undefined}
-                                size="sm"
-                              />
+                              <StatusBadge status={page.status} size="sm" />
                               {/* Badge type de page */}
                               {(['home','studio','contact','work','blog'].includes(page.type)) ? (
                                 <span className="px-2 py-0.5 rounded-full text-[11px] border bg-gray-50 text-gray-700 border-gray-200">Système</span>
@@ -525,7 +519,9 @@ export default function PagesAdmin() {
                               onEdit={() => handleEditPage(page.id)}
                               onPreview={() => handlePreviewPage(page.id)}
                               onDuplicate={!isSystem ? () => handleDuplicatePage(page.id) : undefined}
-                              onDelete={!isHardSystem ? () => handleDeletePage(page.id) : undefined}
+                              onDelete={() => { /* noop for system pages when disabled */ }}
+                              disableDelete={isSystem}
+                              labels={{ delete: isSystem ? 'Désactivé' : 'Supprimer' }}
                               size="sm"
                             />
                             <div className="mt-2 flex items-center justify-end gap-2 text-xs text-gray-700">
@@ -536,24 +532,6 @@ export default function PagesAdmin() {
                               />
                               <label htmlFor={`pin-${page.id}`}>Épingler dans la barre latérale</label>
                             </div>
-                            {/* Désactiver/Activer pour pages système masquables, bouton désactivé pour work/blog */}
-                            {['home','studio','contact'].includes(page.type) && (
-                              <div className="mt-2 flex justify-end">
-                                <button
-                                  onClick={() => handleDeletePage(page.id)}
-                                  className={`text-xs px-3 py-1 rounded-lg border ${isHidden ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100' : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100'}`}
-                                >
-                                  {isHidden ? 'Activer' : 'Désactiver'}
-                                </button>
-                              </div>
-                            )}
-                            {isHardSystem && (
-                              <div className="mt-2 flex justify-end">
-                                <button disabled className="text-xs px-3 py-1 rounded-lg border bg-gray-50 text-gray-400 border-gray-200 opacity-60 cursor-not-allowed">
-                                  Désactivé
-                                </button>
-                              </div>
-                            )}
                           </div>
                         </div>
                       </div>

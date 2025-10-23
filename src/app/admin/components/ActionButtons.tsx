@@ -45,6 +45,8 @@ interface ActionButtonsProps {
     duplicate?: string;
     delete?: string;
   };
+  /** Désactiver uniquement le bouton Supprimer */
+  disableDelete?: boolean;
   
   /**
    * Masquer les icônes
@@ -92,6 +94,7 @@ export default function ActionButtons({
   onDelete,
   size = 'sm',
   disabled = false,
+  disableDelete = false,
   labels,
   hideIcons = false,
   compact = false
@@ -159,7 +162,7 @@ export default function ActionButtons({
         <Button
           onClick={onDelete}
           size={size}
-          disabled={disabled}
+          disabled={disabled || disableDelete}
           variant="ghost"
           className="bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800"
           title={finalLabels.delete}
@@ -171,4 +174,3 @@ export default function ActionButtons({
     </div>
   );
 }
-
