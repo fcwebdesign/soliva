@@ -124,21 +124,24 @@ export const useAdminPage = () => {
 
   // Fonction pour changer de page avec confirmation si modifications non sauvegardées
   const handlePageChange = async (newPage: string) => {
+    console.log('🔄 handlePageChange appelé:', { newPage, currentPage, hasUnsavedChanges });
+    
     // Vérifier si on change vraiment de page
     if (newPage === currentPage) {
+      console.log('⚠️ Même page, pas de changement');
       return;
     }
 
     if (hasUnsavedChanges) {
-      const confirmLeave = await confirm({
-        title: 'Modifications non enregistrées',
-        description: 'Vous avez des modifications non enregistrées. Voulez-vous vraiment quitter cette page sans enregistrer ?',
-        confirmText: 'Quitter sans enregistrer',
-        cancelText: 'Rester sur la page',
-        variant: 'destructive'
-      });
+      console.log('⚠️ Modifications non enregistrées détectées, demande de confirmation...');
+      
+      // Utilisation de window.confirm (fonctionne toujours)
+      const confirmLeave = window.confirm('Modifications non enregistrées\n\nVous avez des modifications non enregistrées. Voulez-vous vraiment quitter cette page sans enregistrer ?');
+      
+      console.log('🔍 Réponse confirmation:', confirmLeave);
       
       if (!confirmLeave) {
+        console.log('❌ Utilisateur a annulé, rester sur la page');
         return;
       }
       
@@ -330,6 +333,7 @@ export const useAdminPage = () => {
     }
     
     setContent(newContent);
+    console.log('📝 updateContent: hasUnsavedChanges mis à true');
     setHasUnsavedChanges(true);
     setSaveStatus('idle');
   };

@@ -13,6 +13,7 @@ import SommairePanel from '@/components/admin/SommairePanel';
 import MobileSommaireButton from '@/components/admin/MobileSommaireButton';
 import { Button } from "@/components/ui/button";
 import StatusBadge from './StatusBadge';
+import ActionButtons from './ActionButtons';
 import {
   Sheet,
   SheetContent,
@@ -71,6 +72,9 @@ interface BlockEditorProps {
 export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticleGenerator }: BlockEditorProps) {
   const router = useRouter();
   const { confirm, ConfirmDialog } = useConfirmDialog();
+  
+  // Debug : vérifier si le hook fonctionne
+  console.log('🔍 Hook useConfirmDialog:', { confirm: typeof confirm, ConfirmDialog: typeof ConfirmDialog });
   const [localData, setLocalData] = useState(pageData || {});
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -247,6 +251,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
   // États pour les actions de duplication et suppression
   const [isDuplicating, setIsDuplicating] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  
   
   // État pour gérer la visibilité des blocs
   const [collapsedBlocks, setCollapsedBlocks] = useState<Set<string>>(() => {
@@ -1127,18 +1132,22 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
     }, 3000);
   };
 
-  // Fonction pour supprimer un contenu
+  // Fonction pour supprimer un contenu (inspirée de /admin/pages)
   const handleDelete = async (type: 'work' | 'blog', id: string, title: string) => {
+    console.log('🗑️ handleDelete appelé:', { type, id, title });
+    
+    // Confirmation via hook (AlertDialog)
     const confirmed = await confirm({
       title: `Supprimer "${title}" ?`,
       description: 'Cette action est irréversible. Le contenu sera définitivement supprimé.',
       confirmText: 'Supprimer',
+      cancelText: 'Annuler',
       variant: 'destructive'
     });
-    
     if (!confirmed) return;
 
     try {
+      console.log('🔄 Début suppression:', { type, id });
       setIsDeleting(id);
       
       const response = await fetch('/api/admin/delete', {
@@ -1149,46 +1158,43 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
         body: JSON.stringify({ type, id }),
       });
 
+      console.log('📡 Réponse API:', response.status, response.statusText);
+
       if (!response.ok) {
         const errorData = await response.json();
+        console.error('❌ Erreur API:', errorData);
         throw new Error(errorData.error || 'Erreur lors de la suppression');
       }
 
       const result = await response.json();
+      console.log('✅ Résultat suppression:', result);
       
-      // Mettre à jour l'interface sans recharger la page
       if (result.success) {
-        // Recharger le contenu depuis l'API
-        const contentResponse = await fetch('/api/admin/content');
-        if (contentResponse.ok) {
-          const newContent = await contentResponse.json();
-          
-          // Mettre à jour seulement la partie spécifique sans flash
-          setLocalData((prevData: any) => {
-            if (type === 'work') {
-              return {
-                ...prevData,
-                adminProjects: newContent.work?.adminProjects || []
-              };
-            } else if (type === 'blog') {
-              return {
-                ...prevData,
-                articles: newContent.blog?.articles || []
-              };
-            }
-            return prevData;
-          });
-          
-          // Afficher une notification modale
-          showNotificationModal('🗑️ Contenu supprimé avec succès !', 'success');
-        }
+        // Mettre à jour l'état local directement
+        setLocalData((prevData: any) => {
+          if (type === 'work') {
+            return {
+              ...prevData,
+              adminProjects: prevData.adminProjects?.filter((p: any) => p.id !== id) || []
+            };
+          } else if (type === 'blog') {
+            return {
+              ...prevData,
+              articles: prevData.articles?.filter((a: any) => a.id !== id) || []
+            };
+          }
+          return prevData;
+        });
+        
+        showNotificationModal('🗑️ Contenu supprimé avec succès !', 'success');
       }
       
     } catch (error) {
-      console.error('Erreur suppression:', error);
+      console.error('❌ Erreur suppression:', error);
       const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
       showNotificationModal(`Erreur lors de la suppression: ${errorMessage}`, 'error');
     } finally {
+      console.log('🏁 Fin suppression, reset isDeleting');
       setIsDeleting(null);
     }
   };
@@ -1282,49 +1288,15 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
                   </div>
                 </div>
                 
-                <div className="flex space-x-2 ml-4">
-                  <Button 
-                    onClick={() => router.push(`/admin/blog/${article.id}`)}
+                <div className="ml-4">
+                  <ActionButtons
+                    onEdit={() => router.push(`/admin/blog/${article.id}`)}
+                    onPreview={() => window.open(`/blog/${article.slug || article.id}`, '_blank')}
+                    onDuplicate={() => handleDuplicate('blog', article.id)}
+                    onDelete={() => handleDelete('blog', article.id, article.title || `Article ${index + 1}`)}
                     size="sm"
-                    variant="secondary"
-                    title="Éditer l'article complet"
-                  >
-                    Éditer
-                  </Button>
-                  <Button 
-                    onClick={() => window.open(`/blog/${article.slug || article.id}`, '_blank')}
-                    size="sm"
-                    variant="outline"
-                    title="Aperçu de l'article"
-                  >
-                    Aperçu
-                  </Button>
-                  <Button 
-                    onClick={() => handleDuplicate('blog', article.id)}
-                    disabled={isDuplicating === article.id}
-                    size="sm"
-                    className={`text-xs border-0 rounded-md ${
-                      isDuplicating === article.id
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
-                    }`}
-                    title="Dupliquer cet article"
-                  >
-                    {isDuplicating === article.id ? '...' : 'Dupliquer'}
-                  </Button>
-                  <Button 
-                    onClick={() => handleDelete('blog', article.id, article.title || `Article ${index + 1}`)}
-                    disabled={isDeleting === article.id}
-                    size="sm"
-                    className={`text-xs border-0 rounded-md ${
-                      isDeleting === article.id
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        : 'bg-red-100 text-red-700 hover:bg-red-200'
-                    }`}
-                    title="Supprimer cet article"
-                  >
-                    {isDeleting === article.id ? '...' : 'Supprimer'}
-                  </Button>
+                    disabled={isDuplicating === article.id || isDeleting === article.id}
+                  />
                 </div>
               </div>
             </div>
@@ -1409,49 +1381,15 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
                   </div>
                 </div>
                 
-                <div className="flex space-x-2 ml-4">
-                  <Button 
-                    onClick={() => router.push(`/admin/work/${project.id}`)}
+                <div className="ml-4">
+                  <ActionButtons
+                    onEdit={() => router.push(`/admin/work/${project.id}`)}
+                    onPreview={() => window.open(`/work/${project.slug || project.id}`, '_blank')}
+                    onDuplicate={() => handleDuplicate('work', project.id)}
+                    onDelete={() => handleDelete('work', project.id, project.title || `Projet ${index + 1}`)}
                     size="sm"
-                    variant="secondary"
-                    title="Éditer le projet complet"
-                  >
-                    Éditer
-                  </Button>
-                  <Button 
-                    onClick={() => window.open(`/work/${project.slug || project.id}`, '_blank')}
-                    size="sm"
-                    variant="outline"
-                    title="Aperçu du projet"
-                  >
-                    Aperçu
-                  </Button>
-                  <Button 
-                    onClick={() => handleDuplicate('work', project.id)}
-                    disabled={isDuplicating === project.id}
-                    size="sm"
-                    className={`text-xs border-0 rounded-md ${
-                      isDuplicating === project.id
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
-                    }`}
-                    title="Dupliquer ce projet"
-                  >
-                    {isDuplicating === project.id ? '...' : 'Dupliquer'}
-                  </Button>
-                  <Button 
-                    onClick={() => handleDelete('work', project.id, project.title || `Projet ${index + 1}`)}
-                    disabled={isDeleting === project.id}
-                    size="sm"
-                    className={`text-xs border-0 rounded-md ${
-                      isDeleting === project.id
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        : 'bg-red-100 text-red-700 hover:bg-red-200'
-                    }`}
-                    title="Supprimer ce projet"
-                  >
-                    {isDeleting === project.id ? '...' : 'Supprimer'}
-                  </Button>
+                    disabled={isDuplicating === project.id || isDeleting === project.id}
+                  />
                 </div>
               </div>
             </div>
