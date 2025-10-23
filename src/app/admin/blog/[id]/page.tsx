@@ -235,11 +235,19 @@ export default function BlogArticleEdit() {
         previewContent = `<p>Contenu de l'article en cours de rédaction...</p>`;
       }
       
-      // 3. Créer l'article avec le contenu généré
+      // 3. Créer l'article avec le contenu généré (assurer un slug/id stable)
+      const fallbackSlug = slugify(article.title || (article.slug || article.id || ''), {
+        lower: true,
+        strict: true,
+        locale: 'fr'
+      });
+      const computedSlug = article.slug || article.id || fallbackSlug || `article-${Date.now()}`;
       const previewArticle = {
         ...article,
+        id: article.id || computedSlug,
+        slug: computedSlug,
         content: previewContent
-      };
+      } as Article;
       
       // 4. Récupérer le contenu complet pour mettre à jour la section blog
       const contentResponse = await fetch('/api/content');
@@ -255,6 +263,17 @@ export default function BlogArticleEdit() {
       const updatedArticles = fullContent.blog.articles.map((a: any) => 
         (a.id === article.id || a.slug === article.slug) ? previewArticle : a
       );
+
+      // Si l'article n'existe pas encore dans le contenu (brouillon non sauvegardé), l'ajouter
+      const existsInList = fullContent.blog.articles.some((a: any) => (a.id === article.id || a.slug === article.slug));
+      if (!existsInList) {
+        updatedArticles.push(previewArticle);
+        console.log('➕ Article draft ajouté à la prévisualisation (non présent dans le contenu publié):', {
+          id: previewArticle.id,
+          slug: previewArticle.slug,
+          title: previewArticle.title
+        });
+      }
       
       console.log('✅ Article mis à jour dans l\'aperçu:', {
         updatedArticlesCount: updatedArticles.length,
@@ -292,8 +311,8 @@ export default function BlogArticleEdit() {
         throw new Error('Erreur lors de la création de l\'aperçu');
       }
       
-      // 7. Ouvrir l'URL spéciale d'aperçu
-      window.open(`/blog/${article.slug || article.id}?preview=${previewId}`, '_blank');
+      // 7. Ouvrir l'URL spéciale d'aperçu (utiliser le slug calculé pour correspondre au contenu preview)
+      window.open(`/blog/${previewArticle.slug || previewArticle.id}?preview=${previewId}`, '_blank');
       
     } catch (err) {
       console.error('Erreur aperçu article:', err);

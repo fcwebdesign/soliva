@@ -7,6 +7,7 @@ import { TRANSITION_CONFIG } from "@/config";
 import FormattedText from "@/components/FormattedText";
 import PreviewBar from "@/components/PreviewBar";
 import PageHeader from "@/components/PageHeader";
+import Image from "next/image";
 
 import gsap from "gsap";
 import SplitText from "gsap/SplitText";
@@ -220,7 +221,14 @@ const WorkClient: React.FC<WorkClientProps> = ({ content }) => {
                 <div key={index} className="project">
                   <div className="project-layout">
                     <div onClick={handleProjectClick(`/work/${project.slug}`)} style={{ cursor: 'pointer' }}>
-                      <img src={project.image} alt={project.alt} />
+                      <Image 
+                        src={project.image} 
+                        alt={project.alt || project.title || "Image du projet"} 
+                        width={800}
+                        height={600}
+                        className="w-full h-auto"
+                        priority={index < 3} // Priorité pour les 3 premières images
+                      />
                     </div>
                     <div>
                       <h3>{project.title}</h3>

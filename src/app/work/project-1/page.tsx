@@ -3,6 +3,7 @@ import { useGSAP } from "@gsap/react";
 import { useTransitionRouter } from "next-view-transitions";
 import { useTransition } from "@/hooks/useTransition";
 import { TRANSITION_CONFIG } from "@/config";
+import Image from "next/image";
 
 import gsap from "gsap";
 import SplitText from "gsap/SplitText";
@@ -135,7 +136,14 @@ const Project1 = (): React.JSX.Element => {
           <div className="col">
             <div className="project-content">
               <div className="project-image">
-                <img src="/img1.jpg" alt="Project Alpha" />
+                <Image 
+                  src="/img1.jpg" 
+                  alt="Project Alpha" 
+                  width={1200}
+                  height={800}
+                  className="w-full h-auto"
+                  priority={true}
+                />
               </div>
               
               <div className="project-description">

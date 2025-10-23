@@ -136,8 +136,8 @@ export default function BlogArticle() {
 
   const fetchContent = async () => {
     try {
-      // Si on est en mode aperçu, charger la révision temporaire
-      if (isPreviewMode && previewId) {
+      // Si un previewId est présent, charger la révision temporaire
+      if (previewId) {
         console.log('📖 Chargement de la révision temporaire:', previewId);
         
         const response = await fetch(`/api/admin/preview/${previewId}`, {
@@ -205,7 +205,7 @@ export default function BlogArticle() {
   }
 
   // Vérifier si l'article est publié ou si on est en mode aperçu
-  if (!isPreviewMode && article.status && article.status !== 'published') {
+  if (!previewId && article.status && article.status !== 'published') {
     return <div>Cet article n'est pas encore publié</div>;
   }
 
@@ -243,7 +243,7 @@ export default function BlogArticle() {
         {TRANSITION_CONFIG.mode === 'curtain' && <div className="revealer"></div>}
         
         {/* Bandeau d'aperçu */}
-        {isPreviewMode && <PreviewBar />}
+        {previewId && <PreviewBar />}
         
         <div className="blog-article-page">
           <div className="col">

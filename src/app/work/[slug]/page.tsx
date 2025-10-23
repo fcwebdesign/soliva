@@ -8,6 +8,7 @@ import { notFound } from "next/navigation";
 import FormattedText from "@/components/FormattedText";
 import PreviewBar from "@/components/PreviewBar";
 import BlockRenderer from "@/components/BlockRenderer";
+import Image from "next/image";
 
 import gsap from "gsap";
 import SplitText from "gsap/SplitText";
@@ -282,7 +283,14 @@ const ProjectPage = ({ params }: ProjectPageProps): React.JSX.Element => {
               {/* Image du projet */}
               {project.image && (
                 <div className="project-image mb-8">
-                  <img src={project.image} alt={project.alt || project.title} className="w-full h-auto rounded-lg" />
+                  <Image 
+                    src={project.image} 
+                    alt={project.alt || project.title || "Image du projet"} 
+                    width={1200}
+                    height={800}
+                    className="w-full h-auto rounded-lg"
+                    priority={true}
+                  />
                 </div>
               )}
               
