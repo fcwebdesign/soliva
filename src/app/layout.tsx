@@ -13,6 +13,7 @@ import { TemplateProvider } from "@/templates/context";
 import { Toaster } from "@/components/ui/sonner";
 import Preloader from "@/components/Preloader";
 
+
 interface RootLayoutProps {
   children: ReactNode;
 }
@@ -49,7 +50,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   
   return (
     <ViewTransitions>
-      <html lang="fr" className={isDraftMode ? 'preview-mode' : ''} data-template={templateKey}>
+      <html lang="fr" className={`${isDraftMode ? 'preview-mode' : ''}`} data-template={templateKey}>
         <head>
           <meta name="cache-control" content="no-cache, no-store, must-revalidate" />
           <meta name="pragma" content="no-cache" />

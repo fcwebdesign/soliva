@@ -25,19 +25,19 @@ export default function ExpandableCard({ data }: { data: ExpandableCardData }) {
   const { mounted } = useTheme();
   const [cards, setCards] = useState<CardItem[]>(data.cards || []);
   const [isAnimating, setIsAnimating] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const bodyRef = useRef<HTMLDivElement>(null);
+  // Un ref par carte pour animer la bonne carte (évite le bug du dernier élément)
+  const cardRefs = useRef<Array<HTMLElement | null>>([]);
 
   // Durée de l'animation FLIP (déplacement des cartes)
   const ANIMATION_DURATION = 500;
 
   // FLIP Animation Helper (position only, no scale to avoid distortion)
-  const animateWithFlip = useCallback((callback: () => void) => {
+  const animateWithFlip = useCallback((cardEl: HTMLElement | null, callback: () => void) => {
     if (isAnimating) return;
     setIsAnimating(true);
 
     // First: capture initial positions
-    const card = cardRef.current;
+    const card = cardEl;
     if (!card) {
       setIsAnimating(false);
       return;
@@ -76,7 +76,8 @@ export default function ExpandableCard({ data }: { data: ExpandableCardData }) {
 
   const toggleCard = useCallback((index: number) => {
     if (isAnimating) return;
-    animateWithFlip(() => {
+    const el = cardRefs.current[index] || null;
+    animateWithFlip(el, () => {
       setCards(prev => prev.map((c, i) => {
         if (i === index) return { ...c, isExpanded: !c.isExpanded };
         // fermer les autres
@@ -98,7 +99,7 @@ export default function ExpandableCard({ data }: { data: ExpandableCardData }) {
       {cards.map((card, index) => (
         <article
           key={index}
-          ref={cardRef}
+          ref={(el) => { cardRefs.current[index] = el; }}
           className="kodza-expandable-card"
           data-theme={card.theme || 'automation'}
           role="button"
@@ -127,7 +128,6 @@ export default function ExpandableCard({ data }: { data: ExpandableCardData }) {
           </div>
 
           <div
-            ref={bodyRef}
             className="kodza-expandable-card-body"
             aria-hidden={!card.isExpanded}
           >

@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
-
 @plugin "tailwindcss-animate";
 @import "tailwindcss";
 
@@ -191,7 +189,7 @@ strong {
 }
 
 .site {
-  font-family: "TWK Lausanne", "Inter";
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: var(--fg);
   max-width: var(--max-width);
   margin: 0 auto;
@@ -500,6 +498,7 @@ body.admin-page,
   line-height: 0.75;
   color: var(--fg);
   transition: color 0.3s ease;
+  overflow: visible; /* éviter la coupe du haut si métriques changent */
 }
 
 /* Responsive pour mobile - permettre le retour à la ligne */
