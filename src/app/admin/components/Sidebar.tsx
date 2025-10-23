@@ -32,16 +32,9 @@ interface SidebarProps {
 export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const router = useRouter();
-  const [pinnedPages, setPinnedPages] = useState<Array<{ id: string; label: string }>>([]);
+  const [pinnedPages, setPinnedPages] = useState<Array<{ id: string; label: string; type: 'system' | 'custom' }>>([]);
 
-  // Pages unifiées pour tout l'admin
-  const PAGES = [
-    { id: 'home', label: 'Accueil', path: '/', icon: Home },
-    { id: 'studio', label: 'Studio', path: '/studio', icon: Palette },
-    { id: 'contact', label: 'Contact', path: '/contact', icon: Mail },
-    { id: 'work', label: 'Portfolio', path: '/work', icon: Briefcase },
-    { id: 'blog', label: 'Blog', path: '/blog', icon: FileText },
-  ];
+  // Supprime la liste fixe; on affiche uniquement les pages épinglées
 
   const SETTINGS = [
     { id: 'nav', label: 'Navigation', path: null, icon: Navigation },
@@ -75,10 +68,21 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
         if (!res.ok) return;
         const data = await res.json();
         const customs = data?.pages?.pages || [];
-        const pinned = customs
+        const pinnedCustom = customs
           .filter((p: any) => p && p.pinned)
-          .map((p: any) => ({ id: p.id, label: p.title || p.id }));
-        setPinnedPages(pinned);
+          .map((p: any) => ({ id: p.id, label: p.title || p.id, type: 'custom' as const }));
+        const systemMap: Record<string,string> = {
+          home: 'Accueil',
+          studio: 'Studio',
+          contact: 'Contact',
+          work: 'Portfolio',
+          blog: 'Blog',
+        };
+        const pinnedSystem: string[] = data?.pages?.pinnedSystem || [];
+        const systemItems = pinnedSystem
+          .filter((id) => systemMap[id])
+          .map((id) => ({ id, label: systemMap[id], type: 'system' as const }));
+        setPinnedPages([...systemItems, ...pinnedCustom]);
       } catch {}
     };
     loadPinned();
@@ -141,29 +145,21 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
             </button>
           </div>
           
-          {/* Pages */}
-          {PAGES.length > 0 && (
-            <div className="mb-4">
-              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                Pages
-              </h3>
-              <ul className="space-y-1">
-                {PAGES.map((page) => renderPageItem(page))}
-              </ul>
-            </div>
-          )}
-
           {pinnedPages.length > 0 && (
             <div className="mb-4">
               <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                Épinglées
+                Pages épinglées
               </h3>
               <ul className="space-y-1">
                 {pinnedPages.map((p) => (
                   <li key={p.id}>
                     <button
                       onClick={() => {
-                        router.push(`/admin/pages/${p.id}`);
+                        if (['home','studio','contact','work','blog'].includes(p.id)) {
+                          router.push(`/admin?page=${p.id}`);
+                        } else {
+                          router.push(`/admin/pages/${p.id}`);
+                        }
                       }}
                       className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none ${
                         currentPage === p.id

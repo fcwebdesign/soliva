@@ -32,6 +32,7 @@ export default function PagesAdmin() {
 
   // Fonction pour générer la liste des pages dynamiquement
   const generatePagesList = (content: any): Page[] => {
+    const pinnedSystem: string[] = content?.pages?.pinnedSystem || [];
     const pagesList: Page[] = [
       {
         id: 'home',
@@ -40,7 +41,8 @@ export default function PagesAdmin() {
         type: 'home',
         icon: Home,
         status: 'published',
-        lastModified: '2024-01-15'
+        lastModified: '2024-01-15',
+        pinned: pinnedSystem.includes('home')
       },
       {
         id: 'contact',
@@ -49,7 +51,8 @@ export default function PagesAdmin() {
         type: 'contact',
         icon: Mail,
         status: 'published',
-        lastModified: '2024-01-10'
+        lastModified: '2024-01-10',
+        pinned: pinnedSystem.includes('contact')
       },
       {
         id: 'studio',
@@ -58,7 +61,28 @@ export default function PagesAdmin() {
         type: 'studio',
         icon: Palette,
         status: 'published',
-        lastModified: '2024-01-12'
+        lastModified: '2024-01-12',
+        pinned: pinnedSystem.includes('studio')
+      },
+      {
+        id: 'work',
+        title: 'Portfolio',
+        description: 'Liste des projets / portfolio',
+        type: 'work',
+        icon: FileText,
+        status: 'published',
+        lastModified: '2024-01-08',
+        pinned: pinnedSystem.includes('work')
+      },
+      {
+        id: 'blog',
+        title: 'Blog',
+        description: 'Journal / articles',
+        type: 'blog',
+        icon: FileText,
+        status: 'published',
+        lastModified: '2024-01-05',
+        pinned: pinnedSystem.includes('blog')
       }
     ];
 
@@ -123,17 +147,21 @@ export default function PagesAdmin() {
 
   const handleTogglePin = async (page: Page, nextPinned: boolean) => {
     try {
-      // Pages système (home, contact, studio) n'ont pas besoin d'être épinglées: elles existent déjà dans la sidebar
-      if (page.type !== 'custom') {
-        toast.info('Les pages système sont déjà dans la barre latérale.');
-        return;
-      }
-
       const newContent = { ...content };
-      if (newContent.pages?.pages && Array.isArray(newContent.pages.pages)) {
-        newContent.pages.pages = newContent.pages.pages.map((p: any) =>
-          p.id === page.id ? { ...p, pinned: nextPinned } : p
-        );
+      if (!newContent.pages) newContent.pages = { pages: [] };
+
+      if (page.type === 'custom') {
+        if (newContent.pages?.pages && Array.isArray(newContent.pages.pages)) {
+          newContent.pages.pages = newContent.pages.pages.map((p: any) =>
+            p.id === page.id ? { ...p, pinned: nextPinned } : p
+          );
+        }
+      } else {
+        const ps: string[] = Array.isArray(newContent.pages.pinnedSystem) ? [...newContent.pages.pinnedSystem] : [];
+        const idx = ps.indexOf(page.id);
+        if (nextPinned && idx === -1) ps.push(page.id);
+        if (!nextPinned && idx !== -1) ps.splice(idx, 1);
+        newContent.pages.pinnedSystem = ps;
       }
 
       const response = await fetch('/api/admin/content', {
@@ -223,7 +251,7 @@ export default function PagesAdmin() {
         // Supprimer la page du contenu
         const newContent = { ...content };
         
-        if (pageId === 'home' || pageId === 'contact' || pageId === 'studio') {
+        if (pageId === 'home' || pageId === 'contact' || pageId === 'studio' || pageId === 'work' || pageId === 'blog') {
           // Ne pas permettre la suppression des pages système
           toast.error('Impossible de supprimer une page système.');
           return;
@@ -377,18 +405,16 @@ export default function PagesAdmin() {
                               onDelete={() => handleDeletePage(page.id)}
                               size="sm"
                             />
-                            {page.type === 'custom' && (
-                              <div className="mt-2 flex items-center gap-2 text-xs text-gray-600">
-                                <input
-                                  id={`pin-${page.id}`}
-                                  type="checkbox"
-                                  checked={!!page.pinned}
-                                  onChange={(e) => handleTogglePin(page, e.target.checked)}
-                                  className="rounded border-gray-300"
-                                />
-                                <label htmlFor={`pin-${page.id}`}>Épingler dans la barre latérale</label>
-                              </div>
-                            )}
+                            <div className="mt-2 flex items-center gap-2 text-xs text-gray-600">
+                              <input
+                                id={`pin-${page.id}`}
+                                type="checkbox"
+                                checked={!!page.pinned}
+                                onChange={(e) => handleTogglePin(page, e.target.checked)}
+                                className="rounded border-gray-300"
+                              />
+                              <label htmlFor={`pin-${page.id}`}>Épingler dans la barre latérale</label>
+                            </div>
                           </div>
                         </div>
                       </div>
