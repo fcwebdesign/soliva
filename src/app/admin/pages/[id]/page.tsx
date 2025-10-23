@@ -375,7 +375,7 @@ export default function PageEdit() {
     <div className="min-h-screen bg-gray-50 grid grid-cols-1 xl:grid-cols-[256px_1fr]">
       {/* Sidebar gauche */}
       <Sidebar 
-        currentPage="pages"
+        currentPage={pageId === 'new' ? 'pages' : (page?.id || pageId)}
       />
 
       {/* Zone principale */}

@@ -166,90 +166,6 @@
         "ctaText": "Yes, sign me up",
         "ctaLink": "https://google.com",
         "theme": "auto"
-      },
-      {
-        "id": "expandable-card-1760516187804",
-        "type": "expandable-card",
-        "data": {
-          "cards": [
-            {
-              "title": "Automatisation",
-              "label": "Service",
-              "summary": "Optimisez vos processus avec nos automatisations.",
-              "content": "<ul><li>Audit des flux</li><li>Zaps/Make scénarios</li><li>Intégrations API</li></ul>",
-              "media": {
-                "src": "",
-                "alt": ""
-              },
-              "theme": "automation",
-              "isExpanded": false
-            },
-            {
-              "title": "Go-to-market",
-              "label": "Service",
-              "summary": "Accélérez votre lancement et vos revenus.",
-              "content": "<ul><li>Positionnement</li><li>Acquisition</li><li>Onboarding</li></ul>",
-              "media": {
-                "src": "",
-                "alt": ""
-              },
-              "theme": "go-to-market",
-              "isExpanded": false
-            }
-          ]
-        },
-        "cards": [
-          {
-            "title": "Automatisation",
-            "label": "Service",
-            "summary": "Optimisez vos processus avec nos automatisations.",
-            "content": "<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>Audit des flux</p></li><li class=\"mb-1\"><p>Zaps/Make scénarios</p></li><li class=\"mb-1\"><p>Intégrations API</p></li></ul><p></p>",
-            "media": {
-              "src": "/uploads/1760517875393-702c3d5e.png",
-              "alt": ""
-            },
-            "theme": "automation",
-            "isExpanded": false
-          },
-          {
-            "title": "Automatisation",
-            "label": "Service",
-            "summary": "Optimisez vos processus avec nos automatisations.",
-            "content": "<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>Audit des flux</p></li><li class=\"mb-1\"><p>Zaps/Make scénarios</p></li><li class=\"mb-1\"><p>Intégrations API</p></li></ul><p></p>",
-            "media": {
-              "src": "",
-              "alt": ""
-            },
-            "theme": "automation",
-            "isExpanded": false
-          },
-          {
-            "title": "Nouveau service",
-            "label": "Service",
-            "summary": "",
-            "content": "",
-            "media": {
-              "src": "",
-              "alt": ""
-            },
-            "theme": "automation",
-            "isExpanded": false
-          }
-        ]
-      },
-      {
-        "id": "quote-1761032830699",
-        "type": "quote",
-        "data": {
-          "quote": "Une citation inspirante pour votre contenu...",
-          "author": "Nom de l'auteur",
-          "role": "Fonction",
-          "theme": "auto"
-        },
-        "quote": "qsdsqdqsds",
-        "author": "dsqqsdsddsqqds",
-        "role": "qsdsqsqdsq",
-        "theme": "dark"
       }
     ],
     "seo": {
@@ -260,6 +176,9 @@
       "schemas": [
         "Article"
       ]
+    },
+    "content": {
+      "description": "<p></p>"
     }
   },
   "contact": {
@@ -319,14 +238,14 @@
       {
         "id": "block-1",
         "type": "content",
-        "content": "<p>Bienvenue dans notre studio, où créativité et impact se rencontrent. <br>Chaque projet est une aventure unique, qu'il s'agisse de donner vie à une identité de marque écoresponsable ou de concevoir une plateforme immersive pour l'art. Ici, on ne se contente pas de créer, on provoque des émotions et des réactions. Prêt à transformer vos idées en réalité palpable ? On s'y met ensemble.</p>"
+        "content": "<p>Bienvenue dans notre studio, où créativité et impact se rencontrent. <br>Chaque projet est une aventure unique, qu'il s'agisse de donner vie à une identité de marque écoresponsable ou de concevoir une plateforme immersive pour l'art. Ici, on ne se contente pas de créer, on provoque des émotions et des réactions. Prêt à transformer vos idées en réalité palpable ? On s'y met ensemble. </p>"
       },
       {
         "id": "block-2",
         "type": "image",
         "content": "",
         "image": {
-          "src": "/uploads/1756481613960-30ee05ee.jpg",
+          "src": "/uploads/1761232226265-08ebd829.webp",
           "alt": ""
         }
       },
@@ -626,10 +545,10 @@
       {
         "title": "Art Gallery Digital",
         "category": "Digital",
-        "image": "/uploads/1755597343554-71ad1faf.jpg",
+        "image": "/uploads/1761217980625-f9578107.png",
         "slug": "art-gallery-digital",
         "excerpt": "Plateforme web immersive pour une galerie d'art contemporain.  ",
-        "content": "<p>Plateforme web immersive pour une galerie d'art contemporain. Interface intuitive permettant aux visiteurs d'explorer les œuvres en 3D et de découvrir les artistes.</p>",
+        "content": "<p>Plateforme web immersive pour une galerie d'art contemporain. Interface intuitive permettant aux visiteurs d'explorer les œuvres en 3D et de découvrir les artistes.</p>\n<img src=\"/uploads/1761217966236-e0e87702.png\" alt=\"\">",
         "client": "Art Gallery Digital",
         "year": "2024",
         "featured": false,
@@ -654,7 +573,7 @@
       {
         "id": "art-gallery-digital",
         "title": "Art Gallery Digital",
-        "content": "<p>Plateforme web immersive pour une galerie d'art contemporain. Interface intuitive permettant aux visiteurs d'explorer les œuvres en 3D et de découvrir les artistes.</p>",
+        "content": "<p>Plateforme web immersive pour une galerie d'art contemporain. Interface intuitive permettant aux visiteurs d'explorer les œuvres en 3D et de découvrir les artistes.</p>\n<img src=\"/uploads/1761217966236-e0e87702.png\" alt=\"\">",
         "slug": "art-gallery-digital",
         "status": "published",
         "publishedAt": "2024-02-20T14:30:00.000Z",
@@ -668,9 +587,24 @@
             "id": "block-1",
             "type": "content",
             "content": "<p>Plateforme web immersive pour une galerie d'art contemporain. Interface intuitive permettant aux visiteurs d'explorer les œuvres en 3D et de découvrir les artistes.</p>"
+          },
+          {
+            "id": "image-1761217958777",
+            "type": "image",
+            "data": {
+              "id": "",
+              "type": "image",
+              "image": {
+                "src": "",
+                "alt": ""
+              }
+            },
+            "image": {
+              "src": "/uploads/1761217966236-e0e87702.png"
+            }
           }
         ],
-        "image": "/uploads/1755597343554-71ad1faf.jpg"
+        "image": "/uploads/1761217980625-f9578107.png"
       },
       {
         "id": "kodza",
@@ -1764,7 +1698,7 @@
       {
         "title": "Les tendances UX que vous devez ignorer en 2024",
         "slug": "les-tendances-ux-que-vous-devez-ignorer-en-2024",
-        "status": "draft",
+        "status": "published",
         "blocks": [
           {
             "id": "intro-1",
@@ -1859,8 +1793,9 @@
           ]
         },
         "id": "article-les-tendances-ux-que-vous-devez-ignorer-en-2024-874101",
-        "publishedAt": "2025-10-23T09:14:34.101Z",
-        "hasCustomSlug": true
+        "publishedAt": "2025-10-23T09:31:10.699Z",
+        "hasCustomSlug": true,
+        "content": "<p>Imaginons un instant que vous soyez en train de consulter votre site web préféré. Tout se déroule bien jusqu'à ce que vous soyez confronté à un design tellement innovant qu'il en devient déroutant. Vous n'êtes pas seul. Chaque année, de nouvelles tendances UX apparaissent, souvent avec plus de promesses que de résultats concrets.</p><p>En 2024, certaines tendances UX sont à prendre avec des pincettes. Dans un monde où l'innovation est parfois synonyme de confusion, il est crucial de savoir lesquelles de ces tendances risquent de nuire à l'expérience utilisateur plutôt que de l'améliorer. Explorons ensemble celles que vous devriez ignorer sans hésitation.</p>\n<h2>Le minimalisme à outrance</h2>\n<p>Le minimalisme est devenu un mantra dans le design UX. Mais soyons clairs, il arrive un moment où moins ne signifie pas mieux. Dans la quête d'une esthétique épurée, certains designers poussent le minimalisme à un point où les utilisateurs doivent jouer aux devinettes pour naviguer. Prenons l'exemple des formulaires de contact. Dans 80% des cas, les utilisateurs préfèrent une interface claire et fonctionnelle plutôt qu'un design minimaliste qui omet les libellés évidents.</p><p>Sur des plateformes comme Shopify, l'accent est mis sur la simplicité d'utilisation et non sur un design ultra-épuré qui pourrait faire perdre des ventes. Le problème n'est pas le minimalisme en soi, c'est la manière dont il est appliqué. Un site comme <strong>Netflix</strong> réussit à marier minimalisme et fonction grâce à une interface utilisateur intuitive et des options de navigation claires.</p><ul class=\"list-disc list-inside space-y-2\"><li><p><strong>Clarité</strong> : Ne vous contentez pas d'une interface dépouillée. Assurez-vous que chaque élément a une fonction claire.</p></li><li><p><strong>Accessibilité</strong> : Vérifiez que l'information cruciale est toujours visible et facilement accessible.</p></li></ul><p>En fin de compte, le minimalisme doit servir l'utilisateur, pas le design. Gardez cela à l'esprit pour éviter de tomber dans le piège du \"trop peu\" qui frustre plus qu'il n'émerveille.</p>\n<h2>L'animation excessive</h2>\n<p>Les animations peuvent apporter une touche de dynamisme à l'expérience utilisateur, mais lorsqu'elles sont utilisées à outrance, elles deviennent rapidement un obstacle plutôt qu'un atout. En 2024, certains designers semblent croire que plus d'animations équivaut à une meilleure expérience. Or, c'est souvent l'inverse qui se produit.</p><p>Illustrons cela avec un exemple concret : un site de e-commerce qui utilise des animations pour chaque transition de page. Résultat ? Les temps de chargement augmentent, et l'utilisateur perd patience. Selon une étude d'Akamai, un délai de chargement de plus de trois secondes suffit à faire fuir 53% des visiteurs.</p><p>Adoptons une approche pragmatique :</p><ul class=\"list-disc list-inside space-y-2\"><li><p><strong>Simplicité</strong> : Limitez les animations aux éléments qui en bénéficient réellement, comme les transitions de menu.</p></li><li><p><strong>Fluidité</strong> : Assurez-vous que les animations sont fluides et ne nuisent pas à la rapidité du site.</p></li></ul><p>En fin de compte, les animations doivent améliorer l'expérience utilisateur, pas la complexifier. Prenez exemple sur des plateformes comme <strong>WordPress</strong>, qui privilégient des animations subtiles pour une navigation agréable sans sacrifier la performance.</p>\n<h2>Les micro-interactions omniprésentes</h2>\n<p>Les micro-interactions sont ces petites animations ou réponses visuelles qui se produisent lors d'une interaction utilisateur, comme un bouton qui change de couleur une fois cliqué. Bien qu'elles puissent améliorer l'expérience utilisateur, leur utilisation excessive peut conduire à une surcharge cognitive.</p><p>Imaginez utiliser une application où chaque clic, glissement ou pression déclenche une micro-interaction. Cela devient vite irritant et détourne l'attention de l'objectif principal de l'utilisateur. Dans le développement web, la clé est de trouver un équilibre. Shopify, par exemple, utilise les micro-interactions de manière réfléchie pour guider l'utilisateur sans l'envahir.</p><p>Voici quelques conseils :</p><ul class=\"list-disc list-inside space-y-2\"><li><p><strong>Pertinence</strong> : Concentrez-vous sur les interactions qui ajoutent une réelle valeur.</p></li><li><p><strong>Subtilité</strong> : Les micro-interactions doivent être discrètes et non intrusives.</p></li></ul><p>En conclusion, les micro-interactions doivent être utilisées pour améliorer l'expérience utilisateur, pas pour la compliquer ou la surcharger. Pensez à vos utilisateurs et à leurs besoins réels plutôt qu'à impressionner avec des effets visuels excessifs.</p>\n<h2>Le design basé sur les données sans contexte</h2>\n<p>Dans le domaine du design UX, l'analyse des données est devenue un outil incontournable pour comprendre le comportement des utilisateurs. Cependant, une tendance problématique émerge : l'utilisation de données brutes sans prise en compte du contexte. Cette approche risque d'induire en erreur et de mener à des décisions de design contre-productives.</p><p>Par exemple, analyser le taux de clics sur une page sans comprendre pourquoi les utilisateurs cliquent peut mener à des conclusions erronées. L'absence de contexte peut transformer une information précieuse en une donnée trompeuse. Prenons l'exemple de Netflix, qui utilise les données non seulement pour suivre le comportement des utilisateurs, mais aussi pour comprendre leurs préférences.</p><p>Voici comment éviter ce piège :</p><ul class=\"list-disc list-inside space-y-2\"><li><p><strong>Contexte</strong> : Assurez-vous de comprendre le 'pourquoi' derrière les chiffres.</p></li><li><p><strong>Qualitatif vs Quantitatif</strong> : Combinez données quantitatives et retours qualitatifs pour une vision complète.</p></li></ul><p>En fin de compte, les données doivent être interprétées avec discernement et intégrées dans une stratégie UX globale, plutôt que d'être le seul moteur de décision. C'est en combinant analyse et intuition que vous créerez une expérience utilisateur réellement enrichissante.</p>\n<h2>L'obsession des dark patterns</h2>\n<p>Les dark patterns sont des techniques de design trompeuses utilisées pour inciter les utilisateurs à effectuer certaines actions, souvent à leur insu. En 2024, l'utilisation de ces pratiques continue de croître, malgré leur impact négatif sur la confiance des utilisateurs.</p><p>Les dark patterns peuvent inclure des méthodes telles que l'ajout automatique de produits dans un panier ou la difficulté à trouver le bouton de désabonnement sur un service en ligne. Ces techniques peuvent offrir des gains à court terme, mais elles endommagent la relation à long terme avec le client. <strong>Amazon</strong> a récemment été critiqué pour ses pratiques de désabonnement compliquées, ce qui a terni sa réputation.</p><p>Quelques conseils pour éviter ces pratiques douteuses :</p><ul class=\"list-disc list-inside space-y-2\"><li><p><strong>Transparence</strong> : Informez clairement les utilisateurs de leurs choix et des conséquences.</p></li><li><p><strong>Éthique</strong> : Concevez des interfaces qui respectent et valorisent la confiance des utilisateurs.</p></li></ul><p>La clé est de concevoir des expériences qui placent l'utilisateur au centre, en respectant son autonomie et ses intentions. En fin de compte, un design éthique est non seulement plus respectueux, mais il construit également une relation de confiance durable.</p>\n<h2>La surcharge de personnalisation</h2>\n<p>La personnalisation est souvent vantée comme un moyen d'améliorer l'expérience utilisateur. Cependant, une personnalisation excessive peut rapidement devenir intrusive et accablante. En 2024, de nombreuses entreprises se concentrent sur la personnalisation à outrance, au point d'oublier l'essentiel : la simplicité.</p><p>Imaginez un tableau de bord où chaque utilisateur a accès à des fonctionnalités personnalisées selon ses préférences supposées. Cela peut sembler idéal, mais sans une interface claire et bien conçue, les utilisateurs peuvent se sentir perdus et frustrés. Prenons l'exemple de <strong>Spotify</strong> : bien qu'il offre une personnalisation poussée, il s'assure de toujours garder une interface intuitive et simple.</p><p>Pour éviter les écueils de la personnalisation excessive :</p><ul class=\"list-disc list-inside space-y-2\"><li><p><strong>Équilibre</strong> : Offrez une personnalisation qui améliore l'expérience sans la compliquer.</p></li><li><p><strong>Clarté</strong> : Maintenez une interface claire et cohérente, même avec des options personnalisées.</p></li></ul><p>En fin de compte, la personnalisation doit être un outil pour mieux servir l'utilisateur, et non pour le submerger. Trouvez le juste milieu pour offrir une expérience enrichissante et efficace.</p>\n<h2>Conclusion : Naviguer avec discernement dans les tendances UX</h2>\n<p>Alors que 2024 nous promet une avalanche de nouvelles tendances UX, il est essentiel de naviguer avec discernement. L'objectif ultime doit toujours être l'amélioration de l'expérience utilisateur, et non la poursuite aveugle des dernières modes. En évitant les pièges du minimalisme à outrance, des animations excessives ou encore des dark patterns, vous pouvez créer des expériences qui résistent à l'épreuve du temps.</p><blockquote><p><strong>\"Une bonne expérience utilisateur ne réside pas dans l'innovation pour l'innovation, mais dans la capacité à répondre aux besoins réels des utilisateurs.\"</strong></p></blockquote><p><br>✨ <em>Cet article fait partie de notre ligne éditoriale : informer et guider sans détour. Parce qu'au final, la seule promesse qui compte, c'est celle qu'on peut tenir.</em></p>"
       },
       {
         "title": "L'obsession des données : quand trop c'est trop",
@@ -2061,6 +1996,108 @@
         "id": "article-le-mythe-de-la-strategie-omnicanale-pourquoi-ca-ne-fonctionne-pas-toujours-525064",
         "publishedAt": "2025-10-23T09:25:25.064Z",
         "hasCustomSlug": true
+      },
+      {
+        "title": "Les faux experts en branding : comment les reconnaître",
+        "slug": "les-faux-experts-en-branding-comment-les-reconnaitre",
+        "status": "published",
+        "blocks": [
+          {
+            "id": "intro-1",
+            "type": "content",
+            "content": "<p>Récemment, un entrepreneur a dépensé des milliers d'euros pour un rebranding qui a échoué. Pourquoi ? Il a fait confiance à un pseudo-expert en branding qui vendait plus de rêve que de réalité. C'est un scénario qui se répète trop souvent.</p><p>Dans un monde où l'image de marque est cruciale, être dupé par des faux experts en branding peut coûter cher. Alors, comment les reconnaître et éviter de tomber dans le piège ? C'est ce que nous allons explorer.</p>"
+          },
+          {
+            "id": "section-1",
+            "type": "h2",
+            "content": "Les promesses irréalistes : un signe révélateur"
+          },
+          {
+            "id": "content-1",
+            "type": "content",
+            "content": "<p>Soyons clairs, si quelqu'un vous promet de transformer votre marque du jour au lendemain, fuyez ! Le branding est un processus complexe qui prend du temps. Les faux experts en branding vous vendent souvent des promesses irréalistes, comme une augmentation garantie de vos ventes en un mois ou une reconnaissance immédiate sur le marché.</p><p>Un vrai expert sait que le branding nécessite :</p><ul class=\"list-disc list-inside space-y-2\"><li><p><strong>Une compréhension approfondie de votre public cible</strong> : Cela ne se fait pas en une réunion de 30 minutes.</p></li><li><p><strong>Une recherche et une analyse de marché</strong> : Nécessaires pour identifier votre positionnement unique.</p></li><li><p><strong>Des tests et des ajustements continus</strong> : Parce que le marché évolue, et votre marque doit suivre.</p></li></ul><p>En bref, le vrai branding, c'est du sur-mesure, pas du prêt-à-porter. Si votre \"expert\" n'a pas de plan détaillé et réaliste, vous êtes probablement face à un imposteur.</p>"
+          },
+          {
+            "id": "section-2",
+            "type": "h2",
+            "content": "L'absence de portfolio concret"
+          },
+          {
+            "id": "content-2",
+            "type": "content",
+            "content": "<p>Un autre drapeau rouge ? L'absence de réalisations concrètes. Un expert digne de ce nom doit pouvoir présenter un portfolio solide. Si votre interlocuteur parle beaucoup mais montre peu, méfiez-vous.</p><p>Un bon portfolio ne se limite pas à quelques logos. Il doit inclure :</p><ul class=\"list-disc list-inside space-y-2\"><li><p><strong>Des études de cas complètes</strong> : Montrant comment ils ont aidé d'autres entreprises à atteindre leurs objectifs.</p></li><li><p><strong>Des métriques tangibles</strong> : Comme l'augmentation du trafic ou l'amélioration de l'engagement.</p></li><li><p><strong>Des témoignages clients</strong> : Qui renforcent la crédibilité de leur travail.</p></li></ul><p>Demandez à voir des preuves concrètes de leur expertise. Si leur réponse est vague ou évasive, c'est un signe qu'ils n'ont rien de solide à montrer.</p>"
+          },
+          {
+            "id": "section-3",
+            "type": "h2",
+            "content": "Des conseils génériques appliqués à tout le monde"
+          },
+          {
+            "id": "content-3",
+            "type": "content",
+            "content": "<p>Un faux expert en branding a souvent une approche \"taille unique\". Ils proposent les mêmes stratégies à tous leurs clients, sans tenir compte des spécificités de chaque entreprise. C'est non seulement inefficace, mais cela peut également nuire à votre marque.</p><p>Une stratégie de branding efficace doit être personnalisée. Par exemple, ce qui fonctionne pour une start-up technologique comme Shopify ne sera pas nécessairement pertinent pour une entreprise de mode comme Nike. Chaque marque a son propre ADN, et il est crucial que votre stratégie le reflète.</p><p>Si vous entendez des phrases comme \"Il suffit de suivre cette méthode et votre marque décollera\", il est temps de remettre en question l'expertise de votre interlocuteur.</p>"
+          },
+          {
+            "id": "section-4",
+            "type": "h2",
+            "content": "L'absence de stratégie numérique"
+          },
+          {
+            "id": "content-4",
+            "type": "content",
+            "content": "<p>Dans le monde actuel, une stratégie de branding sans composante numérique est tout simplement obsolète. Les faux experts en branding ont tendance à ignorer cet aspect crucial, ou à le minimiser. Pourtant, une présence en ligne solide est essentielle pour n'importe quelle marque.</p><p>Une stratégie numérique efficace inclut :</p><ul class=\"list-disc list-inside space-y-2\"><li><p><strong>Un site web optimisé</strong> : Qui n'est ni lent ni buggé, contrairement à ce que nous voyons souvent <a href=\"/pourquoi-les-sites-wordpress-sont-ils-si-lents\">ici</a>.</p></li><li><p><strong>Une présence sur les réseaux sociaux</strong> : Adaptée à votre public cible.</p></li><li><p><strong>Des campagnes de marketing digital</strong> : Qui sont mesurables et ajustables.</p></li></ul><p>Si votre \"expert\" ne vous parle pas de ces éléments, il est peut-être temps de chercher ailleurs.</p>"
+          },
+          {
+            "id": "section-5",
+            "type": "h2",
+            "content": "Un discours centré sur les tendances"
+          },
+          {
+            "id": "content-5",
+            "type": "content",
+            "content": "<p>Attention aux experts qui ne parlent que des dernières tendances. Certes, être à jour est important, mais un bon branding repose sur des fondations solides, pas sur des phénomènes éphémères. Vous souvenez-vous de la mode du \"flat design\" ou des logos minimalistes ? Elles ont eu leur moment, mais un branding réussi transcende les tendances.</p><p>Un vrai expert sera capable de vous conseiller sur ce qui est pertinent pour votre marque, même si cela va à l'encontre de ce qui est à la mode. Il saura également vous dire quelles tendances ignorer, comme nous l'avons mentionné dans notre article sur les <a href=\"/les-tendances-ux-que-vous-devez-ignorer-en-2024\">tendances UX à ignorer</a>.</p><p>Si votre interlocuteur ne semble intéressé que par ce qui est \"in\", méfiez-vous de sa capacité à penser sur le long terme.</p>"
+          },
+          {
+            "id": "section-6",
+            "type": "h2",
+            "content": "Des qualifications douteuses"
+          },
+          {
+            "id": "content-6",
+            "type": "content",
+            "content": "<p>Enfin, vérifiez les qualifications de votre expert. Souvent, les faux experts en branding n'ont pas de formation formelle ou d'expérience substantielle dans le domaine. Ils peuvent avoir suivi un cours en ligne de quelques heures et se proclamer experts.</p><p>Recherchez des qualifications claires :</p><ul class=\"list-disc list-inside space-y-2\"><li><p><strong>Des diplômes ou certifications pertinentes</strong> : Dans le marketing, le design ou la gestion de marques.</p></li><li><p><strong>Une expérience éprouvée</strong> : Avec des références vérifiables.</p></li><li><p><strong>Des publications ou conférences</strong> : Qui montrent leur reconnaissance dans le domaine.</p></li></ul><p>Si votre expert ne peut fournir aucune de ces preuves, il est probable qu'il ne possède pas les compétences nécessaires pour gérer votre branding.</p>"
+          },
+          {
+            "id": "conclusion-1",
+            "type": "h2",
+            "content": "Conclusion : Restez vigilant et exigez la qualité"
+          },
+          {
+            "id": "conclusion-content",
+            "type": "content",
+            "content": "<p>En résumé, reconnaître un faux expert en branding n'est pas si compliqué si vous savez où regarder. Cherchez des promesses réalistes, des preuves concrètes de réussite, une stratégie personnalisée et une intégration numérique. N'oubliez pas de vérifier les qualifications et méfiez-vous des discours trop centrés sur les tendances.</p><blockquote><p><strong>\"Le branding est une promesse faite au client, assurez-vous qu'elle est tenue par des professionnels compétents.\"</strong></p></blockquote><p>✨ <em>Chez Soliva, nous croyons que la qualité passe avant tout. Ne vous contentez pas de moins. Parce qu'au final, la seule promesse qui compte, c'est celle qu'on peut tenir.</em></p>"
+          }
+        ],
+        "seo": {
+          "focusKeyword": "faux experts branding",
+          "metaTitle": "Comment reconnaître les faux experts en branding — Soliva",
+          "metaDescription": "Découvrez comment identifier les faux experts en branding et protéger votre marque des promesses vides.",
+          "canonicalUrl": "http://localhost:3006/blog/les-faux-experts-en-branding-comment-les-reconnaitre",
+          "schemas": [
+            "Article"
+          ],
+          "suggestedInternalLinks": [
+            {
+              "url": "/studio",
+              "label": "Nos services",
+              "reason": "Pertinence contextuelle"
+            }
+          ]
+        },
+        "id": "article-les-faux-experts-en-branding-comment-les-reconnaitre-473148",
+        "publishedAt": "2025-10-23T16:54:53.020Z",
+        "hasCustomSlug": true,
+        "content": "<p>Récemment, un entrepreneur a dépensé des milliers d'euros pour un rebranding qui a échoué. Pourquoi ? Il a fait confiance à un pseudo-expert en branding qui vendait plus de rêve que de réalité. C'est un scénario qui se répète trop souvent.</p><p>Dans un monde où l'image de marque est cruciale, être dupé par des faux experts en branding peut coûter cher. Alors, comment les reconnaître et éviter de tomber dans le piège ? C'est ce que nous allons explorer.</p>\n<h2>Les promesses irréalistes : un signe révélateur</h2>\n<p>Soyons clairs, si quelqu'un vous promet de transformer votre marque du jour au lendemain, fuyez ! Le branding est un processus complexe qui prend du temps. Les faux experts en branding vous vendent souvent des promesses irréalistes, comme une augmentation garantie de vos ventes en un mois ou une reconnaissance immédiate sur le marché.</p><p>Un vrai expert sait que le branding nécessite :</p><ul class=\"list-disc list-inside space-y-2\"><li><p><strong>Une compréhension approfondie de votre public cible</strong> : Cela ne se fait pas en une réunion de 30 minutes.</p></li><li><p><strong>Une recherche et une analyse de marché</strong> : Nécessaires pour identifier votre positionnement unique.</p></li><li><p><strong>Des tests et des ajustements continus</strong> : Parce que le marché évolue, et votre marque doit suivre.</p></li></ul><p>En bref, le vrai branding, c'est du sur-mesure, pas du prêt-à-porter. Si votre \"expert\" n'a pas de plan détaillé et réaliste, vous êtes probablement face à un imposteur.</p>\n<h2>L'absence de portfolio concret</h2>\n<p>Un autre drapeau rouge ? L'absence de réalisations concrètes. Un expert digne de ce nom doit pouvoir présenter un portfolio solide. Si votre interlocuteur parle beaucoup mais montre peu, méfiez-vous.</p><p>Un bon portfolio ne se limite pas à quelques logos. Il doit inclure :</p><ul class=\"list-disc list-inside space-y-2\"><li><p><strong>Des études de cas complètes</strong> : Montrant comment ils ont aidé d'autres entreprises à atteindre leurs objectifs.</p></li><li><p><strong>Des métriques tangibles</strong> : Comme l'augmentation du trafic ou l'amélioration de l'engagement.</p></li><li><p><strong>Des témoignages clients</strong> : Qui renforcent la crédibilité de leur travail.</p></li></ul><p>Demandez à voir des preuves concrètes de leur expertise. Si leur réponse est vague ou évasive, c'est un signe qu'ils n'ont rien de solide à montrer.</p>\n<h2>Des conseils génériques appliqués à tout le monde</h2>\n<p>Un faux expert en branding a souvent une approche \"taille unique\". Ils proposent les mêmes stratégies à tous leurs clients, sans tenir compte des spécificités de chaque entreprise. C'est non seulement inefficace, mais cela peut également nuire à votre marque.</p><p>Une stratégie de branding efficace doit être personnalisée. Par exemple, ce qui fonctionne pour une start-up technologique comme Shopify ne sera pas nécessairement pertinent pour une entreprise de mode comme Nike. Chaque marque a son propre ADN, et il est crucial que votre stratégie le reflète.</p><p>Si vous entendez des phrases comme \"Il suffit de suivre cette méthode et votre marque décollera\", il est temps de remettre en question l'expertise de votre interlocuteur.</p>\n<h2>L'absence de stratégie numérique</h2>\n<p>Dans le monde actuel, une stratégie de branding sans composante numérique est tout simplement obsolète. Les faux experts en branding ont tendance à ignorer cet aspect crucial, ou à le minimiser. Pourtant, une présence en ligne solide est essentielle pour n'importe quelle marque.</p><p>Une stratégie numérique efficace inclut :</p><ul class=\"list-disc list-inside space-y-2\"><li><p><strong>Un site web optimisé</strong> : Qui n'est ni lent ni buggé, contrairement à ce que nous voyons souvent <a href=\"/pourquoi-les-sites-wordpress-sont-ils-si-lents\">ici</a>.</p></li><li><p><strong>Une présence sur les réseaux sociaux</strong> : Adaptée à votre public cible.</p></li><li><p><strong>Des campagnes de marketing digital</strong> : Qui sont mesurables et ajustables.</p></li></ul><p>Si votre \"expert\" ne vous parle pas de ces éléments, il est peut-être temps de chercher ailleurs.</p>\n<h2>Un discours centré sur les tendances</h2>\n<p>Attention aux experts qui ne parlent que des dernières tendances. Certes, être à jour est important, mais un bon branding repose sur des fondations solides, pas sur des phénomènes éphémères. Vous souvenez-vous de la mode du \"flat design\" ou des logos minimalistes ? Elles ont eu leur moment, mais un branding réussi transcende les tendances.</p><p>Un vrai expert sera capable de vous conseiller sur ce qui est pertinent pour votre marque, même si cela va à l'encontre de ce qui est à la mode. Il saura également vous dire quelles tendances ignorer, comme nous l'avons mentionné dans notre article sur les <a href=\"/les-tendances-ux-que-vous-devez-ignorer-en-2024\">tendances UX à ignorer</a>.</p><p>Si votre interlocuteur ne semble intéressé que par ce qui est \"in\", méfiez-vous de sa capacité à penser sur le long terme.</p>\n<h2>Des qualifications douteuses</h2>\n<p>Enfin, vérifiez les qualifications de votre expert. Souvent, les faux experts en branding n'ont pas de formation formelle ou d'expérience substantielle dans le domaine. Ils peuvent avoir suivi un cours en ligne de quelques heures et se proclamer experts.</p><p>Recherchez des qualifications claires :</p><ul class=\"list-disc list-inside space-y-2\"><li><p><strong>Des diplômes ou certifications pertinentes</strong> : Dans le marketing, le design ou la gestion de marques.</p></li><li><p><strong>Une expérience éprouvée</strong> : Avec des références vérifiables.</p></li><li><p><strong>Des publications ou conférences</strong> : Qui montrent leur reconnaissance dans le domaine.</p></li></ul><p>Si votre expert ne peut fournir aucune de ces preuves, il est probable qu'il ne possède pas les compétences nécessaires pour gérer votre branding.</p>\n<h2>Conclusion : Restez vigilant et exigez la qualité</h2>\n<p>En résumé, reconnaître un faux expert en branding n'est pas si compliqué si vous savez où regarder. Cherchez des promesses réalistes, des preuves concrètes de réussite, une stratégie personnalisée et une intégration numérique. N'oubliez pas de vérifier les qualifications et méfiez-vous des discours trop centrés sur les tendances.</p><blockquote><p><strong>\"Le branding est une promesse faite au client, assurez-vous qu'elle est tenue par des professionnels compétents.\"</strong></p></blockquote><p>✨ <em>Chez Soliva, nous croyons que la qualité passe avant tout. Ne vous contentez pas de moins. Parce qu'au final, la seule promesse qui compte, c'est celle qu'on peut tenir.</em></p>"
       }
     ],
     "filters": [
@@ -2223,7 +2260,8 @@
         "hero": {
           "title": "Mentions légales"
         },
-        "layout": "two-columns"
+        "layout": "two-columns",
+        "pinned": false
       },
       {
         "id": "politique-de-confidentialite",
@@ -2281,147 +2319,15 @@
         "hero": {
           "title": "Politique de confidentialité"
         },
-        "layout": "two-columns"
-      },
-      {
-        "id": "nouvelle-page",
-        "title": "Nouvelle page",
-        "content": "<p>lkllhhjh</p>\n<h2>hgggjgjgj</h2>",
-        "slug": "nouvelle-page",
-        "status": "published",
-        "description": "",
-        "blocks": [
-          {
-            "id": "block-1",
-            "type": "content",
-            "content": "<p>lkllhhjh</p>",
-            "title": "Description"
-          },
-          {
-            "id": "block-2",
-            "type": "gallery-grid",
-            "data": {
-              "images": [],
-              "layout": "grid-3",
-              "gap": "medium",
-              "showFilters": true,
-              "showTitles": true,
-              "showDescriptions": true,
-              "enableLightbox": true,
-              "enableDownload": true,
-              "theme": "auto"
-            },
-            "images": [
-              {
-                "id": "image-1757335079401-0",
-                "src": "/uploads/1757335079381-c7e81d79.png",
-                "alt": "",
-                "title": "",
-                "description": "",
-                "category": ""
-              },
-              {
-                "id": "image-1757335079401-1",
-                "src": "/uploads/1757335079386-c22c9cea.png",
-                "alt": "",
-                "title": "",
-                "description": "",
-                "category": "portrait"
-              },
-              {
-                "id": "image-1757335079401-2",
-                "src": "/uploads/1757335079372-e15d791b.png",
-                "alt": "",
-                "title": "",
-                "description": "",
-                "category": ""
-              },
-              {
-                "id": "image-1757335079401-3",
-                "src": "/uploads/1757335079391-26ba7b43.png",
-                "alt": "",
-                "title": "",
-                "description": "",
-                "category": ""
-              },
-              {
-                "id": "image-1757335079401-4",
-                "src": "/uploads/1757335079375-0fb2a224.png",
-                "alt": "",
-                "title": "",
-                "description": "",
-                "category": ""
-              },
-              {
-                "id": "image-1757335079401-5",
-                "src": "/uploads/1757335079380-30a93fb3.png",
-                "alt": "",
-                "title": "",
-                "description": "",
-                "category": ""
-              }
-            ],
-            "layout": "masonry",
-            "theme": "dark"
-          },
-          {
-            "id": "block-3",
-            "type": "content",
-            "data": {
-              "content": ""
-            }
-          },
-          {
-            "id": "block-4",
-            "type": "three-columns",
-            "data": {
-              "leftColumn": [],
-              "middleColumn": [],
-              "rightColumn": [],
-              "layout": "left-middle-right",
-              "gap": "medium",
-              "alignment": "top",
-              "theme": "auto"
-            },
-            "leftColumn": [
-              {
-                "id": "logos-1757335228773",
-                "type": "logos",
-                "title": "NOS CLIENTS",
-                "theme": "auto",
-                "logos": []
-              },
-              {
-                "id": "content-1757335219613",
-                "type": "content",
-                "content": "<p>jhkjhkhkhkj</p>"
-              }
-            ]
-          },
-          {
-            "id": "h2-1757335183671",
-            "type": "h2",
-            "data": {
-              "content": ""
-            },
-            "content": "hgggjgjgj"
-          },
-          {
-            "id": "two-columns-1757335186171",
-            "type": "two-columns",
-            "data": {
-              "leftColumn": [],
-              "rightColumn": [],
-              "layout": "left-right",
-              "gap": "medium",
-              "alignment": "top",
-              "theme": "auto"
-            }
-          }
-        ],
-        "publishedAt": "2025-09-08T12:41:14.389Z",
-        "layout": "two-columns"
+        "layout": "two-columns",
+        "pinned": false,
+        "disabled": false
       }
-    ]
+    ],
+    "pinnedSystem": [],
+    "home": {
+      "mode": "system"
+    },
+    "hiddenSystem": []
   }
 }
