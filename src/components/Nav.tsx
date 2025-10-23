@@ -161,9 +161,7 @@ const Nav: React.FC<NavProps> = ({ content }) => {
     
     // Ajouter automatiquement les pages personnalisées qui ne sont pas déjà dans la liste
     const customPages = content?.pages?.pages || [];
-    const customPageKeys = customPages
-      .filter((p: any) => !p?.disabled)
-      .map((page: any) => page.slug || page.id);
+    const customPageKeys = customPages.map(page => page.slug || page.id);
     
     // Filtrer pour éviter les doublons
     const uniqueItems = [...defaultItems];

@@ -67,11 +67,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             ) : (
                               // SHELL GLOBAL PAR DÉFAUT
               <>
-                <NavWrapper initialContent={{
-                  ...content.nav,
-                  hiddenSystem: (content as any)?.pages?.hiddenSystem || [],
-                  pages: { pages: (content as any)?.pages?.pages || [] }
-                }} />
+                <NavWrapper initialContent={{...content.nav, hiddenSystem: (content as any)?.pages?.hiddenSystem || []}} />
                 {children}
                 <ConditionalFooter initialContent={content.footer} />
                 

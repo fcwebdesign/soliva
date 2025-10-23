@@ -483,7 +483,7 @@ export default function PagesAdmin() {
                     {pages.map((page, index) => {
                       const isSystem = ['home','studio','contact','work','blog'].includes(page.type);
                       const hidden = Array.isArray((content as any)?.pages?.hiddenSystem) ? (content as any).pages.hiddenSystem : [];
-                      const isDisabledFront = isSystem ? hidden.includes(page.id) : !!(page as any)?.disabled;
+                      const isDisabledFront = isSystem && hidden.includes(page.id);
                       // Toggle désactivation côté front pour pages système
                       const toggleDisableFront = async () => {
                         try {
@@ -558,36 +558,7 @@ export default function PagesAdmin() {
                               />
                               <label htmlFor={`pin-${page.id}`}>Épingler dans la barre latérale</label>
                             </div>
-                            {/* Toggle disable for custom pages (keep Supprimer available) */}
-                            {!isSystem && (
-                              <div className="mt-2 flex justify-end">
-                                <button
-                                  onClick={async () => {
-                                    try {
-                                      const newContent = { ...(content as any) };
-                                      if (!newContent.pages) newContent.pages = { pages: [] };
-                                      newContent.pages.pages = (newContent.pages.pages || []).map((p: any) =>
-                                        p.id === page.id ? { ...p, disabled: !p.disabled } : p
-                                      );
-                                      const res = await fetch('/api/admin/content', {
-                                        method: 'PUT',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ content: newContent })
-                                      });
-                                      if (!res.ok) throw new Error('save');
-                                      setContent(newContent);
-                                      setPages(generatePagesList(newContent));
-                                      toast.success((page as any)?.disabled ? 'Page activée' : 'Page désactivée');
-                                    } catch {
-                                      toast.error('Impossible de basculer l\'état');
-                                    }
-                                  }}
-                                  className={`${(page as any)?.disabled ? 'bg-green-50 text-green-700 hover:bg-green-100' : 'bg-red-50 text-red-700 hover:bg-red-100'} text-xs px-3 py-1 rounded-lg border`}
-                                >
-                                  {(page as any)?.disabled ? 'Activer' : 'Désactiver'}
-                                </button>
-                              </div>
-                            )}
+                            
                           </div>
                         </div>
                       </div>
