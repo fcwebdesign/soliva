@@ -34,10 +34,8 @@ export default function PagesAdmin() {
   // Fonction pour générer la liste des pages dynamiquement
   const generatePagesList = (content: any): Page[] => {
     const pinnedSystem: string[] = content?.pages?.pinnedSystem || [];
-    const hiddenSystem: string[] = content?.pages?.hiddenSystem || [];
     const pagesList: Page[] = [
-      // Ces trois pages peuvent être masquées (supprimées) côté liste
-      ...(!hiddenSystem.includes('home') ? [{
+      {
         id: 'home',
         title: 'Accueil',
         description: 'Page d\'accueil du site',
@@ -46,8 +44,8 @@ export default function PagesAdmin() {
         status: 'published' as const,
         lastModified: '2024-01-15',
         pinned: pinnedSystem.includes('home')
-      }] : []),
-      ...(!hiddenSystem.includes('contact') ? [{
+      },
+      {
         id: 'contact',
         title: 'Contact',
         description: 'Page de contact et coordonnées',
@@ -56,8 +54,8 @@ export default function PagesAdmin() {
         status: 'published' as const,
         lastModified: '2024-01-10',
         pinned: pinnedSystem.includes('contact')
-      }] : []),
-      ...(!hiddenSystem.includes('studio') ? [{
+      },
+      {
         id: 'studio',
         title: 'Studio',
         description: 'Présentation du studio',
@@ -66,7 +64,7 @@ export default function PagesAdmin() {
         status: 'published' as const,
         lastModified: '2024-01-12',
         pinned: pinnedSystem.includes('studio')
-      }] : []),
+      },
       {
         id: 'work',
         title: 'Portfolio',
@@ -482,8 +480,12 @@ export default function PagesAdmin() {
                   </div>
 
                   <div className="space-y-3">
-                    {pages.map((page, index) => (
-                      <div key={`${page.id}-${index}`} className="bg-gray-50 rounded-lg border border-gray-200 p-4 hover:border-gray-300 transition-colors">
+                    {pages.map((page, index) => {
+                      const isSystem = ['home','studio','contact','work','blog'].includes(page.type);
+                      const isHardSystem = ['work','blog'].includes(page.type);
+                      const isHidden = isSystem && Array.isArray((content as any)?.pages?.hiddenSystem) && (content as any).pages.hiddenSystem.includes(page.id);
+                      return (
+                      <div key={`${page.id}-${index}`} className={`bg-gray-50 rounded-lg border border-gray-200 p-4 hover:border-gray-300 transition-colors ${isHidden ? 'opacity-60' : ''}`}>
                         <div className="flex items-center justify-between">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center space-x-3">
@@ -491,7 +493,8 @@ export default function PagesAdmin() {
                                 {page.title}
                               </h4>
                               <StatusBadge 
-                                status={page.status}
+                                status={isHidden ? 'archived' : page.status}
+                                label={isHidden ? 'Désactivée' : undefined}
                                 size="sm"
                               />
                               {/* Badge type de page */}
@@ -521,8 +524,8 @@ export default function PagesAdmin() {
                             <ActionButtons
                               onEdit={() => handleEditPage(page.id)}
                               onPreview={() => handlePreviewPage(page.id)}
-                              onDuplicate={() => handleDuplicatePage(page.id)}
-                              onDelete={() => handleDeletePage(page.id)}
+                              onDuplicate={!isSystem ? () => handleDuplicatePage(page.id) : undefined}
+                              onDelete={!isHardSystem ? () => handleDeletePage(page.id) : undefined}
                               size="sm"
                             />
                             <div className="mt-2 flex items-center justify-end gap-2 text-xs text-gray-700">
@@ -533,10 +536,28 @@ export default function PagesAdmin() {
                               />
                               <label htmlFor={`pin-${page.id}`}>Épingler dans la barre latérale</label>
                             </div>
+                            {/* Désactiver/Activer pour pages système masquables, bouton désactivé pour work/blog */}
+                            {['home','studio','contact'].includes(page.type) && (
+                              <div className="mt-2 flex justify-end">
+                                <button
+                                  onClick={() => handleDeletePage(page.id)}
+                                  className={`text-xs px-3 py-1 rounded-lg border ${isHidden ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100' : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100'}`}
+                                >
+                                  {isHidden ? 'Activer' : 'Désactiver'}
+                                </button>
+                              </div>
+                            )}
+                            {isHardSystem && (
+                              <div className="mt-2 flex justify-end">
+                                <button disabled className="text-xs px-3 py-1 rounded-lg border bg-gray-50 text-gray-400 border-gray-200 opacity-60 cursor-not-allowed">
+                                  Désactivé
+                                </button>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
-                    ))}
+                    )})}
                   </div>
                 </div>
               )}
