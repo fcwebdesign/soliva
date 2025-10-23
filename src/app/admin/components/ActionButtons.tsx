@@ -1,7 +1,7 @@
 "use client";
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Eye, Edit, Copy, Trash2 } from 'lucide-react';
+import { Eye, Edit, Copy, Trash2, EyeOff } from 'lucide-react';
 
 interface ActionButtonsProps {
   /**
@@ -48,7 +48,7 @@ interface ActionButtonsProps {
   /** Désactiver uniquement le bouton Supprimer */
   disableDelete?: boolean;
   /** Icône du bouton Supprimer (par défaut: trash) */
-  deleteIcon?: 'trash' | 'power' | 'eye-off';
+  deleteIcon?: 'trash' | 'eye-off';
   
   /**
    * Masquer les icônes
@@ -171,22 +171,11 @@ export default function ActionButtons({
           title={finalLabels.delete}
         >
           {!hideIcons && (
-            deleteIcon === 'power' ? (
-              <Eye className={compact ? "w-4 h-4" : "w-4 h-4 mr-1"} style={{display:'none'}} />
-            ) : null
-          )}
-          {!hideIcons && (
-            deleteIcon === 'eye-off' ? (
-              <Eye className={compact ? "w-4 h-4" : "w-4 h-4 mr-1"} />
-            ) : null
-          )}
-          {!hideIcons && (
-            deleteIcon === 'power' ? (
-              // Using EyeOff to represent disable; change if you prefer Power icon
-              <EyeOff className={compact ? "w-4 h-4" : "w-4 h-4 mr-1"} />
-            ) : deleteIcon === 'eye-off' ? null : (
-              <Trash2 className={compact ? "w-4 h-4" : "w-4 h-4 mr-1"} />
-            )
+            (deleteIcon === 'eye-off' ? (
+              <EyeOff className={compact ? 'w-4 h-4' : 'w-4 h-4 mr-1'} />
+            ) : (
+              <Trash2 className={compact ? 'w-4 h-4' : 'w-4 h-4 mr-1'} />
+            ))
           )}
           {!compact && finalLabels.delete}
         </Button>
