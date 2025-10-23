@@ -50,6 +50,13 @@ L'**Agent PERFORMANCE** est responsable de l'optimisation des performances du si
 - Compression gzip/brotli
 - Cache headers
 
+### 📊 **Tests et Monitoring**
+- **Lighthouse automatisé** avec barre de progression
+- Core Web Vitals monitoring
+- Performance budgets
+- Bundle analysis
+- Tests de performance en local
+
 ---
 
 ## 📁 **Localisation**
@@ -212,6 +219,45 @@ et fallback appropriés
 - [ ] FID < 100ms
 - [ ] CLS < 0.1
 - [ ] TTFB < 600ms
+
+### **Tests et Monitoring**
+- [ ] Lighthouse automatisé configuré
+- [ ] Tests de performance en local
+- [ ] Monitoring Core Web Vitals
+- [ ] Rapports de performance générés
+
+---
+
+## 🧪 **Tests de Performance**
+
+### **Commandes disponibles**
+```bash
+# Test page d'accueil seulement
+npm run lighthouse
+
+# Test page work seulement  
+npm run lighthouse:work
+
+# Test page blog seulement
+npm run lighthouse:blog
+
+# Test toutes les pages (recommandé)
+npm run lighthouse:all
+```
+
+### **Fonctionnalités du test automatisé**
+- ✅ **Barre de progression** visuelle
+- ✅ **Timer en temps réel** pour chaque page
+- ✅ **Temps estimé** total (10-15 minutes)
+- ✅ **Progression** claire (1/5, 2/5, etc.)
+- ✅ **Résumé final** avec temps par page
+- ✅ **Rapports HTML** sauvegardés automatiquement
+
+### **Comment utiliser**
+1. **Démarrer le serveur** : `npm run dev`
+2. **Lancer les tests** : `npm run lighthouse:all`
+3. **Analyser les rapports** HTML générés
+4. **Suivre les recommandations** Lighthouse
 
 ---
 

@@ -166,90 +166,6 @@
         "ctaText": "Yes, sign me up",
         "ctaLink": "https://google.com",
         "theme": "auto"
-      },
-      {
-        "id": "expandable-card-1760516187804",
-        "type": "expandable-card",
-        "data": {
-          "cards": [
-            {
-              "title": "Automatisation",
-              "label": "Service",
-              "summary": "Optimisez vos processus avec nos automatisations.",
-              "content": "<ul><li>Audit des flux</li><li>Zaps/Make scénarios</li><li>Intégrations API</li></ul>",
-              "media": {
-                "src": "",
-                "alt": ""
-              },
-              "theme": "automation",
-              "isExpanded": false
-            },
-            {
-              "title": "Go-to-market",
-              "label": "Service",
-              "summary": "Accélérez votre lancement et vos revenus.",
-              "content": "<ul><li>Positionnement</li><li>Acquisition</li><li>Onboarding</li></ul>",
-              "media": {
-                "src": "",
-                "alt": ""
-              },
-              "theme": "go-to-market",
-              "isExpanded": false
-            }
-          ]
-        },
-        "cards": [
-          {
-            "title": "Automatisation",
-            "label": "Service",
-            "summary": "Optimisez vos processus avec nos automatisations.",
-            "content": "<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>Audit des flux</p></li><li class=\"mb-1\"><p>Zaps/Make scénarios</p></li><li class=\"mb-1\"><p>Intégrations API</p></li></ul><p></p>",
-            "media": {
-              "src": "/uploads/1760517875393-702c3d5e.png",
-              "alt": ""
-            },
-            "theme": "automation",
-            "isExpanded": false
-          },
-          {
-            "title": "Automatisation",
-            "label": "Service",
-            "summary": "Optimisez vos processus avec nos automatisations.",
-            "content": "<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>Audit des flux</p></li><li class=\"mb-1\"><p>Zaps/Make scénarios</p></li><li class=\"mb-1\"><p>Intégrations API</p></li></ul><p></p>",
-            "media": {
-              "src": "",
-              "alt": ""
-            },
-            "theme": "automation",
-            "isExpanded": false
-          },
-          {
-            "title": "Nouveau service",
-            "label": "Service",
-            "summary": "",
-            "content": "",
-            "media": {
-              "src": "",
-              "alt": ""
-            },
-            "theme": "automation",
-            "isExpanded": false
-          }
-        ]
-      },
-      {
-        "id": "quote-1761032830699",
-        "type": "quote",
-        "data": {
-          "quote": "Une citation inspirante pour votre contenu...",
-          "author": "Nom de l'auteur",
-          "role": "Fonction",
-          "theme": "auto"
-        },
-        "quote": "qsdsqdqsds",
-        "author": "dsqqsdsddsqqds",
-        "role": "qsdsqsqdsq",
-        "theme": "dark"
       }
     ],
     "seo": {
@@ -626,10 +542,10 @@
       {
         "title": "Art Gallery Digital",
         "category": "Digital",
-        "image": "/uploads/1755597343554-71ad1faf.jpg",
+        "image": "/uploads/1761217980625-f9578107.png",
         "slug": "art-gallery-digital",
         "excerpt": "Plateforme web immersive pour une galerie d'art contemporain.  ",
-        "content": "<p>Plateforme web immersive pour une galerie d'art contemporain. Interface intuitive permettant aux visiteurs d'explorer les œuvres en 3D et de découvrir les artistes.</p>",
+        "content": "<p>Plateforme web immersive pour une galerie d'art contemporain. Interface intuitive permettant aux visiteurs d'explorer les œuvres en 3D et de découvrir les artistes.</p>\n<img src=\"/uploads/1761217966236-e0e87702.png\" alt=\"\">",
         "client": "Art Gallery Digital",
         "year": "2024",
         "featured": false,
@@ -654,7 +570,7 @@
       {
         "id": "art-gallery-digital",
         "title": "Art Gallery Digital",
-        "content": "<p>Plateforme web immersive pour une galerie d'art contemporain. Interface intuitive permettant aux visiteurs d'explorer les œuvres en 3D et de découvrir les artistes.</p>",
+        "content": "<p>Plateforme web immersive pour une galerie d'art contemporain. Interface intuitive permettant aux visiteurs d'explorer les œuvres en 3D et de découvrir les artistes.</p>\n<img src=\"/uploads/1761217966236-e0e87702.png\" alt=\"\">",
         "slug": "art-gallery-digital",
         "status": "published",
         "publishedAt": "2024-02-20T14:30:00.000Z",
@@ -668,9 +584,24 @@
             "id": "block-1",
             "type": "content",
             "content": "<p>Plateforme web immersive pour une galerie d'art contemporain. Interface intuitive permettant aux visiteurs d'explorer les œuvres en 3D et de découvrir les artistes.</p>"
+          },
+          {
+            "id": "image-1761217958777",
+            "type": "image",
+            "data": {
+              "id": "",
+              "type": "image",
+              "image": {
+                "src": "",
+                "alt": ""
+              }
+            },
+            "image": {
+              "src": "/uploads/1761217966236-e0e87702.png"
+            }
           }
         ],
-        "image": "/uploads/1755597343554-71ad1faf.jpg"
+        "image": "/uploads/1761217980625-f9578107.png"
       },
       {
         "id": "kodza",
