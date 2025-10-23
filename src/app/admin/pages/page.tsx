@@ -175,6 +175,28 @@ export default function PagesAdmin() {
       setContent(newContent);
       setPages(generatePagesList(newContent));
       toast.success(nextPinned ? 'Page épinglée' : 'Page désépinglée');
+
+      // Dispatch a live update event for Sidebar (without reload)
+      try {
+        const customs = newContent?.pages?.pages || [];
+        const pinnedCustom = customs
+          .filter((p: any) => p && p.pinned)
+          .map((p: any) => ({ id: p.id, label: p.title || p.id, type: 'custom' as const }));
+        const systemMap: Record<string,string> = {
+          home: 'Accueil',
+          studio: 'Studio',
+          contact: 'Contact',
+          work: 'Portfolio',
+          blog: 'Blog',
+        };
+        const pinnedSystem: string[] = newContent?.pages?.pinnedSystem || [];
+        const hiddenSystem: string[] = newContent?.pages?.hiddenSystem || [];
+        const systemItems = pinnedSystem
+          .filter((id) => systemMap[id] && !hiddenSystem.includes(id))
+          .map((id) => ({ id, label: systemMap[id], type: 'system' as const }));
+        const payload = [...systemItems, ...pinnedCustom];
+        window.dispatchEvent(new CustomEvent('admin:pinned-updated', { detail: { pinned: payload } }));
+      } catch {}
     } catch (e) {
       console.error(e);
       toast.error('Impossible de mettre à jour l\'épinglage');

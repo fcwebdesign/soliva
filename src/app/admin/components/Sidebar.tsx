@@ -89,6 +89,18 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
     loadPinned();
   }, []);
 
+  // Live update when pages are pinned/unpinned elsewhere in the admin
+  useEffect(() => {
+    const handler = (e: any) => {
+      const arr = e?.detail?.pinned;
+      if (Array.isArray(arr)) {
+        setPinnedPages(arr);
+      }
+    };
+    window.addEventListener('admin:pinned-updated', handler as EventListener);
+    return () => window.removeEventListener('admin:pinned-updated', handler as EventListener);
+  }, []);
+
   const renderPageItem = (page: Page, isMobile = false) => (
     <li key={page.id}> 
       <button
