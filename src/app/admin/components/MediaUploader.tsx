@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef } from 'react';
-import { Upload, Image, GripHorizontal } from 'lucide-react';
+import { Upload, Image as LucideImage, GripHorizontal } from 'lucide-react';
+import Image from 'next/image';
 
 interface MediaUploaderProps {
   currentUrl?: string;
@@ -50,10 +51,14 @@ export default function MediaUploader({ currentUrl, onUpload }: MediaUploaderPro
     <div className="mb-4">
       {currentUrl && (
         <div className="relative inline-block rounded-lg overflow-hidden border-2 border-gray-200">
-          <img 
+          <Image 
             src={currentUrl} 
             alt="Image actuelle" 
+            width={200}
+            height={150}
             className="max-w-[200px] max-h-[150px] block"
+            placeholder="blur"
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
           />
           <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-200">
             <button 
@@ -77,7 +82,7 @@ export default function MediaUploader({ currentUrl, onUpload }: MediaUploaderPro
               <span>Upload en cours...</span>
             ) : (
               <>
-                <Image className="w-12 h-12 text-gray-600" />
+                <LucideImage className="w-12 h-12 text-gray-600" />
                 <span>Cliquez pour uploader une image</span>
               </>
             )}
@@ -148,11 +153,15 @@ export function LogoUploader({ currentUrl, onUpload }: MediaUploaderProps) {
     <div className="mb-4">
       {currentUrl && (
         <div className="relative w-[150px] h-[150px] rounded-lg overflow-hidden border-2 border-gray-200 flex items-center justify-center bg-gray-50 p-4">
-          <img 
+          <Image 
             src={currentUrl} 
             alt="Image actuelle" 
+            width={150}
+            height={150}
             className="w-auto h-auto max-w-full max-h-full"
             style={{ objectFit: 'contain' }}
+            placeholder="blur"
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
           />
           <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-200">
             <button 
@@ -176,7 +185,7 @@ export function LogoUploader({ currentUrl, onUpload }: MediaUploaderProps) {
               <span className="text-sm">Upload en cours...</span>
             ) : (
               <>
-                <Image className="w-8 h-8 text-gray-600" />
+                <LucideImage className="w-8 h-8 text-gray-600" />
                 <span className="text-xs text-center">Cliquez pour uploader</span>
               </>
             )}

@@ -1,5 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
+import Image from 'next/image';
 
 interface HeroCompletProps {
   content: {
@@ -72,10 +73,15 @@ const HeroComplet: React.FC<HeroCompletProps> = ({ content }) => {
         <section aria-label="Featured" className="border-y border-black/5">
           <div className="container py-10 md:py-14">
             <div className="aspect-[21/9] w-full overflow-hidden">
-              <img 
+              <Image 
                 src={content.image.src} 
                 alt={content.image.alt || ""} 
-                className="w-full h-full object-cover" 
+                width={2000}
+                height={857}
+                className="w-full h-full object-cover"
+                priority
+                placeholder="blur"
+                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
               />
             </div>
           </div>

@@ -85,6 +85,33 @@ npm run dev              # Tester visuellement
 
 ---
 
+### 🚀 **Agent PERFORMANCE** - Optimisation Core Web Vitals
+
+**Quand l'utiliser** : Pour optimiser les performances, améliorer les Core Web Vitals, et l'expérience utilisateur
+
+**Compétences** :
+- Optimiser les images (Next.js Image, lazy loading, formats modernes)
+- Réduire le JavaScript bundle (code splitting, lazy loading)
+- Améliorer les Core Web Vitals (LCP, FID, CLS)
+- Optimiser les fonts et CSS
+- Implémenter le caching et la compression
+
+**Stack validée** :
+- Next.js Image (optimisation images)
+- next/dynamic (code splitting)
+- next/font (fonts optimisées)
+- @next/bundle-analyzer (analyse bundle)
+
+**Localisation** : `src/components/optimized/`, `src/utils/performance/`
+
+**Documentation** : `docs/agents/AGENT-PERFORMANCE.md`
+
+**Principe** : Mesurer avant/après, priorité mobile, progressive enhancement.
+
+**Guide détaillé :** [AGENT-PERFORMANCE.md](./agents/AGENT-PERFORMANCE.md)
+
+---
+
 ### 🔌 Agent API
 
 **Mission :** Gérer les endpoints et la logique backend.

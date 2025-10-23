@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Button } from "@/components/ui/button";
 import { Sparkles, Loader2, Check, TrendingUp, X } from 'lucide-react';
@@ -27,10 +27,22 @@ export default function ArticleGeneratorModal({
   const [suggestions, setSuggestions] = useState<ArticleSuggestion[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedSuggestion, setSelectedSuggestion] = useState<ArticleSuggestion | null>(null);
+  // Évite le double chargement en mode Strict (montage/démontage/remontage)
+  const hasLoadedRef = useRef(false);
+  const abortRef = useRef<AbortController | null>(null);
 
   // Charger les suggestions au montage
-  React.useEffect(() => {
-    if (isOpen && suggestions.length === 0) {
+  useEffect(() => {
+    if (!isOpen) {
+      // Réinitialiser l'état interne et annuler toute requête en cours
+      hasLoadedRef.current = false;
+      abortRef.current?.abort();
+      abortRef.current = null;
+      return;
+    }
+
+    if (!hasLoadedRef.current) {
+      hasLoadedRef.current = true;
       loadSuggestions();
     }
   }, [isOpen]);
@@ -38,10 +50,15 @@ export default function ArticleGeneratorModal({
   const loadSuggestions = async () => {
     try {
       setLoading(true);
+      // Annuler une requête précédente si existante
+      abortRef.current?.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
       
       const response = await fetch('/api/ai/suggest-articles', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
       });
 
       if (!response.ok) {
@@ -56,6 +73,8 @@ export default function ArticleGeneratorModal({
       });
 
     } catch (error) {
+      // Ignorer les annulations volontaires
+      if ((error as any)?.name === 'AbortError') return;
       console.error('Erreur suggestions:', error);
       toast.error('Erreur', {
         description: 'Impossible de charger les suggestions'
@@ -114,6 +133,10 @@ export default function ArticleGeneratorModal({
   const handleClose = () => {
     setStep('suggestions');
     setSelectedSuggestion(null);
+    // Réinitialiser le flag de chargement pour la prochaine ouverture
+    hasLoadedRef.current = false;
+    abortRef.current?.abort();
+    abortRef.current = null;
     onClose();
   };
 
@@ -275,4 +298,3 @@ export default function ArticleGeneratorModal({
     document.body
   );
 }
-

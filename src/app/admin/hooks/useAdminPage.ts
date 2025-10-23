@@ -337,6 +337,62 @@ export const useAdminPage = () => {
   const currentPageConfig = getPageConfig(currentPage);
   const currentPageData = content?.[currentPage as keyof Content];
 
+  // Fonction pour gérer la génération d'articles
+  const onArticleGenerated = async (article: any) => {
+    console.log('📝 onArticleGenerated appelé avec:', article);
+    console.log('📝 Contenu actuel:', content?.blog?.articles?.length || 0, 'articles');
+    
+    if (!content) {
+      console.log('❌ Pas de contenu disponible');
+      return;
+    }
+    
+    // Ajouter l'article au contenu
+    const updatedContent = {
+      ...content,
+      blog: {
+        ...content.blog,
+        articles: [
+          ...(content.blog?.articles || []),
+          article
+        ]
+      }
+    };
+    
+    console.log('📝 Nouveau contenu:', updatedContent.blog?.articles?.length || 0, 'articles');
+    console.log('📝 Dernier article ajouté:', updatedContent.blog?.articles?.[updatedContent.blog?.articles?.length - 1]);
+    
+    // Mettre à jour le contenu
+    setContent(updatedContent);
+    setOriginalContent(updatedContent);
+    setHasUnsavedChanges(true);
+    
+    // Afficher un message de succès
+    console.log('✅ Article ajouté au blog:', article.title);
+    
+    // Sauvegarder automatiquement l'article
+    try {
+      console.log('💾 Sauvegarde automatique de l\'article...');
+      const response = await fetch('/api/admin/content', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: updatedContent })
+      });
+      
+      if (response.ok) {
+        console.log('✅ Article sauvegardé avec succès');
+        setHasUnsavedChanges(false);
+        setOriginalContent(updatedContent);
+      } else {
+        console.log('❌ Erreur lors de la sauvegarde automatique');
+      }
+    } catch (error) {
+      console.error('❌ Erreur sauvegarde automatique:', error);
+    }
+    
+    setShowArticleGenerator(false);
+  };
+
   return {
     // State
     content,
@@ -379,5 +435,6 @@ export const useAdminPage = () => {
     handlePreview,
     updateContent,
     cleanContent,
+    onArticleGenerated,
   };
 };

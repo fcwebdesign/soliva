@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
+import Image from 'next/image';
 
 interface Project {
   id: string;
@@ -128,7 +129,16 @@ function Featured({ src, alt }: FeaturedProps) {
     <section aria-label="Featured" className="border-y border-black/5">
       <div className="container py-10 md:py-14">
         <div className="aspect-[21/9] w-full overflow-hidden">
-          <img src={src} alt={alt || "Image vedette"} className="w-full h-full object-cover" />
+          <Image 
+            src={src} 
+            alt={alt || "Image vedette"} 
+            width={2000}
+            height={857}
+            className="w-full h-full object-cover"
+            priority
+            placeholder="blur"
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+          />
         </div>
       </div>
     </section>
@@ -162,7 +172,15 @@ function WorkGrid({ items, title, subtitle }: WorkGridProps) {
           {items.map((p, index) => (
             <a key={p.title || index} href={p.href || "#"} className="group">
               <div className="aspect-[16/10] overflow-hidden">
-                <img src={p.image} alt={p.title} className="w-full h-full object-cover group-hover:opacity-95 transition" />
+                <Image 
+                  src={p.image} 
+                  alt={p.title} 
+                  width={800}
+                  height={500}
+                  className="w-full h-full object-cover group-hover:opacity-95 transition"
+                  placeholder="blur"
+                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+                />
               </div>
               <div className="mt-4 flex items-center justify-between">
                 <h3 className="title text-lg md:text-xl font-medium tracking-tight">{p.title}</h3>

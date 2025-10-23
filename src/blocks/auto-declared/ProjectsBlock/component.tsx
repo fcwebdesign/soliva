@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 interface ProjectsData {
   id?: string;
@@ -281,9 +282,11 @@ export default function ProjectsBlock({ data }: { data: ProjectsData }) {
                         'w-full md:w-1/2 lg:w-1/3'
                       } px-4`}>
                         <div className="project-image mb-4">
-                          <img 
+                          <Image 
                             src={project.image || '/img1.jpg'} 
                             alt={project.alt || project.title}
+                            width={400}
+                            height={300}
                             className={`w-full object-cover rounded-lg cursor-pointer ${
                               actualCount === 1 ? 'h-96' : 'aspect-[1/1]'
                             }`}
@@ -324,9 +327,11 @@ export default function ProjectsBlock({ data }: { data: ProjectsData }) {
                 {displayedProjects.map(project => (
                   <div key={project.id} className="project-card">
                     <div className="project-image mb-4">
-                      <img 
+                      <Image 
                         src={project.image || '/img1.jpg'} 
                         alt={project.alt || project.title}
+                        width={400}
+                        height={300}
                         className={`w-full object-cover rounded-lg cursor-pointer ${
                           actualCount === 1 ? 'h-96' : 'aspect-[1/1]'
                         }`}

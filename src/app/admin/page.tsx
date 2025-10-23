@@ -15,7 +15,7 @@ function AdminPageContent() {
     setContent,
     originalContent,
     setOriginalContent,
-    currentPage,
+          currentPage,
     setCurrentPage,
     isPreviewMode,
     setIsPreviewMode,
@@ -25,13 +25,13 @@ function AdminPageContent() {
     setError,
     saveStatus,
     setSaveStatus,
-    hasUnsavedChanges,
+        hasUnsavedChanges,
     setHasUnsavedChanges,
     pageStatus,
     setPageStatus,
-    isJustSaved,
+      isJustSaved,
     setIsJustSaved,
-    isPageLoading,
+      isPageLoading,
     setIsPageLoading,
     headerManagerRef,
     setHeaderManagerRef,
@@ -51,6 +51,7 @@ function AdminPageContent() {
     handlePreview,
     updateContent,
     cleanContent,
+    onArticleGenerated,
   } = useAdminPage();
 
   if (loading) {
@@ -70,7 +71,7 @@ function AdminPageContent() {
         <div className="text-center">
           <div className="text-red-600 text-xl mb-4">❌</div>
           <p className="text-gray-600 mb-4">{error}</p>
-          <button 
+          <button
             onClick={() => window.location.reload()} 
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
@@ -112,34 +113,30 @@ function AdminPageContent() {
           currentPageData={currentPageData}
           onUpdate={(updates) => updateContent(currentPage, updates)}
           onShowArticleGenerator={() => setShowArticleGenerator(true)}
-          onTemplateChange={(newContent) => {
-            setContent(newContent);
-            setOriginalContent(newContent);
-            setHasUnsavedChanges(false);
-          }}
-          onSave={(newContent) => {
-            setContent(newContent);
-            setOriginalContent(newContent);
-            setHasUnsavedChanges(false);
-          }}
+                    onTemplateChange={(newContent) => {
+                      setContent(newContent);
+                      setOriginalContent(newContent);
+                      setHasUnsavedChanges(false);
+                    }}
+                    onSave={(newContent) => {
+                      setContent(newContent);
+                      setOriginalContent(newContent);
+                      setHasUnsavedChanges(false);
+                    }}
           onUpdateContent={(newContent) => {
-            setContent(newContent);
-            setHasUnsavedChanges(true);
-          }}
-        />
+                      setContent(newContent);
+                      setHasUnsavedChanges(true);
+                    }}
+                  />
       </div>
-
+      
       {/* Modal de génération d'articles */}
-      {showArticleGenerator && createPortal(
+      {showArticleGenerator && (
         <ArticleGeneratorModal
           isOpen={showArticleGenerator}
           onClose={() => setShowArticleGenerator(false)}
-          onArticleGenerated={(article) => {
-            console.log('Article généré:', article);
-            setShowArticleGenerator(false);
-          }}
-        />,
-        document.body
+          onArticleGenerated={onArticleGenerated}
+        />
       )}
     </div>
   );
@@ -158,4 +155,4 @@ export default function AdminPage() {
       <AdminPageContent />
     </Suspense>
   );
-}
+} 

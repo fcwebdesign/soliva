@@ -71,23 +71,23 @@ const FooterManager = ({ content, onSave }: FooterManagerProps): React.JSX.Eleme
   } = useFooterManager(content);
 
   return (
-    <div className="space-y-6">
+      <div className="space-y-6">
       <IdentitySection
         footerData={footerData}
         logoType={logoType}
         onLogoTypeChange={setLogoType}
         onLogoChange={(value) => {
           setFooterData(prev => ({ ...prev, logo: value }));
-          window.dispatchEvent(new CustomEvent('footer-changed'));
-        }}
+                  window.dispatchEvent(new CustomEvent('footer-changed'));
+                }}
         onLogoImageChange={(url) => {
-          setFooterData(prev => ({ ...prev, logoImage: url }));
-          window.dispatchEvent(new CustomEvent('footer-changed'));
-        }}
+                    setFooterData(prev => ({ ...prev, logoImage: url }));
+                    window.dispatchEvent(new CustomEvent('footer-changed'));
+                  }}
         onDescriptionChange={(value) => {
           setFooterData(prev => ({ ...prev, description: value }));
-          window.dispatchEvent(new CustomEvent('footer-changed'));
-        }}
+                  window.dispatchEvent(new CustomEvent('footer-changed'));
+                }}
       />
 
       <NavigationSection
@@ -110,7 +110,7 @@ const FooterManager = ({ content, onSave }: FooterManagerProps): React.JSX.Eleme
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
-        onDragEnd={handleDragEnd}
+                      onDragEnd={handleDragEnd}
       />
 
       <SocialSection
@@ -129,8 +129,8 @@ const FooterManager = ({ content, onSave }: FooterManagerProps): React.JSX.Eleme
         onLegalSearchChange={setLegalSearchTerm}
         onCopyrightChange={(value) => {
           setFooterData(prev => ({ ...prev, copyright: value }));
-          window.dispatchEvent(new CustomEvent('footer-changed'));
-        }}
+                    window.dispatchEvent(new CustomEvent('footer-changed'));
+                  }}
         onToggleLegalPage={toggleLegalPage}
         onAddCustomLegalLink={addCustomLegalLink}
         onMoveBottomLink={moveBottomLink}
@@ -148,10 +148,10 @@ const FooterManager = ({ content, onSave }: FooterManagerProps): React.JSX.Eleme
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
-        onDragEnd={handleDragEnd}
+                          onDragEnd={handleDragEnd}
       />
     </div>
   );
 };
 
-export default FooterManager;
+export default FooterManager; 
