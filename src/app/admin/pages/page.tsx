@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminPageLayout from '../components/AdminPageLayout';
-import { Home, Mail, Palette, FileText, Settings, Layout, Plus } from 'lucide-react';
+import { Home, Mail, Palette, FileText, Settings, Layout, Plus, Pin } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from "sonner";
 import { useConfirmDialog } from '@/hooks/useConfirmDialog';
 import ActionButtons from '../components/ActionButtons';
@@ -381,7 +382,7 @@ export default function PagesAdmin() {
                                 size="sm"
                               />
                               {page.pinned && (
-                                <span title="Épinglée" className="text-yellow-600 text-xs">📌</span>
+                                <Pin title="Épinglée" className="w-4 h-4 text-yellow-600" />
                               )}
                             </div>
                             <div className="flex items-center space-x-4 mt-1">
@@ -405,13 +406,11 @@ export default function PagesAdmin() {
                               onDelete={() => handleDeletePage(page.id)}
                               size="sm"
                             />
-                            <div className="mt-2 flex items-center gap-2 text-xs text-gray-600">
-                              <input
+                            <div className="mt-2 flex items-center gap-2 text-sm text-gray-700">
+                              <Checkbox
                                 id={`pin-${page.id}`}
-                                type="checkbox"
                                 checked={!!page.pinned}
-                                onChange={(e) => handleTogglePin(page, e.target.checked)}
-                                className="rounded border-gray-300"
+                                onCheckedChange={(val) => handleTogglePin(page, !!val)}
                               />
                               <label htmlFor={`pin-${page.id}`}>Épingler dans la barre latérale</label>
                             </div>

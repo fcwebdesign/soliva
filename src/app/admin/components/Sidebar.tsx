@@ -288,14 +288,34 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
                 </button>
               </div>
               
-              {/* Pages mobile */}
-              {PAGES.length > 0 && (
+              {pinnedPages.length > 0 && (
                 <div className="mb-4">
                   <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                    Pages
+                    Pages épinglées
                   </h3>
                   <ul className="space-y-1">
-                    {PAGES.map((page) => renderPageItem(page, true))}
+                    {pinnedPages.map((p) => (
+                      <li key={p.id}>
+                        <button
+                          onClick={() => {
+                            if (['home','studio','contact','work','blog'].includes(p.id)) {
+                              router.push(`/admin?page=${p.id}`);
+                            } else {
+                              router.push(`/admin/pages/${p.id}`);
+                            }
+                            setIsMobileMenuOpen(false);
+                          }}
+                          className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none ${
+                            currentPage === p.id
+                              ? 'bg-blue-50 text-blue-700'
+                              : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                          }`}
+                        >
+                          <FileText className="w-5 h-5" />
+                          <span className="truncate">{p.label}</span>
+                        </button>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               )}
