@@ -137,7 +137,7 @@ export default function PagesAdmin() {
   };
 
   const handleEditPage = (pageId: string) => {
-    if (pageId === 'home' || pageId === 'contact' || pageId === 'studio') {
+    if (['home','contact','studio','work','blog'].includes(pageId)) {
       router.push(`/admin?page=${pageId}`);
     } else {
       // Pour les pages personnalisées, rediriger vers l'éditeur avec le slug
