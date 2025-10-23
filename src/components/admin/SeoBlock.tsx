@@ -78,7 +78,6 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
 
   // Réinitialiser l'état quand on change de page
   useEffect(() => {
-    console.log('🔄 Réinitialisation SeoBlock pour nouvelle page:', content?.id);
     setAiProposals(null);
     setError('');
     setSelectedTitle('');
@@ -406,7 +405,6 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
         });
         
         // Retry automatique après 2 secondes en cas d'erreur
-        console.log('🔄 Retry automatique dans 2 secondes...');
         setTimeout(() => {
           generateAIProposals();
         }, 2000);
@@ -437,7 +435,6 @@ export default function SeoBlock({ content, seoFields, onSeoChange, className = 
       
       // Retry automatique après 2 secondes
       setTimeout(() => {
-        console.log('🔄 Retry automatique de la génération IA...');
         setError('');
         generateAIProposals();
       }, 2000);

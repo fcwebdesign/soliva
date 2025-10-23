@@ -16,8 +16,6 @@ const FormattedText: React.FC<FormattedTextProps> = ({ children, className = "" 
 
   if (!children) return null;
 
-  // Debug: afficher le contenu reçu
-  console.log('FormattedText - children:', children);
 
   // Vérifier si c'est du HTML ou du Markdown
   const isHtml = children.includes('<') && children.includes('>');

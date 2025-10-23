@@ -188,13 +188,6 @@ export default function HomeClient({ content }: HomeClientProps) {
   }, [previewContent?.blocks]);
   
 
-  // Debug: afficher les données reçues
-  console.log('🏠 HomeClient - Données reçues:', {
-    content: content,
-    previewContent: previewContent,
-    hasBlocks: previewContent?.blocks && previewContent.blocks.length > 0,
-    blocksCount: previewContent?.blocks?.length || 0
-  });
 
   return (
     <>

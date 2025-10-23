@@ -124,34 +124,23 @@ export const useAdminPage = () => {
 
   // Fonction pour changer de page avec confirmation si modifications non sauvegardées
   const handlePageChange = async (newPage: string) => {
-    console.log('🔄 handlePageChange appelé:', { newPage, currentPage, hasUnsavedChanges });
-    
     // Vérifier si on change vraiment de page
     if (newPage === currentPage) {
-      console.log('⚠️ Même page, pas de changement');
       return;
     }
 
     if (hasUnsavedChanges) {
-      console.log('⚠️ Modifications non enregistrées détectées, demande de confirmation...');
-      
       // Utilisation de window.confirm (fonctionne toujours)
       const confirmLeave = window.confirm('Modifications non enregistrées\n\nVous avez des modifications non enregistrées. Voulez-vous vraiment quitter cette page sans enregistrer ?');
       
-      console.log('🔍 Réponse confirmation:', confirmLeave);
-      
       if (!confirmLeave) {
-        console.log('❌ Utilisateur a annulé, rester sur la page');
         return;
       }
-      
-      console.log('🗑️ Modifications supprimées par l\'utilisateur');
       setHasUnsavedChanges(false);
       setSaveStatus('idle');
       
       if (originalContent) {
         setContent(originalContent);
-        console.log('🔄 Contenu restauré à l\'état original');
       }
     }
     
@@ -185,7 +174,6 @@ export const useAdminPage = () => {
       setOriginalContent(cleanData);
       setPageStatus('published');
       setHasUnsavedChanges(false);
-      console.log('✅ Contenu chargé et original sauvegardé');
       
     } catch (err) {
       console.error('Erreur:', err);
@@ -220,8 +208,6 @@ export const useAdminPage = () => {
       setOriginalContent(content);
       setPageStatus(status);
       
-      console.log(`✅ Contenu sauvegardé avec le statut: ${status}`);
-      
       setTimeout(() => {
         setSaveStatus('idle');
         setIsJustSaved(false);
@@ -240,13 +226,6 @@ export const useAdminPage = () => {
     
     try {
       const previewId = `preview-${Date.now()}`;
-      console.log('📝 Création aperçu avec contenu:', {
-        currentPage,
-        hasUnsavedChanges,
-        contentKeys: Object.keys(content),
-        currentPageContent: content[currentPage as keyof typeof content],
-        fullContent: JSON.stringify(content).substring(0, 500) + '...'
-      });
       
       const previewContent = {
         ...content,
@@ -286,32 +265,20 @@ export const useAdminPage = () => {
 
   const updateContent = (pageKey: string, updates: any) => {
     if (!content) {
-      console.log('⚠️ updateContent appelé sans contenu');
       return;
     }
     
     // Vérifier si on est en train de changer de page
     if (pageKey !== currentPage) {
-      console.log('⏳ Modification ignorée - changement de page en cours');
       return;
     }
     
-    console.log(`📝 updateContent appelé:`, { 
-      pageKey, 
-      updates: JSON.stringify(updates).substring(0, 100),
-      currentHasUnsavedChanges: hasUnsavedChanges,
-      isJustSaved,
-      isPageLoading,
-      stackTrace: new Error().stack?.split('\n').slice(1, 4).join('\n')
-    });
     
     if (isJustSaved) {
-      console.log('⏳ Modification ignorée - vient de sauvegarder');
       return;
     }
     
     if (isPageLoading) {
-      console.log('⏳ Modification ignorée - page en cours de chargement');
       return;
     }
     
@@ -333,7 +300,6 @@ export const useAdminPage = () => {
     }
     
     setContent(newContent);
-    console.log('📝 updateContent: hasUnsavedChanges mis à true');
     setHasUnsavedChanges(true);
     setSaveStatus('idle');
   };

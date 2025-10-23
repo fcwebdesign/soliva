@@ -48,7 +48,6 @@ export function registerAutoBlock<T>(mod: BlockModule<T>) {
   }
   
   REGISTRY.set(mod.type, mod);
-  console.log(`✅ Bloc auto-déclaré enregistré: ${mod.type}${mod.label ? ` (${mod.label})` : ''}`);
 }
 
 // Fonctions de récupération

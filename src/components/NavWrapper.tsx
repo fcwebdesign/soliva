@@ -32,8 +32,6 @@ const NavWrapper: React.FC<NavWrapperProps> = ({ initialContent }) => {
     // Écouter les changements de localStorage
     window.addEventListener('storage', handleStorageChange);
     
-    // Log initial
-    console.log('🚀 NavWrapper: Initialisé avec', initialContent);
     
     return () => {
       window.removeEventListener('content-updated', handleContentUpdate as EventListener);
@@ -41,10 +39,6 @@ const NavWrapper: React.FC<NavWrapperProps> = ({ initialContent }) => {
     };
   }, [initialContent]);
 
-  // Log quand navContent change
-  useEffect(() => {
-    console.log('📝 NavWrapper: navContent mis à jour', navContent);
-  }, [navContent]);
 
   // Fonction pour forcer la mise à jour (pour debug)
   useEffect(() => {

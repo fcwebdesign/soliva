@@ -45,7 +45,6 @@ export async function getActiveTemplate(): Promise<TemplateMeta | null> {
       return TEMPLATES[configTemplate];
     }
     
-    console.log('📄 Aucun template actif, utilisation du layout par défaut');
     return null;
     
   } catch (error) {

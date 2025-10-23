@@ -72,9 +72,6 @@ interface BlockEditorProps {
 export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticleGenerator }: BlockEditorProps) {
   const router = useRouter();
   const { confirm, ConfirmDialog } = useConfirmDialog();
-  
-  // Debug : vérifier si le hook fonctionne
-  console.log('🔍 Hook useConfirmDialog:', { confirm: typeof confirm, ConfirmDialog: typeof ConfirmDialog });
   const [localData, setLocalData] = useState(pageData || {});
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -224,7 +221,6 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
 
   // Réinitialiser l'état quand on change de page
   useEffect(() => {
-    console.log(`🔄 Changement de page détecté: ${pageKey}`);
     setHasInitialized(false);
     setIsUpdatingContent(false);
     setInitialContent('');
@@ -274,13 +270,11 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
       
       // Priorité 1: Charger les blocs sauvegardés s'ils existent
       if (pageData.blocks && Array.isArray(pageData.blocks) && pageData.blocks.length > 0) {
-        console.log('🔄 Chargement des blocs sauvegardés');
         setBlocks(pageData.blocks);
         setInitialContent(pageData.content || '');
       }
       // Priorité 2: Créer un bloc content à partir du HTML existant
       else if (pageData.content && pageData.content !== initialContent) {
-        console.log('🔄 Création d\'un bloc content initial');
         setInitialContent(pageData.content);
         setBlocks([{
           id: 'block-1',
@@ -290,7 +284,6 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
       }
       // Priorité 3: Créer un bloc vide
       else {
-        console.log('🔄 Création d\'un bloc vide');
         setBlocks([{
           id: 'block-1',
           type: 'content',
@@ -304,15 +297,9 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
   useEffect(() => {
     if (blocks.length > 0) {
       const cleanedBlocks = cleanInvalidBlocks(blocks);
-      console.log('🔍 Vérification des blocs:', { 
-        total: blocks.length, 
-        cleaned: cleanedBlocks.length,
-        blocks: blocks.map(b => ({ id: b.id, type: b.type }))
-      });
       
       // Ne nettoyer que si on a des blocs invalides ET qu'on vient de charger
               if (cleanedBlocks.length !== blocks.length && blocks.some(b => !['h2', 'h3', 'content', 'image', 'cta', 'about'].includes(b.type))) {
-        console.log('🧹 Nettoyage automatique des blocs invalides');
         setBlocks(cleanedBlocks);
         updateBlocksContent(cleanedBlocks);
       }
@@ -335,7 +322,6 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
       return;
     }
     
-    console.log('🔄 Conversion du contenu:', content.substring(0, 100) + '...');
     
     // Nettoyer le contenu HTML avant conversion
     const cleanContent = (html: string) => {
@@ -423,7 +409,6 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
       });
     }
     
-    console.log('✅ Blocs créés:', blocks.map(b => ({ id: b.id, type: b.type })));
     
     // Nettoyer et appliquer les blocs
     const cleanedBlocks = cleanInvalidBlocks(blocks);
@@ -455,11 +440,6 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
       id: `block-${index + 1}` // Réindexer les IDs
     }));
     
-    console.log('🧹 Nettoyage terminé:', {
-      avant: blocks.length,
-      apres: reindexedBlocks.length,
-      supprimes: blocks.length - reindexedBlocks.length
-    });
     
     return reindexedBlocks;
   };
@@ -523,13 +503,11 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
   };
 
   const addBlock = (type: string) => {
-    console.log('🔧 Ajout du bloc:', type);
     
     try {
       // Créer automatiquement le bloc avec les bonnes données depuis le registre
       const newBlock = createAutoBlockInstance(type);
       
-      console.log('🔧 Nouveau bloc créé:', newBlock);
       
       const newBlocks = [...blocks, newBlock];
       setBlocks(newBlocks);
@@ -1134,20 +1112,12 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
 
   // Fonction pour supprimer un contenu (inspirée de /admin/pages)
   const handleDelete = async (type: 'work' | 'blog', id: string, title: string) => {
-    console.log('🗑️ handleDelete appelé:', { type, id, title });
+    // Utilisation de window.confirm (fonctionne toujours)
+    const confirmed = window.confirm(`Supprimer "${title}" ?\n\nCette action est irréversible. Le contenu sera définitivement supprimé.`);
     
-    // Confirmation via hook (AlertDialog)
-    const confirmed = await confirm({
-      title: `Supprimer "${title}" ?`,
-      description: 'Cette action est irréversible. Le contenu sera définitivement supprimé.',
-      confirmText: 'Supprimer',
-      cancelText: 'Annuler',
-      variant: 'destructive'
-    });
     if (!confirmed) return;
 
     try {
-      console.log('🔄 Début suppression:', { type, id });
       setIsDeleting(id);
       
       const response = await fetch('/api/admin/delete', {
@@ -1158,7 +1128,6 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
         body: JSON.stringify({ type, id }),
       });
 
-      console.log('📡 Réponse API:', response.status, response.statusText);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -1167,7 +1136,6 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
       }
 
       const result = await response.json();
-      console.log('✅ Résultat suppression:', result);
       
       if (result.success) {
         // Mettre à jour l'état local directement
@@ -1194,13 +1162,11 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
       const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
       showNotificationModal(`Erreur lors de la suppression: ${errorMessage}`, 'error');
     } finally {
-      console.log('🏁 Fin suppression, reset isDeleting');
       setIsDeleting(null);
     }
   };
 
   const renderBlock = (block: Block, index: number) => {
-    console.log('🔧 Rendu du bloc:', block.type, block);
     
     if (!block || !block.type) {
       return <div className="text-red-500">Erreur: bloc invalide</div>;
