@@ -1,7 +1,7 @@
 "use client";
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Eye, Edit, Copy, Trash2, EyeOff } from 'lucide-react';
+import { Eye, Edit, Copy, Trash2, EyeOff, Circle, CircleDot } from 'lucide-react';
 
 interface ActionButtonsProps {
   /**
@@ -48,7 +48,7 @@ interface ActionButtonsProps {
   /** Désactiver uniquement le bouton Supprimer */
   disableDelete?: boolean;
   /** Icône du bouton Supprimer (par défaut: trash) */
-  deleteIcon?: 'trash' | 'eye-off';
+  deleteIcon?: 'trash' | 'eye-off' | 'circle' | 'circle-dot';
   
   /**
    * Masquer les icônes
@@ -171,11 +171,15 @@ export default function ActionButtons({
           title={finalLabels.delete}
         >
           {!hideIcons && (
-            (deleteIcon === 'eye-off' ? (
+            deleteIcon === 'eye-off' ? (
               <EyeOff className={compact ? 'w-4 h-4' : 'w-4 h-4 mr-1'} />
+            ) : deleteIcon === 'circle' ? (
+              <Circle className={compact ? 'w-4 h-4' : 'w-4 h-4 mr-1'} />
+            ) : deleteIcon === 'circle-dot' ? (
+              <CircleDot className={compact ? 'w-4 h-4' : 'w-4 h-4 mr-1'} />
             ) : (
               <Trash2 className={compact ? 'w-4 h-4' : 'w-4 h-4 mr-1'} />
-            ))
+            )
           )}
           {!compact && finalLabels.delete}
         </Button>

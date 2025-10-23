@@ -546,7 +546,7 @@ export default function PagesAdmin() {
                               onDelete={isSystem ? toggleDisableFront : () => handleDeletePage(page.id)}
                               disableDelete={false}
                               labels={{ delete: isSystem ? (isDisabledFront ? 'Activer' : 'Désactiver') : 'Supprimer' }}
-                              deleteIcon={isSystem ? 'eye-off' : 'trash'}
+                              deleteIcon={isSystem ? (isDisabledFront ? 'circle-dot' : 'circle') : 'trash'}
                               size="sm"
                             />
                             <div className="mt-2 flex items-center justify-end gap-2 text-xs text-gray-700">
