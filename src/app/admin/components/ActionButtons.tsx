@@ -47,6 +47,8 @@ interface ActionButtonsProps {
   };
   /** Désactiver uniquement le bouton Supprimer */
   disableDelete?: boolean;
+  /** Icône du bouton Supprimer (par défaut: trash) */
+  deleteIcon?: 'trash' | 'power' | 'eye-off';
   
   /**
    * Masquer les icônes
@@ -95,6 +97,7 @@ export default function ActionButtons({
   size = 'sm',
   disabled = false,
   disableDelete = false,
+  deleteIcon = 'trash',
   labels,
   hideIcons = false,
   compact = false
@@ -167,7 +170,24 @@ export default function ActionButtons({
           className="bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800"
           title={finalLabels.delete}
         >
-          {!hideIcons && <Trash2 className={compact ? "w-4 h-4" : "w-4 h-4 mr-1"} />}
+          {!hideIcons && (
+            deleteIcon === 'power' ? (
+              <Eye className={compact ? "w-4 h-4" : "w-4 h-4 mr-1"} style={{display:'none'}} />
+            ) : null
+          )}
+          {!hideIcons && (
+            deleteIcon === 'eye-off' ? (
+              <Eye className={compact ? "w-4 h-4" : "w-4 h-4 mr-1"} />
+            ) : null
+          )}
+          {!hideIcons && (
+            deleteIcon === 'power' ? (
+              // Using EyeOff to represent disable; change if you prefer Power icon
+              <EyeOff className={compact ? "w-4 h-4" : "w-4 h-4 mr-1"} />
+            ) : deleteIcon === 'eye-off' ? null : (
+              <Trash2 className={compact ? "w-4 h-4" : "w-4 h-4 mr-1"} />
+            )
+          )}
           {!compact && finalLabels.delete}
         </Button>
       )}
