@@ -4,6 +4,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 // Important: utiliser le BlockRenderer branché sur le registry par template
 import BlockRenderer from '@/blocks/BlockRenderer';
 import FormattedText from '@/components/FormattedText';
+import Image from 'next/image';
 
 type AnyObj = Record<string, any>;
 
@@ -64,18 +65,7 @@ function StarterShell({ content, children }: { content: AnyObj; children: React.
 
       <main>{children}</main>
 
-      <footer className="border-t border-black/10 mt-16">
-        <div className="container mx-auto px-5 py-6 flex items-center justify-between text-sm text-black/60">
-          <p>{content?.footer?.copyright || `© ${new Date().getFullYear()} — Starter`}</p>
-          <div className="flex items-center gap-4">
-            {(content?.footer?.socialLinks || content?.footer?.socials || []).map((s: any, i: number) => (
-              <a key={i} href={s.url || '#'} target={s.target || '_blank'} className="hover:text-black capitalize">
-                {s.platform}
-              </a>
-            ))}
-          </div>
-        </div>
-      </footer>
+      <Footer content={content?.footer} />
     </div>
   );
 }
@@ -125,24 +115,46 @@ export default function StarterApp() {
         </div>
       );
     }
-    return <p className="text-black/60">Contenu à venir…</p>;
+    // Pas de fallback visuel: si rien n'est fourni, ne rien afficher
+    return null;
   };
 
-  const WorkList = () => (
-    <Section title={content?.work?.hero?.title || 'selected work'}>
+  const WorkList = ({ withTitle = false }: { withTitle?: boolean }) => {
+    const projects = (content?.work?.adminProjects || content?.work?.projects || []) as any[];
+    const Grid = (
       <div className="grid md:grid-cols-2 gap-8">
-        {(content?.work?.adminProjects || content?.work?.projects || []).map((p: any, i: number) => (
+        {projects.map((p, i) => (
           <a key={i} href={(p.slug ? withTpl(`/work/${p.slug}`) : '#')} className="group">
-            <div className="aspect-[16/10] bg-gray-100 rounded" />
+            {p.image ? (
+              <Image
+                src={p.image}
+                alt={p.alt || p.title || 'image projet'}
+                width={1200}
+                height={800}
+                className="w-full h-auto rounded-lg object-cover aspect-[16/10]"
+              />
+            ) : (
+              <div className="aspect-[16/10] bg-gray-100 rounded" />
+            )}
             <div className="mt-3 flex items-center justify-between">
               <h3 className="font-medium text-lg">{p.title}</h3>
-              <span className="text-xs text-black/50">{p.category}</span>
+              {p.category && (
+                <span className="text-xs text-black/50">{p.category}</span>
+              )}
             </div>
+            {(p.excerpt || p.description) && (
+              <p className="text-sm text-black/60 mt-1">{p.excerpt || p.description}</p>
+            )}
           </a>
         ))}
       </div>
-    </Section>
-  );
+    );
+    return withTitle ? (
+      <Section title={content?.work?.hero?.title || 'selected work'}>{Grid}</Section>
+    ) : (
+      Grid
+    );
+  };
 
   const BlogList = () => (
     <Section title={content?.blog?.hero?.title || 'Blog'}>
@@ -198,16 +210,25 @@ export default function StarterApp() {
   return (
     <StarterShell content={content}>
       {route === 'home' && (
+        <Section title={content?.hero?.title || 'Home'}>
+          <div className="mt-4">
+            {renderRich(content?.home?.blocks, content?.hero?.subtitle)}
+          </div>
+        </Section>
+      )}
+      {route === 'work' && (
         <>
-          <Section title={content?.hero?.title || 'Home'}>
+          <Section title={content?.work?.hero?.title || 'Work'}>
             <div className="mt-4">
-              {renderRich(content?.home?.blocks, content?.hero?.subtitle)}
+              {renderRich(content?.work?.blocks, content?.work?.description)}
             </div>
           </Section>
-          <WorkList />
+          {(() => {
+            const hasProjectsInWork = Array.isArray(content?.work?.blocks) && content.work.blocks.some((b: any) => b?.type === 'projects');
+            return hasProjectsInWork ? null : <WorkList withTitle={false} />;
+          })()}
         </>
       )}
-      {route === 'work' && <WorkList />}
       {route === 'work-slug' && <Project />}
       {route === 'blog' && <BlogList />}
       {route === 'blog-slug' && <Article />}
@@ -227,5 +248,90 @@ export default function StarterApp() {
       )}
       {route === 'custom' && <CustomPage />}
     </StarterShell>
+  );
+}
+
+function Footer({ content }: { content: any }) {
+  const search = useSearchParams();
+  const description = content?.description;
+  const links = Array.isArray(content?.links) ? content.links : [];
+  const socials = content?.socialLinks || content?.socials || [];
+  const copyright = content?.copyright || `© ${new Date().getFullYear()} — Starter`;
+  const bottomLinks = Array.isArray(content?.bottomLinks) ? content.bottomLinks : [];
+  const labelsMap = content?.legalPageLabels || {};
+
+  const normalizeHref = (url?: string) => {
+    if (!url) return '#';
+    if (url.startsWith('http')) return url;
+    return url.startsWith('/') ? url : `/${url}`;
+  };
+  const withTpl = (href: string) => {
+    const tpl = search?.get('template');
+    if (!tpl) return href;
+    // Conserver le template uniquement pour les liens internes
+    if (!href || !href.startsWith('/')) return href;
+    return `${href}${href.includes('?') ? '&' : '?'}template=${tpl}`;
+  };
+  const labelFor = (slug: string) => {
+    const meta = labelsMap?.[slug];
+    if (!meta) return String(slug).replace(/[-_]/g, ' ');
+    return typeof meta === 'string' ? meta : (meta.title || slug);
+  };
+
+  return (
+    <footer className="border-t border-black/10 mt-16">
+      <div className="container mx-auto px-5 py-6 text-sm text-black/70">
+        {/* Ligne principale: description + liens */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            {description && <p className="max-w-[60ch]">{description}</p>}
+          </div>
+          {!!links.length && (
+            <nav className="flex items-center gap-4 flex-wrap">
+              {links.map((l: any, i: number) => (
+                <a key={i} href={withTpl(normalizeHref(l.url))} className="hover:text-black transition-colors">
+                  {l.title || labelFor(l.url)}
+                </a>
+              ))}
+            </nav>
+          )}
+        </div>
+
+        {/* Bas de page: copyright + mentions (bottomLinks) */}
+        <div className="mt-4 flex items-center justify-between text-xs text-black/60">
+          <p>{copyright}</p>
+          {!!bottomLinks.length && (
+            <div className="flex items-center gap-4 flex-wrap">
+              {bottomLinks.map((entry: any, i: number) => {
+                if (typeof entry === 'string') {
+                  return (
+                    <a key={i} href={withTpl(normalizeHref(entry))} className="hover:text-black transition-colors">
+                      {labelFor(entry)}
+                    </a>
+                  );
+                }
+                // objet { id, label, url }
+                return (
+                  <a key={entry.id || i} href={withTpl(normalizeHref(entry.url))} className="hover:text-black transition-colors">
+                    {entry.label || labelFor(entry.url)}
+                  </a>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Réseaux sociaux */}
+        {!!socials.length && (
+          <div className="mt-3 flex items-center justify-end gap-4">
+            {socials.map((s: any, i: number) => (
+              <a key={i} href={normalizeHref(s.url)} target={s.target || '_blank'} className="hover:text-black capitalize">
+                {s.platform}
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+    </footer>
   );
 }

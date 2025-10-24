@@ -20,6 +20,7 @@ export default function BlockRenderer({ blocks }: { blocks: AnyBlock[] }) {
           const element = entry.target as HTMLElement;
           const blockType = element.dataset.blockType;
           const blockTheme = element.dataset.blockTheme;
+          // Respecter un thème explicite du bloc
           if (blockTheme && blockTheme !== 'auto') {
             document.documentElement.setAttribute('data-theme', blockTheme);
           } else if (blockType === 'services' || blockType === 'projects') {
