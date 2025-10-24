@@ -21,7 +21,7 @@ const TemplateManager = ({ onTemplateChange }: TemplateManagerProps): React.JSX.
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    // Charger la liste des templates disponibles
+    // Charger la liste des templates disponibles puis détecter le template actif
     loadTemplates();
   }, []);
 
@@ -31,6 +31,24 @@ const TemplateManager = ({ onTemplateChange }: TemplateManagerProps): React.JSX.
       if (response.ok) {
         const data = await response.json();
         setTemplates(data.templates);
+      }
+
+      // Déterminer le template appliqué actuellement
+      try {
+        const contentRes = await fetch('/api/content', { cache: 'no-store' });
+        if (contentRes.ok) {
+          const siteContent = await contentRes.json();
+          const activeKey = siteContent?._template as string | undefined;
+          if (activeKey) {
+            const active = (await response.json?.())?.templates?.find?.((t: any) => t.id === activeKey) ||
+                           templates.find(t => t.id === activeKey);
+            if (active) setCurrentTemplate(active as any);
+          } else {
+            setCurrentTemplate(null);
+          }
+        }
+      } catch {
+        // ignore
       }
     } catch (error) {
       console.error('Erreur lors du chargement des templates:', error);
@@ -123,46 +141,39 @@ const TemplateManager = ({ onTemplateChange }: TemplateManagerProps): React.JSX.
         </p>
       </div>
 
-      {/* Liste des templates */}
+      {/* Liste des templates dynamiques */}
       <div className="space-y-4">
         <h4 className="font-medium text-gray-700">Templates disponibles</h4>
-        
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Template Minimaliste Premium */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-            <div className="aspect-video bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mb-4 mx-auto">
-                  <span className="text-white text-2xl font-bold">M</span>
+          {templates.map((t) => (
+            <div key={t.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+              <div className="aspect-video bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+                <div className="text-center px-4">
+                  <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mb-4 mx-auto">
+                    <span className="text-white text-2xl font-bold">{t.name?.[0]?.toUpperCase() || 'T'}</span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900">{t.name || t.id}</h3>
+                  {t.description && (
+                    <p className="text-sm text-gray-600 mt-1 line-clamp-2">{t.description}</p>
+                  )}
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900">Minimaliste Premium</h3>
-                <p className="text-sm text-gray-600 mt-1">Design épuré, typographie bold</p>
               </div>
-            </div>
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-sm text-gray-500">Framer Motion</span>
-                <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">Nouveau</span>
-              </div>
-              <p className="text-sm text-gray-600 mb-4">
-                Template minimaliste avec animations fluides, typographie impactante et design monochrome.
-              </p>
-              <div className="flex gap-2">
+              <div className="p-6 flex gap-2">
                 <button
-                  onClick={() => applyTemplate('minimaliste-premium')}
+                  onClick={() => applyTemplate(t.id)}
                   className="flex-1 bg-blue-600 text-white text-sm py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   Appliquer
                 </button>
                 <button
-                  onClick={() => window.open('/?template=minimaliste-premium', '_blank')}
+                  onClick={() => window.open(`/?template=${t.id}`, '_blank')}
                   className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   Aperçu
                 </button>
               </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
 

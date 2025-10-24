@@ -6,7 +6,7 @@
   "nav": {
     "logo": "soliva",
     "logoImage": "",
-    "location": "paris, le havre ",
+    "location": "paris, le havre  ",
     "items": [
       "studio",
       "work",
@@ -2320,11 +2320,12 @@
           "title": "Politique de confidentialité"
         },
         "layout": "two-columns",
-        "pinned": true,
+        "pinned": false,
         "disabled": false
       }
     ],
     "pinnedSystem": [
+      "home",
       "blog"
     ],
     "home": {

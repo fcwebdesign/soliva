@@ -4,6 +4,7 @@ import WorkMinimalisteClient from '@/templates/minimaliste-premium/work-client';
 import ContactMinimalisteClient from '@/templates/minimaliste-premium/contact-client';
 import BlogMinimalisteClient from '@/templates/minimaliste-premium/blog-client';
 import { headers } from 'next/headers';
+import StarterApp from '@/templates/starter/StarterApp';
 
 export async function TemplateRenderer({ keyName }: { keyName: string }) {
   // Récupérer le pathname pour déterminer quelle page rendre
@@ -28,6 +29,9 @@ export async function TemplateRenderer({ keyName }: { keyName: string }) {
           // Pour les autres pages, utiliser la home par défaut (style cohérent)
           return <MinimalistePremiumClient />;
       }
+    case 'starter':
+      // Exemple: un seul point d'entrée côté client (Shell + routing côté client)
+      return <StarterApp />;
     
     // Autres templates futurs...
     // case 'autre-template':
