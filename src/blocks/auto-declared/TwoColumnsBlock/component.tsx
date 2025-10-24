@@ -3,6 +3,8 @@
 import React from 'react';
 import { useTheme } from '../../../hooks/useTheme';
 import { getAutoDeclaredBlock } from '../registry';
+import { useTemplate } from '@/templates/context';
+import { registries, defaultRegistry } from '../../registry';
 
 interface TwoColumnsData {
   leftColumn?: any[];
@@ -15,6 +17,8 @@ interface TwoColumnsData {
 
 export default function TwoColumnsBlock({ data }: { data: TwoColumnsData }) {
   const { mounted } = useTheme();
+  const { key } = useTemplate();
+  const templateRegistry = registries[key] ?? defaultRegistry;
   
   const leftColumn = data.leftColumn || [];
   const rightColumn = data.rightColumn || [];
@@ -50,36 +54,31 @@ export default function TwoColumnsBlock({ data }: { data: TwoColumnsData }) {
     return <div className="two-columns-section py-28" style={{ minHeight: '200px' }}></div>;
   }
 
-  // Fonction optimisée pour rendre les sous-blocs en utilisant les blocs scalables
+  // Fonction optimisée pour rendre les sous-blocs
   const renderSubBlock = (subBlock: any) => {
-    // Essayer d'abord le système scalable
+    // 1) Tenter un override de template si disponible
+    const TemplateComponent: any = templateRegistry[subBlock.type];
+    if (TemplateComponent) {
+      const props: any = {
+        ...subBlock,
+        'data-block-type': subBlock.type,
+        'data-block-theme': blockTheme || subBlock.theme || 'auto',
+      };
+      return <TemplateComponent key={subBlock.id} {...props} />;
+    }
+
+    // 2) Sinon, utiliser le bloc scalable auto-déclaré
     const scalableBlock = getAutoDeclaredBlock(subBlock.type);
     if (scalableBlock) {
-      const BlockComponent = scalableBlock.component;
-      
+      const BlockComponent = scalableBlock.component as any;
       // Adapter les données selon le type de bloc
       let adaptedData = subBlock;
       if (subBlock.type === 'image' && subBlock.image) {
-        // Pour les blocs image, adapter la structure
-        adaptedData = {
-          ...subBlock,
-          src: subBlock.image.src,
-          alt: subBlock.image.alt
-        };
+        adaptedData = { ...subBlock, src: subBlock.image.src, alt: subBlock.image.alt };
       } else if (subBlock.type === 'h2' || subBlock.type === 'h3') {
-        // Pour les blocs H2/H3, passer le thème du bloc TwoColumns
-        adaptedData = {
-          content: subBlock.content,
-          theme: blockTheme // Utiliser le thème du bloc TwoColumns
-        };
+        adaptedData = { content: subBlock.content, theme: blockTheme };
       }
-      
-      return (
-        <BlockComponent 
-          key={subBlock.id}
-          data={adaptedData}
-        />
-      );
+      return <BlockComponent key={subBlock.id} data={adaptedData} />;
     }
 
     // Fallback pour les blocs non scalables (si nécessaire)

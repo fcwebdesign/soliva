@@ -1,6 +1,9 @@
 "use client";
 import React, { useEffect, useMemo, useState } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
+// Important: utiliser le BlockRenderer branché sur le registry par template
+import BlockRenderer from '@/blocks/BlockRenderer';
+import FormattedText from '@/components/FormattedText';
 
 type AnyObj = Record<string, any>;
 
@@ -111,6 +114,20 @@ export default function StarterApp() {
 
   if (loading || !content) return <div className="container mx-auto px-5 py-20">Chargement…</div>;
 
+  const renderRich = (blocks?: any[], html?: string) => {
+    if (Array.isArray(blocks) && blocks.length > 0) {
+      return <BlockRenderer blocks={blocks} />;
+    }
+    if (html) {
+      return (
+        <div className="prose max-w-none">
+          <FormattedText>{html}</FormattedText>
+        </div>
+      );
+    }
+    return <p className="text-black/60">Contenu à venir…</p>;
+  };
+
   const WorkList = () => (
     <Section title={content?.work?.hero?.title || 'selected work'}>
       <div className="grid md:grid-cols-2 gap-8">
@@ -146,7 +163,9 @@ export default function StarterApp() {
     return (
       <Section title={p.title}>
         <p className="text-black/70">{p.category}</p>
-        <div className="mt-6 prose max-w-none">{p.description || p.excerpt || '—'}</div>
+        <div className="mt-6">
+          {renderRich(p.blocks, p.content || p.description || p.excerpt)}
+        </div>
       </Section>
     );
   };
@@ -157,7 +176,9 @@ export default function StarterApp() {
     if (!a) return <Section title="Article">Introuvable</Section>;
     return (
       <Section title={a.title}>
-        <div className="mt-6 prose max-w-none">{a.excerpt || '—'}</div>
+        <div className="mt-6">
+          {renderRich(a.blocks, a.content || a.excerpt)}
+        </div>
       </Section>
     );
   };
@@ -167,7 +188,9 @@ export default function StarterApp() {
     const pg = (content?.pages?.pages || []).find((x: any) => x.slug === slug || x.id === slug);
     return (
       <Section title={pg?.title || slug}>
-        <div className="prose max-w-none">{pg?.description || pg?.content || '—'}</div>
+        <div className="mt-6">
+          {renderRich(pg?.blocks, pg?.content || pg?.description)}
+        </div>
       </Section>
     );
   };
@@ -177,7 +200,9 @@ export default function StarterApp() {
       {route === 'home' && (
         <>
           <Section title={content?.hero?.title || 'Home'}>
-            <p className="text-black/70">{content?.hero?.subtitle}</p>
+            <div className="mt-4">
+              {renderRich(content?.home?.blocks, content?.hero?.subtitle)}
+            </div>
           </Section>
           <WorkList />
         </>
@@ -188,12 +213,16 @@ export default function StarterApp() {
       {route === 'blog-slug' && <Article />}
       {route === 'studio' && (
         <Section title={content?.studio?.hero?.title || 'Studio'}>
-          <div className="prose max-w-none">{content?.studio?.description || content?.studio?.content?.description}</div>
+          <div className="mt-6">
+            {renderRich(content?.studio?.blocks, content?.studio?.description || content?.studio?.content?.description)}
+          </div>
         </Section>
       )}
       {route === 'contact' && (
         <Section title={content?.contact?.hero?.title || 'Contact'}>
-          <div className="prose max-w-none">{content?.contact?.description}</div>
+          <div className="mt-6">
+            {renderRich(content?.contact?.blocks, content?.contact?.description)}
+          </div>
         </Section>
       )}
       {route === 'custom' && <CustomPage />}
