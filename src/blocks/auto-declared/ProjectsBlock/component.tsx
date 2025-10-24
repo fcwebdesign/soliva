@@ -105,6 +105,17 @@ export default function ProjectsBlock({ data }: { data: ProjectsData }) {
     
     fetchProjects();
   }, []);
+
+  const withTpl = (href: string) => {
+    if (typeof window === 'undefined') return href;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const tpl = params.get('template');
+      return tpl ? `${href}${href.includes('?') ? '&' : '?'}template=${tpl}` : href;
+    } catch {
+      return href;
+    }
+  };
   
   // Gérer la largeur de la fenêtre
   useEffect(() => {
@@ -292,7 +303,7 @@ export default function ProjectsBlock({ data }: { data: ProjectsData }) {
                             }`}
                             onClick={() => {
                               if (project.slug) {
-                                window.location.href = `/work/${project.slug}`;
+                                window.location.href = withTpl(`/work/${project.slug}`);
                               }
                             }}
                           />
@@ -337,7 +348,7 @@ export default function ProjectsBlock({ data }: { data: ProjectsData }) {
                         }`}
                         onClick={() => {
                           if (project.slug) {
-                            window.location.href = `/work/${project.slug}`;
+                            window.location.href = withTpl(`/work/${project.slug}`);
                           }
                         }}
                       />
