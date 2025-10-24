@@ -28,7 +28,7 @@ function useSiteContent() {
 function StarterShell({ content, children }: { content: AnyObj; children: React.ReactNode }) {
   const search = useSearchParams();
   const withTpl = (href: string) => {
-    const tpl = search.get('template');
+    const tpl = search?.get('template');
     if (!tpl) return href;
     return `${href}${href.includes('?') ? '&' : '?'}template=${tpl}`;
   };
@@ -91,6 +91,12 @@ function Section({ title, children }: { title: string; children?: React.ReactNod
 export default function StarterApp() {
   const pathname = usePathname() || '/';
   const { content, loading } = useSiteContent();
+  const search = useSearchParams();
+  const withTpl = (href: string) => {
+    const tpl = search?.get('template');
+    if (!tpl) return href;
+    return `${href}${href.includes('?') ? '&' : '?'}template=${tpl}`;
+  };
 
   const route = useMemo(() => {
     if (pathname === '/') return 'home';
@@ -109,7 +115,7 @@ export default function StarterApp() {
     <Section title={content?.work?.hero?.title || 'selected work'}>
       <div className="grid md:grid-cols-2 gap-8">
         {(content?.work?.adminProjects || content?.work?.projects || []).map((p: any, i: number) => (
-          <a key={i} href={(p.slug ? `/work/${p.slug}` : '#')} className="group">
+          <a key={i} href={(p.slug ? withTpl(`/work/${p.slug}`) : '#')} className="group">
             <div className="aspect-[16/10] bg-gray-100 rounded" />
             <div className="mt-3 flex items-center justify-between">
               <h3 className="font-medium text-lg">{p.title}</h3>
@@ -125,7 +131,7 @@ export default function StarterApp() {
     <Section title={content?.blog?.hero?.title || 'Blog'}>
       <div className="space-y-6">
         {(content?.blog?.articles || []).map((a: any, i: number) => (
-          <a key={i} href={`/blog/${a.slug || a.id}`} className="block group">
+          <a key={i} href={withTpl(`/blog/${a.slug || a.id}`)} className="block group">
             <h3 className="text-xl font-medium group-hover:underline">{a.title}</h3>
           </a>
         ))}
@@ -182,7 +188,7 @@ export default function StarterApp() {
       {route === 'blog-slug' && <Article />}
       {route === 'studio' && (
         <Section title={content?.studio?.hero?.title || 'Studio'}>
-          <div className="prose max-w-none">{content?.studio?.description}</div>
+          <div className="prose max-w-none">{content?.studio?.description || content?.studio?.content?.description}</div>
         </Section>
       )}
       {route === 'contact' && (
@@ -194,4 +200,3 @@ export default function StarterApp() {
     </StarterShell>
   );
 }
-

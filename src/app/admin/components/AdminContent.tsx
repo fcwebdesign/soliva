@@ -66,6 +66,7 @@ const AdminContent: React.FC<AdminContentProps> = ({
         <HeaderManager
           content={content}
           onSave={onSave}
+          onUpdate={(updates) => onUpdate(updates)}
         />
       );
     }
@@ -75,6 +76,7 @@ const AdminContent: React.FC<AdminContentProps> = ({
         <FooterManager
           content={content}
           onSave={onSave}
+          onUpdate={(updates) => onUpdate(updates)}
         />
       );
     }

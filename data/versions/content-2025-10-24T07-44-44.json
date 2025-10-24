@@ -11,7 +11,8 @@
       "studio",
       "work",
       "contact",
-      "blog"
+      "blog",
+      "mentions-legales"
     ],
     "pageLabels": {
       "blog": "le blog",
@@ -2324,7 +2325,9 @@
         "disabled": false
       }
     ],
-    "pinnedSystem": [],
+    "pinnedSystem": [
+      "blog"
+    ],
     "home": {
       "mode": "system"
     },

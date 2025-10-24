@@ -71,6 +71,20 @@ export const useAdminPage = () => {
     };
   }, []);
 
+  // Écouter les changements de navigation/footer pour activer la barre de sauvegarde
+  useEffect(() => {
+    const markDirty = () => {
+      setHasUnsavedChanges(true);
+      setSaveStatus('idle');
+    };
+    window.addEventListener('navigation-changed', markDirty as any);
+    window.addEventListener('footer-changed', markDirty as any);
+    return () => {
+      window.removeEventListener('navigation-changed', markDirty as any);
+      window.removeEventListener('footer-changed', markDirty as any);
+    };
+  }, []);
+
   // Initialiser la page depuis l'URL (une seule fois)
   useEffect(() => {
     const pageFromUrl = searchParams.get('page');
@@ -192,11 +206,46 @@ export const useAdminPage = () => {
     try {
       setSaveStatus('saving');
       setIsJustSaved(true);
+      // Construire une copie à sauvegarder et injecter les données live de nav/footer
+      let contentToSave: any = { ...content };
+      if (currentPage === 'nav' && typeof window !== 'undefined' && typeof (window as any).getCurrentHeaderData === 'function') {
+        const hd = (window as any).getCurrentHeaderData();
+        if (hd) {
+          contentToSave = {
+            ...contentToSave,
+            nav: {
+              logo: hd.logo,
+              logoImage: hd.logoImage,
+              location: hd.location,
+              items: hd.pages,
+              pageLabels: hd.pageLabels,
+            },
+          };
+        }
+      }
+      if (currentPage === 'footer' && typeof window !== 'undefined' && typeof (window as any).getCurrentFooterData === 'function') {
+        const fd = (window as any).getCurrentFooterData();
+        if (fd) {
+          contentToSave = {
+            ...contentToSave,
+            footer: {
+              logo: fd.logo,
+              logoImage: fd.logoImage,
+              description: fd.description,
+              links: fd.links,
+              socialLinks: fd.socialLinks,
+              copyright: fd.copyright,
+              bottomLinks: fd.bottomLinks,
+              legalPageLabels: fd.legalPageLabels,
+            },
+          };
+        }
+      }
       
       const response = await fetch('/api/admin/content', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content, status })
+        body: JSON.stringify({ content: contentToSave, status })
       });
 
       if (!response.ok) {
@@ -205,7 +254,8 @@ export const useAdminPage = () => {
 
       setSaveStatus('success');
       setHasUnsavedChanges(false);
-      setOriginalContent(content);
+      setOriginalContent(contentToSave);
+      setContent(contentToSave);
       setPageStatus(status);
       
       setTimeout(() => {

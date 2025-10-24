@@ -1,5 +1,5 @@
 {
-  "id": "ai-profile-1757315285596",
+  "id": "ai-profile-1761314426756",
   "siteId": "main-site",
   "brand": {
     "name": "Soliva ",
@@ -31,7 +31,7 @@
     ],
     "formality": "vouvoiement",
     "emojisAllowed": false,
-    "preferredLength": "court"
+    "preferredLength": ""
   },
   "writingRules": {
     "do": [],
@@ -95,12 +95,12 @@
   },
   "consent": {
     "allowContextualTraining": true,
-    "dataRetentionDays": null
+    "dataRetentionDays": 90
   },
   "metadata": {
     "version": 1,
     "updatedBy": "admin",
-    "updatedAt": "2025-09-08T07:08:05.596Z",
+    "updatedAt": "2025-10-24T14:00:26.756Z",
     "completenessScore": 83
   }
 }

@@ -6,7 +6,7 @@
   "nav": {
     "logo": "soliva",
     "logoImage": "",
-    "location": "paris, le havre ",
+    "location": "paris, le havre  ",
     "items": [
       "studio",
       "work",
@@ -2154,7 +2154,8 @@
     "copyright": "© 2025 Soliva",
     "bottomLinks": [
       "politique-de-confidentialite",
-      "mentions-legales"
+      "mentions-legales",
+      "home"
     ],
     "legalPageLabels": {
       "custom-1757084495511": {
@@ -2325,6 +2326,7 @@
       }
     ],
     "pinnedSystem": [
+      "home",
       "blog"
     ],
     "home": {

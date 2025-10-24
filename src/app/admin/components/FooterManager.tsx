@@ -9,9 +9,10 @@ import LegalSection from './sections/LegalSection';
 interface FooterManagerProps {
   content: any;
   onSave: (data: any) => void;
+  onUpdate?: (updates: any) => void;
 }
 
-const FooterManager = ({ content, onSave }: FooterManagerProps): React.JSX.Element => {
+const FooterManager = ({ content, onSave, onUpdate }: FooterManagerProps): React.JSX.Element => {
   const {
     // State
     footerData,
@@ -69,6 +70,37 @@ const FooterManager = ({ content, onSave }: FooterManagerProps): React.JSX.Eleme
     handleDrop,
     handleDragEnd,
   } = useFooterManager(content);
+
+  const handleSave = async () => {
+    const newContent = {
+      ...content,
+      footer: {
+        logo: footerData.logo,
+        logoImage: footerData.logoImage,
+        description: footerData.description,
+        links: footerData.links,
+        socialLinks: footerData.socialLinks,
+        copyright: footerData.copyright,
+        bottomLinks: footerData.bottomLinks,
+        legalPageLabels: footerData.legalPageLabels
+      }
+    };
+    try {
+      const res = await fetch('/api/admin/content', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: newContent })
+      });
+      if (!res.ok) throw new Error('save');
+      onSave?.(newContent);
+      window.dispatchEvent(new CustomEvent('footer-changed'));
+    } catch (e) {
+      console.error('Erreur sauvegarde footer:', e);
+    }
+  };
+
+  // Note: on déclenche déjà un événement 'footer-changed' dans le hook pour activer la barre globale;
+  // on évite ici d'appeler onUpdate en boucle pour ne pas créer de cycles d'updates.
 
   return (
       <div className="space-y-6">
@@ -150,6 +182,8 @@ const FooterManager = ({ content, onSave }: FooterManagerProps): React.JSX.Eleme
         onDrop={handleDrop}
                           onDragEnd={handleDragEnd}
       />
+
+      {/* Bouton de sauvegarde retiré: la barre en haut gère la sauvegarde */}
     </div>
   );
 };
