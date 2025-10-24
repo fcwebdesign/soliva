@@ -1,0 +1,197 @@
+"use client";
+import React, { useEffect, useMemo, useState } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
+
+type AnyObj = Record<string, any>;
+
+function useSiteContent() {
+  const [content, setContent] = useState<AnyObj | null>(null);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await fetch('/api/content', { cache: 'no-store' });
+        const data = await res.json();
+        if (mounted) setContent(data);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+  return { content, loading } as const;
+}
+
+function StarterShell({ content, children }: { content: AnyObj; children: React.ReactNode }) {
+  const search = useSearchParams();
+  const withTpl = (href: string) => {
+    const tpl = search.get('template');
+    if (!tpl) return href;
+    return `${href}${href.includes('?') ? '&' : '?'}template=${tpl}`;
+  };
+  const items = Array.isArray(content?.nav?.items) && content.nav.items.length
+    ? content.nav.items
+    : ['home','work','studio','blog','contact'];
+  const labelFor = (key: string) => {
+    const entry = content?.nav?.pageLabels?.[key];
+    if (!entry) return key;
+    return typeof entry === 'string' ? entry : (entry.title || key);
+  };
+  const urlFor = (key: string) => (key === 'home' ? '/' : `/${key}`);
+
+  return (
+    <div className="starter-template font-sans text-gray-900">
+      <header className="sticky top-0 z-30 bg-white/85 backdrop-blur border-b border-black/10">
+        <div className="container mx-auto px-5 h-[68px] flex items-center justify-between">
+          <a href={withTpl('/')} className="tracking-tight font-semibold">
+            {content?.nav?.logo || 'STARTER'}
+          </a>
+          <nav className="hidden md:flex items-center gap-8 text-sm text-black/70">
+            {items.map((key: string) => (
+              <a key={key} href={withTpl(urlFor(key))} className="hover:text-black transition-colors">
+                {labelFor(key)}
+              </a>
+            ))}
+          </nav>
+        </div>
+      </header>
+
+      <main>{children}</main>
+
+      <footer className="border-t border-black/10 mt-16">
+        <div className="container mx-auto px-5 py-6 flex items-center justify-between text-sm text-black/60">
+          <p>{content?.footer?.copyright || `© ${new Date().getFullYear()} — Starter`}</p>
+          <div className="flex items-center gap-4">
+            {(content?.footer?.socialLinks || content?.footer?.socials || []).map((s: any, i: number) => (
+              <a key={i} href={s.url || '#'} target={s.target || '_blank'} className="hover:text-black capitalize">
+                {s.platform}
+              </a>
+            ))}
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+function Section({ title, children }: { title: string; children?: React.ReactNode }) {
+  return (
+    <section className="py-16">
+      <div className="container mx-auto px-5">
+        <h1 className="text-3xl md:text-5xl font-semibold tracking-tight mb-6">{title}</h1>
+        {children}
+      </div>
+    </section>
+  );
+}
+
+export default function StarterApp() {
+  const pathname = usePathname() || '/';
+  const { content, loading } = useSiteContent();
+
+  const route = useMemo(() => {
+    if (pathname === '/') return 'home';
+    if (pathname === '/work') return 'work';
+    if (pathname.startsWith('/work/')) return 'work-slug';
+    if (pathname === '/blog') return 'blog';
+    if (pathname.startsWith('/blog/')) return 'blog-slug';
+    if (pathname === '/studio') return 'studio';
+    if (pathname === '/contact') return 'contact';
+    return 'custom';
+  }, [pathname]);
+
+  if (loading || !content) return <div className="container mx-auto px-5 py-20">Chargement…</div>;
+
+  const WorkList = () => (
+    <Section title={content?.work?.hero?.title || 'selected work'}>
+      <div className="grid md:grid-cols-2 gap-8">
+        {(content?.work?.adminProjects || content?.work?.projects || []).map((p: any, i: number) => (
+          <a key={i} href={(p.slug ? `/work/${p.slug}` : '#')} className="group">
+            <div className="aspect-[16/10] bg-gray-100 rounded" />
+            <div className="mt-3 flex items-center justify-between">
+              <h3 className="font-medium text-lg">{p.title}</h3>
+              <span className="text-xs text-black/50">{p.category}</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </Section>
+  );
+
+  const BlogList = () => (
+    <Section title={content?.blog?.hero?.title || 'Blog'}>
+      <div className="space-y-6">
+        {(content?.blog?.articles || []).map((a: any, i: number) => (
+          <a key={i} href={`/blog/${a.slug || a.id}`} className="block group">
+            <h3 className="text-xl font-medium group-hover:underline">{a.title}</h3>
+          </a>
+        ))}
+      </div>
+    </Section>
+  );
+
+  const Project = () => {
+    const slug = pathname.split('/').filter(Boolean)[1];
+    const p = (content?.work?.adminProjects || content?.work?.projects || []).find((x: any) => x.slug === slug || x.id === slug);
+    if (!p) return <Section title="Projet">Introuvable</Section>;
+    return (
+      <Section title={p.title}>
+        <p className="text-black/70">{p.category}</p>
+        <div className="mt-6 prose max-w-none">{p.description || p.excerpt || '—'}</div>
+      </Section>
+    );
+  };
+
+  const Article = () => {
+    const slug = pathname.split('/').filter(Boolean)[1];
+    const a = (content?.blog?.articles || []).find((x: any) => x.slug === slug || x.id === slug);
+    if (!a) return <Section title="Article">Introuvable</Section>;
+    return (
+      <Section title={a.title}>
+        <div className="mt-6 prose max-w-none">{a.excerpt || '—'}</div>
+      </Section>
+    );
+  };
+
+  const CustomPage = () => {
+    const slug = pathname.split('/').filter(Boolean)[0];
+    const pg = (content?.pages?.pages || []).find((x: any) => x.slug === slug || x.id === slug);
+    return (
+      <Section title={pg?.title || slug}>
+        <div className="prose max-w-none">{pg?.description || pg?.content || '—'}</div>
+      </Section>
+    );
+  };
+
+  return (
+    <StarterShell content={content}>
+      {route === 'home' && (
+        <>
+          <Section title={content?.hero?.title || 'Home'}>
+            <p className="text-black/70">{content?.hero?.subtitle}</p>
+          </Section>
+          <WorkList />
+        </>
+      )}
+      {route === 'work' && <WorkList />}
+      {route === 'work-slug' && <Project />}
+      {route === 'blog' && <BlogList />}
+      {route === 'blog-slug' && <Article />}
+      {route === 'studio' && (
+        <Section title={content?.studio?.hero?.title || 'Studio'}>
+          <div className="prose max-w-none">{content?.studio?.description}</div>
+        </Section>
+      )}
+      {route === 'contact' && (
+        <Section title={content?.contact?.hero?.title || 'Contact'}>
+          <div className="prose max-w-none">{content?.contact?.description}</div>
+        </Section>
+      )}
+      {route === 'custom' && <CustomPage />}
+    </StarterShell>
+  );
+}
+

@@ -2324,7 +2324,9 @@
         "disabled": false
       }
     ],
-    "pinnedSystem": [],
+    "pinnedSystem": [
+      "blog"
+    ],
     "home": {
       "mode": "system"
     },

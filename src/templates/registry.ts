@@ -12,5 +12,11 @@ export const TEMPLATES: Record<string, TemplateMeta> = {
     name: 'Minimaliste Premium',
     description: 'Template minimaliste avec animations fluides et typographie impactante'
   },
+  'starter': {
+    key: 'starter',
+    autonomous: true,
+    name: 'Starter Example',
+    description: 'Exemple de template avec Shell unique et routing client'
+  },
   // Autres templates futurs...
-}; 
+};
