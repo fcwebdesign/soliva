@@ -5,6 +5,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import BlockRenderer from '@/blocks/BlockRenderer';
 import FormattedText from '@/components/FormattedText';
 import Image from 'next/image';
+import { normalizeHref } from '@/utils/linkUtils';
 
 type AnyObj = Record<string, any>;
 
@@ -46,6 +47,23 @@ function StarterShell({ content, children }: { content: AnyObj; children: React.
   };
   const urlFor = (key: string) => (key === 'home' ? '/' : `/${key}`);
 
+  // navAdapter: résout href/target en tenant compte de customUrl/target
+  const navAdapter = (key: string) => {
+    const meta = content?.nav?.pageLabels?.[key];
+    // Si un objet avec customUrl est défini, on le normalise
+    if (meta && typeof meta === 'object' && meta.customUrl) {
+      const norm = normalizeHref(String(meta.customUrl));
+      const isInternal = norm.kind === 'internal';
+      const isAnchor = norm.kind === 'anchor';
+      const href = isInternal ? withTpl(norm.href) : norm.href; // ne pas altérer les ancres
+      const target = meta.target || norm.target; // priorité au choix admin
+      const rel = target === '_blank' ? (norm.rel || 'noopener noreferrer') : undefined;
+      return { href, target, rel } as { href: string; target?: string; rel?: string };
+    }
+    // Sinon URL interne par défaut
+    return { href: withTpl(urlFor(key)) } as { href: string; target?: string; rel?: string };
+  };
+
   return (
     <div className="starter-template font-sans text-gray-900">
       <header className="sticky top-0 z-30 bg-white/85 backdrop-blur border-b border-black/10">
@@ -54,11 +72,14 @@ function StarterShell({ content, children }: { content: AnyObj; children: React.
             {content?.nav?.logo || 'STARTER'}
           </a>
           <nav className="hidden md:flex items-center gap-8 text-sm text-black/70">
-            {items.map((key: string) => (
-              <a key={key} href={withTpl(urlFor(key))} className="hover:text-black transition-colors">
-                {labelFor(key)}
-              </a>
-            ))}
+            {items.map((key: string) => {
+              const { href, target, rel } = navAdapter(key);
+              return (
+                <a key={key} href={href} target={target} rel={rel} className="hover:text-black transition-colors">
+                  {labelFor(key)}
+                </a>
+              );
+            })}
           </nav>
         </div>
       </header>
@@ -152,7 +173,12 @@ export default function StarterApp() {
     return withTitle ? (
       <Section title={content?.work?.hero?.title || 'selected work'}>{Grid}</Section>
     ) : (
-      Grid
+      // Sans titre, on garde un conteneur + marge verticale
+      <section className="pt-0 pb-16">
+        <div className="container mx-auto px-5">
+          {Grid}
+        </div>
+      </section>
     );
   };
 
@@ -260,6 +286,7 @@ function Footer({ content }: { content: any }) {
   const bottomLinks = Array.isArray(content?.bottomLinks) ? content.bottomLinks : [];
   const labelsMap = content?.legalPageLabels || {};
 
+  // Revenir à la normalisation simple (comme avant)
   const normalizeHref = (url?: string) => {
     if (!url) return '#';
     if (url.startsWith('http')) return url;
