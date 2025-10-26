@@ -61,14 +61,6 @@
         "url": "studio",
         "customUrl": "",
         "target": "_self"
-      },
-      {
-        "id": "link-1761505121979",
-        "label": "Accueil",
-        "title": "Accueil",
-        "url": "home",
-        "customUrl": "",
-        "target": "_self"
       }
     ],
     "socialLinks": [],

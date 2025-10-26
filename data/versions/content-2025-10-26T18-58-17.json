@@ -53,24 +53,7 @@
     "logo": "soliva",
     "logoImage": "",
     "description": "",
-    "links": [
-      {
-        "id": "link-1761505096164",
-        "label": "Studio",
-        "title": "Studio",
-        "url": "studio",
-        "customUrl": "",
-        "target": "_self"
-      },
-      {
-        "id": "link-1761505121979",
-        "label": "Accueil",
-        "title": "Accueil",
-        "url": "home",
-        "customUrl": "",
-        "target": "_self"
-      }
-    ],
+    "links": [],
     "socialLinks": [],
     "copyright": "© 2024 Soliva. Tous droits réservés.",
     "bottomLinks": [

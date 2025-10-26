@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import BlockRenderer from '@/blocks/BlockRenderer';
 import HeaderMinimalflow from './components/Header';
@@ -24,16 +24,8 @@ export default function MinimalflowClient() {
     loadContent();
   }, [pathname]); // Recharger le contenu quand le pathname change
 
-  if (!content) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  // Logique de routage améliorée
-  const route = useMemo(() => {
+  // Logique de routage (sans hook pour garder l'ordre stable)
+  const route = (() => {
     if (pathname === '/') return 'home';
     if (pathname === '/work') return 'work';
     if (pathname.startsWith('/work/')) return 'work-slug';
@@ -42,7 +34,15 @@ export default function MinimalflowClient() {
     if (pathname === '/studio') return 'studio';
     if (pathname === '/contact') return 'contact';
     return 'custom';
-  }, [pathname]);
+  })();
+
+  if (!content) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   // Résolution de la page courante
   let pageData: any = null;

@@ -57,6 +57,11 @@ export const TEMPLATES: Record<string, TemplateMeta> = {
     autonomous: true,
     name: 'designhub',
     description: 'Template généré automatiquement'
+  },  'minimalflow': {
+    key: 'minimalflow',
+    autonomous: true,
+    name: 'minimalflow',
+    description: 'Template généré automatiquement'
   },
   // Autres templates futurs...
 };

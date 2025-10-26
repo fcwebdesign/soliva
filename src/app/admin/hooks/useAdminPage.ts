@@ -258,6 +258,25 @@ export const useAdminPage = () => {
       setContent(contentToSave);
       setPageStatus(status);
       
+      // Notifier le front pour mise à jour live (Nav/Footer/Pages)
+      try {
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('content-updated', {
+            detail: {
+              nav: contentToSave.nav,
+              footer: contentToSave.footer,
+              pages: contentToSave.pages,
+            }
+          }));
+          // Déclencher un changement de storage pour les wrappers qui l'utilisent
+          if (currentPage === 'footer') {
+            localStorage.setItem('footer-updated', String(Date.now()));
+          }
+        }
+      } catch {
+        // ignore
+      }
+      
       setTimeout(() => {
         setSaveStatus('idle');
         setIsJustSaved(false);
