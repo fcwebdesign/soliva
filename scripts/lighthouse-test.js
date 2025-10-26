@@ -88,3 +88,4 @@ async function runLighthouse() {
 
 // Exécuter le test
 runLighthouse();
+
