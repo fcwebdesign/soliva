@@ -1,0 +1,52 @@
+{
+  "_template": "debug-test",
+  "metadata": {
+    "title": "Site debug-test",
+    "description": "Description du site debug-test"
+  },
+  "site": {
+    "title": "Site debug-test",
+    "description": "Description du site debug-test",
+    "logo": ""
+  },
+  "nav": {
+    "logo": "debug-test",
+    "items": [
+      "home",
+      "work",
+      "studio",
+      "contact",
+      "blog"
+    ]
+  },
+  "home": {
+    "title": "Accueil debug-test",
+    "description": "Page d'accueil du template debug-test",
+    "hero": {
+      "title": "Bienvenue sur debug-test",
+      "subtitle": "Template debug-test généré avec l'IA",
+      "cta": "Découvrir"
+    },
+    "blocks": []
+  },
+  "studio": {
+    "title": "Studio debug-test",
+    "description": "Page studio du template debug-test",
+    "blocks": []
+  },
+  "work": {
+    "title": "Projets debug-test",
+    "description": "Page projets du template debug-test",
+    "blocks": []
+  },
+  "contact": {
+    "title": "Contact debug-test",
+    "description": "Page contact du template debug-test",
+    "blocks": []
+  },
+  "blog": {
+    "title": "Blog debug-test",
+    "description": "Page blog du template debug-test",
+    "blocks": []
+  }
+}

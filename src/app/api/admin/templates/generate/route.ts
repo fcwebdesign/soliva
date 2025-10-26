@@ -7,6 +7,7 @@ export async function POST(request: Request) {
   try {
     const templateData = await request.json();
     const { name, category, useAI, description, autonomous, styles, blocks, pages, apply, register } = templateData;
+    const shouldRegister = register !== false; // par défaut: on enregistre (Effica-like)
     const autonomousFlag = autonomous !== false; // par défaut autonome
     
     if (!category) {
@@ -48,28 +49,45 @@ export async function POST(request: Request) {
         }
         
         templateName = await aiTemplateNaming.getUniqueTemplateName(category, existingNames);
+        console.log(`🤖 Nom généré par IA: "${templateName}"`);
+        
       } catch (error) {
-        console.error('Erreur génération nom IA:', error);
-        templateName = category.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now().toString().slice(-4);
+        console.error('❌ Erreur génération nom IA:', error);
+        // Fallback vers nom générique
+        templateName = `${category}-template`;
+        let counter = 1;
+        while (existsSync(join(process.cwd(), 'src', 'templates', templateName))) {
+          templateName = `${category}-template-${counter}`;
+          counter++;
+        }
       }
     } else {
-      templateName = name || category.toLowerCase().replace(/\s+/g, '-');
+      // Utiliser le nom fourni ou générer un nom générique
+      templateName = name || `${category}-template`;
+      let counter = 1;
+      while (existsSync(join(process.cwd(), 'src', 'templates', templateName))) {
+        templateName = `${name || category}-${counter}`;
+        counter++;
+      }
     }
 
     // Créer le dossier du template
     const templateDir = join(process.cwd(), 'src', 'templates', templateName);
     mkdirSync(templateDir, { recursive: true });
 
-    // Header basique du template
-    const headerComponent = `import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useState } from 'react';
-import { buildNavModel } from '@/utils/navModel';
+    // Composant Header du template (basé sur navModel)
+    const headerComponent = `"use client";
+import Link from "next/link";
+import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { buildNavModel } from "@/utils/navModel";
+import { useTemplate } from "@/templates/context";
 
 export default function Header{COMP}({ nav, pages }: any) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const model = buildNavModel({ nav, pages, pathname });
+  const { key } = useTemplate();
+  const model = buildNavModel({ nav, pages, pathname, templateKey: key !== 'default' ? key : undefined });
 
   return (
     <header className="bg-white/80 backdrop-blur border-b border-gray-200 sticky top-0 z-40">
@@ -125,7 +143,7 @@ export default function Header{COMP}({ nav, pages }: any) {
   );
 }`.replace('{COMP}', templateName.charAt(0).toUpperCase() + templateName.slice(1).replace(/-/g, ''));
 
-    // Footer basique du template
+    // Footer complet du template (identité, liens, réseaux sociaux, légaux)
     const footerComponent = `type PageLink = { slug?: string; id?: string; title?: string };
 
 export default function Footer{COMP}({ footer, pages }: { footer?: any; pages?: { pages?: PageLink[] } }) {
@@ -148,8 +166,47 @@ export default function Footer{COMP}({ footer, pages }: { footer?: any; pages?: 
 
   return (
     <footer className="bg-gray-50 border-t border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center text-gray-500 text-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Identité + description */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          <div className="space-y-4">
+            <div className="font-semibold text-xl text-gray-900">
+              {footer?.logoImage ? (
+                <img src={footer.logoImage} alt="Logo" className="h-8 max-w-[200px] object-contain" />
+              ) : (
+                footer?.logo || '{COMP}'
+              )}
+            </div>
+            {footer?.description && (
+              <p className="text-sm text-gray-600 max-w-prose">{footer.description}</p>
+            )}
+          </div>
+
+          {/* Liens et Réseaux sociaux */}
+          <div className="flex flex-col md:flex-row md:justify-end gap-12">
+            {Array.isArray(footer?.links) && footer.links.length > 0 && (
+              <div className="space-y-2 text-left">
+                <ul className="space-y-1">
+                  {footer.links.map((l: any, idx: number) => (
+                    <li key={idx}><a href={l.url || '#'} className="text-sm text-gray-700 hover:text-gray-900">{l.title}</a></li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {Array.isArray(footer?.socialLinks) && footer.socialLinks.length > 0 && (
+              <div className="space-y-2 text-left">
+                <ul className="space-y-1">
+                  {footer.socialLinks.map((s: any, idx: number) => (
+                    <li key={idx}><a href={s.url} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-700 hover:text-gray-900">{s.platform}</a></li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Bas de page: copyright + liens */}
+        <div className="border-t pt-6 text-center text-gray-500 text-sm">
           <p>{copyright}</p>
           {links.length > 0 && (
             <ul className="mt-3 flex flex-wrap gap-4 justify-center">
@@ -162,9 +219,7 @@ export default function Footer{COMP}({ footer, pages }: { footer?: any; pages?: 
                 if (typeof meta === 'string') label = meta;
                 if (meta && typeof meta === 'object') { label = meta.title || label; href = meta.customUrl || href; target = meta.target === '_blank' ? '_blank' : '_self'; }
                 return (
-                  <li key={key}>
-                    <a href={href} target={target} className="text-gray-500 hover:text-gray-900 transition-colors">{label}</a>
-                  </li>
+                  <li key={key}><a href={href} target={target} className="text-gray-500 hover:text-gray-900 transition-colors">{label}</a></li>
                 );
               })}
             </ul>
@@ -177,7 +232,7 @@ export default function Footer{COMP}({ footer, pages }: { footer?: any; pages?: 
 
     // Client du template prêt à rendre les blocs & le header
     const clientComponent = `'use client';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import BlockRenderer from '@/blocks/BlockRenderer';
 import Header{COMP} from './components/Header';
@@ -186,18 +241,6 @@ import Footer{COMP} from './components/Footer';
 export default function {COMP}Client() {
   const [content, setContent] = useState<any>(null);
   const pathname = usePathname();
-
-  // Logique de routage améliorée
-  const route = useMemo(() => {
-    if (pathname === '/') return 'home';
-    if (pathname === '/work') return 'work';
-    if (pathname.startsWith('/work/')) return 'work-slug';
-    if (pathname === '/blog') return 'blog';
-    if (pathname.startsWith('/blog/')) return 'blog-slug';
-    if (pathname === '/studio') return 'studio';
-    if (pathname === '/contact') return 'contact';
-    return 'custom';
-  }, [pathname]);
 
   useEffect(() => {
     const loadContent = async () => {
@@ -213,6 +256,18 @@ export default function {COMP}Client() {
     };
     loadContent();
   }, [pathname]); // Recharger le contenu quand le pathname change
+
+  // Logique de routage (sans hook pour garder l'ordre stable)
+  const route = (() => {
+    if (pathname === '/') return 'home';
+    if (pathname === '/work') return 'work';
+    if (pathname.startsWith('/work/')) return 'work-slug';
+    if (pathname === '/blog') return 'blog';
+    if (pathname.startsWith('/blog/')) return 'blog-slug';
+    if (pathname === '/studio') return 'studio';
+    if (pathname === '/contact') return 'contact';
+    return 'custom';
+  })();
 
   if (!content) {
     return (
@@ -260,7 +315,7 @@ export default function {COMP}Client() {
             <h2 className="text-3xl font-bold text-gray-900 mb-4">{pageData?.title || 'Page'}</h2>
             <p className="text-gray-600 mb-8">{pageData?.description || "Aucun bloc pour l'instant"}</p>
             <div className="bg-gray-50 rounded-lg p-8">
-              <p className="text-gray-400">Ajoute des blocs depuis l'admin pour cette page.</p>
+              <p className="text-gray-400">Ajoute des blocs depuis l’admin pour cette page.</p>
             </div>
           </div>
         )}
@@ -268,7 +323,8 @@ export default function {COMP}Client() {
       <Footer{COMP} footer={content.footer} pages={content.pages} />
     </div>
   );
-}`.replace(/{COMP}/g, templateName.charAt(0).toUpperCase() + templateName.slice(1).replace(/-/g, ''));
+}`
+      .replace(/{COMP}/g, templateName.charAt(0).toUpperCase() + templateName.slice(1).replace(/-/g, ''));
 
     // Écrire les fichiers générés
     const componentsDir = join(templateDir, 'components');
@@ -277,9 +333,9 @@ export default function {COMP}Client() {
     writeFileSync(join(componentsDir, `Footer.tsx`), footerComponent);
     writeFileSync(join(templateDir, `${templateName}-client.tsx`), clientComponent);
 
-    // Enregistrement optionnel du template dans le registre/renderer (uniquement si register: true)
+    // Enregistrement du template dans le registre/renderer (par défaut oui, sauf register:false)
     try {
-      if (register === true) {
+      if (shouldRegister) {
       const registryPath = join(process.cwd(), 'src', 'templates', 'registry.ts');
       let registrySrc = readFileSync(registryPath, 'utf-8');
       if (!registrySrc.includes(`'${templateName}':`)) {
@@ -301,58 +357,71 @@ export default function {COMP}Client() {
         const expIdx = rendererSrc.indexOf('export async function TemplateRenderer');
         if (expIdx !== -1) {
           rendererSrc = rendererSrc.slice(0, expIdx) + importLine + '\n' + rendererSrc.slice(expIdx);
+        } else {
+          rendererSrc = importLine + '\n' + rendererSrc;
         }
       }
-      const caseLine = `    case '${templateName}':\n      return <${compName} />;`;
-      if (!rendererSrc.includes(caseLine)) {
-        const switchIdx = rendererSrc.indexOf('switch (keyName) {');
-        if (switchIdx !== -1) {
-          const switchEnd = rendererSrc.indexOf('default:', switchIdx);
-          if (switchEnd !== -1) {
-            rendererSrc = rendererSrc.slice(0, switchEnd) + caseLine + '\n    \n    ' + rendererSrc.slice(switchEnd);
-          }
+      if (!rendererSrc.includes(`case '${templateName}':`)) {
+        const defaultMarker = '// Templates générés dynamiquement sont gérés par le système de fichiers';
+        const caseBlock = `\n    case '${templateName}':\n      return <${compName} />;\n`;
+        if (rendererSrc.includes(defaultMarker)) {
+          rendererSrc = rendererSrc.replace(defaultMarker, caseBlock + '    ' + defaultMarker);
+        } else {
+          // fallback: insert before 'default:'
+          rendererSrc = rendererSrc.replace(/default:\n/, caseBlock + '    default:\n');
         }
       }
       writeFileSync(rendererPath, rendererSrc);
       }
-    } catch (error) {
-      console.error('Erreur enregistrement template:', error);
+    } catch (e) {
+      console.warn('⚠️ Enregistrement optionnel du template échoué (non bloquant):', e);
+    }
+
+    // Application automatique du template (désactivée par défaut)
+    try {
+      const shouldApply = apply === true; // n'appliquer que si apply: true
+      if (shouldApply) {
+        const contentPath = join(process.cwd(), 'data', 'content.json');
+        const content = JSON.parse(readFileSync(contentPath, 'utf8'));
+        // Backup
+        const currentTemplate = content._template || 'default';
+        const backupPath = join(process.cwd(), 'data', 'backups', `template-${currentTemplate}-${Date.now()}.json`);
+        writeFileSync(backupPath, JSON.stringify(content, null, 2));
+        // Appliquer uniquement la clé de template (préserve le contenu)
+        const nextContent = { ...content, _template: templateName };
+        writeFileSync(contentPath, JSON.stringify(nextContent, null, 2));
+      }
+    } catch (e) {
+      console.warn('⚠️ Application automatique du template échouée (non bloquant):', e);
     }
 
     // Créer le fichier de configuration du template
     const templateConfig = {
       name: templateName,
-      description: description || 'Template généré automatiquement',
       category,
-      autonomous: autonomousFlag,
+      description: description || `Template ${category} généré automatiquement`,
+      autonomous,
       styles: styles || {},
       blocks: blocks || [],
-      pages: pages || [],
+      pages: pages || ['home'],
       createdAt: new Date().toISOString()
     };
 
-    const configPath = join(process.cwd(), 'data', 'templates', `${templateName}.json`);
-    writeFileSync(configPath, JSON.stringify(templateConfig, null, 2));
-
-    // Appliquer le template si demandé
-    if (apply === true) {
-      try {
-        const contentPath = join(process.cwd(), 'data', 'content.json');
-        let content = JSON.parse(readFileSync(contentPath, 'utf-8'));
-        content._template = templateName;
-        writeFileSync(contentPath, JSON.stringify(content, null, 2));
-      } catch (error) {
-        console.error('Erreur application template:', error);
-      }
+    // Créer le dossier data/templates s'il n'existe pas
+    const dataTemplatesDir = join(process.cwd(), 'data', 'templates');
+    if (!existsSync(dataTemplatesDir)) {
+      mkdirSync(dataTemplatesDir, { recursive: true });
     }
+
+    writeFileSync(join(dataTemplatesDir, `${templateName}.json`), JSON.stringify(templateConfig, null, 2));
+
+    console.log(`✅ Template "${templateName}" généré avec succès`);
 
     return NextResponse.json({
       success: true,
       templateName,
       message: `Template "${templateName}" généré avec succès`,
-      path: templateDir,
-      registered: register === true,
-      applied: apply === true
+      path: templateDir
     });
 
   } catch (error) {

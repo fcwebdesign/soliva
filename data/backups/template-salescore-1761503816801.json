@@ -1,0 +1,52 @@
+{
+  "_template": "salescore",
+  "metadata": {
+    "title": "Site salescore",
+    "description": "Description du site salescore"
+  },
+  "site": {
+    "title": "Site salescore",
+    "description": "Description du site salescore",
+    "logo": ""
+  },
+  "nav": {
+    "logo": "salescore",
+    "items": [
+      "home",
+      "work",
+      "studio",
+      "contact",
+      "blog"
+    ]
+  },
+  "home": {
+    "title": "Accueil salescore",
+    "description": "Page d'accueil du template salescore",
+    "hero": {
+      "title": "Bienvenue sur salescore",
+      "subtitle": "Template salescore généré avec l'IA",
+      "cta": "Découvrir"
+    },
+    "blocks": []
+  },
+  "studio": {
+    "title": "Studio salescore",
+    "description": "Page studio du template salescore",
+    "blocks": []
+  },
+  "work": {
+    "title": "Projets salescore",
+    "description": "Page projets du template salescore",
+    "blocks": []
+  },
+  "contact": {
+    "title": "Contact salescore",
+    "description": "Page contact du template salescore",
+    "blocks": []
+  },
+  "blog": {
+    "title": "Blog salescore",
+    "description": "Page blog du template salescore",
+    "blocks": []
+  }
+}

@@ -1,9 +1,18 @@
 import { headers } from 'next/headers';
 import StarterApp from '@/templates/starter/StarterApp';
+import PraxisClient from '@/templates/praxis/praxis-client';
+import EfficaClient from '@/templates/effica/effica-client';
+import GenericAutonomous from '@/templates/GenericAutonomous';
 
-import TestminimalClient from '@/templates/test-minimal/test-minimal-client';
-import SimpletestClient from '@/templates/simple-test/simple-test-client';
-import UltrasimpleClient from '@/templates/ultra-simple/ultra-simple-client';
+import DebugtestClient from '@/templates/debug-test/debug-test-client';
+import ConversionflowClient from '@/templates/conversionflow/conversionflow-client';
+import SalescoreClient from '@/templates/salescore/salescore-client';
+import OmnisClient from '@/templates/omnis/omnis-client';
+import DesignhubClient from '@/templates/designhub/designhub-client';
+import MinimalflowClient from '@/templates/minimalflow/minimalflow-client';
+import TalentifyClient from '@/templates/talentify/talentify-client';
+import ArtboardClient from '@/templates/artboard/artboard-client';
+import PixendClient from '@/templates/pixend/pixend-client';
 export async function TemplateRenderer({ keyName }: { keyName: string }) {
   const headersList = await headers();
   const pathname = headersList.get('x-pathname') || '/';
@@ -12,23 +21,42 @@ export async function TemplateRenderer({ keyName }: { keyName: string }) {
     case 'soliva':
       // Template Soliva original - utilise le layout par défaut
       return null;
-    
     case 'starter':
       // Exemple: un seul point d'entrée côté client (Shell + routing côté client)
       return <StarterApp />;
+    case 'praxis':
+      // Template autonome: en-tête/structure propres au thème
+      return <PraxisClient />;
+    case 'effica':
+      return <EfficaClient />;
     
-    // Templates générés dynamiquement sont gérés par le système de fichiers
-        case 'test-minimal':
-      return <TestminimalClient />;
+    case 'debug-test':
+      return <DebugtestClient />;
     
-        case 'simple-test':
-      return <SimpletestClient />;
+    case 'conversionflow':
+      return <ConversionflowClient />;
     
-        case 'ultra-simple':
-      return <UltrasimpleClient />;
+    case 'salescore':
+      return <SalescoreClient />;
     
+    case 'omnis':
+      return <OmnisClient />;
+    
+    case 'designhub':
+      return <DesignhubClient />;
+    case 'minimalflow':
+      return <MinimalflowClient />;
+    
+    case 'talentify':
+      return <TalentifyClient />;
+    
+    case 'artboard':
+      return <ArtboardClient />;
+    
+    case 'pixend':
+      return <PixendClient />;
     default:
-      console.warn(`Template "${keyName}" non trouvé dans TemplateRenderer`);
-      return null;
+      // Fallback: afficher un shell autonome générique (header/footer basiques)
+      return <GenericAutonomous keyName={keyName} pathname={pathname} />;
   }
-} 
+}

@@ -1,0 +1,52 @@
+{
+  "_template": "effica",
+  "metadata": {
+    "title": "Site cleancore",
+    "description": "Description du site cleancore"
+  },
+  "site": {
+    "title": "Site cleancore",
+    "description": "Description du site cleancore",
+    "logo": ""
+  },
+  "nav": {
+    "logo": "cleancore",
+    "items": [
+      "home",
+      "work",
+      "studio",
+      "contact",
+      "blog"
+    ]
+  },
+  "home": {
+    "title": "Accueil cleancore",
+    "description": "Page d'accueil du template cleancore",
+    "hero": {
+      "title": "Bienvenue sur cleancore",
+      "subtitle": "Template cleancore généré avec l'IA",
+      "cta": "Découvrir"
+    },
+    "blocks": []
+  },
+  "studio": {
+    "title": "Studio cleancore",
+    "description": "Page studio du template cleancore",
+    "blocks": []
+  },
+  "work": {
+    "title": "Projets cleancore",
+    "description": "Page projets du template cleancore",
+    "blocks": []
+  },
+  "contact": {
+    "title": "Contact cleancore",
+    "description": "Page contact du template cleancore",
+    "blocks": []
+  },
+  "blog": {
+    "title": "Blog cleancore",
+    "description": "Page blog du template cleancore",
+    "blocks": []
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "_template": "creativeflow",
+  "metadata": {
+    "title": "Site creativeflow",
+    "description": "Description du site creativeflow"
+  },
+  "site": {
+    "title": "Site creativeflow",
+    "description": "Description du site creativeflow",
+    "logo": ""
+  },
+  "nav": {
+    "logo": "creativeflow",
+    "items": [
+      "home",
+      "work",
+      "studio",
+      "contact",
+      "blog"
+    ]
+  },
+  "home": {
+    "title": "Accueil creativeflow",
+    "description": "Page d'accueil du template creativeflow",
+    "hero": {
+      "title": "Bienvenue sur creativeflow",
+      "subtitle": "Template creativeflow généré avec l'IA",
+      "cta": "Découvrir"
+    },
+    "blocks": []
+  },
+  "studio": {
+    "title": "Studio creativeflow",
+    "description": "Page studio du template creativeflow",
+    "blocks": []
+  },
+  "work": {
+    "title": "Projets creativeflow",
+    "description": "Page projets du template creativeflow",
+    "blocks": []
+  },
+  "contact": {
+    "title": "Contact creativeflow",
+    "description": "Page contact du template creativeflow",
+    "blocks": []
+  },
+  "blog": {
+    "title": "Blog creativeflow",
+    "description": "Page blog du template creativeflow",
+    "blocks": []
+  }
+}

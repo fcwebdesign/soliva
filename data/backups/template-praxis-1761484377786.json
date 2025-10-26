@@ -1,0 +1,123 @@
+{
+  "_template": "praxis",
+  "metadata": {
+    "title": "Site praxis",
+    "description": "Description du site praxis"
+  },
+  "site": {
+    "title": "Site praxis",
+    "description": "Description du site praxis",
+    "logo": ""
+  },
+  "nav": {
+    "logo": "praxis",
+    "logoImage": "",
+    "location": "paris, le havre",
+    "items": [
+      "home",
+      "work",
+      "studio",
+      "contact"
+    ],
+    "pageLabels": {}
+  },
+  "home": {
+    "title": "Accueil praxis",
+    "description": "Page d'accueil du template praxis",
+    "hero": {
+      "title": "praxis",
+      "subtitle": "généré par l'ia",
+      "cta": "Découvrir"
+    },
+    "blocks": [
+      {
+        "id": "h2-1761481055391",
+        "type": "h2",
+        "data": {
+          "content": ""
+        },
+        "content": "test H2"
+      },
+      {
+        "id": "two-columns-1761481522910",
+        "type": "two-columns",
+        "data": {
+          "leftColumn": [],
+          "rightColumn": [],
+          "layout": "left-right",
+          "gap": "medium",
+          "alignment": "top",
+          "theme": "auto"
+        },
+        "leftColumn": [
+          {
+            "id": "",
+            "type": "image",
+            "image": {
+              "src": "/uploads/1761481542686-d5d173eb.webp",
+              "alt": ""
+            }
+          }
+        ],
+        "rightColumn": [
+          {
+            "id": "",
+            "type": "image",
+            "image": {
+              "src": "/uploads/1761481551621-800a689c.webp",
+              "alt": ""
+            }
+          }
+        ]
+      }
+    ],
+    "content": ""
+  },
+  "studio": {
+    "title": "Studio praxis",
+    "description": "Page studio du template praxis",
+    "blocks": []
+  },
+  "work": {
+    "title": "Projets praxis",
+    "description": "Page projets du template praxis",
+    "blocks": []
+  },
+  "contact": {
+    "title": "Contact praxis",
+    "description": "Page contact du template praxis",
+    "blocks": []
+  },
+  "blog": {
+    "title": "Blog praxis",
+    "description": "Page blog du template praxis",
+    "blocks": []
+  },
+  "footer": {
+    "logo": "soliva",
+    "logoImage": "",
+    "description": "",
+    "links": [
+      {
+        "id": "link-1761481565407",
+        "label": "Accueil",
+        "title": "Accueil",
+        "url": "home",
+        "customUrl": "",
+        "target": "_self"
+      },
+      {
+        "id": "link-1761481566153",
+        "label": "Studio",
+        "title": "Studio",
+        "url": "studio",
+        "customUrl": "",
+        "target": "_self"
+      }
+    ],
+    "socialLinks": [],
+    "copyright": "© 2024 Soliva. Tous droits réservés.",
+    "bottomLinks": [],
+    "legalPageLabels": {}
+  }
+}

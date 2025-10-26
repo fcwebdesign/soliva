@@ -18,22 +18,67 @@ export const TEMPLATES: Record<string, TemplateMeta> = {
     name: 'Starter Example',
     description: 'Exemple de template avec Shell unique et routing client'
   },
-    'test-minimal': {
-    key: 'test-minimal',
+  'praxis': {
+    key: 'praxis',
     autonomous: true,
-    name: 'test-minimal',
+    name: 'Praxis',
+    description: 'Template corporate léger avec en-tête dédié'
+  },'effica': {
+    key: 'effica',
+    autonomous: true,
+    name: 'effica',
+    description: 'Template généré automatiquement'
+  },  'debug-test': {
+    key: 'debug-test',
+    autonomous: true,
+    name: 'debug-test',
     description: 'Template généré automatiquement'
   },
-    'simple-test': {
-    key: 'simple-test',
+    'conversionflow': {
+    key: 'conversionflow',
     autonomous: true,
-    name: 'simple-test',
+    name: 'conversionflow',
     description: 'Template généré automatiquement'
   },
-    'ultra-simple': {
-    key: 'ultra-simple',
+    'salescore': {
+    key: 'salescore',
     autonomous: true,
-    name: 'ultra-simple',
+    name: 'salescore',
+    description: 'Template généré automatiquement'
+  },
+    'omnis': {
+    key: 'omnis',
+    autonomous: true,
+    name: 'omnis',
+    description: 'Template généré automatiquement'
+  },
+    'designhub': {
+    key: 'designhub',
+    autonomous: true,
+    name: 'designhub',
+    description: 'Template généré automatiquement'
+  },  'minimalflow': {
+    key: 'minimalflow',
+    autonomous: true,
+    name: 'minimalflow',
+    description: 'Template généré automatiquement'
+  },
+    'talentify': {
+    key: 'talentify',
+    autonomous: true,
+    name: 'talentify',
+    description: 'Template généré automatiquement'
+  },
+    'artboard': {
+    key: 'artboard',
+    autonomous: true,
+    name: 'artboard',
+    description: 'Template généré automatiquement'
+  },
+    'pixend': {
+    key: 'pixend',
+    autonomous: true,
+    name: 'pixend',
     description: 'Template généré automatiquement'
   },
   // Autres templates futurs...

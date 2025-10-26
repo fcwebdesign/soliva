@@ -4,6 +4,7 @@ import { useTransitionRouter } from "next-view-transitions";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
+import { buildNavModel } from "@/utils/navModel";
 import ThemeToggle from "./ThemeToggle";
 
 interface NavProps {
@@ -123,60 +124,27 @@ const Nav: React.FC<NavProps> = ({ content }) => {
     curtain.style.transform = "translateY(-100%)";
   }, [pathname]);
 
-  // Pages disponibles avec leurs labels
-  const pageLabels: Record<string, string> = {
-    'home': 'Accueil',
-    'work': 'Réalisations', 
-    'studio': 'Studio',
-    'blog': 'Journal',
-    'contact': 'Contact'
-  };
+  // Modèle de navigation partagé (pages peut être absente ici; fallback sur items uniquement)
+  const navModel = buildNavModel({
+    nav: {
+      logo: content?.logo,
+      logoImage: content?.logoImage,
+      items: content?.items,
+      pageLabels: content?.pageLabels,
+      location: content?.location,
+    },
+    pages: content?.pages ? { pages: content.pages.pages } : undefined,
+    pathname,
+  });
 
-  // Fonction pour obtenir le label d'une page (personnalisée ou par défaut)
-  const getPageLabel = (pageKey: string): string => {
-    // Vérifier d'abord les pages personnalisées
-    const customPage = content?.pages?.pages?.find(page => 
-      (page.slug || page.id) === pageKey
-    );
-    if (customPage) {
-      return customPage.title || 'Page personnalisée';
-    }
-    
-    // Gérer les liens personnalisés (objets) et les labels simples (chaînes)
-    const customLabel = content?.pageLabels?.[pageKey];
-    if (customLabel && typeof customLabel === 'object') {
-      return customLabel.title || pageLabels[pageKey] || pageKey;
-    }
-    
-    // Sinon utiliser les labels par défaut
-    return (typeof customLabel === 'string' ? customLabel : '') || pageLabels[pageKey] || pageKey;
-  };
-
-  // Créer une clé unique pour forcer le re-render
-  const navKey = JSON.stringify(content);
-
-  // Construire la liste des pages de navigation
-  const getNavigationItems = (): string[] => {
-    const defaultItems = content?.items || ['home', 'work', 'studio', 'blog', 'contact'];
-    
-    // Ajouter automatiquement les pages personnalisées qui ne sont pas déjà dans la liste
-    const customPages = content?.pages?.pages || [];
-    const customPageKeys = customPages.map(page => page.slug || page.id);
-    
-    // Filtrer pour éviter les doublons
-    const uniqueItems = [...defaultItems];
-    customPageKeys.forEach(key => {
-      if (!uniqueItems.includes(key)) {
-        uniqueItems.push(key);
-      }
-    });
-    
-    // Exclure les pages système désactivées si présent dans nav content
-    const hiddenSystem: string[] = (content as any)?.hiddenSystem || [];
-    return uniqueItems.filter((k) => !hiddenSystem.includes(k));
-  };
-
-  const navigationItems = getNavigationItems();
+  // Clé de re-render minimale
+  const navKey = JSON.stringify({
+    logo: content?.logo,
+    logoImage: content?.logoImage,
+    items: content?.items,
+    pageLabels: content?.pageLabels,
+    location: content?.location,
+  });
 
   return (
     <div className="nav" key={navKey}>
@@ -198,35 +166,18 @@ const Nav: React.FC<NavProps> = ({ content }) => {
 
       <div className="col">
         <div className="nav-items">
-          {navigationItems.map((item) => {
-            const defaultPath = item === 'home' ? "/" : `/${item}`;
-            const isActive = pathname === defaultPath;
-            const label = getPageLabel(item);
-            
-            // Gérer les liens personnalisés (objets) et les liens normaux (chaînes)
-            let href: string, target: string, onClick: ((e: React.MouseEvent<HTMLAnchorElement>) => void) | undefined;
-            const customLabel = content?.pageLabels?.[item];
-            if (customLabel && typeof customLabel === 'object') {
-              // Lien personnalisé
-              href = customLabel.customUrl || defaultPath;
-              target = customLabel.target || '_blank';
-              onClick = target === '_blank' ? undefined : handleNavigation(href);
-            } else {
-              // Lien normal
-              href = defaultPath;
-              target = '_self';
-              onClick = handleNavigation(href);
-            }
-            
+          {navModel.items.map((item) => {
+            const isExternal = item.target === '_blank';
+            const onClick = isExternal ? undefined : handleNavigation(item.href);
             return (
-              <div key={item} className="nav-item">
-                <Link 
-                  onClick={onClick} 
-                  href={href}
-                  target={target}
-                  className={isActive ? "active" : ""}
+              <div key={item.key} className="nav-item">
+                <Link
+                  onClick={onClick}
+                  href={item.href}
+                  target={item.target}
+                  className={item.active ? "active" : ""}
                 >
-                  {label}
+                  {item.label}
                 </Link>
               </div>
             );
@@ -234,7 +185,7 @@ const Nav: React.FC<NavProps> = ({ content }) => {
         </div>
         <div className="nav-copy">
           <ThemeToggle />
-          <p>{content?.location || 'paris, le havre'}</p>
+          <p>{navModel.location || 'paris, le havre'}</p>
         </div>
       </div>
     </div>
