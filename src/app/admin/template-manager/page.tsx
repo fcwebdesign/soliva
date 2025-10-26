@@ -131,8 +131,10 @@ export default function TemplateManagerPage() {
 
       if (response.ok) {
         const data = await response.json();
-        setCurrentTemplate(templateKey);
         toast.success(`Template "${templateKey}" appliqué avec succès !`);
+        // Recharger les templates et le template actuel après l'application
+        await loadTemplates();
+        await loadCurrentTemplate();
         setTimeout(() => window.location.reload(), 1000);
       } else {
         throw new Error('Erreur lors de l\'application du template');

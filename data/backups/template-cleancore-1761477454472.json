@@ -1,0 +1,45 @@
+{
+  "metadata": {
+    "title": "NextJS Page Transitions | Codegrid",
+    "description": "NextJS Page Transitions | Codegrid"
+  },
+  "nav": {
+    "items": [
+      "studio",
+      "work",
+      "contact",
+      "blog"
+    ]
+  },
+  "home": {
+    "title": "",
+    "description": "",
+    "blocks": []
+  },
+  "contact": {
+    "title": "",
+    "description": "",
+    "blocks": []
+  },
+  "studio": {
+    "title": "",
+    "description": "",
+    "blocks": []
+  },
+  "work": {
+    "title": "",
+    "description": "",
+    "blocks": []
+  },
+  "blog": {
+    "title": "",
+    "description": "",
+    "blocks": []
+  },
+  "_template": "cleancore",
+  "site": {
+    "title": "Site cleancore",
+    "description": "Description du site cleancore",
+    "logo": ""
+  }
+}

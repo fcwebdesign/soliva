@@ -299,7 +299,7 @@
             "type": "image",
             "content": "",
             "image": {
-              "src": "/uploads/1756480758926-52818ca6.png",
+              "src": "/uploads/1761371930021-7bdde0d0.webp",
               "alt": ""
             }
           },
@@ -320,7 +320,7 @@
             "type": "image",
             "content": "",
             "image": {
-              "src": "/uploads/1756480764062-769f0b02.png",
+              "src": "/uploads/1761371941090-545f8261.webp",
               "alt": ""
             }
           },
@@ -471,7 +471,7 @@
             "id": "",
             "type": "image",
             "image": {
-              "src": "/uploads/1757331361994-e78ce4f4.png",
+              "src": "/uploads/1761371865302-1610782d.webp",
               "alt": ""
             }
           }
@@ -515,7 +515,7 @@
             "id": "",
             "type": "image",
             "image": {
-              "src": "/uploads/1757334079054-84de8a0d.png",
+              "src": "/uploads/1761371878682-ea0101c1.webp",
               "alt": ""
             }
           }
@@ -557,16 +557,16 @@
       },
       {
         "title": "Kodza ",
-        "excerpt": "Plateforme web immersive de composants vanilla",
+        "excerpt": "Plateforme web immersive de composants vanilla ",
         "content": "<p>Soliva conçoit des sites sur-mesure en Next.js, rapides à charger et notés vert sur les Core Web Vitals. Nous intégrons des animations GSAP propres et légères, un SEO mesurable dès le lancement, et de l’IA utile directement dans votre CMS pour gagner du temps au quotidien. Parler de votre projet ou obtenir un devis rapide.</p>",
         "category": "Digital",
         "client": "Kodza",
         "year": "2025",
         "featured": false,
-        "status": "draft",
-        "publishedAt": "2025-10-23T08:29:13.988Z",
+        "status": "published",
+        "publishedAt": "2025-10-24T14:53:02.849Z",
         "slug": "kodza",
-        "image": "/uploads/1761208115723-6a999742.png"
+        "image": "/uploads/1761317580776-e77eb56c.webp"
       }
     ],
     "adminProjects": [
@@ -611,8 +611,8 @@
         "title": "Kodza ",
         "content": "<p>Soliva conçoit des sites sur-mesure en Next.js, rapides à charger et notés vert sur les Core Web Vitals. Nous intégrons des animations GSAP propres et légères, un SEO mesurable dès le lancement, et de l’IA utile directement dans votre CMS pour gagner du temps au quotidien. Parler de votre projet ou obtenir un devis rapide.</p>",
         "slug": "kodza",
-        "status": "draft",
-        "excerpt": "Plateforme web immersive de composants vanilla",
+        "status": "published",
+        "excerpt": "Plateforme web immersive de composants vanilla ",
         "client": "Kodza",
         "category": "Digital",
         "year": "2025",
@@ -624,9 +624,9 @@
             "content": "<p>Soliva conçoit des sites sur-mesure en Next.js, rapides à charger et notés vert sur les Core Web Vitals. Nous intégrons des animations GSAP propres et légères, un SEO mesurable dès le lancement, et de l’IA utile directement dans votre CMS pour gagner du temps au quotidien. Parler de votre projet ou obtenir un devis rapide.</p>"
           }
         ],
-        "image": "/uploads/1761208115723-6a999742.png",
+        "image": "/uploads/1761317580776-e77eb56c.webp",
         "_lastModified": "2025-10-23T08:28:04.275Z",
-        "publishedAt": "2025-10-23T08:29:13.988Z"
+        "publishedAt": "2025-10-24T14:53:02.849Z"
       }
     ],
     "seo": {
@@ -2154,7 +2154,8 @@
     "copyright": "© 2025 Soliva",
     "bottomLinks": [
       "politique-de-confidentialite",
-      "mentions-legales"
+      "mentions-legales",
+      "home"
     ],
     "legalPageLabels": {
       "custom-1757084495511": {
@@ -2326,7 +2327,8 @@
     ],
     "pinnedSystem": [
       "home",
-      "blog"
+      "blog",
+      "work"
     ],
     "home": {
       "mode": "system"

@@ -1,0 +1,157 @@
+{
+  "_template": "restaurant",
+  "site": {
+    "title": "Restaurant Le Gourmet",
+    "description": "Restaurant gastronomique français au cœur de Paris",
+    "logo": "/uploads/restaurant-logo.webp"
+  },
+  "nav": {
+    "items": ["menu", "reservations", "about", "contact"]
+  },
+  "home": {
+    "title": "Bienvenue au Restaurant Le Gourmet",
+    "subtitle": "Une expérience culinaire exceptionnelle",
+    "description": "Découvrez notre cuisine française raffinée dans un cadre élégant et chaleureux.",
+    "heroImage": "/uploads/restaurant-hero.webp",
+    "blocks": [
+      {
+        "type": "hero-restaurant",
+        "content": {
+          "title": "Bienvenue au Restaurant Le Gourmet",
+          "subtitle": "Une expérience culinaire exceptionnelle",
+          "image": "/uploads/restaurant-hero.webp",
+          "cta": "Réserver une table"
+        }
+      },
+      {
+        "type": "menu-preview",
+        "content": {
+          "title": "Notre Menu",
+          "description": "Découvrez nos spécialités",
+          "items": [
+            {
+              "name": "Entrée du Chef",
+              "description": "Foie gras mi-cuit aux figues",
+              "price": "18€"
+            },
+            {
+              "name": "Plat Principal",
+              "description": "Magret de canard aux cerises",
+              "price": "32€"
+            },
+            {
+              "name": "Dessert",
+              "description": "Tarte tatin aux pommes",
+              "price": "12€"
+            }
+          ]
+        }
+      },
+      {
+        "type": "reservation-cta",
+        "content": {
+          "title": "Réservez votre table",
+          "description": "Appelez-nous au 01 23 45 67 89",
+          "button": "Réserver maintenant"
+        }
+      }
+    ]
+  },
+  "menu": {
+    "title": "Notre Menu",
+    "description": "Découvrez notre carte gastronomique",
+    "blocks": [
+      {
+        "type": "menu-section",
+        "content": {
+          "title": "Entrées",
+          "items": [
+            {
+              "name": "Foie gras mi-cuit",
+              "description": "Aux figues et pain d'épices",
+              "price": "18€"
+            },
+            {
+              "name": "Escargots de Bourgogne",
+              "description": "Au beurre persillé",
+              "price": "15€"
+            }
+          ]
+        }
+      },
+      {
+        "type": "menu-section",
+        "content": {
+          "title": "Plats Principaux",
+          "items": [
+            {
+              "name": "Magret de canard",
+              "description": "Aux cerises et pommes de terre",
+              "price": "32€"
+            },
+            {
+              "name": "Côte de bœuf",
+              "description": "Grillée, sauce béarnaise",
+              "price": "38€"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "reservations": {
+    "title": "Réservations",
+    "description": "Réservez votre table",
+    "blocks": [
+      {
+        "type": "reservation-form",
+        "content": {
+          "title": "Réservez en ligne",
+          "description": "Ou appelez-nous au 01 23 45 67 89",
+          "form": {
+            "fields": ["name", "email", "phone", "date", "time", "guests", "message"]
+          }
+        }
+      }
+    ]
+  },
+  "about": {
+    "title": "À Propos",
+    "description": "Notre histoire",
+    "blocks": [
+      {
+        "type": "about-story",
+        "content": {
+          "title": "Notre Histoire",
+          "description": "Depuis 1985, le Restaurant Le Gourmet propose une cuisine française traditionnelle dans un cadre raffiné.",
+          "image": "/uploads/restaurant-interior.webp"
+        }
+      },
+      {
+        "type": "chef-profile",
+        "content": {
+          "title": "Notre Chef",
+          "name": "Chef Pierre Dubois",
+          "description": "Formé dans les plus grandes maisons parisiennes",
+          "image": "/uploads/chef-pierre.webp"
+        }
+      }
+    ]
+  },
+  "contact": {
+    "title": "Contact",
+    "description": "Nous contacter",
+    "blocks": [
+      {
+        "type": "contact-info",
+        "content": {
+          "title": "Informations de Contact",
+          "address": "123 Rue de la Gastronomie, 75001 Paris",
+          "phone": "01 23 45 67 89",
+          "email": "contact@restaurant-legourmet.fr",
+          "hours": "Mardi - Samedi: 19h00 - 23h00"
+        }
+      }
+    ]
+  }
+}

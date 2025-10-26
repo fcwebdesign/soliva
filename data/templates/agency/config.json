@@ -1,0 +1,55 @@
+{
+  "name": "agency",
+  "category": "agency",
+  "description": "Template pour agence créative avec portfolio, services et équipe",
+  "autonomous": true,
+  "styles": {
+    "primaryColor": "#2563EB",
+    "secondaryColor": "#1E40AF",
+    "fontFamily": "Inter"
+  },
+  "blocks": [
+    {
+      "type": "hero-agency",
+      "name": "Hero Agence",
+      "description": "Section d'accueil avec présentation de l'agence"
+    },
+    {
+      "type": "services-preview",
+      "name": "Aperçu Services",
+      "description": "Présentation des services principaux"
+    },
+    {
+      "type": "service-detail",
+      "name": "Détail Service",
+      "description": "Description détaillée d'un service"
+    },
+    {
+      "type": "portfolio-preview",
+      "name": "Aperçu Portfolio",
+      "description": "Présentation des projets phares"
+    },
+    {
+      "type": "project-grid",
+      "name": "Grille Projets",
+      "description": "Grille des projets du portfolio"
+    },
+    {
+      "type": "team-member",
+      "name": "Membre Équipe",
+      "description": "Profil d'un membre de l'équipe"
+    },
+    {
+      "type": "contact-form",
+      "name": "Formulaire Contact",
+      "description": "Formulaire de contact pour prospects"
+    },
+    {
+      "type": "contact-info",
+      "name": "Infos Contact",
+      "description": "Informations de contact de l'agence"
+    }
+  ],
+  "pages": ["home", "services", "portfolio", "team", "contact"],
+  "createdAt": "2025-01-26T10:00:00.000Z"
+}
