@@ -1,7 +1,7 @@
 {
-  "name": "minimalflow",
-  "category": "minimal",
-  "description": "Template minimal généré avec l'IA",
+  "name": "sereenity",
+  "description": "Template agency généré avec l'IA",
+  "category": "agency",
   "autonomous": true,
   "styles": {
     "primaryColor": "#3B82F6",
@@ -33,5 +33,5 @@
     "blog",
     "contact"
   ],
-  "createdAt": "2025-10-26T10:40:52.726Z"
+  "createdAt": "2025-10-26T17:44:23.135Z"
 }

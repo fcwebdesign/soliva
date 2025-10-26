@@ -1,7 +1,7 @@
 import "./globals.css";
 import { ViewTransitions } from "next-view-transitions";
 import { readContent } from "@/lib/content";
-import { draftMode } from 'next/headers';
+import { draftMode, headers } from 'next/headers';
 import { SITE_NAME, SITE_URL, DEFAULT_OG_IMAGE } from "@/lib/seo";
 import { ReactNode } from "react";
 
@@ -45,8 +45,54 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   const content = await readContent();
   const { isEnabled: isDraftMode } = await draftMode();
   const activeTemplate = await getActiveTemplate();
-  const isAutonomous = !!activeTemplate?.autonomous;
+  
+  // Vérifier si on est sur une route d'admin
+  const headersList = await headers();
+  const pathname = headersList.get('x-pathname') || '';
+  const isAdminRoute = pathname.startsWith('/admin') || 
+                      pathname.startsWith('/debug-template') || 
+                      pathname.startsWith('/apply-template');
+  
+  // Ne pas utiliser de template autonome sur les routes d'admin
+  const isAutonomous = !!activeTemplate?.autonomous && !isAdminRoute;
   const templateKey = activeTemplate?.key ?? 'default';
+  
+  // Forcer le shell global pour l'admin
+  if (isAdminRoute) {
+    return (
+      <ViewTransitions>
+        <html lang="fr" className={`${isDraftMode ? 'preview-mode' : ''}`} data-template="soliva">
+          <head>
+            <meta name="cache-control" content="no-cache, no-store, must-revalidate" />
+            <meta name="pragma" content="no-cache" />
+            <meta name="expires" content="0" />
+          </head>
+          <body className={`site ${isDraftMode ? 'preview-mode' : ''}`}>
+            <Preloader />
+            <TemplateProvider value={{ key: 'soliva' }}>
+              <NavWrapper initialContent={{...content.nav, hiddenSystem: (content as any)?.pages?.hiddenSystem || []}} />
+              {children}
+              <ConditionalFooter initialContent={content.footer} />
+            </TemplateProvider>
+            <Toaster 
+              position="top-center"
+              toastOptions={{
+                style: {
+                  marginTop: '-10px',
+                  backgroundColor: '#1f2937',
+                  color: '#ffffff',
+                  border: '1px solid #374151'
+                },
+                className: 'text-white',
+                duration: 4000
+              }}
+              theme="dark"
+            />
+          </body>
+        </html>
+      </ViewTransitions>
+    );
+  }
   
   return (
     <ViewTransitions>

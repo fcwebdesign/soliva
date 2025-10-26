@@ -1,16 +1,16 @@
 {
-  "_template": "praxis",
+  "_template": "ultra-simple",
   "metadata": {
-    "title": "Site praxis",
-    "description": "Description du site praxis"
+    "title": "Site ultra-simple",
+    "description": "Description du site ultra-simple"
   },
   "site": {
-    "title": "Site praxis",
-    "description": "Description du site praxis",
+    "title": "Site ultra-simple",
+    "description": "Description du site ultra-simple",
     "logo": ""
   },
   "nav": {
-    "logo": "praxis",
+    "logo": "ultra-simple",
     "items": [
       "home",
       "work",
@@ -20,33 +20,33 @@
     ]
   },
   "home": {
-    "title": "Accueil praxis",
-    "description": "Page d'accueil du template praxis",
+    "title": "Accueil ultra-simple",
+    "description": "Page d'accueil du template ultra-simple",
     "hero": {
-      "title": "praxis",
-      "subtitle": "généré par l'ia",
+      "title": "Bienvenue sur ultra-simple",
+      "subtitle": "Template ultra-simple généré avec l'IA",
       "cta": "Découvrir"
     },
     "blocks": []
   },
   "studio": {
-    "title": "Studio praxis",
-    "description": "Page studio du template praxis",
+    "title": "Studio ultra-simple",
+    "description": "Page studio du template ultra-simple",
     "blocks": []
   },
   "work": {
-    "title": "Projets praxis",
-    "description": "Page projets du template praxis",
+    "title": "Projets ultra-simple",
+    "description": "Page projets du template ultra-simple",
     "blocks": []
   },
   "contact": {
-    "title": "Contact praxis",
-    "description": "Page contact du template praxis",
+    "title": "Contact ultra-simple",
+    "description": "Page contact du template ultra-simple",
     "blocks": []
   },
   "blog": {
-    "title": "Blog praxis",
-    "description": "Page blog du template praxis",
+    "title": "Blog ultra-simple",
+    "description": "Page blog du template ultra-simple",
     "blocks": []
   }
 }

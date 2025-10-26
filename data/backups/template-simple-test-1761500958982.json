@@ -1,0 +1,52 @@
+{
+  "_template": "simple-test",
+  "metadata": {
+    "title": "Site simple-test",
+    "description": "Description du site simple-test"
+  },
+  "site": {
+    "title": "Site simple-test",
+    "description": "Description du site simple-test",
+    "logo": ""
+  },
+  "nav": {
+    "logo": "simple-test",
+    "items": [
+      "home",
+      "work",
+      "studio",
+      "contact",
+      "blog"
+    ]
+  },
+  "home": {
+    "title": "Accueil simple-test",
+    "description": "Page d'accueil du template simple-test",
+    "hero": {
+      "title": "Bienvenue sur simple-test",
+      "subtitle": "Template simple-test généré avec l'IA",
+      "cta": "Découvrir"
+    },
+    "blocks": []
+  },
+  "studio": {
+    "title": "Studio simple-test",
+    "description": "Page studio du template simple-test",
+    "blocks": []
+  },
+  "work": {
+    "title": "Projets simple-test",
+    "description": "Page projets du template simple-test",
+    "blocks": []
+  },
+  "contact": {
+    "title": "Contact simple-test",
+    "description": "Page contact du template simple-test",
+    "blocks": []
+  },
+  "blog": {
+    "title": "Blog simple-test",
+    "description": "Page blog du template simple-test",
+    "blocks": []
+  }
+}

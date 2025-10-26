@@ -13,6 +13,8 @@ export async function getActiveTemplate(): Promise<TemplateMeta | null> {
                         pathname.startsWith('/debug-template') || 
                         pathname.startsWith('/apply-template');
     
+    console.log('🔍 Debug getActiveTemplate - pathname:', pathname, 'isAdminRoute:', isAdminRoute);
+    
     // Vérifier les paramètres URL
     const searchParams = headersList.get('x-search-params') || '';
     const urlParams = new URLSearchParams(searchParams);

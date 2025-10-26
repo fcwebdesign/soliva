@@ -18,5 +18,23 @@ export const TEMPLATES: Record<string, TemplateMeta> = {
     name: 'Starter Example',
     description: 'Exemple de template avec Shell unique et routing client'
   },
+    'test-minimal': {
+    key: 'test-minimal',
+    autonomous: true,
+    name: 'test-minimal',
+    description: 'Template généré automatiquement'
+  },
+    'simple-test': {
+    key: 'simple-test',
+    autonomous: true,
+    name: 'simple-test',
+    description: 'Template généré automatiquement'
+  },
+    'ultra-simple': {
+    key: 'ultra-simple',
+    autonomous: true,
+    name: 'ultra-simple',
+    description: 'Template généré automatiquement'
+  },
   // Autres templates futurs...
 };
