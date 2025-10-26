@@ -12,12 +12,6 @@ export const TEMPLATES: Record<string, TemplateMeta> = {
     name: 'Soliva Original',
     description: 'Template original Soliva avec design personnalisé'
   },
-  'minimaliste-premium': { 
-    key: 'minimaliste-premium', 
-    autonomous: true,
-    name: 'Minimaliste Premium',
-    description: 'Template minimaliste avec animations fluides et typographie impactante'
-  },
   'starter': {
     key: 'starter',
     autonomous: true,

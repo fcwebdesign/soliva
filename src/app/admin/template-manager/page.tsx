@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import AdminPageLayout from '../components/AdminPageLayout';
+import { useConfirmDialog } from '@/hooks/useConfirmDialog';
 import {
   Select,
   SelectContent,
@@ -15,6 +16,7 @@ interface Template {
   name: string;
   description?: string;
   autonomous: boolean;
+  category?: string;
 }
 
 const TEMPLATE_CATEGORIES = [
@@ -29,6 +31,7 @@ const TEMPLATE_CATEGORIES = [
 ];
 
 export default function TemplateManagerPage() {
+  const { confirm, ConfirmDialog } = useConfirmDialog();
   const [templates, setTemplates] = useState<Template[]>([]);
   const [currentTemplate, setCurrentTemplate] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -142,6 +145,39 @@ export default function TemplateManagerPage() {
     }
   };
 
+  const deleteTemplate = async (templateKey: string) => {
+    const confirmed = await confirm({
+      title: 'Supprimer ce template ?',
+      description: `Le template "${templateKey}" sera définitivement supprimé. Cette action est irréversible.`,
+      confirmText: 'Supprimer',
+      variant: 'destructive'
+    });
+
+    if (!confirmed) return;
+
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/admin/templates/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ templateKey }),
+      });
+
+      if (response.ok) {
+        toast.success('Template supprimé avec succès !');
+        loadTemplates(); // Recharger la liste des templates
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Erreur ${response.status}: ${response.statusText}`);
+      }
+    } catch (error: any) {
+      console.error('Erreur:', error);
+      toast.error(`Erreur lors de la suppression: ${error.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <AdminPageLayout
       title="Template Manager"
@@ -228,6 +264,13 @@ export default function TemplateManagerPage() {
                     >
                       {currentTemplate === template.key ? 'Actif' : 'Appliquer'}
                     </button>
+                    <button
+                      onClick={() => deleteTemplate(template.key)}
+                      disabled={isLoading || currentTemplate === template.key}
+                      className="px-3 py-2 text-sm text-red-600 hover:text-red-800 border border-red-300 rounded hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      🗑️
+                    </button>
                     <a
                       href={`/?template=${template.key}`}
                       target="_blank"
@@ -269,6 +312,7 @@ export default function TemplateManagerPage() {
           </div>
         </div>
       </div>
+      <ConfirmDialog />
     </AdminPageLayout>
   );
 }

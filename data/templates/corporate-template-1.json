@@ -1,7 +1,7 @@
 {
-  "name": "blog-template-1",
-  "category": "blog",
-  "description": "Template blog généré avec l'IA",
+  "name": "corporate-template-1",
+  "category": "corporate",
+  "description": "Template corporate généré avec l'IA",
   "autonomous": true,
   "styles": {
     "primaryColor": "#3B82F6",
@@ -33,5 +33,5 @@
     "blog",
     "contact"
   ],
-  "createdAt": "2025-10-26T10:14:08.748Z"
+  "createdAt": "2025-10-26T10:31:03.444Z"
 }
