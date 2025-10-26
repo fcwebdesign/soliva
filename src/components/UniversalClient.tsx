@@ -67,7 +67,7 @@ const UniversalClient: React.FC<UniversalClientProps> = ({ content, template = '
     // Animation des caractères du h1 (seulement si pas de blocs ET pas template minimaliste)
     if (!previewContent?.blocks || previewContent.blocks.length === 0) {
       // Ne pas animer si c'est le template minimaliste
-      if (currentTemplate === 'minimaliste-premium') return;
+      if (currentTemplate === 'starter') return;
       
       const splitTitle = SplitText.create("h1", {
         type: "chars",
@@ -117,7 +117,7 @@ const UniversalClient: React.FC<UniversalClientProps> = ({ content, template = '
 
       <div className={`home template-${currentTemplate}`}>
         {/* Utiliser le template minimaliste pour la page d'accueil */}
-        {currentTemplate === 'minimaliste-premium' ? (
+        {currentTemplate === 'starter' ? (
           <MinimalisteHome 
             content={previewContent?.home || previewContent} 
             workProjects={previewContent?.work?.adminProjects || []} 

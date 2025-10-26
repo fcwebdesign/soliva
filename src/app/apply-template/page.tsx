@@ -15,7 +15,7 @@ export default function ApplyTemplate(): React.JSX.Element {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ templateId: 'minimaliste-premium' }),
+        body: JSON.stringify({ templateId: 'starter' }),
       });
 
       const data = await response.json();

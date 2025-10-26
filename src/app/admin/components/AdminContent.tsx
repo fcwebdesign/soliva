@@ -51,7 +51,7 @@ const AdminContent: React.FC<AdminContentProps> = ({
       );
     }
     
-    if (currentPage === 'home' && content?._template === 'minimaliste-premium') {
+    if (currentPage === 'home' && content?._template === 'starter') {
       return (
         <MinimalisteManager
           content={content}

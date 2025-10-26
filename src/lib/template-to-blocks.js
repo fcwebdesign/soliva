@@ -1,6 +1,6 @@
 // Fonction pour convertir les données du template en blocs
 export function convertTemplateToBlocks(content, templateKey) {
-  if (templateKey === 'minimaliste-premium') {
+  if (templateKey === 'starter') {
     return convertMinimalisteToBlocks(content);
   }
   

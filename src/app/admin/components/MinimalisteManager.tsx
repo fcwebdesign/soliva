@@ -111,7 +111,7 @@ const MinimalisteManager = ({ content, onSave, onUpdate }: MinimalisteManagerPro
             {isEditing ? 'Fermer' : 'Modifier'}
           </button>
           <button
-            onClick={() => window.open('/?template=minimaliste-premium', '_blank')}
+            onClick={() => window.open('/?template=starter', '_blank')}
             className="px-4 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700"
           >
             Aperçu
