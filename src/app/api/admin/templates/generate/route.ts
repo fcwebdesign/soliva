@@ -1,25 +1,72 @@
 import { NextResponse } from 'next/server';
-import { writeFileSync, mkdirSync, existsSync } from 'fs';
+import { writeFileSync, mkdirSync, existsSync, readdirSync } from 'fs';
 import { join } from 'path';
+import { aiTemplateNaming } from '@/lib/ai-template-naming';
 
 export async function POST(request: Request) {
   try {
     const templateData = await request.json();
     const { name, category, useAI, description, autonomous, styles, blocks, pages } = templateData;
     
-    if (!name || !category) {
+    if (!category) {
       return NextResponse.json(
-        { success: false, error: 'Nom et catégorie requis' },
+        { success: false, error: 'Catégorie requise' },
         { status: 400 }
       );
     }
 
-    // Générer un nom unique si nécessaire
-    let templateName = name;
-    let counter = 1;
-    while (existsSync(join(process.cwd(), 'src', 'templates', templateName))) {
-      templateName = `${name}-${counter}`;
-      counter++;
+    // Générer un nom créatif avec l'IA
+    let templateName: string;
+    
+    if (useAI !== false) { // Utiliser l'IA par défaut
+      try {
+        // Récupérer les noms existants pour éviter les doublons
+        const existingNames: string[] = [];
+        
+        // Templates statiques
+        const staticTemplates = ['soliva', 'starter'];
+        existingNames.push(...staticTemplates);
+        
+        // Templates générés dynamiquement
+        const dataTemplatesDir = join(process.cwd(), 'data', 'templates');
+        if (existsSync(dataTemplatesDir)) {
+          const templateFiles = readdirSync(dataTemplatesDir).filter(file => file.endsWith('.json'));
+          templateFiles.forEach(file => {
+            const templateKey = file.replace('.json', '');
+            existingNames.push(templateKey);
+          });
+        }
+        
+        // Templates dans src/templates
+        const templatesDir = join(process.cwd(), 'src', 'templates');
+        if (existsSync(templatesDir)) {
+          const templateDirs = readdirSync(templatesDir, { withFileTypes: true })
+            .filter(dirent => dirent.isDirectory())
+            .map(dirent => dirent.name);
+          existingNames.push(...templateDirs);
+        }
+        
+        templateName = await aiTemplateNaming.getUniqueTemplateName(category, existingNames);
+        console.log(`🤖 Nom généré par IA: "${templateName}"`);
+        
+      } catch (error) {
+        console.error('❌ Erreur génération nom IA:', error);
+        // Fallback vers nom générique
+        templateName = `${category}-template`;
+        let counter = 1;
+        while (existsSync(join(process.cwd(), 'src', 'templates', templateName))) {
+          templateName = `${category}-template-${counter}`;
+          counter++;
+        }
+      }
+    } else {
+      // Utiliser le nom fourni ou générer un nom générique
+      templateName = name || `${category}-template`;
+      let counter = 1;
+      while (existsSync(join(process.cwd(), 'src', 'templates', templateName))) {
+        templateName = `${name || category}-${counter}`;
+        counter++;
+      }
     }
 
     // Créer le dossier du template

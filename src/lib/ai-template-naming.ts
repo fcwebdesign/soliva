@@ -78,19 +78,39 @@ export class AITemplateNaming {
   private buildPrompt(request: AINamingRequest): string {
     const { category, style, industry, mood } = request;
     
-    let prompt = `Génère 5 noms créatifs pour un template de site web de catégorie "${category}".`;
+    const categoryPrompts: Record<string, string> = {
+      'portfolio': 'template portfolio créatif pour artistes, designers, photographes',
+      'agency': 'template agence digitale moderne pour agences marketing et communication',
+      'blog': 'template blog élégant pour créateurs de contenu et influenceurs',
+      'ecommerce': 'template boutique en ligne premium pour e-commerce et marketplace',
+      'landing': 'template landing page optimisée pour conversions et ventes',
+      'corporate': 'template corporate professionnel pour entreprises et institutions',
+      'creative': 'template créatif innovant avec design artistique et moderne',
+      'minimal': 'template minimaliste épuré avec design sobre et élégant'
+    };
+    
+    let prompt = `Génère 8 noms créatifs et uniques pour un ${categoryPrompts[category] || `template de catégorie "${category}"`}.`;
     
     if (style) prompt += ` Style: ${style}.`;
     if (industry) prompt += ` Industrie: ${industry}.`;
     if (mood) prompt += ` Ambiance: ${mood}.`;
     
-    prompt += `\n\nLes noms doivent être:\n`;
-    prompt += `- Créatifs et mémorables\n`;
-    prompt += `- Professionnels\n`;
-    prompt += `- En anglais (pour l'URL)\n`;
-    prompt += `- Courts (2-3 mots max)\n`;
-    prompt += `- Sans caractères spéciaux\n\n`;
-    prompt += `Réponds en JSON: {"names": ["nom1", "nom2", ...], "description": "description du template"}`;
+    prompt += `\n\nInspire-toi du style des templates Framer Marketplace. Les noms doivent être:\n`;
+    prompt += `- Créatifs, mémorables et originaux (comme "Talentify", "Sereenity", "Portfolite")\n`;
+    prompt += `- Un seul mot ou deux mots maximum\n`;
+    prompt += `- Sans caractères spéciaux ni espaces\n`;
+    prompt += `- Éviter les mots génériques comme "template", "site", "web", "modern", "premium"\n`;
+    prompt += `- Utiliser des mots inventés, des combinaisons créatives ou des mots évocateurs\n`;
+    prompt += `- Style moderne et professionnel\n\n`;
+    
+    prompt += `Exemples inspirants par catégorie:\n`;
+    prompt += `- Portfolio: "Talentify", "Artboard", "Pixend", "PureVisuals", "Brandora"\n`;
+    prompt += `- Agency: "Sereenity", "ReadyLaunch", "Stratex", "Gordian", "Trifecta"\n`;
+    prompt += `- Blog: "Limitless", "Breve", "Viral", "Hypersonic", "Clover"\n`;
+    prompt += `- Ecommerce: "Dalgona", "Bombon", "Lungo", "Swipe", "Helium"\n`;
+    prompt += `- Corporate: "Praxis", "Effica", "Omnis", "Pearl", "Acelia"\n\n`;
+    
+    prompt += `Réponds UNIQUEMENT en JSON: {"names": ["nom1", "nom2", ...], "description": "description créative du template"}`;
 
     return prompt;
   }
@@ -98,30 +118,42 @@ export class AITemplateNaming {
   private getFallbackNames(category: string): AINamingResponse {
     const fallbacks: Record<string, { names: string[], description: string }> = {
       'portfolio': {
-        names: ['creative-showcase', 'artistic-portfolio', 'design-gallery', 'creative-works', 'portfolio-pro'],
-        description: 'Template portfolio créatif'
+        names: ['Talentify', 'Artboard', 'Pixend', 'PureVisuals', 'Brandora', 'CreativeFlow', 'VisualHub', 'DesignCore'],
+        description: 'Template portfolio créatif pour artistes et designers'
       },
       'ecommerce': {
-        names: ['shop-modern', 'store-premium', 'commerce-pro', 'marketplace-elegant', 'shop-luxury'],
-        description: 'Template e-commerce moderne'
+        names: ['Dalgona', 'Bombon', 'Lungo', 'Swipe', 'Helium', 'Shopify', 'CommerceFlow', 'StoreCore'],
+        description: 'Template e-commerce premium et moderne'
       },
       'agency': {
-        names: ['agency-pro', 'creative-studio', 'digital-agency', 'marketing-hub', 'agency-modern'],
-        description: 'Template agence professionnelle'
+        names: ['Sereenity', 'ReadyLaunch', 'Stratex', 'Gordian', 'Trifecta', 'AgencyFlow', 'CreativeCore', 'DigitalHub'],
+        description: 'Template agence digitale professionnelle'
       },
       'blog': {
-        names: ['blog-minimal', 'content-hub', 'writing-space', 'blog-elegant', 'content-studio'],
-        description: 'Template blog élégant'
+        names: ['Limitless', 'Breve', 'Viral', 'Hypersonic', 'Clover', 'ContentFlow', 'StoryCore', 'WritingHub'],
+        description: 'Template blog élégant pour créateurs de contenu'
       },
       'corporate': {
-        names: ['corporate-pro', 'business-premium', 'enterprise-modern', 'corporate-elegant', 'business-hub'],
-        description: 'Template corporate professionnel'
+        names: ['Praxis', 'Effica', 'Omnis', 'Pearl', 'Acelia', 'BusinessFlow', 'CorporateCore', 'EnterpriseHub'],
+        description: 'Template corporate professionnel et moderne'
+      },
+      'landing': {
+        names: ['Landio', 'ConversionFlow', 'SalesCore', 'LeadHub', 'ConvertPro', 'LandingFlow', 'SalesCore', 'LeadHub'],
+        description: 'Template landing page optimisée pour conversions'
+      },
+      'creative': {
+        names: ['CreativeFlow', 'ArtCore', 'DesignHub', 'InnovateFlow', 'ArtCore', 'CreativeHub', 'DesignFlow', 'InnovateCore'],
+        description: 'Template créatif innovant et artistique'
+      },
+      'minimal': {
+        names: ['MinimalFlow', 'CleanCore', 'SimpleHub', 'PureFlow', 'CleanCore', 'MinimalHub', 'SimpleFlow', 'PureCore'],
+        description: 'Template minimaliste épuré et élégant'
       }
     };
 
     return fallbacks[category.toLowerCase()] || {
-      names: [`${category}-template`, `${category}-modern`, `${category}-premium`, `${category}-pro`, `${category}-elegant`],
-      description: `Template ${category} généré`
+      names: [`${category}Flow`, `${category}Core`, `${category}Hub`, `${category}Pro`, `${category}Studio`, `${category}Space`, `${category}Lab`, `${category}Works`],
+      description: `Template ${category} moderne et professionnel`
     };
   }
 

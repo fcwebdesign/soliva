@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import BlockRenderer from '@/blocks/BlockRenderer';
 
-export default function EcommercetemplateClient() {
+export default function CleancoreClient() {
   const [content, setContent] = useState<any>(null);
 
   useEffect(() => {
@@ -33,7 +33,7 @@ export default function EcommercetemplateClient() {
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <h1 className="text-2xl font-bold text-gray-900">ecommerce-template</h1>
+            <h1 className="text-2xl font-bold text-gray-900">cleancore</h1>
             <nav className="hidden md:flex space-x-8">
               <a href="/" className="text-gray-500 hover:text-gray-900">Accueil</a>
               <a href="/work" className="text-gray-500 hover:text-gray-900">Projets</a>
@@ -47,8 +47,8 @@ export default function EcommercetemplateClient() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center py-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Template ecommerce-template</h2>
-          <p className="text-gray-600 mb-8">Template ecommerce généré avec l'IA</p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Template cleancore</h2>
+          <p className="text-gray-600 mb-8">Template minimal généré avec l'IA</p>
           <div className="bg-gray-50 rounded-lg p-8">
             <p className="text-gray-500">Contenu du template à configurer</p>
           </div>
@@ -58,7 +58,7 @@ export default function EcommercetemplateClient() {
       <footer className="bg-gray-50 border-t border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center text-gray-500">
-            <p>&copy; 2025 ecommerce-template. Template généré automatiquement.</p>
+            <p>&copy; 2025 cleancore. Template généré automatiquement.</p>
           </div>
         </div>
       </footer>
