@@ -301,8 +301,8 @@ export const useAdminPage = () => {
       
       const previewPath = getPagePath(currentPage);
       let previewUrl = `${previewPath}?preview=${previewId}`;
-      if (content._template === 'minimaliste-premium') {
-        previewUrl = `/?template=minimaliste-premium&preview=${previewId}`;
+      if (content._template === 'starter') {
+        previewUrl = `/?template=starter&preview=${previewId}`;
       }
       
       window.open(previewUrl, '_blank');
