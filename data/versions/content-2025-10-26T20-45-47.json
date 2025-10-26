@@ -1,0 +1,52 @@
+{
+  "_template": "pearl",
+  "metadata": {
+    "title": "Site pearl",
+    "description": "Description du site pearl"
+  },
+  "site": {
+    "title": "Site pearl",
+    "description": "Description du site pearl",
+    "logo": ""
+  },
+  "nav": {
+    "logo": "pearl",
+    "items": [
+      "home",
+      "work",
+      "studio",
+      "contact",
+      "blog"
+    ]
+  },
+  "home": {
+    "title": "Accueil pearl",
+    "description": "Page d'accueil du template pearl",
+    "hero": {
+      "title": "Bienvenue sur pearl",
+      "subtitle": "Template pearl généré avec l'IA",
+      "cta": "Découvrir"
+    },
+    "blocks": []
+  },
+  "studio": {
+    "title": "Studio pearl",
+    "description": "Page studio du template pearl",
+    "blocks": []
+  },
+  "work": {
+    "title": "Projets pearl",
+    "description": "Page projets du template pearl",
+    "blocks": []
+  },
+  "contact": {
+    "title": "Contact pearl",
+    "description": "Page contact du template pearl",
+    "blocks": []
+  },
+  "blog": {
+    "title": "Blog pearl",
+    "description": "Page blog du template pearl",
+    "blocks": []
+  }
+}

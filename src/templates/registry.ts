@@ -81,5 +81,17 @@ export const TEMPLATES: Record<string, TemplateMeta> = {
     name: 'pixend',
     description: 'Template généré automatiquement'
   },
+    'limitless': {
+    key: 'limitless',
+    autonomous: true,
+    name: 'limitless',
+    description: 'Template généré automatiquement'
+  },
+    'pearl': {
+    key: 'pearl',
+    autonomous: true,
+    name: 'pearl',
+    description: 'Template généré automatiquement'
+  },
   // Autres templates futurs...
 };

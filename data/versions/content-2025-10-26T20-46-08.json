@@ -27,21 +27,7 @@
       "subtitle": "Template pearl généré avec l'IA",
       "cta": "Découvrir"
     },
-    "blocks": [
-      {
-        "id": "block-1",
-        "type": "content",
-        "content": ""
-      },
-      {
-        "id": "h2-1761511561731",
-        "type": "h2",
-        "data": {
-          "content": ""
-        },
-        "content": "Boostez votre marque maintenant"
-      }
-    ]
+    "blocks": []
   },
   "studio": {
     "title": "Studio pearl",

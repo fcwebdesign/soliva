@@ -10,6 +10,7 @@ import ConditionalFooter from "@/components/ConditionalFooter";
 import { getActiveTemplate } from "@/templates/get-active-template";
 import { TemplateRenderer } from "@/templates/TemplateRenderer";
 import { TemplateProvider } from "@/templates/context";
+import ThemeTransitions from "@/templates/ThemeTransitions";
 import { Toaster } from "@/components/ui/sonner";
 import Preloader from "@/components/Preloader";
 
@@ -70,6 +71,8 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           <body className={`site ${isDraftMode ? 'preview-mode' : ''}`}>
             <Preloader />
             <TemplateProvider value={{ key: 'soliva' }}>
+              {/* Per-template page transitions (no-op for admin since key=soliva) */}
+              <ThemeTransitions />
               <NavWrapper initialContent={{...content.nav, hiddenSystem: (content as any)?.pages?.hiddenSystem || []}} />
               {children}
               <ConditionalFooter initialContent={content.footer} />
@@ -107,6 +110,8 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           <Preloader />
           
           <TemplateProvider value={{ key: templateKey }}>
+            {/* Per-template page transitions */}
+            <ThemeTransitions />
             {isAutonomous ? (
               // DÉLÉGATION TOTALE AU TEMPLATE
               <TemplateRenderer keyName={activeTemplate.key} />

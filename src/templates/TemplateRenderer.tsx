@@ -13,6 +13,8 @@ import MinimalflowClient from '@/templates/minimalflow/minimalflow-client';
 import TalentifyClient from '@/templates/talentify/talentify-client';
 import ArtboardClient from '@/templates/artboard/artboard-client';
 import PixendClient from '@/templates/pixend/pixend-client';
+import LimitlessClient from '@/templates/limitless/limitless-client';
+import PearlClient from '@/templates/pearl/pearl-client';
 export async function TemplateRenderer({ keyName }: { keyName: string }) {
   const headersList = await headers();
   const pathname = headersList.get('x-pathname') || '/';
@@ -55,6 +57,12 @@ export async function TemplateRenderer({ keyName }: { keyName: string }) {
     
     case 'pixend':
       return <PixendClient />;
+    
+    case 'limitless':
+      return <LimitlessClient />;
+    
+    case 'pearl':
+      return <PearlClient />;
     default:
       // Fallback: afficher un shell autonome générique (header/footer basiques)
       return <GenericAutonomous keyName={keyName} pathname={pathname} />;

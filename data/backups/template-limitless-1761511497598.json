@@ -1,0 +1,87 @@
+{
+  "_template": "limitless",
+  "metadata": {
+    "title": "Site limitless",
+    "description": "Description du site limitless"
+  },
+  "site": {
+    "title": "Site limitless",
+    "description": "Description du site limitless",
+    "logo": ""
+  },
+  "nav": {
+    "logo": "limitless",
+    "items": [
+      "home",
+      "work",
+      "studio",
+      "contact",
+      "blog"
+    ]
+  },
+  "home": {
+    "title": "Accueil limitless",
+    "description": "Page d'accueil du template limitless",
+    "hero": {
+      "title": "Bienvenue sur limitless",
+      "subtitle": "Template limitless généré avec l'IA",
+      "cta": "Découvrir"
+    },
+    "blocks": []
+  },
+  "studio": {
+    "title": "Studio limitless",
+    "description": "Page studio du template limitless",
+    "blocks": []
+  },
+  "work": {
+    "title": "Projets limitless",
+    "description": "Page projets du template limitless",
+    "blocks": []
+  },
+  "contact": {
+    "title": "Contact limitless",
+    "description": "Page contact du template limitless",
+    "blocks": []
+  },
+  "blog": {
+    "title": "Blog limitless",
+    "description": "Page blog du template limitless",
+    "blocks": []
+  },
+  "footer": {
+    "logo": "sdffdsfsd",
+    "logoImage": "",
+    "description": "ddfdsdfs",
+    "links": [
+      {
+        "id": "link-1761511415191",
+        "label": "Journal",
+        "title": "Journal",
+        "url": "blog",
+        "customUrl": "",
+        "target": "_self"
+      },
+      {
+        "id": "link-1761511415619",
+        "label": "Studio",
+        "title": "Studio",
+        "url": "studio",
+        "customUrl": "",
+        "target": "_self"
+      }
+    ],
+    "socialLinks": [
+      {
+        "id": "social-1761511425907",
+        "platform": "reddit",
+        "url": "qsdqdsqsd"
+      }
+    ],
+    "copyright": "© 2026 Soliva. Tous droits réservés.",
+    "bottomLinks": [
+      "work"
+    ],
+    "legalPageLabels": {}
+  }
+}
