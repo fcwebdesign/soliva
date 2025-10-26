@@ -18,9 +18,9 @@ export default function HeaderPearl({ nav, pages }: any) {
           <div className="flex items-center min-w-0">
             <Link href="/" className="flex items-center space-x-3">
               {model.brand.image ? (
-                <img src={model.brand.image} alt="Logo" className="h-8 w-auto object-contain max-w-[180px]" />
+                <img src={model.brand.image} alt="Logo" className="h-8 w-auto object-contain max-w-[180px] vt-brand" />
               ) : (
-                <span className="text-xl font-bold tracking-tight text-gray-900 truncate">{model.brand.text}</span>
+                <span className="text-xl font-bold tracking-tight text-gray-900 truncate vt-brand">{model.brand.text}</span>
               )}
             </Link>
           </div>
