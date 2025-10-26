@@ -1,0 +1,52 @@
+{
+  "_template": "pixend",
+  "metadata": {
+    "title": "Site pixend",
+    "description": "Description du site pixend"
+  },
+  "site": {
+    "title": "Site pixend",
+    "description": "Description du site pixend",
+    "logo": ""
+  },
+  "nav": {
+    "logo": "pixend",
+    "items": [
+      "home",
+      "work",
+      "studio",
+      "contact",
+      "blog"
+    ]
+  },
+  "home": {
+    "title": "Accueil pixend",
+    "description": "Page d'accueil du template pixend",
+    "hero": {
+      "title": "Bienvenue sur pixend",
+      "subtitle": "Template pixend généré avec l'IA",
+      "cta": "Découvrir"
+    },
+    "blocks": []
+  },
+  "studio": {
+    "title": "Studio pixend",
+    "description": "Page studio du template pixend",
+    "blocks": []
+  },
+  "work": {
+    "title": "Projets pixend",
+    "description": "Page projets du template pixend",
+    "blocks": []
+  },
+  "contact": {
+    "title": "Contact pixend",
+    "description": "Page contact du template pixend",
+    "blocks": []
+  },
+  "blog": {
+    "title": "Blog pixend",
+    "description": "Page blog du template pixend",
+    "blocks": []
+  }
+}

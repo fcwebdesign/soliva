@@ -10,6 +10,9 @@ import SalescoreClient from '@/templates/salescore/salescore-client';
 import OmnisClient from '@/templates/omnis/omnis-client';
 import DesignhubClient from '@/templates/designhub/designhub-client';
 import MinimalflowClient from '@/templates/minimalflow/minimalflow-client';
+import TalentifyClient from '@/templates/talentify/talentify-client';
+import ArtboardClient from '@/templates/artboard/artboard-client';
+import PixendClient from '@/templates/pixend/pixend-client';
 export async function TemplateRenderer({ keyName }: { keyName: string }) {
   const headersList = await headers();
   const pathname = headersList.get('x-pathname') || '/';
@@ -42,6 +45,15 @@ export async function TemplateRenderer({ keyName }: { keyName: string }) {
       return <DesignhubClient />;
     case 'minimalflow':
       return <MinimalflowClient />;
+    
+    case 'talentify':
+      return <TalentifyClient />;
+    
+    case 'artboard':
+      return <ArtboardClient />;
+    
+    case 'pixend':
+      return <PixendClient />;
     default:
       // Fallback: afficher un shell autonome générique (header/footer basiques)
       return <GenericAutonomous keyName={keyName} pathname={pathname} />;

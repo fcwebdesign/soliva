@@ -1,0 +1,52 @@
+{
+  "_template": "artboard",
+  "metadata": {
+    "title": "Site artboard",
+    "description": "Description du site artboard"
+  },
+  "site": {
+    "title": "Site artboard",
+    "description": "Description du site artboard",
+    "logo": ""
+  },
+  "nav": {
+    "logo": "artboard",
+    "items": [
+      "home",
+      "work",
+      "studio",
+      "contact",
+      "blog"
+    ]
+  },
+  "home": {
+    "title": "Accueil artboard",
+    "description": "Page d'accueil du template artboard",
+    "hero": {
+      "title": "Bienvenue sur artboard",
+      "subtitle": "Template artboard généré avec l'IA",
+      "cta": "Découvrir"
+    },
+    "blocks": []
+  },
+  "studio": {
+    "title": "Studio artboard",
+    "description": "Page studio du template artboard",
+    "blocks": []
+  },
+  "work": {
+    "title": "Projets artboard",
+    "description": "Page projets du template artboard",
+    "blocks": []
+  },
+  "contact": {
+    "title": "Contact artboard",
+    "description": "Page contact du template artboard",
+    "blocks": []
+  },
+  "blog": {
+    "title": "Blog artboard",
+    "description": "Page blog du template artboard",
+    "blocks": []
+  }
+}

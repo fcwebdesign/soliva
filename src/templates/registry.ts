@@ -63,5 +63,23 @@ export const TEMPLATES: Record<string, TemplateMeta> = {
     name: 'minimalflow',
     description: 'Template généré automatiquement'
   },
+    'talentify': {
+    key: 'talentify',
+    autonomous: true,
+    name: 'talentify',
+    description: 'Template généré automatiquement'
+  },
+    'artboard': {
+    key: 'artboard',
+    autonomous: true,
+    name: 'artboard',
+    description: 'Template généré automatiquement'
+  },
+    'pixend': {
+    key: 'pixend',
+    autonomous: true,
+    name: 'pixend',
+    description: 'Template généré automatiquement'
+  },
   // Autres templates futurs...
 };

@@ -1,0 +1,81 @@
+{
+  "_template": "minimalflow",
+  "metadata": {
+    "title": "Site minimalflow",
+    "description": "Description du site minimalflow"
+  },
+  "site": {
+    "title": "Site minimalflow",
+    "description": "Description du site minimalflow",
+    "logo": ""
+  },
+  "nav": {
+    "logo": "minimalflow",
+    "items": [
+      "home",
+      "work",
+      "studio",
+      "contact",
+      "blog"
+    ]
+  },
+  "home": {
+    "title": "Accueil minimalflow",
+    "description": "Page d'accueil du template minimalflow",
+    "hero": {
+      "title": "Bienvenue sur minimalflow",
+      "subtitle": "Template minimalflow généré avec l'IA",
+      "cta": "Découvrir"
+    },
+    "blocks": []
+  },
+  "studio": {
+    "title": "Studio minimalflow",
+    "description": "Page studio du template minimalflow",
+    "blocks": []
+  },
+  "work": {
+    "title": "Projets minimalflow",
+    "description": "Page projets du template minimalflow",
+    "blocks": []
+  },
+  "contact": {
+    "title": "Contact minimalflow",
+    "description": "Page contact du template minimalflow",
+    "blocks": []
+  },
+  "blog": {
+    "title": "Blog minimalflow",
+    "description": "Page blog du template minimalflow",
+    "blocks": []
+  },
+  "footer": {
+    "logo": "soliva",
+    "logoImage": "",
+    "description": "",
+    "links": [
+      {
+        "id": "link-1761505096164",
+        "label": "Studio",
+        "title": "Studio",
+        "url": "studio",
+        "customUrl": "",
+        "target": "_self"
+      },
+      {
+        "id": "link-1761505121979",
+        "label": "Accueil",
+        "title": "Accueil",
+        "url": "home",
+        "customUrl": "",
+        "target": "_self"
+      }
+    ],
+    "socialLinks": [],
+    "copyright": "© 2024 Soliva. Tous droits réservés.",
+    "bottomLinks": [
+      "home"
+    ],
+    "legalPageLabels": {}
+  }
+}
