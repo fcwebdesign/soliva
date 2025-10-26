@@ -1,0 +1,52 @@
+{
+  "_template": "simplehub",
+  "metadata": {
+    "title": "Site simplehub",
+    "description": "Description du site simplehub"
+  },
+  "site": {
+    "title": "Site simplehub",
+    "description": "Description du site simplehub",
+    "logo": ""
+  },
+  "nav": {
+    "logo": "simplehub",
+    "items": [
+      "home",
+      "work",
+      "studio",
+      "contact",
+      "blog"
+    ]
+  },
+  "home": {
+    "title": "Accueil simplehub",
+    "description": "Page d'accueil du template simplehub",
+    "hero": {
+      "title": "Bienvenue sur simplehub",
+      "subtitle": "Template simplehub généré avec l'IA",
+      "cta": "Découvrir"
+    },
+    "blocks": []
+  },
+  "studio": {
+    "title": "Studio simplehub",
+    "description": "Page studio du template simplehub",
+    "blocks": []
+  },
+  "work": {
+    "title": "Projets simplehub",
+    "description": "Page projets du template simplehub",
+    "blocks": []
+  },
+  "contact": {
+    "title": "Contact simplehub",
+    "description": "Page contact du template simplehub",
+    "blocks": []
+  },
+  "blog": {
+    "title": "Blog simplehub",
+    "description": "Page blog du template simplehub",
+    "blocks": []
+  }
+}

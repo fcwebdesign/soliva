@@ -299,7 +299,7 @@
             "type": "image",
             "content": "",
             "image": {
-              "src": "/uploads/1756480758926-52818ca6.png",
+              "src": "/uploads/1761371930021-7bdde0d0.webp",
               "alt": ""
             }
           },
@@ -320,7 +320,7 @@
             "type": "image",
             "content": "",
             "image": {
-              "src": "/uploads/1756480764062-769f0b02.png",
+              "src": "/uploads/1761371941090-545f8261.webp",
               "alt": ""
             }
           },
@@ -2334,5 +2334,6 @@
       "mode": "system"
     },
     "hiddenSystem": []
-  }
+  },
+  "_template": "soliva"
 }

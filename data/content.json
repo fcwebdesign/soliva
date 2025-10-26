@@ -1,16 +1,16 @@
 {
-  "_template": "praxis",
+  "_template": "talentify",
   "metadata": {
-    "title": "Site praxis",
-    "description": "Description du site praxis"
+    "title": "Site talentify",
+    "description": "Description du site talentify"
   },
   "site": {
-    "title": "Site praxis",
-    "description": "Description du site praxis",
+    "title": "Site talentify",
+    "description": "Description du site talentify",
     "logo": ""
   },
   "nav": {
-    "logo": "praxis",
+    "logo": "talentify",
     "items": [
       "home",
       "work",
@@ -20,33 +20,33 @@
     ]
   },
   "home": {
-    "title": "Accueil praxis",
-    "description": "Page d'accueil du template praxis",
+    "title": "Accueil talentify",
+    "description": "Page d'accueil du template talentify",
     "hero": {
-      "title": "praxis",
-      "subtitle": "généré par l'ia",
+      "title": "Bienvenue sur talentify",
+      "subtitle": "Template talentify généré avec l'IA",
       "cta": "Découvrir"
     },
     "blocks": []
   },
   "studio": {
-    "title": "Studio praxis",
-    "description": "Page studio du template praxis",
+    "title": "Studio talentify",
+    "description": "Page studio du template talentify",
     "blocks": []
   },
   "work": {
-    "title": "Projets praxis",
-    "description": "Page projets du template praxis",
+    "title": "Projets talentify",
+    "description": "Page projets du template talentify",
     "blocks": []
   },
   "contact": {
-    "title": "Contact praxis",
-    "description": "Page contact du template praxis",
+    "title": "Contact talentify",
+    "description": "Page contact du template talentify",
     "blocks": []
   },
   "blog": {
-    "title": "Blog praxis",
-    "description": "Page blog du template praxis",
+    "title": "Blog talentify",
+    "description": "Page blog du template talentify",
     "blocks": []
   }
 }

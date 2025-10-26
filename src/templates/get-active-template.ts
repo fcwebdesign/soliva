@@ -26,9 +26,10 @@ export async function getActiveTemplate(): Promise<TemplateMeta | null> {
     }
     
     // 1. Paramètre ?template=... (priorité absolue, même en mode preview)
-    if (templateParam && TEMPLATES[templateParam]) {
+    if (templateParam) {
+      const meta: TemplateMeta = TEMPLATES[templateParam] || { key: templateParam, autonomous: true, name: templateParam };
       console.log('🔍 Template paramètre détecté:', templateParam, hasPreviewParam ? '(mode preview)' : '');
-      return TEMPLATES[templateParam];
+      return meta;
     }
     
     // En mode preview sans paramètre template, ne pas appliquer de template
@@ -40,9 +41,10 @@ export async function getActiveTemplate(): Promise<TemplateMeta | null> {
     // 2. Configuration du site (content.json) - appliqué sur toutes les pages
     const content = await readContent();
     const configTemplate = content._template;
-    if (configTemplate && TEMPLATES[configTemplate]) {
+    if (configTemplate) {
+      const meta: TemplateMeta = TEMPLATES[configTemplate] || { key: configTemplate, autonomous: true, name: configTemplate };
       console.log('⚙️ Template config détecté:', configTemplate, 'sur', pathname);
-      return TEMPLATES[configTemplate];
+      return meta;
     }
     
     return null;

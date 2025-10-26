@@ -1,9 +1,11 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import BlockRenderer from '@/blocks/BlockRenderer';
 
 export default function CleancoreClient() {
   const [content, setContent] = useState<any>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     const loadContent = async () => {
@@ -18,7 +20,7 @@ export default function CleancoreClient() {
       }
     };
     loadContent();
-  }, []);
+  }, [pathname]); // Recharger le contenu quand le pathname change
 
   if (!content) {
     return (

@@ -46,10 +46,10 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - admin (admin routes)
-     * - agency-premium (template routes)
-     * - portfolio-signature (template routes)
+     *
+     * Note: On inclut /admin pour que le middleware ajoute les headers x-pathname/x-search-params
+     * afin que getActiveTemplate puisse détecter et ignorer le template sur les routes admin.
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|admin|agency-premium|portfolio-signature).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 }; 

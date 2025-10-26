@@ -11,20 +11,21 @@
   },
   "nav": {
     "logo": "praxis",
+    "logoImage": "",
+    "location": "paris, le havre",
     "items": [
       "home",
       "work",
-      "studio",
-      "contact",
-      "blog"
-    ]
+      "contact"
+    ],
+    "pageLabels": {}
   },
   "home": {
     "title": "Accueil praxis",
     "description": "Page d'accueil du template praxis",
     "hero": {
-      "title": "généré par l'ia",
-      "subtitle": "praxis",
+      "title": "Bienvenue sur praxis",
+      "subtitle": "Template praxis généré avec l'IA",
       "cta": "Découvrir"
     },
     "blocks": []

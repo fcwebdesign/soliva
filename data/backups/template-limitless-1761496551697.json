@@ -1,0 +1,79 @@
+{
+  "_template": "limitless",
+  "metadata": {
+    "title": "Site talentify",
+    "description": "Description du site talentify"
+  },
+  "site": {
+    "title": "Site talentify",
+    "description": "Description du site talentify",
+    "logo": ""
+  },
+  "nav": {
+    "logo": "talentify",
+    "items": [
+      "home",
+      "work",
+      "studio",
+      "contact",
+      "blog"
+    ]
+  },
+  "home": {
+    "title": "Accueil talentify",
+    "description": "Page d'accueil du template talentify",
+    "hero": {
+      "title": "Bienvenue sur talentify",
+      "subtitle": "Template talentify généré avec l'IA",
+      "cta": "Découvrir"
+    },
+    "blocks": []
+  },
+  "studio": {
+    "title": "Studio talentify",
+    "description": "Page studio du template talentify",
+    "blocks": []
+  },
+  "work": {
+    "title": "Projets talentify",
+    "description": "Page projets du template talentify",
+    "blocks": []
+  },
+  "contact": {
+    "title": "Contact talentify",
+    "description": "Page contact du template talentify",
+    "blocks": []
+  },
+  "blog": {
+    "title": "Blog talentify",
+    "description": "Page blog du template talentify",
+    "blocks": []
+  },
+  "footer": {
+    "logo": "soliva",
+    "logoImage": "",
+    "description": "",
+    "links": [
+      {
+        "id": "link-1761496459279",
+        "label": "Accueil",
+        "title": "Accueil",
+        "url": "home",
+        "customUrl": "",
+        "target": "_self"
+      },
+      {
+        "id": "link-1761496459845",
+        "label": "Réalisations",
+        "title": "Réalisations",
+        "url": "work",
+        "customUrl": "",
+        "target": "_self"
+      }
+    ],
+    "socialLinks": [],
+    "copyright": "© 2024 Soliva. Tous droits réservés.",
+    "bottomLinks": [],
+    "legalPageLabels": {}
+  }
+}

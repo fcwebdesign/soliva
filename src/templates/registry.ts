@@ -18,5 +18,15 @@ export const TEMPLATES: Record<string, TemplateMeta> = {
     name: 'Starter Example',
     description: 'Exemple de template avec Shell unique et routing client'
   },
-  // Autres templates futurs...
+  'praxis': {
+    key: 'praxis',
+    autonomous: true,
+    name: 'Praxis',
+    description: 'Template corporate léger avec en-tête dédié'
+  },'effica': {
+    key: 'effica',
+    autonomous: true,
+    name: 'effica',
+    description: 'Template généré automatiquement'
+  },// Autres templates futurs...
 };

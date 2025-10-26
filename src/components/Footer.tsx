@@ -164,7 +164,7 @@ const Footer: React.FC<FooterProps> = ({ content, fullContent }) => {
             {/* Copyright - Colonne gauche */}
             <div className="text-left">
               <p className="text-sm text-gray-600">
-                {footerContent.copyright || '© 2024 Soliva. Tous droits réservés.'}
+                {footerContent.copyright || `© ${new Date().getFullYear()} ${footerContent.logo || 'Soliva'}. Tous droits réservés.`}
               </p>
             </div>
             

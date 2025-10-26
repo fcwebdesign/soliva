@@ -1,0 +1,79 @@
+{
+  "_template": "artcore",
+  "metadata": {
+    "title": "Site artcore",
+    "description": "Description du site artcore"
+  },
+  "site": {
+    "title": "Site artcore",
+    "description": "Description du site artcore",
+    "logo": ""
+  },
+  "nav": {
+    "logo": "artcore",
+    "items": [
+      "home",
+      "work",
+      "studio",
+      "contact",
+      "blog"
+    ]
+  },
+  "home": {
+    "title": "Accueil artcore",
+    "description": "Page d'accueil du template artcore",
+    "hero": {
+      "title": "Bienvenue sur artcore",
+      "subtitle": "Template artcore généré avec l'IA",
+      "cta": "Découvrir"
+    },
+    "blocks": []
+  },
+  "studio": {
+    "title": "Studio artcore",
+    "description": "Page studio du template artcore",
+    "blocks": []
+  },
+  "work": {
+    "title": "Projets artcore",
+    "description": "Page projets du template artcore",
+    "blocks": []
+  },
+  "contact": {
+    "title": "Contact artcore",
+    "description": "Page contact du template artcore",
+    "blocks": []
+  },
+  "blog": {
+    "title": "Blog artcore",
+    "description": "Page blog du template artcore",
+    "blocks": []
+  },
+  "footer": {
+    "logo": "soliva",
+    "logoImage": "",
+    "description": "",
+    "links": [
+      {
+        "id": "link-1761498391144",
+        "label": "Accueil",
+        "title": "Accueil",
+        "url": "home",
+        "customUrl": "",
+        "target": "_self"
+      },
+      {
+        "id": "link-1761498391514",
+        "label": "Réalisations",
+        "title": "Réalisations",
+        "url": "work",
+        "customUrl": "",
+        "target": "_self"
+      }
+    ],
+    "socialLinks": [],
+    "copyright": "© 2024 Soliva. Tous droits réservés.",
+    "bottomLinks": [],
+    "legalPageLabels": {}
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "name": "talentify",
+  "category": "portfolio",
+  "description": "Template portfolio généré avec l'IA",
+  "autonomous": true,
+  "styles": {
+    "primaryColor": "#3B82F6",
+    "secondaryColor": "#1E40AF",
+    "fontFamily": "Inter"
+  },
+  "blocks": [
+    {
+      "type": "hero",
+      "content": "Hero section"
+    },
+    {
+      "type": "services",
+      "content": "Services section"
+    },
+    {
+      "type": "projects",
+      "content": "Projects section"
+    },
+    {
+      "type": "contact",
+      "content": "Contact section"
+    }
+  ],
+  "pages": [
+    "home",
+    "work",
+    "studio",
+    "blog",
+    "contact"
+  ],
+  "createdAt": "2025-10-26T17:35:48.705Z"
+}
