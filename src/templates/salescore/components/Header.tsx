@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { buildNavModel } from "@/utils/navModel";
 import { useTemplate } from "@/templates/context";
 
-export default function HeaderSereenity({ nav, pages }: any) {
+export default function HeaderSalescore({ nav, pages }: any) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const { key } = useTemplate();

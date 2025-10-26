@@ -1,8 +1,8 @@
 type PageLink = { slug?: string; id?: string; title?: string };
 
-export default function FooterTalentify({ footer, pages }: { footer?: any; pages?: { pages?: PageLink[] } }) {
+export default function FooterMinimalflow({ footer, pages }: { footer?: any; pages?: { pages?: PageLink[] } }) {
   const year = new Date().getFullYear();
-  const copyright = footer?.copyright || ('© ' + year + ' Talentify. Tous droits réservés.');
+  const copyright = footer?.copyright || ('© ' + year + ' Minimalflow. Tous droits réservés.');
   const links: string[] = footer?.bottomLinks || [];
   const labelMap: Record<string, string | { title: string; customUrl?: string; target?: string }> = footer?.legalPageLabels || {};
   const allPages = pages?.pages || [];

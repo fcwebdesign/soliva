@@ -1,9 +1,16 @@
 import { headers } from 'next/headers';
 import StarterApp from '@/templates/starter/StarterApp';
 import PraxisClient from '@/templates/praxis/praxis-client';
+import SereenityClient from '@/templates/sereenity/sereenity-client';
 import EfficaClient from '@/templates/effica/effica-client';
+import DalgonaClient from '@/templates/dalgona/dalgona-client';
 import GenericAutonomous from '@/templates/GenericAutonomous';
 
+import DebugtestClient from '@/templates/debug-test/debug-test-client';
+import ConversionflowClient from '@/templates/conversionflow/conversionflow-client';
+import SalescoreClient from '@/templates/salescore/salescore-client';
+import OmnisClient from '@/templates/omnis/omnis-client';
+import DesignhubClient from '@/templates/designhub/designhub-client';
 export async function TemplateRenderer({ keyName }: { keyName: string }) {
   const headersList = await headers();
   const pathname = headersList.get('x-pathname') || '/';
@@ -18,8 +25,27 @@ export async function TemplateRenderer({ keyName }: { keyName: string }) {
     case 'praxis':
       // Template autonome: en-tête/structure propres au thème
       return <PraxisClient />;
+    case 'sereenity':
+      return <SereenityClient />;
+    case 'dalgona':
+      return <DalgonaClient />;
     case 'effica':
       return <EfficaClient />;
+    
+    case 'debug-test':
+      return <DebugtestClient />;
+    
+    case 'conversionflow':
+      return <ConversionflowClient />;
+    
+    case 'salescore':
+      return <SalescoreClient />;
+    
+    case 'omnis':
+      return <OmnisClient />;
+    
+    case 'designhub':
+      return <DesignhubClient />;
     default:
       // Fallback: afficher un shell autonome générique (header/footer basiques)
       return <GenericAutonomous keyName={keyName} pathname={pathname} />;

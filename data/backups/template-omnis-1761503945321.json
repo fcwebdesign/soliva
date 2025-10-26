@@ -1,0 +1,52 @@
+{
+  "_template": "omnis",
+  "metadata": {
+    "title": "Site omnis",
+    "description": "Description du site omnis"
+  },
+  "site": {
+    "title": "Site omnis",
+    "description": "Description du site omnis",
+    "logo": ""
+  },
+  "nav": {
+    "logo": "omnis",
+    "items": [
+      "home",
+      "work",
+      "studio",
+      "contact",
+      "blog"
+    ]
+  },
+  "home": {
+    "title": "Accueil omnis",
+    "description": "Page d'accueil du template omnis",
+    "hero": {
+      "title": "Bienvenue sur omnis",
+      "subtitle": "Template omnis généré avec l'IA",
+      "cta": "Découvrir"
+    },
+    "blocks": []
+  },
+  "studio": {
+    "title": "Studio omnis",
+    "description": "Page studio du template omnis",
+    "blocks": []
+  },
+  "work": {
+    "title": "Projets omnis",
+    "description": "Page projets du template omnis",
+    "blocks": []
+  },
+  "contact": {
+    "title": "Contact omnis",
+    "description": "Page contact du template omnis",
+    "blocks": []
+  },
+  "blog": {
+    "title": "Blog omnis",
+    "description": "Page blog du template omnis",
+    "blocks": []
+  }
+}

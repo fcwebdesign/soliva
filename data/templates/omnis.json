@@ -1,7 +1,7 @@
 {
-  "name": "simplehub",
-  "category": "minimal",
-  "description": "Template minimal généré avec l'IA",
+  "name": "omnis",
+  "category": "corporate",
+  "description": "Template corporate généré avec l'IA",
   "autonomous": true,
   "styles": {
     "primaryColor": "#3B82F6",
@@ -33,5 +33,5 @@
     "blog",
     "contact"
   ],
-  "createdAt": "2025-10-26T16:25:24.422Z"
+  "createdAt": "2025-10-26T18:36:22.395Z"
 }

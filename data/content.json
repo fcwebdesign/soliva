@@ -1,16 +1,16 @@
 {
-  "_template": "talentify",
+  "_template": "designhub",
   "metadata": {
-    "title": "Site talentify",
-    "description": "Description du site talentify"
+    "title": "Site designhub",
+    "description": "Description du site designhub"
   },
   "site": {
-    "title": "Site talentify",
-    "description": "Description du site talentify",
+    "title": "Site designhub",
+    "description": "Description du site designhub",
     "logo": ""
   },
   "nav": {
-    "logo": "talentify",
+    "logo": "designhub",
     "items": [
       "home",
       "work",
@@ -20,33 +20,33 @@
     ]
   },
   "home": {
-    "title": "Accueil talentify",
-    "description": "Page d'accueil du template talentify",
+    "title": "Accueil designhub",
+    "description": "Page d'accueil du template designhub",
     "hero": {
-      "title": "Bienvenue sur talentify",
-      "subtitle": "Template talentify généré avec l'IA",
+      "title": "Bienvenue sur designhub",
+      "subtitle": "Template designhub généré avec l'IA",
       "cta": "Découvrir"
     },
     "blocks": []
   },
   "studio": {
-    "title": "Studio talentify",
-    "description": "Page studio du template talentify",
+    "title": "Studio designhub",
+    "description": "Page studio du template designhub",
     "blocks": []
   },
   "work": {
-    "title": "Projets talentify",
-    "description": "Page projets du template talentify",
+    "title": "Projets designhub",
+    "description": "Page projets du template designhub",
     "blocks": []
   },
   "contact": {
-    "title": "Contact talentify",
-    "description": "Page contact du template talentify",
+    "title": "Contact designhub",
+    "description": "Page contact du template designhub",
     "blocks": []
   },
   "blog": {
-    "title": "Blog talentify",
-    "description": "Page blog du template talentify",
+    "title": "Blog designhub",
+    "description": "Page blog du template designhub",
     "blocks": []
   }
 }

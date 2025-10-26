@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { buildNavModel } from "@/utils/navModel";
+import { useTemplate } from "@/templates/context";
 
 type PageLink = {
   slug?: string;
@@ -24,7 +25,8 @@ export interface PraxisHeaderProps {
 export default function PraxisHeader({ nav, pages }: PraxisHeaderProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const model = buildNavModel({ nav, pages, pathname });
+  const { key } = useTemplate();
+  const model = buildNavModel({ nav, pages, pathname, templateKey: key !== 'default' ? key : undefined });
 
   return (
     <header className="praxis-header bg-white/80 backdrop-blur border-b border-gray-200 sticky top-0 z-40">

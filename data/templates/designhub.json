@@ -1,7 +1,7 @@
 {
-  "name": "talentify",
-  "category": "portfolio",
-  "description": "Template portfolio généré avec l'IA",
+  "name": "designhub",
+  "category": "creative",
+  "description": "Template creative généré avec l'IA",
   "autonomous": true,
   "styles": {
     "primaryColor": "#3B82F6",
@@ -33,5 +33,5 @@
     "blog",
     "contact"
   ],
-  "createdAt": "2025-10-26T17:35:48.705Z"
+  "createdAt": "2025-10-26T18:38:58.357Z"
 }

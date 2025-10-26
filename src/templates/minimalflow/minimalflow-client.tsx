@@ -2,10 +2,10 @@
 import { useEffect, useState, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 import BlockRenderer from '@/blocks/BlockRenderer';
-import HeaderTalentify from './components/Header';
-import FooterTalentify from './components/Footer';
+import HeaderMinimalflow from './components/Header';
+import FooterMinimalflow from './components/Footer';
 
-export default function TalentifyClient() {
+export default function MinimalflowClient() {
   const [content, setContent] = useState<any>(null);
   const pathname = usePathname();
 
@@ -73,7 +73,7 @@ export default function TalentifyClient() {
 
   return (
     <div className="min-h-screen bg-white">
-      <HeaderTalentify nav={content.nav || { logo: 'talentify' }} pages={content.pages} />
+      <HeaderMinimalflow nav={content.nav || { logo: 'minimalflow' }} pages={content.pages} />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {Array.isArray(pageData?.blocks) && pageData.blocks.length > 0 ? (
           <BlockRenderer blocks={pageData.blocks} />
@@ -87,7 +87,7 @@ export default function TalentifyClient() {
           </div>
         )}
       </main>
-      <FooterTalentify footer={content.footer} pages={content.pages} />
+      <FooterMinimalflow footer={content.footer} pages={content.pages} />
     </div>
   );
 }

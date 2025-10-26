@@ -1,0 +1,53 @@
+{
+  "_template": "effica",
+  "metadata": {
+    "title": "Site effica",
+    "description": "Description du site effica"
+  },
+  "site": {
+    "title": "Site effica",
+    "description": "Description du site effica",
+    "logo": ""
+  },
+  "nav": {
+    "logo": "effica",
+    "logoImage": "",
+    "location": "paris, le havre",
+    "items": [
+      "home",
+      "work",
+      "contact"
+    ],
+    "pageLabels": {}
+  },
+  "home": {
+    "title": "Accueil effica",
+    "description": "Page d'accueil du template effica",
+    "hero": {
+      "title": "Bienvenue sur effica",
+      "subtitle": "Template effica généré avec l'IA",
+      "cta": "Découvrir"
+    },
+    "blocks": []
+  },
+  "studio": {
+    "title": "Studio effica",
+    "description": "Page studio du template effica",
+    "blocks": []
+  },
+  "work": {
+    "title": "Projets effica",
+    "description": "Page projets du template effica",
+    "blocks": []
+  },
+  "contact": {
+    "title": "Contact effica",
+    "description": "Page contact du template effica",
+    "blocks": []
+  },
+  "blog": {
+    "title": "Blog effica",
+    "description": "Page blog du template effica",
+    "blocks": []
+  }
+}

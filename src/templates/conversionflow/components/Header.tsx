@@ -3,11 +3,13 @@ import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { buildNavModel } from "@/utils/navModel";
+import { useTemplate } from "@/templates/context";
 
-export default function HeaderTalentify({ nav, pages }: any) {
+export default function HeaderConversionflow({ nav, pages }: any) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const model = buildNavModel({ nav, pages, pathname });
+  const { key } = useTemplate();
+  const model = buildNavModel({ nav, pages, pathname, templateKey: key !== 'default' ? key : undefined });
 
   return (
     <header className="bg-white/80 backdrop-blur border-b border-gray-200 sticky top-0 z-40">

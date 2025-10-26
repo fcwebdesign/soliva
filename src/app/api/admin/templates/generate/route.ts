@@ -7,6 +7,7 @@ export async function POST(request: Request) {
   try {
     const templateData = await request.json();
     const { name, category, useAI, description, autonomous, styles, blocks, pages, apply, register } = templateData;
+    const shouldRegister = register !== false; // par défaut: on enregistre (Effica-like)
     const autonomousFlag = autonomous !== false; // par défaut autonome
     
     if (!category) {
@@ -80,11 +81,13 @@ import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { buildNavModel } from "@/utils/navModel";
+import { useTemplate } from "@/templates/context";
 
 export default function Header{COMP}({ nav, pages }: any) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const model = buildNavModel({ nav, pages, pathname });
+  const { key } = useTemplate();
+  const model = buildNavModel({ nav, pages, pathname, templateKey: key !== 'default' ? key : undefined });
 
   return (
     <header className="bg-white/80 backdrop-blur border-b border-gray-200 sticky top-0 z-40">
@@ -192,7 +195,7 @@ export default function Footer{COMP}({ footer, pages }: { footer?: any; pages?: 
 
     // Client du template prêt à rendre les blocs & le header
     const clientComponent = `'use client';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import BlockRenderer from '@/blocks/BlockRenderer';
 import Header{COMP} from './components/Header';
@@ -217,16 +220,8 @@ export default function {COMP}Client() {
     loadContent();
   }, [pathname]); // Recharger le contenu quand le pathname change
 
-  if (!content) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  // Logique de routage améliorée
-  const route = useMemo(() => {
+  // Logique de routage (sans hook pour garder l'ordre stable)
+  const route = (() => {
     if (pathname === '/') return 'home';
     if (pathname === '/work') return 'work';
     if (pathname.startsWith('/work/')) return 'work-slug';
@@ -235,7 +230,15 @@ export default function {COMP}Client() {
     if (pathname === '/studio') return 'studio';
     if (pathname === '/contact') return 'contact';
     return 'custom';
-  }, [pathname]);
+  })();
+
+  if (!content) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   // Résolution de la page courante
   let pageData: any = null;
@@ -293,9 +296,9 @@ export default function {COMP}Client() {
     writeFileSync(join(componentsDir, `Footer.tsx`), footerComponent);
     writeFileSync(join(templateDir, `${templateName}-client.tsx`), clientComponent);
 
-    // Enregistrement optionnel du template dans le registre/renderer (uniquement si register: true)
+    // Enregistrement du template dans le registre/renderer (par défaut oui, sauf register:false)
     try {
-      if (register === true) {
+      if (shouldRegister) {
       const registryPath = join(process.cwd(), 'src', 'templates', 'registry.ts');
       let registrySrc = readFileSync(registryPath, 'utf-8');
       if (!registrySrc.includes(`'${templateName}':`)) {

@@ -2,10 +2,10 @@
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import BlockRenderer from '@/blocks/BlockRenderer';
-import HeaderSimplehub from './components/Header';
-import FooterSimplehub from './components/Footer';
+import HeaderDesignhub from './components/Header';
+import FooterDesignhub from './components/Footer';
 
-export default function SimplehubClient() {
+export default function DesignhubClient() {
   const [content, setContent] = useState<any>(null);
   const pathname = usePathname();
 
@@ -24,6 +24,18 @@ export default function SimplehubClient() {
     loadContent();
   }, [pathname]); // Recharger le contenu quand le pathname change
 
+  // Logique de routage (sans hook pour garder l'ordre stable)
+  const route = (() => {
+    if (pathname === '/') return 'home';
+    if (pathname === '/work') return 'work';
+    if (pathname.startsWith('/work/')) return 'work-slug';
+    if (pathname === '/blog') return 'blog';
+    if (pathname.startsWith('/blog/')) return 'blog-slug';
+    if (pathname === '/studio') return 'studio';
+    if (pathname === '/contact') return 'contact';
+    return 'custom';
+  })();
+
   if (!content) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -32,21 +44,36 @@ export default function SimplehubClient() {
     );
   }
 
-  const firstSegment = (pathname || '/').split('?')[0].split('#')[0].replace(/^\/+/, '').split('/')[0];
-  const pageKey = firstSegment === '' ? 'home' : firstSegment;
-  const systemKeys = new Set(['home','studio','work','blog','contact']);
+  // Résolution de la page courante
   let pageData: any = null;
-  if (systemKeys.has(pageKey)) {
-    pageData = (content as any)[pageKey];
+  if (route === 'home') {
+    pageData = content?.home;
+  } else if (route === 'work') {
+    pageData = content?.work;
+  } else if (route === 'work-slug') {
+    // Pour les pages de projet individuelles, utiliser le contenu work
+    pageData = content?.work;
+  } else if (route === 'blog') {
+    pageData = content?.blog;
+  } else if (route === 'blog-slug') {
+    // Pour les articles individuels, utiliser le contenu blog
+    pageData = content?.blog;
+  } else if (route === 'studio') {
+    pageData = content?.studio;
+  } else if (route === 'contact') {
+    pageData = content?.contact;
   } else {
-    const customPages = (content as any)?.pages?.pages || [];
-    pageData = customPages.find((p: any) => (p.slug || p.id) === pageKey) || null;
+    // Page personnalisée
+    const firstSegment = pathname?.split('/')[1] || '';
+    const customPages = content?.pages?.pages || [];
+    pageData = customPages.find((p: any) => (p.slug || p.id) === firstSegment) || null;
   }
-  if (!pageData) pageData = (content as any).home || { blocks: [] };
+  
+  if (!pageData) pageData = content?.home || { blocks: [] };
 
   return (
     <div className="min-h-screen bg-white">
-      <HeaderSimplehub nav={content.nav || { logo: 'simplehub' }} pages={content.pages} />
+      <HeaderDesignhub nav={content.nav || { logo: 'designhub' }} pages={content.pages} />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {Array.isArray(pageData?.blocks) && pageData.blocks.length > 0 ? (
           <BlockRenderer blocks={pageData.blocks} />
@@ -60,7 +87,7 @@ export default function SimplehubClient() {
           </div>
         )}
       </main>
-      <FooterSimplehub />
+      <FooterDesignhub footer={content.footer} pages={content.pages} />
     </div>
   );
 }

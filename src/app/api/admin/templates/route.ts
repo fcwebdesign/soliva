@@ -3,13 +3,23 @@ import { TEMPLATES } from '@/templates/registry';
 import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 
+function toTitleCase(id: string): string {
+  if (!id) return '';
+  const base = id.replace(/_/g, '-');
+  return base
+    .split('-')
+    .filter(Boolean)
+    .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+    .join(' ');
+}
+
 export async function GET() {
   try {
     // Convertir l'objet TEMPLATES en array normalisé
     const staticTemplates = Object.values(TEMPLATES).map(t => ({
       id: t.key,
       key: t.key,
-      name: t.name,
+      name: t.name || toTitleCase(t.key),
       description: t.description || '',
       autonomous: t.autonomous,
     }));
@@ -26,9 +36,7 @@ export async function GET() {
         return {
           id: key,
           key,
-          name: templateData.name ? 
-            templateData.name.charAt(0).toUpperCase() + templateData.name.slice(1).replace(/-/g, ' ') :
-            file.replace('.json', '').charAt(0).toUpperCase() + file.replace('.json', '').slice(1).replace(/-/g, ' '),
+          name: (templateData.name && toTitleCase(templateData.name)) || toTitleCase(file.replace('.json', '')),
           description: templateData.description || `Template ${templateData.category || 'généré'}`,
           autonomous: templateData.autonomous !== false,
           category: templateData.category,
@@ -58,6 +66,8 @@ export async function GET() {
           description: d.description || existing.description,
           // conserver autonomous de la version statique si présent
           autonomous: existing.autonomous ?? d.autonomous,
+          // ajouter la catégorie si manquante côté statique
+          category: existing.category || d.category,
         });
       }
     }

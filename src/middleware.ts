@@ -27,9 +27,17 @@ export async function middleware(request: NextRequest) {
     });
   }
 
-  // Pour la redirection de template, on va utiliser une approche différente
-  // On peut vérifier le template via une API route ou un cookie
-  // Pour l'instant, on désactive cette fonctionnalité pour éviter le problème de node:fs
+  // Supprimer le paramètre ?template= si présent (sauf si explicitement en mode preview)
+  // Cela évite que le paramètre reste collé dans l'URL après l'application d'un template
+  const hasTemplateParam = request.nextUrl.searchParams.has('template');
+  const hasPreviewParam = request.nextUrl.searchParams.has('preview');
+  
+  if (hasTemplateParam && !hasPreviewParam) {
+    // Rediriger vers la même URL sans le paramètre template
+    const url = request.nextUrl.clone();
+    url.searchParams.delete('template');
+    return NextResponse.redirect(url);
+  }
 
   return NextResponse.next({
     request: {

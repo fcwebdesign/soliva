@@ -28,5 +28,35 @@ export const TEMPLATES: Record<string, TemplateMeta> = {
     autonomous: true,
     name: 'effica',
     description: 'Template généré automatiquement'
-  },// Autres templates futurs...
+  },  'debug-test': {
+    key: 'debug-test',
+    autonomous: true,
+    name: 'debug-test',
+    description: 'Template généré automatiquement'
+  },
+    'conversionflow': {
+    key: 'conversionflow',
+    autonomous: true,
+    name: 'conversionflow',
+    description: 'Template généré automatiquement'
+  },
+    'salescore': {
+    key: 'salescore',
+    autonomous: true,
+    name: 'salescore',
+    description: 'Template généré automatiquement'
+  },
+    'omnis': {
+    key: 'omnis',
+    autonomous: true,
+    name: 'omnis',
+    description: 'Template généré automatiquement'
+  },
+    'designhub': {
+    key: 'designhub',
+    autonomous: true,
+    name: 'designhub',
+    description: 'Template généré automatiquement'
+  },
+  // Autres templates futurs...
 };
