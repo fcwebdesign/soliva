@@ -6,6 +6,12 @@ export type TemplateMeta = {
 };
 
 export const TEMPLATES: Record<string, TemplateMeta> = {
+  'soliva': {
+    key: 'soliva',
+    autonomous: false,
+    name: 'Soliva Original',
+    description: 'Template original Soliva avec design personnalisé'
+  },
   'minimaliste-premium': { 
     key: 'minimaliste-premium', 
     autonomous: true,

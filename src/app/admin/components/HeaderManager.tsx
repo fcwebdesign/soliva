@@ -33,7 +33,7 @@ declare global {
   }
 }
 
-const HeaderManager: React.FC<HeaderManagerProps> = ({ content, onSave, onUpdate }) => {
+const HeaderManager: React.FC<HeaderManagerProps> = ({ content, onSave }) => {
   const [headerData, setHeaderData] = useState<HeaderData>({
     logo: content?.nav?.logo || 'soliva',
     logoImage: content?.nav?.logoImage || '',
@@ -101,7 +101,6 @@ const HeaderManager: React.FC<HeaderManagerProps> = ({ content, onSave, onUpdate
         ...prev,
         pages: newPages
       };
-      onUpdate?.({ items: next.pages });
       return next;
     });
     // Déclencher hasUnsavedChanges
@@ -114,7 +113,6 @@ const HeaderManager: React.FC<HeaderManagerProps> = ({ content, onSave, onUpdate
     newPages.splice(toIndex, 0, movedPage);
     console.log('🔄 HeaderManager: Pages réorganisées:', newPages);
     setHeaderData(prev => ({ ...prev, pages: newPages }));
-    onUpdate?.({ items: newPages });
     // Déclencher hasUnsavedChanges
     window.dispatchEvent(new CustomEvent('navigation-changed'));
   };
@@ -130,7 +128,6 @@ const HeaderManager: React.FC<HeaderManagerProps> = ({ content, onSave, onUpdate
         ...prev,
         pageLabels: newPageLabels
       };
-      onUpdate?.({ pageLabels: next.pageLabels });
       return next;
     });
     // Déclencher hasUnsavedChanges
@@ -147,7 +144,6 @@ const HeaderManager: React.FC<HeaderManagerProps> = ({ content, onSave, onUpdate
           customUrl: newUrl
         }
       };
-      onUpdate?.({ pageLabels: newPageLabels });
       return { ...prev, pageLabels: newPageLabels };
     });
     window.dispatchEvent(new CustomEvent('navigation-changed'));
@@ -163,7 +159,6 @@ const HeaderManager: React.FC<HeaderManagerProps> = ({ content, onSave, onUpdate
           target: newTarget
         }
       };
-      onUpdate?.({ pageLabels: newPageLabels });
       return { ...prev, pageLabels: newPageLabels };
     });
     window.dispatchEvent(new CustomEvent('navigation-changed'));
@@ -311,7 +306,6 @@ const HeaderManager: React.FC<HeaderManagerProps> = ({ content, onSave, onUpdate
                 value={headerData.logo}
                 onChange={(e) => {
                   setHeaderData(prev => ({ ...prev, logo: e.target.value }));
-                  onUpdate?.({ logo: e.target.value });
                   window.dispatchEvent(new CustomEvent('navigation-changed'));
                 }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -326,7 +320,6 @@ const HeaderManager: React.FC<HeaderManagerProps> = ({ content, onSave, onUpdate
                   currentUrl={headerData.logoImage}
                   onUpload={(url) => {
                     setHeaderData(prev => ({ ...prev, logoImage: url }));
-                    onUpdate?.({ logoImage: url });
                     window.dispatchEvent(new CustomEvent('navigation-changed'));
                   }}
                 />
@@ -347,7 +340,6 @@ const HeaderManager: React.FC<HeaderManagerProps> = ({ content, onSave, onUpdate
               value={headerData.location}
               onChange={(e) => {
                 setHeaderData(prev => ({ ...prev, location: e.target.value }));
-                onUpdate?.({ location: e.target.value });
                 window.dispatchEvent(new CustomEvent('navigation-changed'));
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"

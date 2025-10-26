@@ -66,7 +66,6 @@ const AdminContent: React.FC<AdminContentProps> = ({
         <HeaderManager
           content={content}
           onSave={onSave}
-          onUpdate={(updates) => onUpdate(updates)}
         />
       );
     }

@@ -40,12 +40,20 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
     { id: 'nav', label: 'Navigation', path: null, icon: Navigation },
     { id: 'metadata', label: 'Métadonnées', path: null, icon: Settings },
     { id: 'templates', label: 'Templates', path: null, icon: Layout },
+    { id: 'template-manager', label: 'Template Manager', path: '/admin/template-manager', icon: Palette },
     { id: 'footer', label: 'Footer', path: null, icon: Footprints },
     { id: 'backup', label: 'Sauvegarde', path: null, icon: Save },
     { id: 'ai', label: 'IA', path: '/admin/ai', icon: Brain },
   ];
 
   const handlePageChange = (pageId: string) => {
+    // Vérifier si la page a un path défini dans SETTINGS
+    const setting = SETTINGS.find(s => s.id === pageId);
+    if (setting && setting.path) {
+      router.push(setting.path);
+      return;
+    }
+    
     if (onPageChange) {
       onPageChange(pageId);
     } else {
@@ -54,6 +62,8 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
         router.push('/admin/pages');
       } else if (pageId === 'ai') {
         router.push('/admin/ai');
+      } else if (pageId === 'template-manager') {
+        router.push('/admin/template-manager');
       } else {
         router.push(`/admin?page=${pageId}`);
       }

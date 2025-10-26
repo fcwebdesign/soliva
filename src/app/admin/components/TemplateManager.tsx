@@ -9,6 +9,7 @@ interface TemplateManagerProps {
 
 interface Template {
   id: string;
+  key?: string;
   name: string;
   description: string;
   preview: string;
@@ -145,8 +146,8 @@ const TemplateManager = ({ onTemplateChange }: TemplateManagerProps): React.JSX.
       <div className="space-y-4">
         <h4 className="font-medium text-gray-700">Templates disponibles</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {templates.map((t) => (
-            <div key={t.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+          {templates.map((t, index) => (
+            <div key={`${t.id}-${index}`} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
               <div className="aspect-video bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
                 <div className="text-center px-4">
                   <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mb-4 mx-auto">

@@ -3,6 +3,7 @@ import StudioMinimalisteClient from '@/templates/minimaliste-premium/studio-clie
 import WorkMinimalisteClient from '@/templates/minimaliste-premium/work-client';
 import ContactMinimalisteClient from '@/templates/minimaliste-premium/contact-client';
 import BlogMinimalisteClient from '@/templates/minimaliste-premium/blog-client';
+import CorporatetemplateClient from '@/templates/corporate-template/corporate-template-client';
 import { headers } from 'next/headers';
 import StarterApp from '@/templates/starter/StarterApp';
 
@@ -11,8 +12,11 @@ export async function TemplateRenderer({ keyName }: { keyName: string }) {
   const headersList = await headers();
   const pathname = headersList.get('x-pathname') || '/';
 
-  switch (keyName) {
-    case 'minimaliste-premium':
+      switch (keyName) {
+        case 'soliva':
+          // Template Soliva original - utilise le layout par défaut
+          return null;
+        case 'minimaliste-premium':
       // Rendre le bon client selon la page - TOUTES les pages utilisent le template
       switch (pathname) {
         case '/':
@@ -25,6 +29,8 @@ export async function TemplateRenderer({ keyName }: { keyName: string }) {
           return <ContactMinimalisteClient />;
         case '/blog':
           return <BlogMinimalisteClient />;
+        case 'corporate-template':
+          return <CorporatetemplateClient />;
         default:
           // Pour les autres pages, utiliser la home par défaut (style cohérent)
           return <MinimalistePremiumClient />;

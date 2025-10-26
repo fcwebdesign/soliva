@@ -19,7 +19,7 @@ export default function BlockRenderer({ blocks }: { blocks: AnyBlock[] }) {
       try {
         document.documentElement.setAttribute('data-theme', 'light');
       } catch {}
-      return; // ne pas attacher d'observer pour starter
+      return undefined; // ne pas attacher d'observer pour starter
     }
 
     const observer = new IntersectionObserver((entries) => {

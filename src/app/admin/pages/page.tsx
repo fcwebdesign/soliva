@@ -544,7 +544,7 @@ export default function PagesAdmin() {
                                 <span className="px-2 py-0.5 rounded-full text-[11px] border bg-blue-50 text-blue-700 border-blue-200">Custom</span>
                               )}
                               {page.pinned && (
-                                <Pin title="Épinglée" className="w-4 h-4 text-yellow-600" />
+                                <Pin className="w-4 h-4 text-yellow-600" />
                               )}
                             </div>
                             <div className="flex items-center space-x-4 mt-1">

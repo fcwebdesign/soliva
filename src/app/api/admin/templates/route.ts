@@ -1,49 +1,48 @@
-import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
+import { NextResponse } from 'next/server';
+import { TEMPLATES } from '@/templates/registry';
+import { readdirSync, readFileSync } from 'fs';
+import { join } from 'path';
 
 export async function GET() {
   try {
-    const templatesDir = path.join(process.cwd(), 'data', 'templates');
+    // Convertir l'objet TEMPLATES en array
+    const staticTemplates = Object.values(TEMPLATES);
     
-    // Vérifier si le dossier existe
+    // Charger les templates générés dynamiquement
+    const dataTemplatesDir = join(process.cwd(), 'data', 'templates');
+    let dynamicTemplates: any[] = [];
+    
     try {
-      await fs.access(templatesDir);
-    } catch {
-      // Créer le dossier s'il n'existe pas
-      await fs.mkdir(templatesDir, { recursive: true });
+      const templateFiles = readdirSync(dataTemplatesDir).filter(file => file.endsWith('.json'));
+      dynamicTemplates = templateFiles.map(file => {
+        const templateData = JSON.parse(readFileSync(join(dataTemplatesDir, file), 'utf8'));
+        return {
+          key: templateData.name || file.replace('.json', ''),
+          name: templateData.name ? 
+            templateData.name.charAt(0).toUpperCase() + templateData.name.slice(1).replace(/-/g, ' ') :
+            file.replace('.json', '').charAt(0).toUpperCase() + file.replace('.json', '').slice(1).replace(/-/g, ' '),
+          description: templateData.description || `Template ${templateData.category || 'généré'}`,
+          autonomous: templateData.autonomous || true,
+          category: templateData.category,
+          createdAt: templateData.createdAt
+        };
+      });
+    } catch (error) {
+      console.log('Aucun template dynamique trouvé:', error);
     }
-
-    // Lire tous les fichiers JSON dans le dossier templates
-    const files = await fs.readdir(templatesDir);
-    const templateFiles = files.filter(file => file.endsWith('.json'));
-
-    const templates = [];
-
-    for (const file of templateFiles) {
-      try {
-        const filePath = path.join(templatesDir, file);
-        const content = await fs.readFile(filePath, 'utf-8');
-        const template = JSON.parse(content);
-        
-        templates.push({
-          id: template._template || file.replace('.json', ''),
-          name: template.metadata?.title || file.replace('.json', ''),
-          description: template.metadata?.description || '',
-          version: template._templateVersion || '1.0.0',
-          category: template._template || 'portfolio'
-        });
-      } catch (error) {
-        console.error(`Erreur lors de la lecture du template ${file}:`, error);
-      }
-    }
-
-    return NextResponse.json({ templates });
+    
+    // Combiner les templates statiques et dynamiques
+    const allTemplates = [...staticTemplates, ...dynamicTemplates];
+    
+    return NextResponse.json({
+      success: true,
+      templates: allTemplates
+    });
   } catch (error) {
     console.error('Erreur lors du chargement des templates:', error);
     return NextResponse.json(
-      { error: 'Erreur lors du chargement des templates' },
+      { success: false, error: 'Erreur lors du chargement des templates' },
       { status: 500 }
     );
   }
-} 
+}
