@@ -138,7 +138,7 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
   return (
     <>
       {/* Sidebar desktop */}
-      <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 lg:z-50 lg:bg-white lg:border-r lg:border-gray-200">
+      <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 lg:z-50 lg:bg-white lg:border-r lg:border-gray-200 admin-sidebar">
         {/* Logo */}
         <div className="flex items-center px-6 py-4 border-b border-gray-200">
           <div className="flex items-center space-x-3">

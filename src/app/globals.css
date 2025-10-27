@@ -2498,11 +2498,9 @@ html.preview-mode body {
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
-/* Empêcher la surbrillance sur les conteneurs parents */
-.block-editor,
-.space-y-4,
-.grid,
-.logos-grid-container {
+/* Empêcher la surbrillance sur les conteneurs parents (uniquement pendant le drag) */
+.dragging .block-editor,
+.dragging .logos-grid-container {
   /* S'assurer qu'aucun effet de drag & drop ne s'applique aux conteneurs parents */
   border-color: transparent !important;
   background-color: transparent !important;
@@ -2516,17 +2514,21 @@ html.preview-mode body {
   --tw-ring-offset-color: transparent !important;
 }
 
-/* Supprimer les classes ring de tous les conteneurs parents */
-.block-editor *,
-.space-y-4 *,
-.grid *,
-.logos-grid-container * {
+/* Supprimer les classes ring des conteneurs parents pendant le drag uniquement */
+.dragging .block-editor *,
+.dragging .logos-grid-container * {
   --tw-ring-offset-shadow: none !important;
   --tw-ring-shadow: none !important;
   --tw-ring-color: transparent !important;
   --tw-ring-opacity: 0 !important;
   --tw-ring-offset-width: 0 !important;
   --tw-ring-offset-color: transparent !important;
+}
+
+/* Conserver un curseur normal dans la sidebar lors d'un drag */
+.dragging .admin-sidebar,
+.dragging .admin-sidebar * {
+  cursor: auto !important;
 }
 
 /* Réactiver les ring uniquement pour les zones de drop spécifiques */
