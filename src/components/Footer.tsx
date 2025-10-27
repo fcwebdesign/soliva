@@ -23,6 +23,7 @@ interface FooterContent {
   logo?: string;
   logoImage?: string;
   description?: string;
+  footerVariant?: string;
   links?: FooterLink[];
   socialLinks?: SocialLink[];
   copyright?: string;
@@ -91,73 +92,145 @@ const Footer: React.FC<FooterProps> = ({ content, fullContent }) => {
     return null;
   }
 
+  const VariantClassic = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="space-y-4">
+        <div className="font-semibold text-xl" style={{ color: 'var(--fg)' }}>
+          {footerContent.logoImage ? (
+            <img src={footerContent.logoImage} alt="Logo" className="h-8 max-w-[200px] object-contain" />
+          ) : (
+            footerContent.logo || 'soliva'
+          )}
+        </div>
+        {footerContent.description && (
+          <p className="text-sm leading-relaxed" style={{ color: 'var(--fg)' }}>
+            {footerContent.description}
+          </p>
+        )}
+      </div>
+      <div className="flex flex-col md:flex-row md:justify-end gap-16">
+        {footerContent.links && footerContent.links.length > 0 && (
+          <div className="space-y-2">
+            <ul className="space-y-1 text-left">
+              {footerContent.links.map((link, index) => (
+                <li key={index}>
+                  <Link href={link.url || '#'} className="transition-colors text-sm hover:opacity-80 leading-tight" style={{ color: 'var(--fg)' }}>
+                    {link.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {footerContent.socialLinks && footerContent.socialLinks.length > 0 && (
+          <div className="space-y-2">
+            <ul className="space-y-1 text-left">
+              {footerContent.socialLinks.map((social, index) => (
+                <li key={index}>
+                  <a href={social.url} target="_blank" rel="noopener noreferrer" className="transition-colors text-sm hover:opacity-80 leading-tight" style={{ color: 'var(--fg)' }}>
+                    {social.platform}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  const VariantColumns = () => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+      <div className="space-y-4">
+        <div className="font-semibold text-xl" style={{ color: 'var(--fg)' }}>
+          {footerContent.logoImage ? (
+            <img src={footerContent.logoImage} alt="Logo" className="h-8 max-w-[200px] object-contain" />
+          ) : (
+            footerContent.logo || 'soliva'
+          )}
+        </div>
+        {footerContent.description && (
+          <p className="text-sm leading-relaxed" style={{ color: 'var(--fg)' }}>
+            {footerContent.description}
+          </p>
+        )}
+      </div>
+      <div>
+        {footerContent.links && footerContent.links.length > 0 && (
+          <div className="space-y-2">
+            <div className="text-sm font-semibold text-gray-700">Liens</div>
+            <ul className="space-y-1">
+              {footerContent.links.map((link, index) => (
+                <li key={index}><Link href={link.url || '#'} className="text-sm text-gray-700 hover:text-gray-900">{link.title}</Link></li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+      <div>
+        {footerContent.socialLinks && footerContent.socialLinks.length > 0 && (
+          <div className="space-y-2">
+            <div className="text-sm font-semibold text-gray-700">Réseaux</div>
+            <ul className="space-y-1">
+              {footerContent.socialLinks.map((s, i) => (
+                <li key={i}><a href={s.url} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-700 hover:text-gray-900">{s.platform}</a></li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  const VariantCentered = () => (
+    <div className="text-center space-y-4">
+      <div className="font-semibold text-xl" style={{ color: 'var(--fg)' }}>
+        {footerContent.logoImage ? (
+          <img src={footerContent.logoImage} alt="Logo" className="h-8 mx-auto max-w-[200px] object-contain" />
+        ) : (
+          footerContent.logo || 'soliva'
+        )}
+      </div>
+      {footerContent.description && (
+        <p className="text-sm max-w-prose mx-auto text-gray-700">{footerContent.description}</p>
+      )}
+      {footerContent.links && footerContent.links.length > 0 && (
+        <ul className="flex flex-wrap gap-4 justify-center text-sm">
+          {footerContent.links.map((l, i) => (
+            <li key={i}><Link href={l.url || '#'} className="text-gray-700 hover:text-gray-900">{l.title}</Link></li>
+          ))}
+        </ul>
+      )}
+      {footerContent.socialLinks && footerContent.socialLinks.length > 0 && (
+        <ul className="flex flex-wrap gap-4 justify-center text-sm">
+          {footerContent.socialLinks.map((s, i) => (
+            <li key={i}><a href={s.url} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-gray-900">{s.platform}</a></li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+
+  const VariantMinimal = () => null;
+
+  const renderTop = () => {
+    switch (footerContent.footerVariant || 'classic') {
+      case 'columns':
+        return <VariantColumns />;
+      case 'centered':
+        return <VariantCentered />;
+      case 'minimal':
+        return <VariantMinimal />;
+      case 'classic':
+      default:
+        return <VariantClassic />;
+    }
+  };
+
   return (
     <footer className="py-12">
       <div className="mx-auto px-4 lg:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Logo et Description - Colonne gauche */}
-          <div className="space-y-4">
-            <div className="font-semibold text-xl" style={{ color: 'var(--fg)' }}>
-              {footerContent.logoImage ? (
-                <img 
-                  src={footerContent.logoImage} 
-                  alt="Logo" 
-                  className="h-8 max-w-[200px] object-contain"
-                />
-              ) : (
-                footerContent.logo || 'soliva'
-              )}
-            </div>
-            {footerContent.description && (
-              <p className="text-sm leading-relaxed" style={{ color: 'var(--fg)' }}>
-                {footerContent.description}
-              </p>
-            )}
-          </div>
-
-          {/* Liens et Réseaux sociaux - Colonne droite */}
-          <div className="flex flex-col md:flex-row md:justify-end gap-48">
-            {/* Liens */}
-            {footerContent.links && footerContent.links.length > 0 && (
-              <div className="space-y-4">
-                <ul className="space-y-1 text-left">
-                  {footerContent.links.map((link, index) => (
-                    <li key={index}>
-                      <Link 
-                        href={link.url || '#'} 
-                        className="transition-colors text-sm hover:opacity-80 leading-tight"
-                        style={{ color: 'var(--fg)' }}
-                      >
-                        {link.title}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Réseaux sociaux */}
-            {footerContent.socialLinks && footerContent.socialLinks.length > 0 && (
-              <div className="space-y-4">
-                <ul className="space-y-1 text-left">
-                  {footerContent.socialLinks.map((social, index) => (
-                    <li key={index}>
-                      <a
-                        href={social.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="transition-colors text-sm hover:opacity-80 leading-tight"
-                        style={{ color: 'var(--fg)' }}
-                      >
-                        {social.platform}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </div>
+        {renderTop()}
 
         {/* Copyright */}
         <div className="border-t mt-8 pt-8 footer-copyright-border">

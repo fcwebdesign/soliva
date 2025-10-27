@@ -18,46 +18,131 @@ export default function FooterPearl({ footer, pages }: { footer?: any; pages?: {
   const customPages = allPages.map(p => ({ key: p.slug || p.id, label: p.title || 'Page', path: '/' + (p.slug || p.id) }));
   const available = [...defaultPages, ...customPages];
 
+  const VariantClassic = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+      <div className="space-y-4">
+        <div className="font-semibold text-xl text-gray-900">
+          {footer?.logoImage ? (
+            <img src={footer.logoImage} alt="Logo" className="h-8 max-w-[200px] object-contain" />
+          ) : (
+            footer?.logo || 'Pearl'
+          )}
+        </div>
+        {footer?.description && (
+          <p className="text-sm text-gray-600 max-w-prose">{footer.description}</p>
+        )}
+      </div>
+      <div className="flex flex-col md:flex-row md:justify-end gap-12">
+        {Array.isArray(footer?.links) && footer.links.length > 0 && (
+          <div className="space-y-2 text-left">
+            <ul className="space-y-1">
+              {footer.links.map((l: any, idx: number) => (
+                <li key={idx}><a href={l.url || '#'} className="text-sm text-gray-700 hover:text-gray-900">{l.title}</a></li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {Array.isArray(footer?.socialLinks) && footer.socialLinks.length > 0 && (
+          <div className="space-y-2 text-left">
+            <ul className="space-y-1">
+              {footer.socialLinks.map((s: any, idx: number) => (
+                <li key={idx}><a href={s.url} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-700 hover:text-gray-900">{s.platform}</a></li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  const VariantColumns = () => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-8">
+      <div className="space-y-4">
+        <div className="font-semibold text-xl text-gray-900">
+          {footer?.logoImage ? (
+            <img src={footer.logoImage} alt="Logo" className="h-8 max-w-[200px] object-contain" />
+          ) : (
+            footer?.logo || 'Pearl'
+          )}
+        </div>
+        {footer?.description && (
+          <p className="text-sm text-gray-600 max-w-prose">{footer.description}</p>
+        )}
+      </div>
+      <div>
+        {Array.isArray(footer?.links) && footer.links.length > 0 && (
+          <div className="space-y-2 text-left">
+            <div className="text-sm font-semibold text-gray-700">Liens</div>
+            <ul className="space-y-1">
+              {footer.links.map((l: any, idx: number) => (
+                <li key={idx}><a href={l.url || '#'} className="text-sm text-gray-700 hover:text-gray-900">{l.title}</a></li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+      <div>
+        {Array.isArray(footer?.socialLinks) && footer.socialLinks.length > 0 && (
+          <div className="space-y-2 text-left">
+            <div className="text-sm font-semibold text-gray-700">Réseaux</div>
+            <ul className="space-y-1">
+              {footer.socialLinks.map((s: any, idx: number) => (
+                <li key={idx}><a href={s.url} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-700 hover:text-gray-900">{s.platform}</a></li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  const VariantCentered = () => (
+    <div className="text-center space-y-4 mb-8">
+      <div className="font-semibold text-xl text-gray-900">
+        {footer?.logoImage ? (
+          <img src={footer.logoImage} alt="Logo" className="h-8 mx-auto max-w-[200px] object-contain" />
+        ) : (
+          footer?.logo || 'Pearl'
+        )}
+      </div>
+      {footer?.description && (
+        <p className="text-sm text-gray-600 max-w-prose mx-auto">{footer.description}</p>
+      )}
+      {Array.isArray(footer?.links) && footer.links.length > 0 && (
+        <ul className="flex flex-wrap gap-4 justify-center text-sm">
+          {footer.links.map((l: any, idx: number) => (
+            <li key={idx}><a href={l.url || '#'} className="text-gray-700 hover:text-gray-900">{l.title}</a></li>
+          ))}
+        </ul>
+      )}
+      {Array.isArray(footer?.socialLinks) && footer.socialLinks.length > 0 && (
+        <ul className="flex flex-wrap gap-4 justify-center text-sm">
+          {footer.socialLinks.map((s: any, idx: number) => (
+            <li key={idx}><a href={s.url} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-gray-900">{s.platform}</a></li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+
+  const renderTop = () => {
+    switch (footer?.footerVariant || 'classic') {
+      case 'columns':
+        return <VariantColumns />;
+      case 'centered':
+        return <VariantCentered />;
+      case 'minimal':
+        return null;
+      case 'classic':
+      default:
+        return <VariantClassic />;
+    }
+  };
+
   return (
     <footer className="bg-gray-50 border-t border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Identité + description */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-          <div className="space-y-4">
-            <div className="font-semibold text-xl text-gray-900">
-              {footer?.logoImage ? (
-                <img src={footer.logoImage} alt="Logo" className="h-8 max-w-[200px] object-contain" />
-              ) : (
-                footer?.logo || 'Pearl'
-              )}
-            </div>
-            {footer?.description && (
-              <p className="text-sm text-gray-600 max-w-prose">{footer.description}</p>
-            )}
-          </div>
-
-          {/* Liens et Réseaux sociaux */}
-          <div className="flex flex-col md:flex-row md:justify-end gap-12">
-            {Array.isArray(footer?.links) && footer.links.length > 0 && (
-              <div className="space-y-2 text-left">
-                <ul className="space-y-1">
-                  {footer.links.map((l: any, idx: number) => (
-                    <li key={idx}><a href={l.url || '#'} className="text-sm text-gray-700 hover:text-gray-900">{l.title}</a></li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {Array.isArray(footer?.socialLinks) && footer.socialLinks.length > 0 && (
-              <div className="space-y-2 text-left">
-                <ul className="space-y-1">
-                  {footer.socialLinks.map((s: any, idx: number) => (
-                    <li key={idx}><a href={s.url} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-700 hover:text-gray-900">{s.platform}</a></li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </div>
+        {renderTop()}
 
         {/* Bas de page: copyright + liens */}
         <div className="border-t pt-6 text-center text-gray-500 text-sm">

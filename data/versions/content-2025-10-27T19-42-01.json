@@ -4,10 +4,10 @@
     "title": "Site pearl",
     "description": "Description du site pearl",
     "_transitionConfig": {
-      "type": "reveal-left",
+      "type": "zoom-out-in",
       "duration": 900,
       "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
-      "updatedAt": "2025-10-27T18:47:13.773Z"
+      "updatedAt": "2025-10-27T18:55:15.939Z"
     }
   },
   "site": {
@@ -24,7 +24,7 @@
       "contact",
       "blog"
     ],
-    "headerVariant": "brand-centered"
+    "headerVariant": "classic"
   },
   "home": {
     "title": "Accueil pearl",
@@ -71,9 +71,48 @@
     "blocks": []
   },
   "_transitionConfig": {
-    "type": "reveal-left",
+    "type": "zoom-out-in",
     "duration": 900,
     "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
-    "updatedAt": "2025-10-27T18:47:13.773Z"
+    "updatedAt": "2025-10-27T18:55:15.939Z"
+  },
+  "footer": {
+    "logo": "soliva",
+    "logoImage": "",
+    "description": "",
+    "links": [
+      {
+        "id": "link-1761591595663",
+        "label": "Accueil",
+        "title": "Accueil",
+        "url": "home",
+        "customUrl": "",
+        "target": "_self"
+      },
+      {
+        "id": "link-1761591596181",
+        "label": "Réalisations",
+        "title": "Réalisations",
+        "url": "work",
+        "customUrl": "",
+        "target": "_self"
+      },
+      {
+        "id": "link-1761591596654",
+        "label": "Studio",
+        "title": "Studio",
+        "url": "studio",
+        "customUrl": "",
+        "target": "_self"
+      }
+    ],
+    "socialLinks": [],
+    "copyright": "© 2024 Soliva. Tous droits réservés.",
+    "bottomLinks": [
+      "home",
+      "work"
+    ],
+    "legalPageLabels": {},
+    "footerVariant": "columns"
   }
 }

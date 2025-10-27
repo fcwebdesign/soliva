@@ -11,6 +11,7 @@ export interface FooterData {
   logo: string;
   logoImage: string;
   description: string;
+  variant?: string;
   links: Array<{
     id?: string;
     label?: string;
@@ -43,6 +44,7 @@ export const useFooterManager = (content: any) => {
     logo: content?.footer?.logo || 'soliva',
     logoImage: content?.footer?.logoImage || '',
     description: content?.footer?.description || '',
+    variant: content?.footer?.footerVariant || 'classic',
     links: content?.footer?.links || [],
     socialLinks: content?.footer?.socialLinks || [],
     copyright: content?.footer?.copyright || '© 2024 Soliva. Tous droits réservés.',
@@ -72,6 +74,7 @@ export const useFooterManager = (content: any) => {
       logo: content?.footer?.logo || 'soliva',
       logoImage: content?.footer?.logoImage || '',
       description: content?.footer?.description || '',
+      variant: content?.footer?.footerVariant || 'classic',
       links: content?.footer?.links || [],
       socialLinks: content?.footer?.socialLinks || [],
       copyright: content?.footer?.copyright || '© 2024 Soliva. Tous droits réservés.',

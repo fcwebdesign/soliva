@@ -7,7 +7,7 @@
       "type": "parallax-slide",
       "duration": 900,
       "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
-      "updatedAt": "2025-10-27T18:50:57.870Z"
+      "updatedAt": "2025-10-27T18:54:32.687Z"
     }
   },
   "site": {
@@ -24,7 +24,7 @@
       "contact",
       "blog"
     ],
-    "headerVariant": "brand-centered"
+    "headerVariant": "classic"
   },
   "home": {
     "title": "Accueil pearl",
@@ -74,6 +74,6 @@
     "type": "parallax-slide",
     "duration": 900,
     "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
-    "updatedAt": "2025-10-27T18:50:57.870Z"
+    "updatedAt": "2025-10-27T18:54:32.687Z"
   }
 }
