@@ -1,0 +1,163 @@
+{
+  "_template": "pearl",
+  "metadata": {
+    "title": "Site pearl",
+    "description": "Description du site pearl",
+    "_transitionConfig": {
+      "type": "slide-up",
+      "duration": 1200,
+      "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
+      "updatedAt": "2025-10-27T07:22:14.413Z"
+    }
+  },
+  "site": {
+    "title": "Site pearl",
+    "description": "Description du site pearl",
+    "logo": ""
+  },
+  "nav": {
+    "logo": "pearl",
+    "items": [
+      "home",
+      "work",
+      "studio",
+      "contact",
+      "blog"
+    ]
+  },
+  "home": {
+    "title": "Accueil pearl",
+    "description": "Page d'accueil du template pearl",
+    "hero": {
+      "title": "Bienvenue sur pearl",
+      "subtitle": "Template pearl généré avec l'IA",
+      "cta": "Découvrir"
+    },
+    "blocks": [
+      {
+        "id": "gallery-grid-1761550076907",
+        "type": "gallery-grid",
+        "data": {
+          "images": [],
+          "layout": "grid-3",
+          "gap": "medium",
+          "showFilters": true,
+          "showTitles": true,
+          "showDescriptions": true,
+          "enableLightbox": true,
+          "enableDownload": true,
+          "theme": "auto"
+        },
+        "images": [
+          {
+            "id": "image-1761550093482-0",
+            "src": "/uploads/1761550092896-56586bca.webp",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1761550093482-1",
+            "src": "/uploads/1761550092893-05207275.webp",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1761550093482-2",
+            "src": "/uploads/1761550092903-15b5f6a9.webp",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1761550093482-3",
+            "src": "/uploads/1761550092898-cb76564e.webp",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1761550093482-4",
+            "src": "/uploads/1761550092897-fa7dfb4b.webp",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1761550093482-5",
+            "src": "/uploads/1761550092898-9c782846.webp",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1761550093482-6",
+            "src": "/uploads/1761550093062-c6c2f430.webp",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1761550093482-7",
+            "src": "/uploads/1761550093121-cf204d21.webp",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1761550093482-8",
+            "src": "/uploads/1761550093122-873877be.webp",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          },
+          {
+            "id": "image-1761550093482-9",
+            "src": "/uploads/1761550093243-5414aa81.webp",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          }
+        ],
+        "layout": "grid-3"
+      }
+    ]
+  },
+  "studio": {
+    "title": "Studio pearl",
+    "description": "Page studio du template pearl",
+    "blocks": []
+  },
+  "work": {
+    "title": "Projets pearl",
+    "description": "Page projets du template pearl",
+    "blocks": []
+  },
+  "contact": {
+    "title": "Contact pearl",
+    "description": "Page contact du template pearl",
+    "blocks": []
+  },
+  "blog": {
+    "title": "Blog pearl",
+    "description": "Page blog du template pearl",
+    "blocks": []
+  },
+  "_transitionConfig": {
+    "type": "slide-up",
+    "duration": 1200,
+    "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
+    "updatedAt": "2025-10-27T07:22:14.413Z"
+  }
+}

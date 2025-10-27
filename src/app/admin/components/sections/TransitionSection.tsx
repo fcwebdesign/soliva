@@ -2,9 +2,9 @@
 import { useState, useEffect } from 'react';
 import { Settings, Play, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { TRANSITION_TYPES, TransitionType } from '@/templates/transition-config';
+import { TransitionType, getTransitionConfig } from '@/templates/transition-config';
+import { useTemplate } from '@/templates/context';
 
 interface TransitionSectionProps {
   localData: any;
@@ -97,11 +97,12 @@ const TransitionSection: React.FC<TransitionSectionProps> = ({ localData, update
             onChange={(e) => setSelectedTransition(e.target.value as TransitionType)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
           >
-            {Object.entries(TRANSITION_TYPES).map(([key, { name, description }]) => (
-              <option key={key} value={key}>
-                {name} - {description}
-              </option>
-            ))}
+            <option value="slide-up">Slide Up (Pearl)</option>
+            <option value="slide-down">Slide Down</option>
+            <option value="fade">Fade</option>
+            <option value="zoom">Zoom</option>
+            <option value="flip">Flip 3D</option>
+            <option value="curtain">Curtain</option>
           </select>
         </div>
 
@@ -143,7 +144,7 @@ const TransitionSection: React.FC<TransitionSectionProps> = ({ localData, update
         <div className="bg-gray-50 p-4 rounded-lg">
           <h4 className="text-sm font-medium text-gray-700 mb-2">Configuration actuelle</h4>
           <div className="space-y-1 text-sm text-gray-600">
-            <div>Type: <Badge variant="secondary">{TRANSITION_TYPES[selectedTransition].name}</Badge></div>
+            <div>Type: <Badge variant="secondary">{selectedTransition}</Badge></div>
             <div>Durée: {duration}ms</div>
             <div>Courbe: {easingPresets.find(p => p.value === easing)?.label || easing}</div>
           </div>

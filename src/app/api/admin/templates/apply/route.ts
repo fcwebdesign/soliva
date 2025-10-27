@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 
 export async function POST(request: Request) {
@@ -27,14 +27,14 @@ export async function POST(request: Request) {
     let newContent;
     
     if (existsSync(templateContentPath)) {
-      // Charger le contenu spécifique du template
-      console.log(`📁 Chargement du contenu du template "${templateId}"`);
+      // Charger le contenu spécifique du template (avec les modifications sauvegardées)
+      console.log(`📁 Chargement du contenu sauvegardé du template "${templateId}"`);
       newContent = JSON.parse(readFileSync(templateContentPath, 'utf8'));
       // S'assurer que le _template est défini
       newContent._template = templateId;
     } else {
-      // Créer un contenu vide pour le nouveau template
-      console.log(`🆕 Création d'un contenu vide pour le template "${templateId}"`);
+      // Créer un contenu de base pour le nouveau template
+      console.log(`🆕 Création d'un contenu de base pour le template "${templateId}"`);
       newContent = {
         _template: templateId,
         metadata: {
@@ -81,6 +81,14 @@ export async function POST(request: Request) {
           blocks: []
         }
       };
+      
+      // Créer le dossier du template et sauvegarder le contenu de base
+      const templateDir = join(process.cwd(), 'data', 'templates', templateId);
+      if (!existsSync(templateDir)) {
+        mkdirSync(templateDir, { recursive: true });
+      }
+      writeFileSync(templateContentPath, JSON.stringify(newContent, null, 2));
+      console.log(`💾 Contenu de base sauvegardé pour le template "${templateId}"`);
     }
     
     // Sauvegarder le nouveau contenu

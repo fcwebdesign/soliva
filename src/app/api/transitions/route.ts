@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     const content = await readContent();
     
     // Mettre à jour la configuration des transitions à la racine du contenu
-    content._transitionConfig = {
+    (content as any)._transitionConfig = {
       type: transitionConfig.type,
       duration: transitionConfig.duration || 1500,
       easing: transitionConfig.easing || 'cubic-bezier(0.87, 0, 0.13, 1)',
@@ -32,17 +32,17 @@ export async function POST(request: NextRequest) {
     
     // Aussi dans metadata pour compatibilité avec l'admin
     if (!content.metadata) {
-      content.metadata = {};
+      (content as any).metadata = {};
     }
-    content.metadata._transitionConfig = content._transitionConfig;
+    (content as any).metadata._transitionConfig = (content as any)._transitionConfig;
 
     // Sauvegarder
     await writeContent(content);
 
     return NextResponse.json({ 
       success: true, 
-      message: 'Configuration des transitions sauvegardée',
-      config: content._transitionConfig
+      message: 'Configuration des transitions sauvegardée', 
+      config: (content as any)._transitionConfig 
     });
 
   } catch (error) {
@@ -56,7 +56,7 @@ export async function GET() {
     const content = await readContent();
     
     return NextResponse.json({
-      transitionConfig: content._transitionConfig || null
+      transitionConfig: (content as any)._transitionConfig || null
     });
 
   } catch (error) {
