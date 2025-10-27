@@ -324,6 +324,26 @@ export default function ThemeTransitions() {
       }
     `,
 
+    'cover-up': `
+      html::view-transition-old(root) { animation-name: vt-cover-old; transform-origin: 50% 50%; }
+      html::view-transition-new(root) { animation-name: vt-cover-up-new; will-change: clip-path, transform; filter: drop-shadow(0 12px 24px rgba(0,0,0,0.06)); }
+
+      @keyframes vt-cover-up-new {
+        from { clip-path: inset(100% 0 0 0); transform: translateY(-6%); }
+        to   { clip-path: inset(0 0 0 0); transform: translateY(0); }
+      }
+    `,
+
+    'cover-down': `
+      html::view-transition-old(root) { animation-name: vt-cover-old; transform-origin: 50% 50%; }
+      html::view-transition-new(root) { animation-name: vt-cover-down-new; will-change: clip-path, transform; filter: drop-shadow(0 -12px 24px rgba(0,0,0,0.06)); }
+
+      @keyframes vt-cover-down-new {
+        from { clip-path: inset(0 0 100% 0); transform: translateY(6%); }
+        to   { clip-path: inset(0 0 0 0); transform: translateY(0); }
+      }
+    `,
+
     // Parallax: ancien bouge moins vite que le nouveau
     'parallax-slide': `
       html::view-transition-old(root) { animation-name: vt-parallax-old; }

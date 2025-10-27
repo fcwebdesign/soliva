@@ -114,6 +114,8 @@ const TransitionSection: React.FC<TransitionSectionProps> = ({ localData, update
             <option value="reveal-right">Reveal Right</option>
             <option value="cover-left">Cover Left</option>
             <option value="cover-right">Cover Right</option>
+            <option value="cover-up">Cover Up</option>
+            <option value="cover-down">Cover Down</option>
             <option value="parallax-slide">Parallax Slide</option>
           </select>
         </div>

@@ -15,6 +15,8 @@ export type TransitionType =
   | 'reveal-right'
   | 'cover-left'
   | 'cover-right'
+  | 'cover-up'
+  | 'cover-down'
   | 'parallax-slide';
 
 export interface TransitionConfig {
@@ -213,6 +215,14 @@ export const TRANSITION_TYPES: Record<TransitionType, { name: string; descriptio
   'cover-right': {
     name: 'Cover Right',
     description: 'Nouvelle page couvre depuis la droite; ancienne se réduit + flou léger'
+  },
+  'cover-up': {
+    name: 'Cover Up',
+    description: 'Nouvelle page couvre depuis le haut; ancienne se réduit + flou léger'
+  },
+  'cover-down': {
+    name: 'Cover Down',
+    description: 'Nouvelle page couvre depuis le bas; ancienne se réduit + flou léger'
   },
   'parallax-slide': {
     name: 'Parallax Slide',
