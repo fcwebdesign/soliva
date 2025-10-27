@@ -12,7 +12,10 @@ export type TransitionType =
   | 'rotate'
   | 'curtain'
   | 'reveal-left'
-  | 'reveal-right';
+  | 'reveal-right'
+  | 'cover-left'
+  | 'cover-right'
+  | 'parallax-slide';
 
 export interface TransitionConfig {
   type: TransitionType;
@@ -202,5 +205,17 @@ export const TRANSITION_TYPES: Record<TransitionType, { name: string; descriptio
   'reveal-right': {
     name: 'Reveal Right',
     description: 'Révélation depuis le bord droit'
+  },
+  'cover-left': {
+    name: 'Cover Left',
+    description: 'Nouvelle page couvre depuis la gauche; ancienne se réduit + flou léger'
+  },
+  'cover-right': {
+    name: 'Cover Right',
+    description: 'Nouvelle page couvre depuis la droite; ancienne se réduit + flou léger'
+  },
+  'parallax-slide': {
+    name: 'Parallax Slide',
+    description: 'Ancienne glisse légèrement, nouvelle arrive avec profondeur (parallax)'
   }
 };

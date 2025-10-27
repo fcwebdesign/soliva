@@ -4,10 +4,10 @@
     "title": "Site pearl",
     "description": "Description du site pearl",
     "_transitionConfig": {
-      "type": "reveal-left",
+      "type": "rotate",
       "duration": 900,
       "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
-      "updatedAt": "2025-10-27T18:39:41.059Z"
+      "updatedAt": "2025-10-27T18:45:56.847Z"
     }
   },
   "site": {
@@ -71,9 +71,9 @@
     "blocks": []
   },
   "_transitionConfig": {
-    "type": "reveal-left",
+    "type": "rotate",
     "duration": 900,
     "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
-    "updatedAt": "2025-10-27T18:39:41.059Z"
+    "updatedAt": "2025-10-27T18:45:56.847Z"
   }
 }

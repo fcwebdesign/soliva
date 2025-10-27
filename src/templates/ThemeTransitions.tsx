@@ -298,6 +298,46 @@ export default function ThemeTransitions() {
         to   { clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%); }
       }
     `,
+
+    // Cover: nouvelle page couvre depuis un bord, ancienne se réduit + floute
+    'cover-left': `
+      html::view-transition-old(root) { animation-name: vt-cover-old; transform-origin: 50% 50%; }
+      html::view-transition-new(root) { animation-name: vt-cover-left-new; will-change: clip-path, transform; }
+
+      @keyframes vt-cover-old {
+        from { opacity: 1; transform: scale(1); filter: blur(0px); }
+        to   { opacity: .75; transform: scale(.96); filter: blur(2px); }
+      }
+      @keyframes vt-cover-left-new {
+        from { clip-path: inset(0 100% 0 0); transform: translateX(-6%); }
+        to   { clip-path: inset(0 0 0 0); transform: translateX(0); }
+      }
+    `,
+
+    'cover-right': `
+      html::view-transition-old(root) { animation-name: vt-cover-old; transform-origin: 50% 50%; }
+      html::view-transition-new(root) { animation-name: vt-cover-right-new; will-change: clip-path, transform; }
+
+      @keyframes vt-cover-right-new {
+        from { clip-path: inset(0 0 0 100%); transform: translateX(6%); }
+        to   { clip-path: inset(0 0 0 0); transform: translateX(0); }
+      }
+    `,
+
+    // Parallax: ancien bouge moins vite que le nouveau
+    'parallax-slide': `
+      html::view-transition-old(root) { animation-name: vt-parallax-old; }
+      html::view-transition-new(root) { animation-name: vt-parallax-new; }
+
+      @keyframes vt-parallax-old {
+        from { opacity: 1; transform: translateX(0); }
+        to   { opacity: .85; transform: translateX(-8%); }
+      }
+      @keyframes vt-parallax-new {
+        from { opacity: 0; transform: translateX(18%); }
+        to   { opacity: 1; transform: translateX(0); }
+      }
+    `,
   };
 
   return (
