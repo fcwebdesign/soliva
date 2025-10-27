@@ -57,7 +57,7 @@ export default function ThemeTransitions() {
   `;
 
   // Définitions des différentes transitions
-  const transitionStyles = {
+  const transitionStyles: Record<string, string> = {
     'slide-up': `
       html::view-transition-old(root) { animation-name: vt-slide-up-out; }
       html::view-transition-new(root) { animation-name: vt-slide-up-in; }
@@ -108,6 +108,36 @@ export default function ThemeTransitions() {
       }
     `,
 
+    'slide-left': `
+      html::view-transition-old(root) { animation-name: vt-slide-left-out; }
+      html::view-transition-new(root) { animation-name: vt-slide-left-in; }
+
+      @keyframes vt-slide-left-out {
+        from { opacity: 1; transform: translateX(0); }
+        to   { opacity: 0.2; transform: translateX(-35%); }
+      }
+
+      @keyframes vt-slide-left-in {
+        from { transform: translateX(35%); }
+        to   { transform: translateX(0); }
+      }
+    `,
+
+    'slide-right': `
+      html::view-transition-old(root) { animation-name: vt-slide-right-out; }
+      html::view-transition-new(root) { animation-name: vt-slide-right-in; }
+
+      @keyframes vt-slide-right-out {
+        from { opacity: 1; transform: translateX(0); }
+        to   { opacity: 0.2; transform: translateX(35%); }
+      }
+
+      @keyframes vt-slide-right-in {
+        from { transform: translateX(-35%); }
+        to   { transform: translateX(0); }
+      }
+    `,
+
     'fade': `
       html::view-transition-old(root) { animation-name: vt-fade-out; }
       html::view-transition-new(root) { animation-name: vt-fade-in; }
@@ -120,6 +150,21 @@ export default function ThemeTransitions() {
       @keyframes vt-fade-in { 
         from { opacity: 0; }
         to { opacity: 1; }
+      }
+    `,
+
+    'fade-blur': `
+      html::view-transition-old(root) { animation-name: vt-fade-blur-out; }
+      html::view-transition-new(root) { animation-name: vt-fade-blur-in; }
+
+      @keyframes vt-fade-blur-out {
+        from { opacity: 1; filter: blur(0px); }
+        to   { opacity: 0; filter: blur(8px); }
+      }
+      
+      @keyframes vt-fade-blur-in {
+        from { opacity: 0; filter: blur(8px); }
+        to   { opacity: 1; filter: blur(0px); }
       }
     `,
 
@@ -150,6 +195,21 @@ export default function ThemeTransitions() {
       }
     `,
 
+    'zoom-out-in': `
+      html::view-transition-old(root) { animation-name: vt-zoom2-out; }
+      html::view-transition-new(root) { animation-name: vt-zoom2-in; }
+
+      @keyframes vt-zoom2-out {
+        from { opacity: 1; transform: scale(1); }
+        to   { opacity: 0; transform: scale(1.08); }
+      }
+      
+      @keyframes vt-zoom2-in {
+        from { opacity: 0; transform: scale(0.92); }
+        to   { opacity: 1; transform: scale(1); }
+      }
+    `,
+
     'flip': `
       html::view-transition-old(root) { animation-name: vt-flip-out; }
       html::view-transition-new(root) { animation-name: vt-flip-in; }
@@ -177,6 +237,20 @@ export default function ThemeTransitions() {
       }
     `,
 
+    'rotate': `
+      html::view-transition-old(root) { animation-name: vt-rotate-out; transform-origin: 50% 50%; }
+      html::view-transition-new(root) { animation-name: vt-rotate-in; transform-origin: 50% 50%; }
+
+      @keyframes vt-rotate-out {
+        from { opacity: 1; transform: rotateZ(0deg) scale(1); }
+        to   { opacity: 0; transform: rotateZ(-5deg) scale(1.02); }
+      }
+      @keyframes vt-rotate-in {
+        from { opacity: 0; transform: rotateZ(5deg) scale(0.98); }
+        to   { opacity: 1; transform: rotateZ(0deg) scale(1); }
+      }
+    `,
+
     'curtain': `
       html::view-transition-old(root) { animation-name: vt-curtain-out; }
       html::view-transition-new(root) { animation-name: vt-curtain-in; }
@@ -199,6 +273,35 @@ export default function ThemeTransitions() {
         }
       }
     `
+    ,
+
+    'reveal-left': `
+      html::view-transition-old(root) { animation-name: vt-reveal-left-out; }
+      html::view-transition-new(root) { animation-name: vt-reveal-left-in; }
+
+      @keyframes vt-reveal-left-out {
+        from { clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%); }
+        to   { clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%); }
+      }
+      @keyframes vt-reveal-left-in {
+        from { clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%); }
+        to   { clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%); }
+      }
+    `,
+
+    'reveal-right': `
+      html::view-transition-old(root) { animation-name: vt-reveal-right-out; }
+      html::view-transition-new(root) { animation-name: vt-reveal-right-in; }
+
+      @keyframes vt-reveal-right-out {
+        from { clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%); }
+        to   { clip-path: polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%); }
+      }
+      @keyframes vt-reveal-right-in {
+        from { clip-path: polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%); }
+        to   { clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%); }
+      }
+    `,
   };
 
   return (

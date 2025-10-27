@@ -10,7 +10,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Valider la configuration
-    const validTypes = ['slide-up', 'slide-down', 'fade', 'zoom', 'flip', 'curtain'];
+    const validTypes = [
+      'slide-up', 'slide-down', 'slide-left', 'slide-right',
+      'fade', 'fade-blur', 'zoom', 'zoom-out-in', 'flip', 'rotate',
+      'curtain', 'reveal-left', 'reveal-right'
+    ];
     if (!validTypes.includes(transitionConfig.type)) {
       return NextResponse.json({ error: 'Type de transition invalide' }, { status: 400 });
     }

@@ -101,10 +101,17 @@ const TransitionSection: React.FC<TransitionSectionProps> = ({ localData, update
           >
             <option value="slide-up">Slide Up (Pearl)</option>
             <option value="slide-down">Slide Down</option>
+            <option value="slide-left">Slide Left</option>
+            <option value="slide-right">Slide Right</option>
             <option value="fade">Fade</option>
+            <option value="fade-blur">Fade + Blur</option>
             <option value="zoom">Zoom</option>
+            <option value="zoom-out-in">Zoom Out/In</option>
             <option value="flip">Flip 3D</option>
+            <option value="rotate">Rotate</option>
             <option value="curtain">Curtain</option>
+            <option value="reveal-left">Reveal Left</option>
+            <option value="reveal-right">Reveal Right</option>
           </select>
         </div>
 

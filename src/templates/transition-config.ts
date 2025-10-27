@@ -1,5 +1,18 @@
 // Configuration des transitions par thème
-export type TransitionType = 'slide-up' | 'slide-down' | 'fade' | 'zoom' | 'flip' | 'curtain';
+export type TransitionType =
+  | 'slide-up'
+  | 'slide-down'
+  | 'slide-left'
+  | 'slide-right'
+  | 'fade'
+  | 'fade-blur'
+  | 'zoom'
+  | 'zoom-out-in'
+  | 'flip'
+  | 'rotate'
+  | 'curtain'
+  | 'reveal-left'
+  | 'reveal-right';
 
 export interface TransitionConfig {
   type: TransitionType;
@@ -146,20 +159,48 @@ export const TRANSITION_TYPES: Record<TransitionType, { name: string; descriptio
     name: 'Slide Down', 
     description: 'L\'ancienne page glisse vers le bas, la nouvelle se déplie depuis le haut'
   },
+  'slide-left': {
+    name: 'Slide Left',
+    description: 'Glissement horizontal vers la gauche avec révélation'
+  },
+  'slide-right': {
+    name: 'Slide Right',
+    description: 'Glissement horizontal vers la droite avec révélation'
+  },
   'fade': {
     name: 'Fade',
     description: 'Transition en fondu simple entre les pages'
+  },
+  'fade-blur': {
+    name: 'Fade + Blur',
+    description: 'Fondu avec flou progressif'
   },
   'zoom': {
     name: 'Zoom',
     description: 'Effet de zoom avec échelle et opacité'
   },
+  'zoom-out-in': {
+    name: 'Zoom Out/In',
+    description: 'Ancienne page zoome légèrement, la nouvelle zoome depuis 0.95'
+  },
   'flip': {
     name: 'Flip 3D',
     description: 'Rotation 3D autour de l\'axe Y'
   },
+  'rotate': {
+    name: 'Rotate',
+    description: 'Léger pivot en entrée/sortie'
+  },
   'curtain': {
     name: 'Curtain',
     description: 'Effet de rideau qui se déplie'
+  },
+  'reveal-left': {
+    name: 'Reveal Left',
+    description: 'Révélation depuis le bord gauche'
+  },
+  'reveal-right': {
+    name: 'Reveal Right',
+    description: 'Révélation depuis le bord droit'
   }
 };
