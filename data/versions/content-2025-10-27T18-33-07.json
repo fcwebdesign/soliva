@@ -24,7 +24,7 @@
       "contact",
       "blog"
     ],
-    "headerVariant": "brand-centered"
+    "headerVariant": "stacked"
   },
   "home": {
     "title": "Accueil pearl",

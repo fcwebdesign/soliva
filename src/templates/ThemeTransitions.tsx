@@ -9,6 +9,10 @@ export default function ThemeTransitions() {
   
   // Charger la configuration depuis le contenu
   useEffect(() => {
+    // Sur l'admin (key = 'soliva'), ne pas déclencher de polling réseau inutile
+    if (key === 'soliva') {
+      return;
+    }
     const fetchContent = async () => {
       try {
         const response = await fetch('/api/content', { 
@@ -35,7 +39,7 @@ export default function ThemeTransitions() {
     const interval = setInterval(fetchContent, 2000);
     
     return () => clearInterval(interval);
-  }, []);
+  }, [key]);
 
   // Utiliser la config du contenu si disponible, sinon fallback sur la config statique
   const staticConfig = getTransitionConfig(key);

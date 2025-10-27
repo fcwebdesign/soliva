@@ -56,6 +56,7 @@ import MetadataSection from './sections/MetadataSection';
 import ContactSection from './sections/ContactSection';
 import FooterSection from './sections/FooterSection';
 import TransitionSection from './sections/TransitionSection';
+import HeaderVariantsSection from './sections/HeaderVariantsSection';
 
 interface Block {
   id: string;
@@ -2110,6 +2111,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
             <>
               <MetadataSection localData={localData} updateField={updateField} />
               <TransitionSection localData={localData} updateField={updateField} />
+              <HeaderVariantsSection localData={localData} updateField={updateField} />
             </>
           )}
         </div>

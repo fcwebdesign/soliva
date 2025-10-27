@@ -102,39 +102,53 @@ export const useAdminPage = () => {
   // Gérer les changements d'URL
   useEffect(() => {
     const pageFromUrl = searchParams.get('page');
-    
+    const allowed = ['home', 'studio', 'contact', 'work', 'blog', 'nav', 'metadata', 'templates', 'footer', 'backup'];
+
     const handleNavigationChange = async () => {
-      if (pageFromUrl !== currentPage && ['home', 'studio', 'contact', 'work', 'blog', 'nav', 'metadata', 'templates', 'footer', 'backup'].includes(pageFromUrl)) {
-        if (hasUnsavedChanges) {
-          const confirmLeave = await confirm({
-            title: 'Modifications non enregistrées',
-            description: 'Vous avez des modifications non enregistrées. Voulez-vous vraiment quitter cette page sans enregistrer ?',
-            confirmText: 'Quitter sans enregistrer',
-            cancelText: 'Rester sur la page',
-            variant: 'destructive'
-          });
-          
-          if (!confirmLeave) {
-            window.history.pushState(null, '', `/admin?page=${currentPage}`);
-            return;
-          }
-          
-          setHasUnsavedChanges(false);
-          setSaveStatus('idle');
-          if (originalContent) {
-            setContent(originalContent);
-          }
+      if (!pageFromUrl || !allowed.includes(pageFromUrl)) {
+        return;
+      }
+
+      if (pageFromUrl === currentPage) {
+        return;
+      }
+
+      if (hasUnsavedChanges) {
+        const confirmLeave = await confirm({
+          title: 'Modifications non enregistrées',
+          description: 'Vous avez des modifications non enregistrées. Voulez-vous vraiment quitter cette page sans enregistrer ?',
+          confirmText: 'Quitter sans enregistrer',
+          cancelText: 'Rester sur la page',
+          variant: 'destructive'
+        });
+
+        if (!confirmLeave) {
+          window.history.pushState(null, '', `/admin?page=${currentPage}`);
+          return;
         }
-        
-        setCurrentPage(pageFromUrl);
-        // Réinitialiser l'état des modifications lors du changement de page
+
         setHasUnsavedChanges(false);
         setSaveStatus('idle');
+        if (originalContent) {
+          setContent(originalContent);
+        }
+      }
+
+      setCurrentPage(pageFromUrl);
+      // Réinitialiser l'état des modifications lors du changement de page
+      setHasUnsavedChanges(false);
+      setSaveStatus('idle');
+
+      // Navigation spéciale pour la page IA
+      if (pageFromUrl === 'ai') {
+        router.replace('/admin/ai');
+      } else {
+        router.replace(`/admin?page=${pageFromUrl}`);
       }
     };
-    
+
     handleNavigationChange();
-  }, [searchParams]);
+  }, [searchParams, currentPage, hasUnsavedChanges, originalContent]);
 
   // Fonction pour changer de page avec confirmation si modifications non sauvegardées
   const handlePageChange = async (newPage: string) => {
@@ -175,7 +189,11 @@ export const useAdminPage = () => {
   const fetchContent = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/admin/content');
+      // Utiliser un timeout pour éviter un chargement infini si l'API ne répond pas
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000); // 10s
+      const response = await fetch('/api/admin/content', { cache: 'no-store', signal: controller.signal });
+      clearTimeout(timeout);
       
       if (!response.ok) {
         throw new Error('Erreur lors du chargement');
@@ -191,7 +209,12 @@ export const useAdminPage = () => {
       
     } catch (err) {
       console.error('Erreur:', err);
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue');
+      const message = err instanceof DOMException && err.name === 'AbortError' 
+        ? "Délai d'attente dépassé pour l'API (10s)."
+        : err instanceof Error 
+          ? err.message 
+          : 'Une erreur est survenue';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -237,6 +260,20 @@ export const useAdminPage = () => {
               copyright: fd.copyright,
               bottomLinks: fd.bottomLinks,
               legalPageLabels: fd.legalPageLabels,
+            },
+          };
+        }
+      }
+
+      // Si on est sur la page metadata, propager la variante de header vers nav avant de sauvegarder
+      if (currentPage === 'metadata') {
+        const variant = (content as any)?.metadata?.nav?.headerVariant;
+        if (variant) {
+          contentToSave = {
+            ...contentToSave,
+            nav: {
+              ...contentToSave.nav,
+              headerVariant: variant,
             },
           };
         }

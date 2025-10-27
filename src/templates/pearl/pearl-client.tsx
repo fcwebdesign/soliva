@@ -73,7 +73,11 @@ export default function PearlClient() {
 
   return (
     <div className="min-h-screen bg-white">
-      <HeaderPearl nav={content.nav || { logo: 'pearl' }} pages={content.pages} />
+      <HeaderPearl 
+        nav={content.nav || { logo: 'pearl' }} 
+        pages={content.pages} 
+        variant={content.nav?.headerVariant || 'classic'}
+      />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {Array.isArray(pageData?.blocks) && pageData.blocks.length > 0 ? (
           <BlockRenderer blocks={pageData.blocks} />

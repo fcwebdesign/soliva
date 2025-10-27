@@ -46,13 +46,15 @@ const TransitionSection: React.FC<TransitionSectionProps> = ({ localData, update
       if (response.ok) {
         // Mettre à jour aussi le champ local pour la cohérence
         updateField('_transitionConfig', transitionConfig);
-        
-        // Forcer un rechargement de la page pour appliquer les changements
-        setTimeout(() => {
-          window.location.reload();
-        }, 500);
-        
-        alert('Configuration des transitions sauvegardée ! La page va se recharger...');
+        // Notifier les consommateurs live et éviter un reload complet
+        try {
+          window.dispatchEvent(new CustomEvent('content-updated', {
+            detail: { _transitionConfig: transitionConfig }
+          }));
+          localStorage.setItem('transitions-updated', String(Date.now()));
+        } catch {}
+
+        alert('Configuration des transitions sauvegardée !');
       } else {
         const error = await response.json();
         alert(`Erreur: ${error.error}`);
