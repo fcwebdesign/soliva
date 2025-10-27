@@ -5,7 +5,6 @@ import IdentitySection from './sections/IdentitySection';
 import NavigationSection from './sections/NavigationSection';
 import SocialSection from './sections/SocialSection';
 import LegalSection from './sections/LegalSection';
-import FooterVariantsSection from './sections/FooterVariantsSection';
 
 interface FooterManagerProps {
   content: any;
@@ -106,16 +105,6 @@ const FooterManager = ({ content, onSave, onUpdate }: FooterManagerProps): React
 
   return (
       <div className="space-y-6">
-      <FooterVariantsSection
-        localData={content}
-        updateField={(path, value) => {
-          // path always footer.footerVariant here but keep it generic
-          setFooterData(prev => ({ ...prev, // mirror locally for live preview
-            ...(path === 'footer.footerVariant' ? { variant: value } : {}),
-          }));
-          window.dispatchEvent(new CustomEvent('footer-changed'));
-        }}
-      />
       <IdentitySection
         footerData={footerData}
         logoType={logoType}

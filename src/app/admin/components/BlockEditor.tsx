@@ -55,6 +55,7 @@ import NavSection from './sections/NavSection';
 import MetadataSection from './sections/MetadataSection';
 import ContactSection from './sections/ContactSection';
 import FooterSection from './sections/FooterSection';
+import FooterVariantsSection from './sections/FooterVariantsSection';
 import TransitionSection from './sections/TransitionSection';
 import HeaderVariantsSection from './sections/HeaderVariantsSection';
 
@@ -2112,6 +2113,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
               <MetadataSection localData={localData} updateField={updateField} />
               <TransitionSection localData={localData} updateField={updateField} />
               <HeaderVariantsSection localData={localData} updateField={updateField} />
+              <FooterVariantsSection localData={localData} updateField={updateField} />
             </>
           )}
         </div>
