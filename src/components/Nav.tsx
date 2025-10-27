@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { buildNavModel } from "@/utils/navModel";
 import ThemeToggle from "./ThemeToggle";
+import TransitionLink from "./TransitionLink";
 
 interface NavProps {
   content: {
@@ -25,15 +26,7 @@ const Nav: React.FC<NavProps> = ({ content }) => {
   const pathname = usePathname();
   const logoRef = useRef<HTMLSpanElement>(null);
 
-  const isSafari = (): boolean => {
-    const ua = navigator.userAgent.toLowerCase();
-    return ua.includes("safari") && !ua.includes("chrome");
-  };
-
-  const isBasicTransition = (): boolean => {
-    const ua = navigator.userAgent.toLowerCase();
-    return ua.includes("firefox") || isSafari();
-  };
+  // Supprimer le code dupliqué - maintenant dans le hook
 
   // Remplace dynamiquement le "o" par un cercle pour éviter les erreurs SSR/CSR
   useEffect(() => {
@@ -43,86 +36,7 @@ const Nav: React.FC<NavProps> = ({ content }) => {
     }
   }, [content?.logo, content?.logoImage]);
 
-  // Crée un rideau bleu si besoin (Firefox/Safari)
-  useEffect(() => {
-    if (!isBasicTransition()) return;
-    if (document.getElementById("curtain")) return;
-
-    const curtain = document.createElement("div");
-    curtain.id = "curtain";
-    curtain.style.cssText = `
-      position: fixed;
-      inset: 0;
-      background: var(--accent);
-      transform: translateY(-100%);
-      z-index: 9999;
-      transition: transform 0.6s ease;
-      pointer-events: none;
-    `;
-    document.body.appendChild(curtain);
-  }, []);
-
-  function triggerPageTransition(path: string): void {
-    if (isBasicTransition()) {
-      const curtain = document.getElementById("curtain");
-      if (!curtain) return;
-
-      curtain.style.transform = "translateY(0%)";
-
-      const delay = isSafari() ? 1000 : 600;
-
-      setTimeout(() => {
-        router.push(path);
-      }, delay);
-
-      return;
-    }
-
-    // Chrome → animation native via clipPath avec cercle
-    document.documentElement.animate(
-      [
-        {
-          // Étape 1 : cercle très petit au centre
-          clipPath: "circle(0% at 50% 50%)"
-        },
-        {
-          // Étape 2 : cercle qui s'agrandit pour couvrir tout l'écran
-          clipPath: "circle(150% at 50% 50%)",
-        },
-      ],
-      {
-        duration: 2000,
-        easing: "cubic-bezier(0.9, 0, 0.1, 1)",
-        pseudoElement: "::view-transition-new(root)",
-      }
-    );
-  }
-
-  const handleNavigation = (path: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (path === pathname) {
-      e.preventDefault();
-      return;
-    }
-
-    e.preventDefault();
-
-    if (isBasicTransition()) {
-      triggerPageTransition(path);
-    } else {
-      router.push(path, {
-        onTransitionReady: () => triggerPageTransition(path),
-      });
-    }
-  };
-
-  // Replie le rideau après navigation
-  useEffect(() => {
-    if (!isBasicTransition()) return;
-    const curtain = document.getElementById("curtain");
-    if (!curtain) return;
-
-    curtain.style.transform = "translateY(-100%)";
-  }, [pathname]);
+  // Crée un rideau bleu si besoin (Firefox/Safari) - maintenant dans le hook
 
   // Modèle de navigation partagé (pages peut être absente ici; fallback sur items uniquement)
   const navModel = buildNavModel({
@@ -150,7 +64,7 @@ const Nav: React.FC<NavProps> = ({ content }) => {
     <div className="nav" key={navKey}>
       <div className="col">
         <div className="nav-logo">
-          <Link onClick={handleNavigation("/")} href="/">
+          <TransitionLink href="/">
             {content?.logoImage ? (
               <img 
                 src={content.logoImage} 
@@ -160,7 +74,7 @@ const Nav: React.FC<NavProps> = ({ content }) => {
             ) : (
               <span ref={logoRef}>{content?.logo || 'soliva'}</span>
             )}
-          </Link>
+          </TransitionLink>
         </div>
       </div>
 
@@ -168,17 +82,15 @@ const Nav: React.FC<NavProps> = ({ content }) => {
         <div className="nav-items">
           {navModel.items.map((item) => {
             const isExternal = item.target === '_blank';
-            const onClick = isExternal ? undefined : handleNavigation(item.href);
             return (
               <div key={item.key} className="nav-item">
-                <Link
-                  onClick={onClick}
+                <TransitionLink
                   href={item.href}
                   target={item.target}
                   className={item.active ? "active" : ""}
                 >
                   {item.label}
-                </Link>
+                </TransitionLink>
               </div>
             );
           })}

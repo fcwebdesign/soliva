@@ -55,6 +55,7 @@ import NavSection from './sections/NavSection';
 import MetadataSection from './sections/MetadataSection';
 import ContactSection from './sections/ContactSection';
 import FooterSection from './sections/FooterSection';
+import TransitionSection from './sections/TransitionSection';
 
 interface Block {
   id: string;
@@ -2104,10 +2105,11 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
             </>
           )}
           
-          {/* Pour la page metadata, afficher seulement le bloc metadata */}
+          {/* Pour la page metadata, afficher le bloc metadata et les transitions */}
           {pageKey === 'metadata' && (
             <>
               <MetadataSection localData={localData} updateField={updateField} />
+              <TransitionSection localData={localData} updateField={updateField} />
             </>
           )}
         </div>

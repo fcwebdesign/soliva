@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import TransitionLink from './TransitionLink';
 
 interface FooterLink {
   title: string;
@@ -208,13 +209,13 @@ const Footer: React.FC<FooterProps> = ({ content, fullContent }) => {
                     
                     return (
                       <li key={index}>
-                        <Link 
+                        <TransitionLink 
                           href={url} 
                           target={target}
                           className="transition-colors hover:opacity-80 leading-tight text-gray-600"
                         >
                           {displayLabel}
-                        </Link>
+                        </TransitionLink>
                       </li>
                     );
                   })}

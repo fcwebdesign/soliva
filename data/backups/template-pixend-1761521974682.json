@@ -2,7 +2,13 @@
   "_template": "pixend",
   "metadata": {
     "title": "Site pixend",
-    "description": "Description du site pixend"
+    "description": "Description du site pixend",
+    "_transitionConfig": {
+      "type": "slide-up",
+      "duration": 1500,
+      "easing": "cubic-bezier(0.25, 0.1, 0.25, 1)",
+      "updatedAt": "2025-10-26T23:39:10.268Z"
+    }
   },
   "site": {
     "title": "Site pixend",
@@ -48,5 +54,11 @@
     "title": "Blog pixend",
     "description": "Page blog du template pixend",
     "blocks": []
+  },
+  "_transitionConfig": {
+    "type": "slide-up",
+    "duration": 1500,
+    "easing": "cubic-bezier(0.25, 0.1, 0.25, 1)",
+    "updatedAt": "2025-10-26T23:39:10.268Z"
   }
 }

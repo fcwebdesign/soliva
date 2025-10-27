@@ -2,7 +2,13 @@
   "_template": "pearl",
   "metadata": {
     "title": "Site pearl",
-    "description": "Description du site pearl"
+    "description": "Description du site pearl",
+    "_transitionConfig": {
+      "type": "zoom",
+      "duration": 1500,
+      "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
+      "updatedAt": "2025-10-26T23:40:48.659Z"
+    }
   },
   "site": {
     "title": "Site pearl",
@@ -48,5 +54,11 @@
     "title": "Blog pearl",
     "description": "Page blog du template pearl",
     "blocks": []
+  },
+  "_transitionConfig": {
+    "type": "zoom",
+    "duration": 1500,
+    "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
+    "updatedAt": "2025-10-26T23:40:48.659Z"
   }
 }
