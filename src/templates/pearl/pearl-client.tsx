@@ -44,6 +44,7 @@ export default function PearlClient() {
     );
   }
 
+
   // Résolution de la page courante
   let pageData: any = null;
   if (route === 'home') {
@@ -77,8 +78,13 @@ export default function PearlClient() {
         nav={content.nav || { logo: 'pearl' }} 
         pages={content.pages} 
         variant={content.nav?.headerVariant || 'classic'}
+        layout={content.metadata?.layout || 'standard'}
       />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className={`mx-auto px-4 sm:px-6 lg:px-8 py-8 ${
+        content.metadata?.layout === 'compact' ? 'max-w-7xl' :
+        content.metadata?.layout === 'wide' ? 'max-w-custom-1920' :
+        'max-w-screen-2xl' // standard par défaut (1536px, proche de 1440px)
+      }`}>
         {Array.isArray(pageData?.blocks) && pageData.blocks.length > 0 ? (
           <BlockRenderer blocks={pageData.blocks} />
         ) : (
@@ -86,12 +92,12 @@ export default function PearlClient() {
             <h2 className="text-3xl font-bold text-gray-900 mb-4">{pageData?.title || 'Page'}</h2>
             <p className="text-gray-600 mb-8">{pageData?.description || "Aucun bloc pour l'instant"}</p>
             <div className="bg-gray-50 rounded-lg p-8">
-              <p className="text-gray-400">Ajoute des blocs depuis l’admin pour cette page.</p>
+              <p className="text-gray-400">Ajoute des blocs depuis l'admin pour cette page.</p>
             </div>
           </div>
         )}
       </main>
-      <FooterPearl footer={content.footer} pages={content.pages} />
+      <FooterPearl footer={content.footer} pages={content.pages} layout={content.metadata?.layout || 'standard'} />
     </div>
   );
 }

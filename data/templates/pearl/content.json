@@ -4,14 +4,15 @@
     "title": "Site pearl",
     "description": "Description du site pearl",
     "_transitionConfig": {
-      "type": "zoom-out-in",
+      "type": "slide-up",
       "duration": 900,
       "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
-      "updatedAt": "2025-10-27T18:55:15.939Z"
+      "updatedAt": "2025-10-28T06:55:10.440Z"
     },
     "footer": {
       "footerVariant": "classic"
-    }
+    },
+    "layout": "standard"
   },
   "site": {
     "title": "Site pearl",
@@ -74,10 +75,10 @@
     "blocks": []
   },
   "_transitionConfig": {
-    "type": "zoom-out-in",
+    "type": "slide-up",
     "duration": 900,
     "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
-    "updatedAt": "2025-10-27T18:55:15.939Z"
+    "updatedAt": "2025-10-28T06:55:10.440Z"
   },
   "footer": {
     "logo": "soliva",
@@ -122,6 +123,6 @@
       "work"
     ],
     "legalPageLabels": {},
-    "footerVariant": "columns"
+    "footerVariant": "classic"
   }
 }

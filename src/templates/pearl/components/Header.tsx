@@ -11,9 +11,10 @@ interface HeaderPearlProps {
   nav: any;
   pages: any;
   variant?: HeaderVariant;
+  layout?: string;
 }
 
-export default function HeaderPearl({ nav, pages, variant = 'classic' }: HeaderPearlProps) {
+export default function HeaderPearl({ nav, pages, variant = 'classic', layout = 'standard' }: HeaderPearlProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const { key } = useTemplate();
@@ -220,7 +221,11 @@ export default function HeaderPearl({ nav, pages, variant = 'classic' }: HeaderP
 
   return (
     <header className="bg-white/80 backdrop-blur border-b border-gray-200 sticky top-0 z-40 w-full">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className={`mx-auto px-4 sm:px-6 lg:px-8 ${
+        layout === 'compact' ? 'max-w-7xl' :
+        layout === 'wide' ? 'max-w-custom-1920' :
+        'max-w-screen-2xl' // standard par défaut (1536px, proche de 1440px)
+      }`}>
         {renderHeaderContent()}
       </div>
       {open && (

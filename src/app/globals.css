@@ -13,6 +13,24 @@
   --text-secondary-hsl: 0 0% 40%;
   --max-width: 1440px;
   
+  /* Layout system classes */
+  .layout-compact {
+    --max-width: 1280px;
+  }
+  
+  .layout-standard {
+    --max-width: 1440px;
+  }
+  
+  .layout-wide {
+    --max-width: 1920px;
+  }
+  
+  /* Classe custom pour max-width 1920px */
+  .max-w-custom-1920 {
+    max-width: 1920px;
+  }
+  
   /* Force les couleurs des liens personnalisés */
   .footer-custom-links a {
     color: #666666 !important;

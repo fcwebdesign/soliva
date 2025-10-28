@@ -1,6 +1,6 @@
 type PageLink = { slug?: string; id?: string; title?: string };
 
-export default function FooterPearl({ footer, pages }: { footer?: any; pages?: { pages?: PageLink[] } }) {
+export default function FooterPearl({ footer, pages, layout = 'standard' }: { footer?: any; pages?: { pages?: PageLink[] }; layout?: string }) {
   const year = new Date().getFullYear();
   const copyright = footer?.copyright || ('© ' + year + ' Pearl. Tous droits réservés.');
   const links: string[] = footer?.bottomLinks || [];
@@ -141,7 +141,11 @@ export default function FooterPearl({ footer, pages }: { footer?: any; pages?: {
 
   return (
     <footer className="bg-gray-50 border-t border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className={`mx-auto px-4 sm:px-6 lg:px-8 py-12 ${
+        layout === 'compact' ? 'max-w-7xl' :
+        layout === 'wide' ? 'max-w-custom-1920' :
+        'max-w-screen-2xl' // standard par défaut (1536px, proche de 1440px)
+      }`}>
         {renderTop()}
 
         {/* Bas de page: copyright + liens */}
