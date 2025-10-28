@@ -1,9 +1,10 @@
 "use client";
 import { useTransitionRouter } from "next-view-transitions";
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 
 export function usePageTransitions() {
   const router = useTransitionRouter();
+  const isTransitioning = useRef(false);
 
   const isSafari = useCallback((): boolean => {
     const ua = navigator.userAgent.toLowerCase();
@@ -16,9 +17,20 @@ export function usePageTransitions() {
   }, [isSafari]);
 
   const triggerPageTransition = useCallback((path: string): void => {
+    // Éviter les transitions multiples
+    if (isTransitioning.current) {
+      console.log('🚫 Transition déjà en cours, ignorée');
+      return;
+    }
+    
+    isTransitioning.current = true;
+    
     if (isBasicTransition()) {
       const curtain = document.getElementById("curtain");
-      if (!curtain) return;
+      if (!curtain) {
+        isTransitioning.current = false;
+        return;
+      }
 
       curtain.style.transform = "translateY(0%)";
 
@@ -26,6 +38,10 @@ export function usePageTransitions() {
 
       setTimeout(() => {
         router.push(path);
+        // Réinitialiser le flag après la navigation
+        setTimeout(() => {
+          isTransitioning.current = false;
+        }, 100);
       }, delay);
 
       return;
@@ -48,7 +64,12 @@ export function usePageTransitions() {
         easing: "cubic-bezier(0.9, 0, 0.1, 1)",
         pseudoElement: "::view-transition-new(root)",
       }
-    );
+    ).addEventListener('finish', () => {
+      // Réinitialiser le flag après l'animation
+      setTimeout(() => {
+        isTransitioning.current = false;
+      }, 100);
+    });
   }, [router, isBasicTransition, isSafari]);
 
   const handleNavigation = useCallback((path: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -56,6 +77,13 @@ export function usePageTransitions() {
     
     if (path === currentPath) {
       e.preventDefault();
+      return;
+    }
+
+    // Éviter les transitions multiples
+    if (isTransitioning.current) {
+      e.preventDefault();
+      console.log('🚫 Navigation ignorée - transition en cours');
       return;
     }
 
@@ -77,6 +105,13 @@ export function usePageTransitions() {
     // Toujours SPA pour l'interne (on ignore target _blank hérité par erreur)
     if (isInternal && !withMod) {
       e.preventDefault();
+      
+      // Éviter les transitions multiples
+      if (isTransitioning.current) {
+        console.log('🚫 Clic de lien ignoré - transition en cours');
+        return;
+      }
+      
       if (href.startsWith("#")) {
         document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
       } else {

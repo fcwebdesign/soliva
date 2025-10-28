@@ -1,11 +1,12 @@
 "use client";
 import { useTemplate } from "@/templates/context";
 import { getTransitionConfig, TransitionType, DEFAULT_TRANSITION_CONFIG } from "./transition-config";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export default function ThemeTransitions() {
   const { key } = useTemplate();
   const [contentConfig, setContentConfig] = useState<any>(null);
+  const isTransitioning = useRef(false);
   
   // Charger la configuration depuis le contenu
   useEffect(() => {
@@ -13,6 +14,27 @@ export default function ThemeTransitions() {
     if (key === 'soliva') {
       return () => {}; // Retourner une fonction de nettoyage vide
     }
+    
+    // Protection globale contre les transitions multiples
+    const handleTransitionStart = () => {
+      if (isTransitioning.current) {
+        console.log('🚫 Transition déjà en cours, ignorée');
+        return false;
+      }
+      isTransitioning.current = true;
+      return true;
+    };
+    
+    const handleTransitionEnd = () => {
+      setTimeout(() => {
+        isTransitioning.current = false;
+      }, 100);
+    };
+    
+    // Écouter les événements de transition
+    document.addEventListener('transitionstart', handleTransitionStart);
+    document.addEventListener('transitionend', handleTransitionEnd);
+    
     const fetchContent = async () => {
       try {
         const response = await fetch('/api/content', { 
@@ -38,7 +60,11 @@ export default function ThemeTransitions() {
     // Recharger périodiquement pour détecter les changements
     const interval = setInterval(fetchContent, 2000);
     
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('transitionstart', handleTransitionStart);
+      document.removeEventListener('transitionend', handleTransitionEnd);
+    };
   }, [key]);
 
   // Utiliser la config du contenu si disponible, sinon fallback sur la config statique
