@@ -7,10 +7,42 @@ import HeaderPearl from './components/Header';
 import FooterPearl from './components/Footer';
 import WorkPearl from './components/Work';
 import BlogPearl from './components/Blog';
+import { useRevealAnimation } from '@/animations/reveal/hooks/useRevealAnimation';
+import RevealAnimation from '@/animations/reveal/RevealAnimationOriginal';
+import '@/animations/reveal/reveal-original.css';
 
 export default function PearlClient() {
   const [content, setContent] = useState<any>(null);
   const pathname = usePathname();
+  const { shouldShowReveal, isRevealComplete, completeReveal, config } = useRevealAnimation({
+    text: {
+      title: content?.home?.hero?.title || "Pearl",
+      subtitle: content?.home?.hero?.subtitle || "Un template moderne et élégant",
+      author: "Soliva"
+    },
+    images: ['/img1.jpg', '/img2.jpg', '/img3.jpg', '/img4.jpg'],
+    duration: 4000,
+    colors: {
+      background: '#000000',
+      text: '#ffffff',
+      progress: '#ffffff'
+    }
+  });
+
+         // Debug logs
+         console.log('🎬 Pearl Animation Debug:', {
+           shouldShowReveal,
+           isRevealComplete,
+           content: !!content,
+           homeHero: content?.home?.hero,
+           config
+         });
+
+         // Fonction pour réinitialiser l'animation (debug)
+         const resetAnimation = () => {
+           sessionStorage.removeItem('pearl-reveal-seen');
+           window.location.reload();
+         };
 
   useEffect(() => {
     const loadContent = async () => {
@@ -84,111 +116,168 @@ export default function PearlClient() {
 
   return (
     <div className="min-h-screen bg-white">
-      <HeaderPearl 
-        nav={content.nav || { logo: 'pearl' }} 
-        pages={content.pages} 
-        variant={content.nav?.headerVariant || 'classic'}
-        layout={content.metadata?.layout || 'standard'}
-      />
-      <main className={`mx-auto px-4 sm:px-6 lg:px-8 py-8 ${
-        content.metadata?.layout === 'compact' ? 'max-w-7xl' :
-        content.metadata?.layout === 'wide' ? 'max-w-custom-1920' :
-        'max-w-screen-2xl' // standard par défaut (1536px, proche de 1440px)
-      }`}>
-        {route === 'work-slug' && individualItem ? (
-          // Page de projet individuel
-          <div className="space-y-8">
-            <div className="text-center">
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">{individualItem.title}</h1>
-              {individualItem.category && (
-                <p className="text-lg text-gray-600 mb-4">Catégorie: {individualItem.category}</p>
-              )}
-            </div>
-            
-            {individualItem.image && (
-              <div className="relative h-96 w-full rounded-lg overflow-hidden">
-                <img
-                  src={individualItem.image}
-                  alt={individualItem.title || 'Image du projet'}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            )}
-            
-            {individualItem.blocks && individualItem.blocks.length > 0 ? (
-              <BlockRenderer blocks={individualItem.blocks} />
-            ) : individualItem.content || individualItem.description ? (
-              <div className="prose max-w-none">
-                <div dangerouslySetInnerHTML={{ __html: individualItem.content || individualItem.description }} />
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-gray-400">Ce projet n'a pas encore de contenu.</p>
-              </div>
-            )}
-            
-            <div className="text-center">
-              <Link href="/work" className="text-blue-600 hover:text-blue-800">
-                ← Retour aux réalisations
-              </Link>
-            </div>
-          </div>
-        ) : route === 'blog-slug' && individualItem ? (
-          // Page d'article individuel
-          <div className="space-y-8">
-            <div className="text-center">
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">{individualItem.title}</h1>
-              {individualItem.publishedAt && (
-                <p className="text-lg text-gray-600 mb-4">
-                  Publié le {new Date(individualItem.publishedAt).toLocaleDateString('fr-FR')}
-                </p>
-              )}
-            </div>
-            
-            {individualItem.blocks && individualItem.blocks.length > 0 ? (
-              <BlockRenderer blocks={individualItem.blocks} />
-            ) : individualItem.content ? (
-              <div className="prose max-w-none">
-                <div dangerouslySetInnerHTML={{ __html: individualItem.content }} />
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-gray-400">Cet article n'a pas encore de contenu.</p>
-              </div>
-            )}
-            
-            <div className="text-center">
-              <Link href="/blog" className="text-blue-600 hover:text-blue-800">
-                ← Retour au journal
-              </Link>
-            </div>
-          </div>
-        ) : Array.isArray(pageData?.blocks) && pageData.blocks.length > 0 && pageData.blocks.some((block: any) => block.content && block.content.trim() !== '') ? (
-          <BlockRenderer blocks={pageData.blocks} />
-        ) : route === 'work' ? (
-          <WorkPearl content={content?.work} />
-        ) : route === 'blog' ? (
-          <BlogPearl content={content?.blog} />
-        ) : (
-          <div className="text-center py-12">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">
-              {pageData?.hero?.title || pageData?.title || 'Page'}
-            </h1>
-            {pageData?.hero?.subtitle || pageData?.description ? (
-              <div
-                className="text-gray-600 mb-8 max-w-2xl mx-auto"
-                dangerouslySetInnerHTML={{ __html: pageData?.hero?.subtitle || pageData?.description }}
-              />
-            ) : (
-              <p className="text-gray-400">Aucun contenu pour l'instant</p>
-            )}
-            <div className="bg-gray-50 rounded-lg p-8">
-              <p className="text-gray-400">Ajoute des blocs depuis l'admin pour cette page.</p>
-            </div>
-          </div>
+      {/* Overlay noir pour l'animation */}
+      <div 
+        className={`fixed inset-0 z-50 transition-opacity duration-300 ${
+          shouldShowReveal && content ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+        style={{ backgroundColor: config.colors.background }}
+      >
+        {shouldShowReveal && content && (
+          <RevealAnimation 
+            config={config} 
+            onComplete={completeReveal}
+          />
         )}
-      </main>
-      <FooterPearl footer={content.footer} pages={content.pages} layout={content.metadata?.layout || 'standard'} />
+      </div>
+
+             {/* Bouton de debug temporaire */}
+             {!shouldShowReveal && (
+               <button 
+                 onClick={resetAnimation}
+                 className="fixed top-4 right-4 z-50 bg-red-500 text-white px-4 py-2 rounded"
+               >
+                 Reset Animation
+               </button>
+             )}
+
+             {/* Contenu principal: toujours rendu (le reveal est une surcouche) */}
+             {content && (
+               <>
+                 {/* Hero rows pour l'animation CodeGrid (home uniquement) */}
+                 {route === 'home' && (
+                   <section className="hero">
+                     {(config.text.title || 'Pearl').split('\n').map((line, idx) => (
+                       <div className="header-row" key={idx}>
+                         <div className="divider" />
+                         <h1>{line}</h1>
+                       </div>
+                     ))}
+                   </section>
+                 )}
+                 <HeaderPearl
+            nav={content.nav || { logo: 'pearl' }} 
+            pages={content.pages} 
+            variant={content.nav?.headerVariant || 'classic'}
+            layout={content.metadata?.layout || 'standard'}
+          />
+          <main className={`mx-auto px-4 sm:px-6 lg:px-8 py-8 ${
+            content.metadata?.layout === 'compact' ? 'max-w-7xl' :
+            content.metadata?.layout === 'wide' ? 'max-w-custom-1920' :
+            'max-w-screen-2xl' // standard par défaut (1536px, proche de 1440px)
+          }`}>
+            {route === 'home' ? (
+              // Le hero anim sera au-dessus; on évite de dupliquer un heading ici
+              Array.isArray(pageData?.blocks) && pageData.blocks.length > 0 ? (
+                <BlockRenderer blocks={pageData.blocks} />
+              ) : (
+                <div className="text-center py-12">
+                  {pageData?.hero?.subtitle || pageData?.description ? (
+                    <div
+                      className="text-gray-600 mb-8 max-w-2xl mx-auto"
+                      dangerouslySetInnerHTML={{ __html: pageData?.hero?.subtitle || pageData?.description }}
+                    />
+                  ) : (
+                    <p className="text-gray-400">Aucun contenu pour l'instant</p>
+                  )}
+                </div>
+              )
+            ) : route === 'work-slug' && individualItem ? (
+              // Page de projet individuel
+              <div className="space-y-8">
+                <div className="text-center">
+                  <h1 className="text-3xl font-bold text-gray-900 mb-4">{individualItem.title}</h1>
+                  {individualItem.category && (
+                    <p className="text-lg text-gray-600 mb-4">Catégorie: {individualItem.category}</p>
+                  )}
+                </div>
+                
+                {individualItem.image && (
+                  <div className="relative h-96 w-full rounded-lg overflow-hidden">
+                    <img
+                      src={individualItem.image}
+                      alt={individualItem.title || 'Image du projet'}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                
+                {individualItem.blocks && individualItem.blocks.length > 0 ? (
+                  <BlockRenderer blocks={individualItem.blocks} />
+                ) : individualItem.content || individualItem.description ? (
+                  <div className="prose max-w-none">
+                    <div dangerouslySetInnerHTML={{ __html: individualItem.content || individualItem.description }} />
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <p className="text-gray-400">Ce projet n'a pas encore de contenu.</p>
+                  </div>
+                )}
+                
+                <div className="text-center">
+                  <Link href="/work" className="text-blue-600 hover:text-blue-800">
+                    ← Retour aux réalisations
+                  </Link>
+                </div>
+              </div>
+            ) : route === 'blog-slug' && individualItem ? (
+              // Page d'article individuel
+              <div className="space-y-8">
+                <div className="text-center">
+                  <h1 className="text-3xl font-bold text-gray-900 mb-4">{individualItem.title}</h1>
+                  {individualItem.publishedAt && (
+                    <p className="text-lg text-gray-600 mb-4">
+                      Publié le {new Date(individualItem.publishedAt).toLocaleDateString('fr-FR')}
+                    </p>
+                  )}
+                </div>
+                
+                {individualItem.blocks && individualItem.blocks.length > 0 ? (
+                  <BlockRenderer blocks={individualItem.blocks} />
+                ) : individualItem.content ? (
+                  <div className="prose max-w-none">
+                    <div dangerouslySetInnerHTML={{ __html: individualItem.content }} />
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <p className="text-gray-400">Cet article n'a pas encore de contenu.</p>
+                  </div>
+                )}
+                
+                <div className="text-center">
+                  <Link href="/blog" className="text-blue-600 hover:text-blue-800">
+                    ← Retour au journal
+                  </Link>
+                </div>
+              </div>
+            ) : Array.isArray(pageData?.blocks) && pageData.blocks.length > 0 && pageData.blocks.some((block: any) => block.content && block.content.trim() !== '') ? (
+              <BlockRenderer blocks={pageData.blocks} />
+            ) : route === 'work' ? (
+              <WorkPearl content={content?.work} />
+            ) : route === 'blog' ? (
+              <BlogPearl content={content?.blog} />
+            ) : (
+              <div className="text-center py-12">
+                <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                  {pageData?.hero?.title || pageData?.title || 'Page'}
+                </h1>
+                {pageData?.hero?.subtitle || pageData?.description ? (
+                  <div
+                    className="text-gray-600 mb-8 max-w-2xl mx-auto"
+                    dangerouslySetInnerHTML={{ __html: pageData?.hero?.subtitle || pageData?.description }}
+                  />
+                ) : (
+                  <p className="text-gray-400">Aucun contenu pour l'instant</p>
+                )}
+                <div className="bg-gray-50 rounded-lg p-8">
+                  <p className="text-gray-400">Ajoute des blocs depuis l'admin pour cette page.</p>
+                </div>
+              </div>
+            )}
+          </main>
+          <FooterPearl footer={content.footer} pages={content.pages} layout={content.metadata?.layout || 'standard'} />
+        </>
+      )}
     </div>
   );
 }

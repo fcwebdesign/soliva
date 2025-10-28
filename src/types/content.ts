@@ -1,6 +1,7 @@
 export interface Metadata {
   title: string;
   description: string;
+  layout?: 'compact' | 'standard' | 'wide';
 }
 
 export interface Nav {

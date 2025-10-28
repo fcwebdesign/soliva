@@ -68,7 +68,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             <meta name="pragma" content="no-cache" />
             <meta name="expires" content="0" />
           </head>
-          <body className={`site layout-${content.layout || 'standard'} ${isDraftMode ? 'preview-mode' : ''}`}>
+          <body className={`site layout-${content.metadata?.layout || 'standard'} ${isDraftMode ? 'preview-mode' : ''}`}>
             <Preloader />
             <TemplateProvider value={{ key: 'soliva' }}>
               {/* Per-template page transitions (no-op for admin since key=soliva) */}
@@ -105,7 +105,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           <meta name="pragma" content="no-cache" />
           <meta name="expires" content="0" />
         </head>
-        <body className={`${templateKey === 'pearl' ? '' : 'site'} layout-${content.layout || 'standard'} ${isDraftMode ? 'preview-mode' : ''}`}>
+        <body className={`${templateKey === 'pearl' ? '' : 'site'} layout-${content.metadata?.layout || 'standard'} ${isDraftMode ? 'preview-mode' : ''}`}>
           {/* Preloader */}
           <Preloader />
           
