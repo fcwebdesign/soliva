@@ -162,7 +162,7 @@ export default function PearlClient() {
               </a>
             </div>
           </div>
-        ) : Array.isArray(pageData?.blocks) && pageData.blocks.length > 0 ? (
+        ) : Array.isArray(pageData?.blocks) && pageData.blocks.length > 0 && pageData.blocks.some((block: any) => block.content && block.content.trim() !== '') ? (
           <BlockRenderer blocks={pageData.blocks} />
         ) : route === 'work' ? (
           <WorkPearl content={content?.work} />
@@ -170,12 +170,17 @@ export default function PearlClient() {
           <BlogPearl content={content?.blog} />
         ) : (
           <div className="text-center py-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">
               {pageData?.hero?.title || pageData?.title || 'Page'}
-            </h2>
-            <p className="text-gray-600 mb-8">
-              {pageData?.hero?.subtitle || pageData?.description || "Aucun bloc pour l'instant"}
-            </p>
+            </h1>
+            {pageData?.hero?.subtitle || pageData?.description ? (
+              <div
+                className="text-gray-600 mb-8 max-w-2xl mx-auto"
+                dangerouslySetInnerHTML={{ __html: pageData?.hero?.subtitle || pageData?.description }}
+              />
+            ) : (
+              <p className="text-gray-400">Aucun contenu pour l'instant</p>
+            )}
             <div className="bg-gray-50 rounded-lg p-8">
               <p className="text-gray-400">Ajoute des blocs depuis l'admin pour cette page.</p>
             </div>
