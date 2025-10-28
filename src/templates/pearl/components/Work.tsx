@@ -12,10 +12,12 @@ type Project = {
   category?: string;
 };
 
-export default function WorkPearl({ content }: { content?: { hero?: { title?: string; subtitle?: string }; description?: string; projects?: Project[] } }) {
+export default function WorkPearl({ content }: { content?: { hero?: { title?: string; subtitle?: string }; description?: string; projects?: Project[]; adminProjects?: Project[] } }) {
   const title = content?.hero?.title || 'Réalisations';
   const subtitle = content?.hero?.subtitle || content?.description || '';
-  const projects: Project[] = Array.isArray(content?.projects) ? (content?.projects as Project[]) : [];
+  const projectsFromProjects: Project[] = Array.isArray(content?.projects) ? (content?.projects as Project[]) : [];
+  const projectsFromAdmin: Project[] = Array.isArray((content as any)?.adminProjects) ? ((content as any)?.adminProjects as Project[]) : [];
+  const projects: Project[] = projectsFromProjects.length > 0 ? projectsFromProjects : projectsFromAdmin;
 
   return (
     <section>

@@ -11,7 +11,7 @@ type Article = {
 export default function BlogPearl({ content }: { content?: { hero?: { title?: string; subtitle?: string }; description?: string; articles?: Article[] } }) {
   const title = content?.hero?.title || 'Journal';
   const subtitle = content?.hero?.subtitle || content?.description || '';
-  const articles: Article[] = Array.isArray(content?.articles) ? (content?.articles as Article[]) : [];
+  const articles: Article[] = Array.isArray((content as any)?.articles) ? ((content as any)?.articles as Article[]) : [];
 
   const visibleArticles = articles.filter(a => (a.status === 'published' || !a.status));
 

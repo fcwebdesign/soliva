@@ -12,7 +12,7 @@
     "footer": {
       "footerVariant": "classic"
     },
-    "layout": "standard"
+    "layout": "compact"
   },
   "site": {
     "title": "Site pearl",
@@ -21,14 +21,17 @@
   },
   "nav": {
     "logo": "pearl",
+    "logoImage": "",
+    "location": "paris, le havre",
     "items": [
       "home",
       "work",
       "studio",
       "contact",
-      "blog"
+      "blog",
+      "test-page"
     ],
-    "headerVariant": "classic"
+    "pageLabels": {}
   },
   "home": {
     "title": "Accueil pearl",
@@ -57,22 +60,36 @@
   "studio": {
     "title": "Studio pearl",
     "description": "Page studio du template pearl",
-    "blocks": []
+    "blocks": [],
+    "hero": {
+      "title": "About us"
+    }
   },
   "work": {
     "title": "Projets pearl",
     "description": "Page projets du template pearl",
-    "blocks": []
+    "blocks": [],
+    "hero": {
+      "title": "selected work"
+    },
+    "adminProjects": []
   },
   "contact": {
     "title": "Contact pearl",
     "description": "Page contact du template pearl",
-    "blocks": []
+    "blocks": [],
+    "hero": {
+      "title": "Contact"
+    }
   },
   "blog": {
     "title": "Blog pearl",
     "description": "Page blog du template pearl",
-    "blocks": []
+    "blocks": [],
+    "hero": {
+      "title": "Le Journal"
+    },
+    "articles": []
   },
   "_transitionConfig": {
     "type": "slide-up",
@@ -81,7 +98,7 @@
     "updatedAt": "2025-10-28T06:55:10.440Z"
   },
   "footer": {
-    "logo": "soliva",
+    "logo": "pearl",
     "logoImage": "",
     "description": "",
     "links": [
@@ -122,7 +139,30 @@
       "home",
       "work"
     ],
-    "legalPageLabels": {},
-    "footerVariant": "classic"
+    "legalPageLabels": {}
+  },
+  "pages": {
+    "pages": [
+      {
+        "id": "test-page",
+        "title": "Test page",
+        "content": "",
+        "slug": "test-page",
+        "status": "published",
+        "description": "<p>Description de la page de test</p>",
+        "blocks": [
+          {
+            "id": "block-1761637080720",
+            "type": "content",
+            "content": "",
+            "title": "Description"
+          }
+        ],
+        "hero": {
+          "title": "Testpage"
+        },
+        "publishedAt": "2025-10-28T07:38:42.832Z"
+      }
+    ]
   }
 }
