@@ -4,10 +4,10 @@
     "title": "Site pearl",
     "description": "Description du site pearl",
     "_transitionConfig": {
-      "type": "slide-up",
+      "type": "zoom",
       "duration": 900,
       "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
-      "updatedAt": "2025-10-28T06:55:10.440Z"
+      "updatedAt": "2025-10-28T10:00:07.983Z"
     },
     "footer": {
       "footerVariant": "classic"
@@ -31,7 +31,8 @@
       "blog",
       "test-page"
     ],
-    "pageLabels": {}
+    "pageLabels": {},
+    "headerVariant": "classic"
   },
   "home": {
     "title": "Accueil pearl",
@@ -72,7 +73,35 @@
     "hero": {
       "title": "selected work"
     },
-    "adminProjects": []
+    "adminProjects": [
+      {
+        "id": "projet-test",
+        "title": "projet 1",
+        "content": "",
+        "status": "published",
+        "client": "lisa",
+        "category": "web",
+        "year": "2025",
+        "featured": false,
+        "slug": "projet-test",
+        "image": "/uploads/1761644824030-2423f906.webp",
+        "publishedAt": "2025-10-28T09:47:12.339Z"
+      }
+    ],
+    "projects": [
+      {
+        "title": "projet 1",
+        "content": "",
+        "category": "web",
+        "client": "lisa",
+        "year": "2025",
+        "featured": false,
+        "status": "published",
+        "publishedAt": "2025-10-28T09:47:12.339Z",
+        "slug": "projet-test",
+        "image": "/uploads/1761644824030-2423f906.webp"
+      }
+    ]
   },
   "contact": {
     "title": "Contact pearl",
@@ -89,13 +118,30 @@
     "hero": {
       "title": "Le Journal"
     },
-    "articles": []
+    "articles": [
+      {
+        "id": "test-article",
+        "title": "test article",
+        "content": "<p>dsfddfdfsfsd</p>",
+        "status": "published",
+        "slug": "test-article",
+        "hasCustomSlug": true,
+        "blocks": [
+          {
+            "id": "block-1",
+            "type": "content",
+            "content": "<p>dsfddfdfsfsd</p>"
+          }
+        ],
+        "publishedAt": "2025-10-28T08:01:22.153Z"
+      }
+    ]
   },
   "_transitionConfig": {
-    "type": "slide-up",
+    "type": "zoom",
     "duration": 900,
     "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
-    "updatedAt": "2025-10-28T06:55:10.440Z"
+    "updatedAt": "2025-10-28T10:00:07.983Z"
   },
   "footer": {
     "logo": "pearl",
@@ -163,6 +209,10 @@
         },
         "publishedAt": "2025-10-28T07:38:42.832Z"
       }
+    ],
+    "pinnedSystem": [
+      "work",
+      "blog"
     ]
   }
 }

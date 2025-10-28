@@ -1986,12 +1986,12 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
   }
   
   // Si c'est la page blog générale, afficher les onglets
-  if (pageKey === 'blog' && localData.articles) {
+  if (pageKey === 'blog' && localData.articles !== undefined) {
     return renderBlogTabs();
   }
 
   // Si c'est la page work générale, afficher les onglets
-  if (pageKey === 'work' && localData.adminProjects) {
+  if (pageKey === 'work' && localData.adminProjects !== undefined) {
     return renderWorkTabs();
   }
 

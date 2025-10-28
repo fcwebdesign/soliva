@@ -49,17 +49,24 @@ export default function PearlClient() {
 
   // Résolution de la page courante
   let pageData: any = null;
+  let individualItem: any = null; // Pour les articles/projets individuels
+  
   if (route === 'home') {
     pageData = content?.home;
   } else if (route === 'work') {
     pageData = content?.work;
   } else if (route === 'work-slug') {
-    // Pour les pages de projet individuelles, utiliser le contenu work
+    // Pour les pages de projet individuelles, trouver le projet spécifique
+    const slug = pathname?.split('/')[2] || '';
+    individualItem = content?.work?.adminProjects?.find((p: any) => p.slug === slug || p.id === slug) ||
+                     content?.work?.projects?.find((p: any) => p.slug === slug || p.id === slug);
     pageData = content?.work;
   } else if (route === 'blog') {
     pageData = content?.blog;
   } else if (route === 'blog-slug') {
-    // Pour les articles individuels, utiliser le contenu blog
+    // Pour les articles individuels, trouver l'article spécifique
+    const slug = pathname?.split('/')[2] || '';
+    individualItem = content?.blog?.articles?.find((a: any) => a.slug === slug || a.id === slug);
     pageData = content?.blog;
   } else if (route === 'studio') {
     pageData = content?.studio;
@@ -87,7 +94,75 @@ export default function PearlClient() {
         content.metadata?.layout === 'wide' ? 'max-w-custom-1920' :
         'max-w-screen-2xl' // standard par défaut (1536px, proche de 1440px)
       }`}>
-        {Array.isArray(pageData?.blocks) && pageData.blocks.length > 0 ? (
+        {route === 'work-slug' && individualItem ? (
+          // Page de projet individuel
+          <div className="space-y-8">
+            <div className="text-center">
+              <h1 className="text-4xl font-bold text-gray-900 mb-4">{individualItem.title}</h1>
+              {individualItem.category && (
+                <p className="text-lg text-gray-600 mb-4">Catégorie: {individualItem.category}</p>
+              )}
+            </div>
+            
+            {individualItem.image && (
+              <div className="relative h-96 w-full rounded-lg overflow-hidden">
+                <img
+                  src={individualItem.image}
+                  alt={individualItem.title || 'Image du projet'}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+            
+            {individualItem.blocks && individualItem.blocks.length > 0 ? (
+              <BlockRenderer blocks={individualItem.blocks} />
+            ) : individualItem.content || individualItem.description ? (
+              <div className="prose max-w-none">
+                <div dangerouslySetInnerHTML={{ __html: individualItem.content || individualItem.description }} />
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-gray-400">Ce projet n'a pas encore de contenu.</p>
+              </div>
+            )}
+            
+            <div className="text-center">
+              <a href="/work" className="text-blue-600 hover:text-blue-800">
+                ← Retour aux réalisations
+              </a>
+            </div>
+          </div>
+        ) : route === 'blog-slug' && individualItem ? (
+          // Page d'article individuel
+          <div className="space-y-8">
+            <div className="text-center">
+              <h1 className="text-4xl font-bold text-gray-900 mb-4">{individualItem.title}</h1>
+              {individualItem.publishedAt && (
+                <p className="text-lg text-gray-600 mb-4">
+                  Publié le {new Date(individualItem.publishedAt).toLocaleDateString('fr-FR')}
+                </p>
+              )}
+            </div>
+            
+            {individualItem.blocks && individualItem.blocks.length > 0 ? (
+              <BlockRenderer blocks={individualItem.blocks} />
+            ) : individualItem.content ? (
+              <div className="prose max-w-none">
+                <div dangerouslySetInnerHTML={{ __html: individualItem.content }} />
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-gray-400">Cet article n'a pas encore de contenu.</p>
+              </div>
+            )}
+            
+            <div className="text-center">
+              <a href="/blog" className="text-blue-600 hover:text-blue-800">
+                ← Retour au journal
+              </a>
+            </div>
+          </div>
+        ) : Array.isArray(pageData?.blocks) && pageData.blocks.length > 0 ? (
           <BlockRenderer blocks={pageData.blocks} />
         ) : route === 'work' ? (
           <WorkPearl content={content?.work} />

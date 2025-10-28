@@ -1,5 +1,6 @@
 "use client";
 import React from 'react';
+import Link from 'next/link';
 
 type Project = {
   id?: string;
@@ -35,12 +36,16 @@ export default function WorkPearl({ content }: { content?: { hero?: { title?: st
           {projects.map((project) => (
             <article key={project.slug || project.id} className="group border border-gray-200 rounded-xl overflow-hidden hover:shadow-sm transition-shadow">
               {project.image && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={project.image} alt={project.alt || project.title || 'Projet'} className="w-full h-56 object-cover" />
+                <Link href={`/work/${project.slug || project.id}`} className="block">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={project.image} alt={project.alt || project.title || 'Projet'} className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300" />
+                </Link>
               )}
               <div className="p-5">
                 <h3 className="text-lg font-semibold text-gray-900 group-hover:text-gray-700">
-                  <a href={`/work/${project.slug || project.id}`}>{project.title || 'Projet'}</a>
+                  <Link href={`/work/${project.slug || project.id}`} className="hover:text-blue-600 transition-colors">
+                    {project.title || 'Projet'}
+                  </Link>
                 </h3>
                 {(project.excerpt || project.description) && (
                   <p className="mt-2 text-sm text-gray-600 line-clamp-3">{project.excerpt || project.description}</p>
