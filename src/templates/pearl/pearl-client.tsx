@@ -4,6 +4,8 @@ import { usePathname } from 'next/navigation';
 import BlockRenderer from '@/blocks/BlockRenderer';
 import HeaderPearl from './components/Header';
 import FooterPearl from './components/Footer';
+import WorkPearl from './components/Work';
+import BlogPearl from './components/Blog';
 
 export default function PearlClient() {
   const [content, setContent] = useState<any>(null);
@@ -87,10 +89,18 @@ export default function PearlClient() {
       }`}>
         {Array.isArray(pageData?.blocks) && pageData.blocks.length > 0 ? (
           <BlockRenderer blocks={pageData.blocks} />
+        ) : route === 'work' ? (
+          <WorkPearl content={content?.work} />
+        ) : route === 'blog' ? (
+          <BlogPearl content={content?.blog} />
         ) : (
           <div className="text-center py-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">{pageData?.title || 'Page'}</h2>
-            <p className="text-gray-600 mb-8">{pageData?.description || "Aucun bloc pour l'instant"}</p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              {pageData?.hero?.title || pageData?.title || 'Page'}
+            </h2>
+            <p className="text-gray-600 mb-8">
+              {pageData?.hero?.subtitle || pageData?.description || "Aucun bloc pour l'instant"}
+            </p>
             <div className="bg-gray-50 rounded-lg p-8">
               <p className="text-gray-400">Ajoute des blocs depuis l'admin pour cette page.</p>
             </div>
