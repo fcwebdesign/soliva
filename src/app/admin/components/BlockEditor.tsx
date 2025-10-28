@@ -1030,7 +1030,18 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
     // Réinitialiser les états
     setDraggedLogoIndex(null);
     setDragOverLogoIndex(null);
-    document.body.classList.remove('dragging');
+    
+    // Nettoyage robuste de la classe dragging
+    if (document.body.classList.contains('dragging')) {
+      document.body.classList.remove('dragging');
+    }
+    
+    // Nettoyage supplémentaire au cas où
+    setTimeout(() => {
+      if (document.body.classList.contains('dragging')) {
+        document.body.classList.remove('dragging');
+      }
+    }, 100);
   };
 
   const handleLogoDragEnd = () => {
@@ -1041,7 +1052,18 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
     
     setDraggedLogoIndex(null);
     setDragOverLogoIndex(null);
-    document.body.classList.remove('dragging');
+    
+    // Nettoyage robuste de la classe dragging
+    if (document.body.classList.contains('dragging')) {
+      document.body.classList.remove('dragging');
+    }
+    
+    // Nettoyage supplémentaire au cas où
+    setTimeout(() => {
+      if (document.body.classList.contains('dragging')) {
+        document.body.classList.remove('dragging');
+      }
+    }, 100);
   };
 
   // Fonction pour dupliquer un contenu

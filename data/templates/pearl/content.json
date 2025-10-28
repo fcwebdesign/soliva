@@ -8,6 +8,9 @@
       "duration": 900,
       "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
       "updatedAt": "2025-10-27T18:55:15.939Z"
+    },
+    "footer": {
+      "footerVariant": "classic"
     }
   },
   "site": {

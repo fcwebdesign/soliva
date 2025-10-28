@@ -34,6 +34,23 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
   const router = useRouter();
   const [pinnedPages, setPinnedPages] = useState<Array<{ id: string; label: string; type: 'system' | 'custom' }>>([]);
 
+  // Nettoyer automatiquement les classes dragging qui peuvent interférer
+  useEffect(() => {
+    const cleanupDragging = () => {
+      if (document.body.classList.contains('dragging')) {
+        document.body.classList.remove('dragging');
+      }
+    };
+
+    // Nettoyer au montage du composant
+    cleanupDragging();
+
+    // Nettoyer périodiquement (au cas où un drag se serait mal terminé)
+    const interval = setInterval(cleanupDragging, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   // Supprime la liste fixe; on affiche uniquement les pages épinglées
 
   const SETTINGS = [
@@ -46,7 +63,18 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
     { id: 'ai', label: 'IA', path: '/admin/ai', icon: Brain },
   ];
 
-  const handlePageChange = (pageId: string) => {
+  const handlePageChange = (pageId: string, event?: React.MouseEvent) => {
+    // Empêcher les conflits d'événements
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    // Nettoyer les classes dragging avant la navigation
+    if (document.body.classList.contains('dragging')) {
+      document.body.classList.remove('dragging');
+    }
+
     // Vérifier si la page a un path défini dans SETTINGS
     const setting = SETTINGS.find(s => s.id === pageId);
     if (setting && setting.path) {
@@ -55,7 +83,10 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
     }
     
     if (onPageChange) {
-      onPageChange(pageId);
+      // Ajouter un petit délai pour éviter les problèmes de synchronisation
+      setTimeout(() => {
+        onPageChange(pageId);
+      }, 10);
     } else {
       // Fallback si onPageChange n'est pas fourni
       if (pageId === 'pages') {
@@ -130,7 +161,18 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
     </li>
   );
 
-  const handlePagesClick = (isMobile = false) => {
+  const handlePagesClick = (isMobile = false, event?: React.MouseEvent) => {
+    // Empêcher les conflits d'événements
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    // Nettoyer les classes dragging avant la navigation
+    if (document.body.classList.contains('dragging')) {
+      document.body.classList.remove('dragging');
+    }
+
     router.push('/admin/pages');
     if (isMobile) setIsMobileMenuOpen(false);
   };
@@ -156,7 +198,7 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
           {/* Bouton Pages */}
           <div className="mb-4">
             <button
-              onClick={() => handlePagesClick()}
+              onClick={(e) => handlePagesClick(false, e)}
               className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none ${
                 currentPage === 'pages'
                   ? 'bg-blue-50 text-blue-700'
@@ -177,7 +219,15 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
                 {pinnedPages.map((p) => (
                   <li key={p.id}>
                     <button
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        // Nettoyer les classes dragging avant la navigation
+                        if (document.body.classList.contains('dragging')) {
+                          document.body.classList.remove('dragging');
+                        }
+                        
                         if (['home','studio','contact','work','blog'].includes(p.id)) {
                           router.push(`/admin?page=${p.id}`);
                         } else {
@@ -207,7 +257,7 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
               {SETTINGS.map((setting) => (
                 <li key={setting.id}> 
                   <button
-                    onClick={() => handlePageChange(setting.id)}
+                    onClick={(e) => handlePageChange(setting.id, e)}
                     className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none ${
                       currentPage === setting.id
                         ? 'bg-blue-50 text-blue-700'
@@ -231,7 +281,15 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
           <ul className="space-y-1">
             <li>
               <button
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  
+                  // Nettoyer les classes dragging avant l'action
+                  if (document.body.classList.contains('dragging')) {
+                    document.body.classList.remove('dragging');
+                  }
+                  
                   window.open('/', '_blank');
                 }}
                 className="w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors focus:outline-none"
@@ -242,7 +300,15 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
             </li>
             <li>
               <button
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  
+                  // Nettoyer les classes dragging avant l'action
+                  if (document.body.classList.contains('dragging')) {
+                    document.body.classList.remove('dragging');
+                  }
+                  
                   // Logout - rediriger vers la page d'accueil
                   window.location.href = '/';
                 }}
@@ -299,7 +365,7 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
               {/* Bouton Pages mobile */}
               <div className="mb-4">
                 <button
-                  onClick={() => handlePagesClick(true)}
+                  onClick={(e) => handlePagesClick(true, e)}
                   className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none ${
                     currentPage === 'pages'
                       ? 'bg-blue-50 text-blue-700'
@@ -320,7 +386,15 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
                     {pinnedPages.map((p) => (
                       <li key={p.id}>
                         <button
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            
+                            // Nettoyer les classes dragging avant la navigation
+                            if (document.body.classList.contains('dragging')) {
+                              document.body.classList.remove('dragging');
+                            }
+                            
                             if (['home','studio','contact','work','blog'].includes(p.id)) {
                               router.push(`/admin?page=${p.id}`);
                             } else {
@@ -351,8 +425,8 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
                   {SETTINGS.map((setting) => (
                     <li key={setting.id}>
                       <button
-                        onClick={() => {
-                          handlePageChange(setting.id);
+                        onClick={(e) => {
+                          handlePageChange(setting.id, e);
                           setIsMobileMenuOpen(false);
                         }}
                         className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none ${
@@ -378,7 +452,15 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
               <ul className="space-y-1">
                 <li>
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      
+                      // Nettoyer les classes dragging avant l'action
+                      if (document.body.classList.contains('dragging')) {
+                        document.body.classList.remove('dragging');
+                      }
+                      
                       window.open('/', '_blank');
                     }}
                     className="w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors focus:outline-none"
@@ -389,7 +471,15 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
                 </li>
                 <li>
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      
+                      // Nettoyer les classes dragging avant l'action
+                      if (document.body.classList.contains('dragging')) {
+                        document.body.classList.remove('dragging');
+                      }
+                      
                       window.location.href = '/';
                     }}
                     className="w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors focus:outline-none"

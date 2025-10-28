@@ -11,7 +11,7 @@ export default function ThemeTransitions() {
   useEffect(() => {
     // Sur l'admin (key = 'soliva'), ne pas déclencher de polling réseau inutile
     if (key === 'soliva') {
-      return;
+      return () => {}; // Retourner une fonction de nettoyage vide
     }
     const fetchContent = async () => {
       try {

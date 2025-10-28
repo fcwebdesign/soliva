@@ -99,19 +99,29 @@ export const useAdminPage = () => {
     }
   }, []);
 
-  // Gérer les changements d'URL
+  // Gérer les changements d'URL (TEMPORAIREMENT DÉSACTIVÉ - cause des conflits)
+  /*
   useEffect(() => {
     const pageFromUrl = searchParams.get('page');
     const allowed = ['home', 'studio', 'contact', 'work', 'blog', 'nav', 'metadata', 'templates', 'footer', 'backup'];
 
+    console.log('🌐 [URL] useEffect déclenché - pageFromUrl:', pageFromUrl, 'currentPage:', currentPage);
+
     const handleNavigationChange = async () => {
+      console.log('🌐 [URL] handleNavigationChange appelé');
+      
       if (!pageFromUrl || !allowed.includes(pageFromUrl)) {
+        console.log('🌐 [URL] Page non autorisée ou vide:', pageFromUrl);
         return;
       }
 
+      // Éviter les conflits avec handlePageChange - ne traiter que les changements d'URL externes
       if (pageFromUrl === currentPage) {
+        console.log('🌐 [URL] Même page, pas de changement:', pageFromUrl);
         return;
       }
+      
+      console.log('🌐 [URL] Changement d\'URL externe détecté:', pageFromUrl);
 
       if (hasUnsavedChanges) {
         const confirmLeave = await confirm({
@@ -134,6 +144,7 @@ export const useAdminPage = () => {
         }
       }
 
+      console.log('🌐 [URL] Mise à jour currentPage vers:', pageFromUrl);
       setCurrentPage(pageFromUrl);
       // Réinitialiser l'état des modifications lors du changement de page
       setHasUnsavedChanges(false);
@@ -141,22 +152,22 @@ export const useAdminPage = () => {
 
       // Navigation spéciale pour la page IA
       if (pageFromUrl === 'ai') {
+        console.log('🌐 [URL] Redirection vers IA');
         router.replace('/admin/ai');
       } else {
+        console.log('🌐 [URL] Redirection vers:', `/admin?page=${pageFromUrl}`);
         router.replace(`/admin?page=${pageFromUrl}`);
       }
+      
+      console.log('✅ [URL] Navigation terminée');
     };
 
     handleNavigationChange();
   }, [searchParams, currentPage, hasUnsavedChanges, originalContent]);
+  */
 
   // Fonction pour changer de page avec confirmation si modifications non sauvegardées
   const handlePageChange = async (newPage: string) => {
-    // Vérifier si on change vraiment de page
-    if (newPage === currentPage) {
-      return;
-    }
-
     if (hasUnsavedChanges) {
       // Utilisation de window.confirm (fonctionne toujours)
       const confirmLeave = window.confirm('Modifications non enregistrées\n\nVous avez des modifications non enregistrées. Voulez-vous vraiment quitter cette page sans enregistrer ?');

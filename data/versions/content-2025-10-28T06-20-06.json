@@ -106,13 +106,19 @@
         "target": "_self"
       }
     ],
-    "socialLinks": [],
+    "socialLinks": [
+      {
+        "id": "social-1761594219857",
+        "platform": "soundcloud",
+        "url": "vcxccvcvvbcb"
+      }
+    ],
     "copyright": "© 2024 Soliva. Tous droits réservés.",
     "bottomLinks": [
       "home",
       "work"
     ],
     "legalPageLabels": {},
-    "footerVariant": "centered"
+    "footerVariant": "classic"
   }
 }
