@@ -1,3 +1,5 @@
+import { Link } from "next-view-transitions";
+
 type PageLink = { slug?: string; id?: string; title?: string };
 
 export default function FooterPearl({ footer, pages, layout = 'standard' }: { footer?: any; pages?: { pages?: PageLink[] }; layout?: string }) {
@@ -18,6 +20,21 @@ export default function FooterPearl({ footer, pages, layout = 'standard' }: { fo
   const customPages = allPages.map(p => ({ key: p.slug || p.id, label: p.title || 'Page', path: '/' + (p.slug || p.id) }));
   const available = [...defaultPages, ...customPages];
 
+  // Helper pour normaliser les URLs des liens de navigation
+  const normalizeUrl = (url: string) => {
+    if (!url) return '#';
+    if (url.startsWith('/')) return url;
+    if (url.startsWith('http')) return url;
+    // Mapper les clés vers les chemins
+    const page = available.find(p => p.key === url);
+    return page?.path || `/${url}`;
+  };
+
+  const isInternalUrl = (url: string) => {
+    const normalized = normalizeUrl(url);
+    return normalized.startsWith('/') && !normalized.startsWith('//');
+  };
+
   const VariantClassic = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
       <div className="space-y-4">
@@ -36,9 +53,19 @@ export default function FooterPearl({ footer, pages, layout = 'standard' }: { fo
         {Array.isArray(footer?.links) && footer.links.length > 0 && (
           <div className="space-y-2 text-left">
             <ul className="space-y-1">
-              {footer.links.map((l: any, idx: number) => (
-                <li key={idx}><a href={l.url || '#'} className="text-sm text-gray-700 hover:text-gray-900">{l.title}</a></li>
-              ))}
+              {footer.links.map((l: any, idx: number) => {
+                const href = normalizeUrl(l.url);
+                const isInternal = isInternalUrl(l.url);
+                return (
+                  <li key={idx}>
+                    {isInternal ? (
+                      <Link href={href} className="text-sm text-gray-700 hover:text-gray-900">{l.title}</Link>
+                    ) : (
+                      <a href={href} className="text-sm text-gray-700 hover:text-gray-900">{l.title}</a>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
         )}
@@ -74,9 +101,19 @@ export default function FooterPearl({ footer, pages, layout = 'standard' }: { fo
           <div className="space-y-2 text-left">
             <div className="text-sm font-semibold text-gray-700">Liens</div>
             <ul className="space-y-1">
-              {footer.links.map((l: any, idx: number) => (
-                <li key={idx}><a href={l.url || '#'} className="text-sm text-gray-700 hover:text-gray-900">{l.title}</a></li>
-              ))}
+              {footer.links.map((l: any, idx: number) => {
+                const href = normalizeUrl(l.url);
+                const isInternal = isInternalUrl(l.url);
+                return (
+                  <li key={idx}>
+                    {isInternal ? (
+                      <Link href={href} className="text-sm text-gray-700 hover:text-gray-900">{l.title}</Link>
+                    ) : (
+                      <a href={href} className="text-sm text-gray-700 hover:text-gray-900">{l.title}</a>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
         )}
@@ -110,9 +147,19 @@ export default function FooterPearl({ footer, pages, layout = 'standard' }: { fo
       )}
       {Array.isArray(footer?.links) && footer.links.length > 0 && (
         <ul className="flex flex-wrap gap-4 justify-center text-sm">
-          {footer.links.map((l: any, idx: number) => (
-            <li key={idx}><a href={l.url || '#'} className="text-gray-700 hover:text-gray-900">{l.title}</a></li>
-          ))}
+          {footer.links.map((l: any, idx: number) => {
+            const href = normalizeUrl(l.url);
+            const isInternal = isInternalUrl(l.url);
+            return (
+              <li key={idx}>
+                {isInternal ? (
+                  <Link href={href} className="text-gray-700 hover:text-gray-900">{l.title}</Link>
+                ) : (
+                  <a href={href} className="text-gray-700 hover:text-gray-900">{l.title}</a>
+                )}
+              </li>
+            );
+          })}
         </ul>
       )}
       {Array.isArray(footer?.socialLinks) && footer.socialLinks.length > 0 && (
@@ -179,4 +226,3 @@ export default function FooterPearl({ footer, pages, layout = 'standard' }: { fo
     </footer>
   );
 }
-import { Link } from "next-view-transitions";
