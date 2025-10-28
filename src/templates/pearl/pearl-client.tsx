@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { Link } from 'next-view-transitions';
 import BlockRenderer from '@/blocks/BlockRenderer';
 import HeaderPearl from './components/Header';
 import FooterPearl from './components/Footer';
@@ -127,9 +128,9 @@ export default function PearlClient() {
             )}
             
             <div className="text-center">
-              <a href="/work" className="text-blue-600 hover:text-blue-800">
+              <Link href="/work" className="text-blue-600 hover:text-blue-800">
                 ← Retour aux réalisations
-              </a>
+              </Link>
             </div>
           </div>
         ) : route === 'blog-slug' && individualItem ? (
@@ -157,9 +158,9 @@ export default function PearlClient() {
             )}
             
             <div className="text-center">
-              <a href="/blog" className="text-blue-600 hover:text-blue-800">
+              <Link href="/blog" className="text-blue-600 hover:text-blue-800">
                 ← Retour au journal
-              </a>
+              </Link>
             </div>
           </div>
         ) : Array.isArray(pageData?.blocks) && pageData.blocks.length > 0 && pageData.blocks.some((block: any) => block.content && block.content.trim() !== '') ? (

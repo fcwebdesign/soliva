@@ -72,7 +72,7 @@ export function usePageTransitions() {
     });
   }, [router, isBasicTransition, isSafari]);
 
-  const handleNavigation = useCallback((path: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleNavigation = useCallback((path: string) => (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => {
     const currentPath = window.location.pathname;
     
     if (path === currentPath) {
@@ -98,7 +98,7 @@ export function usePageTransitions() {
     }
   }, [router, isBasicTransition, triggerPageTransition]);
 
-  const handleLinkClick = useCallback((href: string, e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleLinkClick = useCallback((href: string, e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => {
     const isInternal = href.startsWith("/") || href.startsWith("#");
     const withMod = e.metaKey || e.ctrlKey || e.shiftKey || e.altKey;
 

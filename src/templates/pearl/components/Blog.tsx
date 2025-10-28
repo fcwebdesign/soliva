@@ -1,5 +1,6 @@
 "use client";
 import React from 'react';
+import { Link } from 'next-view-transitions';
 
 type Article = {
   id?: string;
@@ -31,7 +32,9 @@ export default function BlogPearl({ content }: { content?: { hero?: { title?: st
           {visibleArticles.map((article) => (
             <article key={article.slug || article.id}>
               <h2 className="text-xl font-semibold text-gray-900">
-                <a href={`/blog/${article.slug || article.id}`} className="hover:text-gray-700">{article.title || 'Article'}</a>
+                <Link href={`/blog/${article.slug || article.id}`} className="hover:text-gray-700">
+                  {article.title || 'Article'}
+                </Link>
               </h2>
               <hr className="mt-4 border-gray-200" />
             </article>

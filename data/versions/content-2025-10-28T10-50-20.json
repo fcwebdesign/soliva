@@ -4,10 +4,10 @@
     "title": "Site pearl",
     "description": "Description du site pearl",
     "_transitionConfig": {
-      "type": "slide-up",
+      "type": "zoom",
       "duration": 900,
       "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
-      "updatedAt": "2025-10-28T06:55:10.440Z"
+      "updatedAt": "2025-10-28T10:00:07.983Z"
     },
     "footer": {
       "footerVariant": "classic"
@@ -31,7 +31,8 @@
       "blog",
       "test-page"
     ],
-    "pageLabels": {}
+    "pageLabels": {},
+    "headerVariant": "classic"
   },
   "home": {
     "title": "Accueil pearl",
@@ -137,10 +138,10 @@
     ]
   },
   "_transitionConfig": {
-    "type": "slide-up",
+    "type": "zoom",
     "duration": 900,
     "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
-    "updatedAt": "2025-10-28T06:55:10.440Z"
+    "updatedAt": "2025-10-28T10:00:07.983Z"
   },
   "footer": {
     "logo": "pearl",
