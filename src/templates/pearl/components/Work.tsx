@@ -23,7 +23,7 @@ export default function WorkPearl({ content }: { content?: { hero?: { title?: st
   return (
     <section>
       <div className="text-center py-10">
-        <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">{title}</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{title}</h1>
         {subtitle && <p className="mt-3 text-gray-600 max-w-2xl mx-auto">{subtitle}</p>}
       </div>
 
