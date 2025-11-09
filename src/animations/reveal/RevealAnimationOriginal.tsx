@@ -592,7 +592,11 @@ export default function RevealAnimation({ config, onComplete }: RevealAnimationP
                               visibility: "visible",
                               zIndex: 99999,
                               pointerEvents: "none", // Ne pas bloquer les clics
+                              clipPath: "none", // IMPORTANT: Retirer le clip-path pour que le logo reste visible
                             });
+                            
+                            // Forcer aussi via style inline
+                            textContainer.style.setProperty('clip-path', 'none', 'important');
                             
                             // Ajouter la classe "aligned-left" pour aligner à gauche
                             textContainer.classList.add('aligned-left');
@@ -644,7 +648,11 @@ export default function RevealAnimation({ config, onComplete }: RevealAnimationP
               zIndex: 99999,
               pointerEvents: "none",
               position: "fixed",
+              clipPath: "none", // IMPORTANT: Retirer le clip-path pour que le logo reste visible
             });
+            
+            // Forcer aussi via style inline
+            textContainer.style.setProperty('clip-path', 'none', 'important');
             
             // Pour les images uniquement (le texte span est géré dans le if précédent)
             gsap.to(
@@ -695,7 +703,11 @@ export default function RevealAnimation({ config, onComplete }: RevealAnimationP
                     visibility: "visible",
                     zIndex: 99999,
                     pointerEvents: "none",
+                    clipPath: "none", // IMPORTANT: Retirer le clip-path pour que le logo reste visible
                   });
+                  
+                  // Forcer aussi via style inline
+                  textContainer.style.setProperty('clip-path', 'none', 'important');
                   
                   // Retirer la classe "centered" si elle existe encore (le texte est déjà à gauche par défaut)
                   textContainer.classList.remove('centered');
@@ -719,6 +731,25 @@ export default function RevealAnimation({ config, onComplete }: RevealAnimationP
         "-=1.5"
       );
 
+      // S'ASSURER que le logo est bien sorti du preloader AVANT de fermer le clip-path
+      tl.call(() => {
+        const textContainer = document.querySelector('.preloader-copy') as HTMLElement;
+        if (textContainer) {
+          // Forcer la sortie du preloader si ce n'est pas déjà fait
+          const parent = textContainer.parentElement;
+          if (parent && (parent.classList.contains('preloader') || 
+              (parent.style.position === 'fixed' && parseInt(parent.style.zIndex || '0') >= 9998))) {
+            document.body.appendChild(textContainer);
+          }
+          
+          // Forcer clip-path: none AVANT que le preloader ne se ferme
+          gsap.set(textContainer, {
+            clipPath: "none",
+          });
+          textContainer.style.setProperty('clip-path', 'none', 'important');
+        }
+      }, null, "-=0.1"); // Juste avant la fermeture du preloader
+
       // Fermer le preloader APRÈS que le texte soit complètement arrivé au header
       // Le texte doit rester visible pendant tout ce temps car il est hors du preloader
       // On utilise un délai plus long pour être sûr que le texte est bien arrivé et reste visible
@@ -731,18 +762,71 @@ export default function RevealAnimation({ config, onComplete }: RevealAnimationP
         },
         "+=1" // Délai plus long pour que le texte soit bien arrivé et reste visible
       );
+      
+      // S'assurer IMMÉDIATEMENT après la fermeture que le clip-path reste à none
+      tl.call(() => {
+        const textContainer = document.querySelector('.preloader-copy') as HTMLElement;
+        if (textContainer) {
+          gsap.set(textContainer, {
+            clipPath: "none",
+          });
+          textContainer.style.setProperty('clip-path', 'none', 'important');
+        }
+      }, null, "-=1.74"); // Juste après le début de la fermeture
 
-      // NE PAS cacher le texte - il doit rester visible pour remplacer le logo du header
-      // Le texte reste visible et prend la place du logo qui est caché
-      // tl.to(
-      //   ".preloader-copy",
-      //   {
-      //     opacity: 0,
-      //     duration: 0.3,
-      //     ease: "power2.out",
-      //   },
-      //   "-=0.3"
-      // );
+      // S'ASSURER que le texte reste visible APRÈS la fermeture du preloader
+      // Le texte doit rester visible pour remplacer le logo du header
+      tl.call(() => {
+        const textContainer = document.querySelector('.preloader-copy') as HTMLElement;
+        if (textContainer) {
+          // S'assurer que le texte est bien sorti du preloader et de l'overlay React
+          const parent = textContainer.parentElement;
+          // Vérifier si le parent est le preloader ou un overlay (fixe avec z-index élevé)
+          if (parent && (parent.classList.contains('preloader') || 
+              (parent.style.position === 'fixed' && parseInt(parent.style.zIndex || '0') >= 9998))) {
+            document.body.appendChild(textContainer);
+          }
+          
+          // Forcer la visibilité et s'assurer qu'il reste au-dessus de tout
+          gsap.set(textContainer, {
+            opacity: 1,
+            visibility: "visible",
+            zIndex: 99999,
+            pointerEvents: "none",
+            position: "fixed", // S'assurer qu'il reste en position fixed
+            clipPath: "none", // IMPORTANT: Retirer le clip-path pour que le logo reste visible
+          });
+          
+          // Forcer aussi via style inline pour être sûr
+          textContainer.style.setProperty('opacity', '1', 'important');
+          textContainer.style.setProperty('visibility', 'visible', 'important');
+          textContainer.style.setProperty('z-index', '99999', 'important');
+          textContainer.style.setProperty('pointer-events', 'none', 'important');
+          textContainer.style.setProperty('position', 'fixed', 'important');
+          textContainer.style.setProperty('clip-path', 'none', 'important'); // IMPORTANT: Retirer le clip-path
+        }
+      }, null, "-=0.1"); // Juste avant onComplete
+
+      // S'assurer aussi APRÈS onComplete que le logo reste visible
+      tl.call(() => {
+        // Attendre un peu pour que l'overlay React disparaisse
+        setTimeout(() => {
+          const textContainer = document.querySelector('.preloader-copy') as HTMLElement;
+          if (textContainer) {
+            // Forcer à nouveau la visibilité au cas où l'overlay l'aurait affecté
+            gsap.set(textContainer, {
+              opacity: 1,
+              visibility: "visible",
+              zIndex: 99999,
+              clipPath: "none", // IMPORTANT: Retirer le clip-path
+            });
+            textContainer.style.setProperty('opacity', '1', 'important');
+            textContainer.style.setProperty('visibility', 'visible', 'important');
+            textContainer.style.setProperty('z-index', '99999', 'important');
+            textContainer.style.setProperty('clip-path', 'none', 'important'); // IMPORTANT: Retirer le clip-path
+          }
+        }, 100);
+      }, null, "+=0.1"); // Juste après onComplete
 
       tl.call(onComplete);
     };

@@ -26,7 +26,7 @@ export default function PearlClient() {
     images: ['/img1.jpg', '/img2.jpg', '/img3.jpg', '/img4.jpg'],
     duration: 4000,
     colors: {
-      background: '#000000',
+      background: '#d4a574', // Beige pour mieux voir le logo
       text: '#ffffff',
       progress: '#ffffff'
     }

@@ -58,9 +58,12 @@
   left: 50%;
   transform: translateX(-50%);
   width: 30%;
-  z-index: 10000; /* Au-dessus de tout pour la transition vers le header */
+  z-index: 99999 !important; /* Au-dessus de tout pour la transition vers le header et après */
   pointer-events: none; /* Ne pas bloquer les interactions */
   overflow: visible !important; /* Empêcher le coupage du contenu */
+  opacity: 1 !important; /* S'assurer qu'il reste visible */
+  visibility: visible !important; /* S'assurer qu'il reste visible */
+  clip-path: none !important; /* IMPORTANT: Retirer le clip-path pour que le logo reste visible */
 }
 
 /* Par défaut, le texte est centré (au début de l'animation) */
