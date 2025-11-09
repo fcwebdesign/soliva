@@ -53,20 +53,30 @@
 }
 
 .preloader-copy {
-  position: absolute;
+  position: fixed; /* Fixed pour pouvoir se déplacer librement */
   bottom: 5rem;
   left: 50%;
   transform: translateX(-50%);
   width: 30%;
-  z-index: 10; /* Au-dessus des images */
+  z-index: 10000; /* Au-dessus de tout pour la transition vers le header */
+  pointer-events: none; /* Ne pas bloquer les interactions */
+  overflow: visible !important; /* Empêcher le coupage du contenu */
 }
 
+/* Par défaut, le texte est centré (au début de l'animation) */
 .preloader-copy p {
-  text-transform: uppercase;
-  text-align: center;
-  font-size: 0.8rem;
-  font-weight: 550;
+  text-transform: none; /* Respecter la casse du backend */
+  text-align: center; /* Centré par défaut au début de l'animation */
+  font-size: 1.25rem; /* text-xl = 1.25rem */
+  font-weight: 700; /* font-bold */
   color: #fff;
+  overflow: visible !important; /* Empêcher le coupage */
+  white-space: nowrap; /* Garder le texte sur une ligne */
+}
+
+/* Classe pour aligner à gauche quand le texte arrive au header */
+.preloader-copy.aligned-left p {
+  text-align: left !important;
 }
 
 .preloader-header {

@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 import { Link } from 'next-view-transitions';
 import BlockRenderer from '@/blocks/BlockRenderer';
@@ -14,11 +14,14 @@ import '@/animations/reveal/reveal-original.css';
 export default function PearlClient() {
   const [content, setContent] = useState<any>(null);
   const pathname = usePathname();
-  const { shouldShowReveal, isRevealComplete, completeReveal, config } = useRevealAnimation({
+  
+  // Calculer la config dynamiquement quand le contenu change
+  // Utilise l'identité (nav.logo) comme titre, et le sous-titre du hero ou une valeur par défaut
+  const revealConfig = useMemo(() => ({
     text: {
-      title: content?.home?.hero?.title || "Pearl",
-      subtitle: content?.home?.hero?.subtitle || "Un template moderne et élégant",
-      author: "Soliva"
+      title: content?.nav?.logo || content?.home?.hero?.title || "Pearl",
+      subtitle: content?.home?.hero?.subtitle || `Bienvenue sur ${content?.nav?.logo || "Pearl"}`,
+      author: "" // Plus d'auteur affiché
     },
     images: ['/img1.jpg', '/img2.jpg', '/img3.jpg', '/img4.jpg'],
     duration: 4000,
@@ -27,22 +30,16 @@ export default function PearlClient() {
       text: '#ffffff',
       progress: '#ffffff'
     }
-  });
+  }), [content]);
 
-         // Debug logs
-         console.log('🎬 Pearl Animation Debug:', {
-           shouldShowReveal,
-           isRevealComplete,
-           content: !!content,
-           homeHero: content?.home?.hero,
-           config
-         });
+  const { shouldShowReveal, isRevealComplete, completeReveal, config } = useRevealAnimation(revealConfig);
 
-         // Fonction pour réinitialiser l'animation (debug)
-         const resetAnimation = () => {
-           sessionStorage.removeItem('pearl-reveal-seen');
-           window.location.reload();
-         };
+
+  // Fonction pour réinitialiser l'animation (utile pour tester)
+  const resetAnimation = () => {
+    sessionStorage.removeItem('pearl-reveal-seen');
+    window.location.reload();
+  };
 
   useEffect(() => {
     const loadContent = async () => {
@@ -118,14 +115,21 @@ export default function PearlClient() {
     <div className="min-h-screen bg-white">
       {/* Overlay noir pour l'animation */}
       <div 
-        className={`fixed inset-0 z-50 transition-opacity duration-300 ${
+        className={`fixed inset-0 z-[9998] transition-opacity duration-300 ${
           shouldShowReveal && content ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         style={{ backgroundColor: config.colors.background }}
       >
-        {shouldShowReveal && content && (
+        {shouldShowReveal && content && content.nav?.logo && (
           <RevealAnimation 
-            config={config} 
+            config={{
+              ...config,
+              text: {
+                title: content.nav.logo || config.text.title,
+                subtitle: content.nav.logo || config.text.subtitle, // Respecter la casse du backend
+                author: config.text.author
+              }
+            }} 
             onComplete={completeReveal}
           />
         )}
@@ -142,23 +146,19 @@ export default function PearlClient() {
              )}
 
              {/* Contenu principal: toujours rendu (le reveal est une surcouche) */}
+             {/* Le header doit être rendu même pendant l'animation pour permettre la transition */}
              {content && (
                <>
-                 {/* Hero rows pour l'animation CodeGrid (home uniquement) */}
-                 {route === 'home' && (
-                   <section className="hero">
-                     {(config.text.title || 'Pearl').split('\n').map((line, idx) => (
-                       <div className="header-row" key={idx}>
-                         <div className="divider" />
-                         <h1>{line}</h1>
-                       </div>
-                     ))}
-                   </section>
-                 )}
                  <HeaderPearl
             nav={content.nav || { logo: 'pearl' }} 
             pages={content.pages} 
-            variant={content.nav?.headerVariant || 'classic'}
+            variant={(() => {
+              const variant = content.nav?.headerVariant || 'classic';
+              if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/admin')) {
+                console.log('🟢 [PearlClient] Header variant utilisé (FRONT):', variant);
+              }
+              return variant;
+            })()}
             layout={content.metadata?.layout || 'standard'}
           />
           <main className={`mx-auto px-4 sm:px-6 lg:px-8 py-8 ${
@@ -167,7 +167,6 @@ export default function PearlClient() {
             'max-w-screen-2xl' // standard par défaut (1536px, proche de 1440px)
           }`}>
             {route === 'home' ? (
-              // Le hero anim sera au-dessus; on évite de dupliquer un heading ici
               Array.isArray(pageData?.blocks) && pageData.blocks.length > 0 ? (
                 <BlockRenderer blocks={pageData.blocks} />
               ) : (
