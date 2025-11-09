@@ -40,3 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 nextjs-view-transitions
+
+# versions automatiques du contenu (sauvegardes)
+data/versions/
