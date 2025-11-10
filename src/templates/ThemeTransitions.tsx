@@ -58,21 +58,14 @@ export default function ThemeTransitions() {
           const transitionConfig = getTransitionConfigFromContent(data);
           const configString = JSON.stringify(transitionConfig);
           
-          console.log('🎨 [ThemeTransitions] Configuration transitions chargée:', transitionConfig, 'pour key:', key);
-          console.log('🎨 [ThemeTransitions] Template détecté:', data._template);
-          
           // Vérifier si la config a changé avant de mettre à jour
           if (transitionConfig && configString !== lastConfigRef.current) {
-            console.log('🔄 [ThemeTransitions] Nouvelle config détectée, mise à jour...');
-            console.log('🔄 [ThemeTransitions] Ancienne config:', lastConfigRef.current);
-            console.log('🔄 [ThemeTransitions] Nouvelle config:', configString);
+            if (process.env.NODE_ENV === 'development') {
+              console.log('🔄 [ThemeTransitions] Nouvelle config détectée, mise à jour');
+            }
             lastConfigRef.current = configString;
             // Stocker la config à la racine pour la cohérence
             setContentConfig({ ...data, _transitionConfig: transitionConfig });
-          } else if (!transitionConfig) {
-            console.warn('⚠️ [ThemeTransitions] Aucune config de transition trouvée dans le contenu');
-          } else {
-            console.log('⏸️ [ThemeTransitions] Config inchangée, pas de mise à jour');
           }
         }
       } catch (error) {
@@ -82,11 +75,15 @@ export default function ThemeTransitions() {
     
     fetchContent();
     
-    // Recharger périodiquement pour détecter les changements
-    const interval = setInterval(fetchContent, 2000);
+    // Écouter les changements de contenu via un événement personnalisé au lieu de polling
+    const handleContentUpdate = () => {
+      fetchContent();
+    };
+    
+    window.addEventListener('admin:content-updated', handleContentUpdate);
     
     return () => {
-      clearInterval(interval);
+      window.removeEventListener('admin:content-updated', handleContentUpdate);
       document.removeEventListener('transitionstart', handleTransitionStart);
       document.removeEventListener('transitionend', handleTransitionEnd);
     };
@@ -99,10 +96,6 @@ export default function ThemeTransitions() {
   // UTILISER LA FONCTION UTILITAIRE CENTRALISÉE (évite les bugs de localisation)
   const dynamicConfig = getTransitionConfigFromContent(contentConfig);
   const config = dynamicConfig || staticConfig;
-  
-  console.log('🎨 [ThemeTransitions] Transition config utilisée:', config, 'pour key:', key);
-  console.log('🎨 [ThemeTransitions] dynamicConfig:', dynamicConfig);
-  console.log('🎨 [ThemeTransitions] staticConfig:', staticConfig);
 
   // Styles communs pour toutes les transitions
   const commonStyles = `
@@ -421,14 +414,12 @@ export default function ThemeTransitions() {
   const transitionType = config?.type || 'slide-up';
   const transitionStyle = transitionStyles[transitionType] || transitionStyles['slide-up'];
   
-  if (!transitionStyles[transitionType]) {
+  if (!transitionStyles[transitionType] && process.env.NODE_ENV === 'development') {
     console.warn(`⚠️ [ThemeTransitions] Type de transition "${transitionType}" non trouvé, utilisation de "slide-up" par défaut`);
   }
   
   // Utiliser une clé unique basée sur la config pour forcer le re-render quand elle change
   const styleKey = `${transitionType}-${config?.duration || 1500}-${contentConfig?._transitionConfig ? 'dynamic' : 'static'}`;
-  
-  console.log('🎨 [ThemeTransitions] Style appliqué pour type:', transitionType, 'config complète:', config);
   
   return (
     <style jsx global key={styleKey}>{`
