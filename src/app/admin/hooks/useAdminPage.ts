@@ -40,6 +40,7 @@ export const useAdminPage = () => {
       nav: { label: 'Navigation', path: null, icon: '🧭' },
       metadata: { label: 'Métadonnées', path: null, icon: '⚙️' },
       typography: { label: 'Typographie', path: null, icon: '🔤' },
+      colors: { label: 'Palette de Couleurs', path: null, icon: '🎨' },
       reveal: { label: 'Preloader / Reveal', path: null, icon: '✨' },
       templates: { label: 'Templates', path: null, icon: '🎨' },
       footer: { label: 'Footer', path: null, icon: '🦶' },
@@ -91,7 +92,7 @@ export const useAdminPage = () => {
   // Initialiser la page depuis l'URL (une seule fois)
   useEffect(() => {
     const pageFromUrl = searchParams.get('page');
-    if (pageFromUrl && ['home', 'studio', 'contact', 'work', 'blog', 'nav', 'metadata', 'reveal', 'templates', 'footer', 'backup'].includes(pageFromUrl)) {
+    if (pageFromUrl && ['home', 'studio', 'contact', 'work', 'blog', 'nav', 'metadata', 'typography', 'colors', 'reveal', 'templates', 'footer', 'backup'].includes(pageFromUrl)) {
       setCurrentPage(pageFromUrl);
     } else {
       const defaultPage = sessionStorage.getItem('adminDefaultPage');

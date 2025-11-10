@@ -7,6 +7,7 @@ import FooterManager from './FooterManager';
 import MinimalisteManager from './MinimalisteManager';
 import RevealSection from './sections/RevealSection';
 import TypographySection from './sections/TypographySection';
+import ColorPaletteSection from './sections/ColorPaletteSection';
 import SeoBlock from '@/components/admin/SeoBlock';
 import SchemaScript from '@/components/SchemaScript';
 import { generateAllSchemas } from '@/lib/schema';
@@ -104,12 +105,33 @@ const AdminContent: React.FC<AdminContentProps> = ({
             const keys = path.split('.');
             const newContent = { ...content };
             let current = newContent as any;
-            
+
             for (let i = 0; i < keys.length - 1; i++) {
               if (!current[keys[i]]) current[keys[i]] = {};
               current = current[keys[i]];
             }
-            
+
+            current[keys[keys.length - 1]] = value;
+            onUpdateContent(newContent as Content);
+          }}
+        />
+      );
+    }
+    
+    if (currentPage === 'colors') {
+      return (
+        <ColorPaletteSection
+          localData={content || {}}
+          updateField={(path, value) => {
+            const keys = path.split('.');
+            const newContent = { ...content };
+            let current = newContent as any;
+
+            for (let i = 0; i < keys.length - 1; i++) {
+              if (!current[keys[i]]) current[keys[i]] = {};
+              current = current[keys[i]];
+            }
+
             current[keys[keys.length - 1]] = value;
             onUpdateContent(newContent as Content);
           }}
