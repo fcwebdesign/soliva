@@ -34,20 +34,28 @@ export default function BlogPearl({ content, fullContent }: {
 
       {visibleArticles.length === 0 ? (
         <div className="text-center py-16">
-          <p className="text-gray-500">Aucun article pour l’instant.</p>
+          <p className="text-gray-500">Aucun article pour l'instant.</p>
         </div>
       ) : (
         <div className="space-y-6">
-          {visibleArticles.map((article) => (
-            <article key={article.slug || article.id}>
-              <h2 className="text-xl font-semibold text-gray-900">
-                <Link href={`/blog/${article.slug || article.id}`} className="hover:text-gray-700">
-                  {article.title || 'Article'}
-                </Link>
-              </h2>
-              <hr className="mt-4 border-gray-200" />
-            </article>
-          ))}
+          {visibleArticles.map((article) => {
+            const articleHref = `/blog/${article.slug || article.id}`;
+            
+            return (
+              <article key={article.slug || article.id} data-view-transition-name={`article-preview-${article.slug || article.id}`}>
+                <h2 className="text-xl font-semibold text-gray-900">
+                  <Link 
+                    href={articleHref}
+                    className="hover:text-gray-700"
+                    data-view-transition-name={`article-link-${article.slug || article.id}`}
+                  >
+                    {article.title || 'Article'}
+                  </Link>
+                </h2>
+                <hr className="mt-4 border-gray-200" />
+              </article>
+            );
+          })}
         </div>
       )}
     </section>

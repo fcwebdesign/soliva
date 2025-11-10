@@ -23,6 +23,27 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
       color: 'text-gray-900',
       tracking: 'tracking-tight'
     },
+    h3: {
+      fontSize: 'text-lg',
+      fontWeight: 'font-semibold',
+      lineHeight: 'leading-normal',
+      color: 'text-gray-900',
+      tracking: 'tracking-normal'
+    },
+    h4: {
+      fontSize: 'text-sm',
+      fontWeight: 'font-normal',
+      lineHeight: 'leading-relaxed',
+      color: 'text-gray-600',
+      tracking: 'tracking-normal'
+    },
+    h1Single: {
+      fontSize: 'text-fluid-10xl',
+      fontWeight: 'font-medium',
+      lineHeight: 'leading-none',
+      color: 'text-gray-900',
+      tracking: 'tracking-tighter'
+    },
     p: {
       fontSize: 'text-base',
       fontWeight: 'font-normal',
@@ -66,6 +87,27 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
         color: typoConfig.h2?.color || 'text-gray-900',
         tracking: typoConfig.h2?.tracking || 'tracking-tight'
       },
+      h3: {
+        fontSize: typoConfig.h3?.fontSize || 'text-lg',
+        fontWeight: typoConfig.h3?.fontWeight || 'font-semibold',
+        lineHeight: typoConfig.h3?.lineHeight || 'leading-normal',
+        color: typoConfig.h3?.color || 'text-gray-900',
+        tracking: typoConfig.h3?.tracking || 'tracking-normal'
+      },
+      h4: {
+        fontSize: typoConfig.h4?.fontSize || 'text-sm',
+        fontWeight: typoConfig.h4?.fontWeight || 'font-normal',
+        lineHeight: typoConfig.h4?.lineHeight || 'leading-relaxed',
+        color: typoConfig.h4?.color || 'text-gray-600',
+        tracking: typoConfig.h4?.tracking || 'tracking-normal'
+      },
+      h1Single: {
+        fontSize: typoConfig.h1Single?.fontSize || 'text-fluid-10xl',
+        fontWeight: typoConfig.h1Single?.fontWeight || 'font-medium',
+        lineHeight: typoConfig.h1Single?.lineHeight || 'leading-none',
+        color: typoConfig.h1Single?.color || 'text-gray-900',
+        tracking: typoConfig.h1Single?.tracking || 'tracking-tighter'
+      },
       p: {
         fontSize: typoConfig.p?.fontSize || 'text-base',
         fontWeight: typoConfig.p?.fontWeight || 'font-normal',
@@ -104,6 +146,9 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
     const typoConfig = {
       h1: typography.h1,
       h2: typography.h2,
+      h3: typography.h3,
+      h4: typography.h4,
+      h1Single: typography.h1Single,
       p: typography.p,
       nav: typography.nav,
       footer: typography.footer,
@@ -111,7 +156,7 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
     updateField('metadata.typography', typoConfig);
   }, [typography, isInitialized, localData, updateField]);
 
-  const updateTypography = (element: 'h1' | 'h2' | 'p' | 'nav' | 'footer', property: string, value: string) => {
+  const updateTypography = (element: 'h1' | 'h2' | 'h3' | 'h4' | 'h1Single' | 'p' | 'nav' | 'footer', property: string, value: string) => {
     setTypography(prev => ({
       ...prev,
       [element]: {
@@ -274,6 +319,9 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
           <div className={Object.values(config).join(' ')}>
             {element === 'h1' && <h1>Exemple de titre H1</h1>}
             {element === 'h2' && <h2>Exemple de titre H2</h2>}
+            {element === 'h3' && <h3>Exemple de titre H3</h3>}
+            {element === 'h4' && <h4>Exemple de titre H4</h4>}
+            {element === 'h1Single' && <h1>Exemple de titre projet/article</h1>}
             {element === 'p' && <p>Exemple de paragraphe avec du texte pour voir le rendu.</p>}
             {element === 'nav' && <nav><a href="#" className="hover:text-gray-900">Lien de navigation</a></nav>}
             {element === 'footer' && <footer><p>Texte du footer avec exemple de lien</p></footer>}
@@ -294,6 +342,9 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
       <div className="space-y-6">
         {renderElementConfig('h1', 'Titre H1')}
         {renderElementConfig('h2', 'Titre H2')}
+        {renderElementConfig('h3', 'Titre H3')}
+        {renderElementConfig('h4', 'Titre H4')}
+        {renderElementConfig('h1Single', 'H1 Projets/Articles individuels')}
         {renderElementConfig('p', 'Paragraphe')}
         {renderElementConfig('nav', 'Navigation / Menu')}
         {renderElementConfig('footer', 'Footer')}

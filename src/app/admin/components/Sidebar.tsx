@@ -1,6 +1,7 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { 
   Home, 
   Palette, 
@@ -16,8 +17,40 @@ import {
   LogOut,
   Brain,
   Sparkles,
-  Type
+  Type,
+  // Icônes populaires pour le sélecteur
+  Book,
+  Calendar,
+  Camera,
+  Code,
+  Coffee,
+  Compass,
+  Database,
+  Edit,
+  Folder,
+  Image,
+  Link,
+  List,
+  MapPin,
+  Music,
+  Package,
+  Phone,
+  Search,
+  ShoppingBag,
+  Star,
+  Tag,
+  User,
+  Users,
+  Video,
+  Zap,
+  X
 } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 interface Page {
   id: string;
@@ -31,10 +64,50 @@ interface SidebarProps {
   onPageChange?: (newPage: string) => void;
 }
 
+// Liste d'icônes Lucide populaires pour le sélecteur
+const POPULAR_ICONS = [
+  { name: 'FileText', component: FileText },
+  { name: 'Home', component: Home },
+  { name: 'Briefcase', component: Briefcase },
+  { name: 'Book', component: Book },
+  { name: 'Calendar', component: Calendar },
+  { name: 'Camera', component: Camera },
+  { name: 'Code', component: Code },
+  { name: 'Coffee', component: Coffee },
+  { name: 'Compass', component: Compass },
+  { name: 'Database', component: Database },
+  { name: 'Edit', component: Edit },
+  { name: 'Folder', component: Folder },
+  { name: 'Image', component: Image },
+  { name: 'Link', component: Link },
+  { name: 'List', component: List },
+  { name: 'Mail', component: Mail },
+  { name: 'MapPin', component: MapPin },
+  { name: 'Music', component: Music },
+  { name: 'Package', component: Package },
+  { name: 'Phone', component: Phone },
+  { name: 'Search', component: Search },
+  { name: 'ShoppingBag', component: ShoppingBag },
+  { name: 'Star', component: Star },
+  { name: 'Tag', component: Tag },
+  { name: 'User', component: User },
+  { name: 'Users', component: Users },
+  { name: 'Video', component: Video },
+  { name: 'Zap', component: Zap },
+  { name: 'Palette', component: Palette },
+  { name: 'Settings', component: Settings },
+  { name: 'Layout', component: Layout },
+  { name: 'Brain', component: Brain },
+  { name: 'Sparkles', component: Sparkles },
+  { name: 'Type', component: Type },
+];
+
 export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const router = useRouter();
-  const [pinnedPages, setPinnedPages] = useState<Array<{ id: string; label: string; type: 'system' | 'custom' }>>([]);
+  const [pinnedPages, setPinnedPages] = useState<Array<{ id: string; label: string; type: 'system' | 'custom'; iconName?: string }>>([]);
+  const [iconPickerOpen, setIconPickerOpen] = useState(false);
+  const [selectedPageId, setSelectedPageId] = useState<string | null>(null);
 
   // Nettoyer automatiquement les classes dragging qui peuvent interférer
   useEffect(() => {
@@ -105,65 +178,172 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
     }
   };
 
-  // Charger les pages épinglées depuis le contenu admin
-  useEffect(() => {
-    const loadPinned = async () => {
-      try {
-        const res = await fetch('/api/admin/content', { cache: 'no-store' });
-        if (!res.ok) return;
-        const data = await res.json();
-        const customs = data?.pages?.pages || [];
-        const pinnedCustom = customs
-          .filter((p: any) => p && p.pinned)
-          .map((p: any) => ({ id: p.id, label: p.title || p.id, type: 'custom' as const }));
-        const systemMap: Record<string,string> = {
-          home: 'Accueil',
-          studio: 'Studio',
-          contact: 'Contact',
-          work: 'Portfolio',
-          blog: 'Blog',
-        };
-        const pinnedSystem: string[] = data?.pages?.pinnedSystem || [];
-        const hiddenSystem: string[] = data?.pages?.hiddenSystem || [];
-        const systemItems = pinnedSystem
-          .filter((id) => systemMap[id] && !hiddenSystem.includes(id))
-          .map((id) => ({ id, label: systemMap[id], type: 'system' as const }));
-        setPinnedPages([...systemItems, ...pinnedCustom]);
-      } catch {}
-    };
-    loadPinned();
+  // Fonction pour recharger les pages épinglées
+  const reloadPinnedPages = useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/content', { cache: 'no-store' });
+      if (!res.ok) return;
+      const data = await res.json();
+      const pageIcons = data.metadata?.pageIcons || {};
+      console.log('🔄 [Sidebar] Rechargement pages, pageIcons:', pageIcons);
+      
+      const customs = data?.pages?.pages || [];
+      const pinnedCustom = customs
+        .filter((p: any) => p && p.pinned)
+        .map((p: any) => ({ 
+          id: p.id, 
+          label: p.title || p.id, 
+          type: 'custom' as const,
+          iconName: p.iconName
+        }));
+      
+      const systemMap: Record<string,string> = {
+        home: 'Accueil',
+        studio: 'Studio',
+        contact: 'Contact',
+        work: 'Portfolio',
+        blog: 'Blog',
+      };
+      const pinnedSystem: string[] = data?.pages?.pinnedSystem || [];
+      const hiddenSystem: string[] = data?.pages?.hiddenSystem || [];
+      const systemItems = pinnedSystem
+        .filter((id) => systemMap[id] && !hiddenSystem.includes(id))
+        .map((id) => ({ 
+          id, 
+          label: systemMap[id], 
+          type: 'system' as const,
+          iconName: pageIcons[id]
+        }));
+      const allPages = [...systemItems, ...pinnedCustom];
+      console.log('🔄 [Sidebar] Pages chargées:', allPages.map(p => ({ id: p.id, iconName: p.iconName })));
+      setPinnedPages(allPages);
+    } catch (error) {
+      console.error('Erreur rechargement pages:', error);
+    }
   }, []);
 
+  // Fonction pour sauvegarder l'icône choisie
+  const saveIcon = useCallback(async (pageId: string, iconName: string) => {
+    console.log('💾 [Sidebar] Sauvegarde icône:', pageId, iconName);
+    try {
+      // Récupérer le contenu actuel
+      const res = await fetch('/api/admin/content', { cache: 'no-store' });
+      if (!res.ok) {
+        console.error('❌ [Sidebar] Erreur récupération contenu');
+        reloadPinnedPages();
+        return;
+      }
+      const data = await res.json();
+      
+      // Déterminer si c'est une page système ou personnalisée
+      const isSystemPage = ['home', 'studio', 'contact', 'work', 'blog'].includes(pageId);
+      
+      if (isSystemPage) {
+        // Pour les pages système, sauvegarder dans metadata.pageIcons
+        const pageIcons = data.metadata?.pageIcons || {};
+        pageIcons[pageId] = iconName;
+        console.log('💾 [Sidebar] Sauvegarde page système, pageIcons:', pageIcons);
+        
+        const updateRes = await fetch('/api/admin/content', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            content: {
+              ...data,
+              metadata: {
+                ...data.metadata,
+                pageIcons
+              }
+            }
+          })
+        });
+        
+        if (!updateRes.ok) {
+          console.error('❌ [Sidebar] Erreur sauvegarde');
+          toast.error('Erreur lors de la sauvegarde de l\'icône');
+          reloadPinnedPages();
+        } else {
+          console.log('✅ [Sidebar] Sauvegarde réussie, rechargement...');
+          toast.success('Icône mise à jour avec succès !');
+          // Mettre à jour l'état local immédiatement
+          setPinnedPages(prev => prev.map(p => 
+            p.id === pageId ? { ...p, iconName } : p
+          ));
+          // Recharger après un court délai pour être sûr
+          setTimeout(() => {
+            reloadPinnedPages();
+          }, 100);
+        }
+      } else {
+        // Pour les pages personnalisées, sauvegarder dans la page elle-même
+        const pages = data.pages?.pages || [];
+        const pageIndex = pages.findIndex((p: any) => p.id === pageId);
+        if (pageIndex !== -1) {
+          pages[pageIndex].iconName = iconName;
+          console.log('💾 [Sidebar] Sauvegarde page personnalisée, iconName:', iconName);
+          
+          const updateRes = await fetch('/api/admin/content', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              content: {
+                ...data,
+                pages: {
+                  ...data.pages,
+                  pages
+                }
+              }
+            })
+          });
+          
+          if (!updateRes.ok) {
+            console.error('❌ [Sidebar] Erreur sauvegarde');
+            toast.error('Erreur lors de la sauvegarde de l\'icône');
+            reloadPinnedPages();
+          } else {
+            console.log('✅ [Sidebar] Sauvegarde réussie, rechargement...');
+            toast.success('Icône mise à jour avec succès !');
+            // Mettre à jour l'état local immédiatement
+            setPinnedPages(prev => prev.map(p => 
+              p.id === pageId ? { ...p, iconName } : p
+            ));
+            // Recharger après un court délai pour être sûr
+            setTimeout(() => {
+              reloadPinnedPages();
+            }, 100);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('❌ [Sidebar] Erreur sauvegarde icône:', error);
+      toast.error('Erreur lors de la sauvegarde de l\'icône');
+      reloadPinnedPages();
+    }
+  }, [reloadPinnedPages]);
+
+  // Charger les pages épinglées depuis le contenu admin
+  useEffect(() => {
+    reloadPinnedPages();
+  }, [reloadPinnedPages]);
+
   // Live update when pages are pinned/unpinned elsewhere in the admin
+  // On recharge depuis le serveur pour récupérer les icônes sauvegardées
   useEffect(() => {
     const handler = (e: any) => {
-      const arr = e?.detail?.pinned;
-      if (Array.isArray(arr)) {
-        setPinnedPages(arr);
-      }
+      // Recharger depuis le serveur pour avoir les icônes à jour
+      // Cela garantit que même si une page est décochée puis ré-épinglée, l'icône est conservée
+      reloadPinnedPages();
     };
     window.addEventListener('admin:pinned-updated', handler as EventListener);
     return () => window.removeEventListener('admin:pinned-updated', handler as EventListener);
-  }, []);
+  }, [reloadPinnedPages]);
 
-  const renderPageItem = (page: Page, isMobile = false) => (
-    <li key={page.id}> 
-      <button
-        onClick={() => {
-          handlePageChange(page.id);
-          if (isMobile) setIsMobileMenuOpen(false);
-        }}
-        className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none ${
-          currentPage === page.id
-            ? 'bg-blue-50 text-blue-700'
-            : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-        }`}
-      >
-        <page.icon className="w-5 h-5" />
-        <span>{page.label}</span>
-      </button>
-    </li>
-  );
+  // Fonction pour obtenir le composant d'icône à partir du nom
+  const getIconComponent = (iconName?: string) => {
+    if (!iconName) return FileText;
+    const iconData = POPULAR_ICONS.find(i => i.name === iconName);
+    return iconData?.component || FileText;
+  };
 
   const handlePagesClick = (isMobile = false, event?: React.MouseEvent) => {
     // Empêcher les conflits d'événements
@@ -222,31 +402,46 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
               <ul className="space-y-1">
                 {pinnedPages.map((p) => (
                   <li key={p.id}>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        // Nettoyer les classes dragging avant la navigation
-                        if (document.body.classList.contains('dragging')) {
-                          document.body.classList.remove('dragging');
-                        }
-                        
-                        if (['home','studio','contact','work','blog'].includes(p.id)) {
-                          router.push(`/admin?page=${p.id}`);
-                        } else {
-                          router.push(`/admin/pages/${p.id}`);
-                        }
-                      }}
-                      className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none ${
-                        currentPage === p.id
-                          ? 'bg-blue-50 text-blue-700'
-                          : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                      }`}
-                    >
-                      <FileText className="w-5 h-5" />
-                      <span className="truncate">{p.label}</span>
-                    </button>
+                    <div className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      currentPage === p.id
+                        ? 'bg-blue-50 text-blue-700'
+                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                    }`}>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setSelectedPageId(p.id);
+                          setIconPickerOpen(true);
+                        }}
+                        className="p-1 hover:bg-gray-200 rounded transition-colors"
+                        title="Changer l'icône"
+                      >
+                        {(() => {
+                          const IconComponent = getIconComponent(p.iconName);
+                          return <IconComponent className="w-5 h-5" />;
+                        })()}
+                      </button>
+                      <span 
+                        className="truncate flex-1 cursor-pointer"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          
+                          if (document.body.classList.contains('dragging')) {
+                            document.body.classList.remove('dragging');
+                          }
+                          
+                          if (['home','studio','contact','work','blog'].includes(p.id)) {
+                            router.push(`/admin?page=${p.id}`);
+                          } else {
+                            router.push(`/admin/pages/${p.id}`);
+                          }
+                        }}
+                      >
+                        {p.label}
+                      </span>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -389,32 +584,47 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
                   <ul className="space-y-1">
                     {pinnedPages.map((p) => (
                       <li key={p.id}>
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            
-                            // Nettoyer les classes dragging avant la navigation
-                            if (document.body.classList.contains('dragging')) {
-                              document.body.classList.remove('dragging');
-                            }
-                            
-                            if (['home','studio','contact','work','blog'].includes(p.id)) {
-                              router.push(`/admin?page=${p.id}`);
-                            } else {
-                              router.push(`/admin/pages/${p.id}`);
-                            }
-                            setIsMobileMenuOpen(false);
-                          }}
-                          className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none ${
-                            currentPage === p.id
-                              ? 'bg-blue-50 text-blue-700'
-                              : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                          }`}
-                        >
-                          <FileText className="w-5 h-5" />
-                          <span className="truncate">{p.label}</span>
-                        </button>
+                        <div className={`w-full flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                          currentPage === p.id
+                            ? 'bg-blue-50 text-blue-700'
+                            : 'text-gray-700'
+                        }`}>
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setSelectedPageId(p.id);
+                              setIconPickerOpen(true);
+                            }}
+                            className="p-1 hover:bg-gray-200 rounded transition-colors"
+                            title="Changer l'icône"
+                          >
+                            {(() => {
+                              const IconComponent = getIconComponent(p.iconName);
+                              return <IconComponent className="w-5 h-5" />;
+                            })()}
+                          </button>
+                          <span 
+                            className="truncate flex-1 cursor-pointer hover:text-gray-900"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              
+                              if (document.body.classList.contains('dragging')) {
+                                document.body.classList.remove('dragging');
+                              }
+                              
+                              if (['home','studio','contact','work','blog'].includes(p.id)) {
+                                router.push(`/admin?page=${p.id}`);
+                              } else {
+                                router.push(`/admin/pages/${p.id}`);
+                              }
+                              setIsMobileMenuOpen(false);
+                            }}
+                          >
+                            {p.label}
+                          </span>
+                        </div>
                       </li>
                     ))}
                   </ul>
@@ -507,6 +717,40 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
 
       {/* Spacer pour le contenu principal */}
       <div className="hidden lg:block lg:w-64" />
+
+      {/* Dialog de sélection d'icône */}
+      <Dialog open={iconPickerOpen} onOpenChange={setIconPickerOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Choisir une icône pour "{pinnedPages.find(p => p.id === selectedPageId)?.label || 'cette page'}"</DialogTitle>
+          </DialogHeader>
+          <div className="grid grid-cols-6 sm:grid-cols-8 gap-3 mt-4">
+            {POPULAR_ICONS.map((iconData) => {
+              const IconComponent = iconData.component;
+              const isSelected = pinnedPages.find(p => p.id === selectedPageId)?.iconName === iconData.name;
+              return (
+                <button
+                  key={iconData.name}
+                  onClick={() => {
+                    if (selectedPageId) {
+                      saveIcon(selectedPageId, iconData.name);
+                      setIconPickerOpen(false);
+                    }
+                  }}
+                  className={`p-3 rounded-lg border-2 transition-all hover:bg-gray-50 ${
+                    isSelected 
+                      ? 'border-blue-500 bg-blue-50' 
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                  title={iconData.name}
+                >
+                  <IconComponent className="w-6 h-6 mx-auto text-gray-700" />
+                </button>
+              );
+            })}
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 } 

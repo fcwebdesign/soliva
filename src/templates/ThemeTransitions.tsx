@@ -1,12 +1,14 @@
 "use client";
 import { useTemplate } from "@/templates/context";
 import { getTransitionConfig, TransitionType, DEFAULT_TRANSITION_CONFIG } from "./transition-config";
+import { getTransitionConfig as getTransitionConfigFromContent } from "@/utils/transitionConfig";
 import { useEffect, useState, useRef } from "react";
 
 export default function ThemeTransitions() {
   const { key } = useTemplate();
   const [contentConfig, setContentConfig] = useState<any>(null);
   const isTransitioning = useRef(false);
+  const lastConfigRef = useRef<string | null>(null);
   
   // Charger la configuration depuis le contenu
   useEffect(() => {
@@ -41,7 +43,8 @@ export default function ThemeTransitions() {
     
     const fetchContent = async () => {
       try {
-        const response = await fetch('/api/content', { 
+        // Ajouter un timestamp pour éviter le cache
+        const response = await fetch(`/api/content?t=${Date.now()}`, { 
           cache: 'no-store',
           headers: {
             'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -51,11 +54,29 @@ export default function ThemeTransitions() {
         });
         if (response.ok) {
           const data = await response.json();
-          console.log('🎨 Configuration transitions chargée:', data._transitionConfig);
-          setContentConfig(data);
+          // UTILISER LA FONCTION UTILITAIRE CENTRALISÉE (évite les bugs de localisation)
+          const transitionConfig = getTransitionConfigFromContent(data);
+          const configString = JSON.stringify(transitionConfig);
+          
+          console.log('🎨 [ThemeTransitions] Configuration transitions chargée:', transitionConfig, 'pour key:', key);
+          console.log('🎨 [ThemeTransitions] Template détecté:', data._template);
+          
+          // Vérifier si la config a changé avant de mettre à jour
+          if (transitionConfig && configString !== lastConfigRef.current) {
+            console.log('🔄 [ThemeTransitions] Nouvelle config détectée, mise à jour...');
+            console.log('🔄 [ThemeTransitions] Ancienne config:', lastConfigRef.current);
+            console.log('🔄 [ThemeTransitions] Nouvelle config:', configString);
+            lastConfigRef.current = configString;
+            // Stocker la config à la racine pour la cohérence
+            setContentConfig({ ...data, _transitionConfig: transitionConfig });
+          } else if (!transitionConfig) {
+            console.warn('⚠️ [ThemeTransitions] Aucune config de transition trouvée dans le contenu');
+          } else {
+            console.log('⏸️ [ThemeTransitions] Config inchangée, pas de mise à jour');
+          }
         }
       } catch (error) {
-        console.error('Erreur chargement configuration transitions:', error);
+        console.error('❌ [ThemeTransitions] Erreur chargement configuration transitions:', error);
       }
     };
     
@@ -75,9 +96,13 @@ export default function ThemeTransitions() {
   // Pour 'soliva' (admin), utiliser la config par défaut pour que les transitions fonctionnent
   // quand on navigue depuis l'admin vers le frontend
   const staticConfig = getTransitionConfig(key === 'soliva' ? 'pearl' : key);
-  const config = contentConfig?._transitionConfig || staticConfig;
+  // UTILISER LA FONCTION UTILITAIRE CENTRALISÉE (évite les bugs de localisation)
+  const dynamicConfig = getTransitionConfigFromContent(contentConfig);
+  const config = dynamicConfig || staticConfig;
   
-  console.log('🎨 Transition config utilisée:', config, 'pour key:', key);
+  console.log('🎨 [ThemeTransitions] Transition config utilisée:', config, 'pour key:', key);
+  console.log('🎨 [ThemeTransitions] dynamicConfig:', dynamicConfig);
+  console.log('🎨 [ThemeTransitions] staticConfig:', staticConfig);
 
   // Styles communs pour toutes les transitions
   const commonStyles = `
@@ -392,11 +417,24 @@ export default function ThemeTransitions() {
     `,
   };
 
+  // Vérifier que le type de transition existe
+  const transitionType = config?.type || 'slide-up';
+  const transitionStyle = transitionStyles[transitionType] || transitionStyles['slide-up'];
+  
+  if (!transitionStyles[transitionType]) {
+    console.warn(`⚠️ [ThemeTransitions] Type de transition "${transitionType}" non trouvé, utilisation de "slide-up" par défaut`);
+  }
+  
+  // Utiliser une clé unique basée sur la config pour forcer le re-render quand elle change
+  const styleKey = `${transitionType}-${config?.duration || 1500}-${contentConfig?._transitionConfig ? 'dynamic' : 'static'}`;
+  
+  console.log('🎨 [ThemeTransitions] Style appliqué pour type:', transitionType, 'config complète:', config);
+  
   return (
-    <style jsx global>{`
+    <style jsx global key={styleKey}>{`
       ${commonStyles}
-      ${transitionStyles[config.type]}
-      ${config.customStyles || ''}
+      ${transitionStyle}
+      ${config?.customStyles || ''}
     `}</style>
   );
 }

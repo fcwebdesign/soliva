@@ -1,7 +1,7 @@
 'use client';
-import { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { usePathname } from 'next/navigation';
-import { Link } from 'next-view-transitions';
+import { Link, useTransitionRouter } from 'next-view-transitions';
 import BlockRenderer from '@/blocks/BlockRenderer';
 import HeaderPearl from './components/Header';
 import FooterPearl from './components/Footer';
@@ -19,6 +19,7 @@ export default function PearlClient() {
   // Récupérer les styles typographiques une seule fois
   const typoConfig = useMemo(() => getTypographyConfig(content || {}), [content]);
   const h1Classes = useMemo(() => getTypographyClasses('h1', typoConfig, defaultTypography.h1), [typoConfig]);
+  const h1SingleClasses = useMemo(() => getTypographyClasses('h1Single', typoConfig, defaultTypography.h1Single), [typoConfig]);
   const pClasses = useMemo(() => getTypographyClasses('p', typoConfig, defaultTypography.p), [typoConfig]);
   
   // Calculer la config dynamiquement quand le contenu change
@@ -58,6 +59,7 @@ export default function PearlClient() {
         if (response.ok) {
           const data = await response.json();
           setContent(data);
+          console.log('📦 [PearlClient] Contenu chargé');
         }
       } catch (error) {
         console.error('Erreur chargement contenu:', error);
@@ -67,16 +69,55 @@ export default function PearlClient() {
   }, [pathname]); // Recharger le contenu quand le pathname change
 
   // Logique de routage (sans hook pour garder l'ordre stable)
-  const route = (() => {
+  const route = useMemo(() => {
+    console.log('🧭 [PearlClient] Calcul de la route, pathname:', pathname);
+    if (!content) {
+      console.log('🧭 [PearlClient] Pas de contenu, retour home');
+      return 'home';
+    }
+    
+    // Récupérer les slugs personnalisés (uniquement pour home, studio, contact)
+    const customSlugs = {
+      home: content?.home?.customSlug,
+      studio: content?.studio?.customSlug,
+      contact: content?.contact?.customSlug,
+    };
+    
+    // Vérifier home (avec ou sans slug personnalisé)
     if (pathname === '/') return 'home';
+    if (customSlugs.home && pathname === `/${customSlugs.home}`) return 'home';
+    
+    // Vérifier work (slug fixe /work)
     if (pathname === '/work') return 'work';
     if (pathname.startsWith('/work/')) return 'work-slug';
+    
+    // Vérifier blog (slug fixe /blog)
     if (pathname === '/blog') return 'blog';
     if (pathname.startsWith('/blog/')) return 'blog-slug';
+    
+    // Vérifier studio (avec ou sans slug personnalisé)
+    if (customSlugs.studio && pathname === `/${customSlugs.studio}`) return 'studio';
     if (pathname === '/studio') return 'studio';
+    
+    // Vérifier contact (avec ou sans slug personnalisé)
+    if (customSlugs.contact && pathname === `/${customSlugs.contact}`) return 'contact';
     if (pathname === '/contact') return 'contact';
+    
     return 'custom';
-  })();
+  }, [content, pathname]);
+
+  // Logs pour debug des transitions (AVANT le return conditionnel pour respecter les règles des hooks)
+  useEffect(() => {
+    console.log('🔄 [PearlClient] Pathname changé:', pathname);
+    console.log('🔄 [PearlClient] Route calculée:', route);
+    console.log('🔄 [PearlClient] document.startViewTransition disponible:', typeof document !== 'undefined' && 'startViewTransition' in document);
+    
+    // Vérifier si View Transitions est supporté
+    if (typeof document !== 'undefined') {
+      console.log('🔄 [PearlClient] View Transitions support:', CSS.supports('view-transition-name', 'test'));
+      console.log('🔄 [PearlClient] document.startViewTransition:', typeof (document as any).startViewTransition);
+    }
+  }, [pathname, route]);
 
   if (!content) {
     return (
@@ -97,7 +138,8 @@ export default function PearlClient() {
     pageData = content?.work;
   } else if (route === 'work-slug') {
     // Pour les pages de projet individuelles, trouver le projet spécifique
-    const slug = pathname?.split('/')[2] || '';
+    const pathSegments = pathname?.split('/').filter(Boolean) || [];
+    const slug = pathSegments[1] || '';
     individualItem = content?.work?.adminProjects?.find((p: any) => p.slug === slug || p.id === slug) ||
                      content?.work?.projects?.find((p: any) => p.slug === slug || p.id === slug);
     pageData = content?.work;
@@ -105,7 +147,8 @@ export default function PearlClient() {
     pageData = content?.blog;
   } else if (route === 'blog-slug') {
     // Pour les articles individuels, trouver l'article spécifique
-    const slug = pathname?.split('/')[2] || '';
+    const pathSegments = pathname?.split('/').filter(Boolean) || [];
+    const slug = pathSegments[1] || '';
     individualItem = content?.blog?.articles?.find((a: any) => a.slug === slug || a.id === slug);
     pageData = content?.blog;
   } else if (route === 'studio') {
@@ -179,11 +222,14 @@ export default function PearlClient() {
             layout={content.metadata?.layout || 'standard'}
             fullContent={content}
           />
-          <main className={`mx-auto px-4 sm:px-6 lg:px-8 py-8 ${
-            content.metadata?.layout === 'compact' ? 'max-w-7xl' :
-            content.metadata?.layout === 'wide' ? 'max-w-custom-1920' :
-            'max-w-screen-2xl' // standard par défaut (1536px, proche de 1440px)
-          }`}>
+          <main 
+            data-view-transition-name={`main-${route}`}
+            className={`mx-auto px-4 sm:px-6 lg:px-8 py-8 ${
+              content.metadata?.layout === 'compact' ? 'max-w-7xl' :
+              content.metadata?.layout === 'wide' ? 'max-w-custom-1920' :
+              'max-w-screen-2xl' // standard par défaut (1536px, proche de 1440px)
+            }`}
+          >
             {route === 'home' ? (
               Array.isArray(pageData?.blocks) && pageData.blocks.length > 0 ? (
                 <BlockRenderer blocks={pageData.blocks} />
@@ -203,7 +249,7 @@ export default function PearlClient() {
               // Page de projet individuel
               <div className="space-y-8">
                 <div className="text-left py-10">
-                  <h1 className={`${h1Classes} mb-4`}>{individualItem.title}</h1>
+                  <h1 className={`${h1SingleClasses} mb-4`}>{individualItem.title}</h1>
                   {individualItem.category && (
                     <p className="text-lg text-gray-600 mb-4">Catégorie: {individualItem.category}</p>
                   )}
@@ -239,9 +285,9 @@ export default function PearlClient() {
               </div>
             ) : route === 'blog-slug' && individualItem ? (
               // Page d'article individuel
-              <div className="space-y-8">
+              <div className="space-y-8" data-view-transition-name={`article-${individualItem.slug || individualItem.id}`}>
                 <div className="text-left py-10">
-                  <h1 className={`${h1Classes} mb-4`}>{individualItem.title}</h1>
+                  <h1 data-view-transition-name={`article-title-${individualItem.slug || individualItem.id}`} className={`${h1SingleClasses} mb-4`}>{individualItem.title}</h1>
                   {individualItem.publishedAt && (
                     <p className="text-lg text-gray-600 mb-4">
                       Publié le {new Date(individualItem.publishedAt).toLocaleDateString('fr-FR')}
@@ -262,7 +308,10 @@ export default function PearlClient() {
                 )}
                 
                 <div className="text-center">
-                  <Link href="/blog" className="text-blue-600 hover:text-blue-800">
+                  <Link 
+                    href="/blog"
+                    className="text-blue-600 hover:text-blue-800"
+                  >
                     ← Retour au journal
                   </Link>
                 </div>

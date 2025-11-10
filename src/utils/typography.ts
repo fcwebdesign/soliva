@@ -17,6 +17,27 @@ export interface TypographyConfig {
     color?: string;
     tracking?: string;
   };
+  h3?: {
+    fontSize?: string;
+    fontWeight?: string;
+    lineHeight?: string;
+    color?: string;
+    tracking?: string;
+  };
+  h4?: {
+    fontSize?: string;
+    fontWeight?: string;
+    lineHeight?: string;
+    color?: string;
+    tracking?: string;
+  };
+  h1Single?: {
+    fontSize?: string;
+    fontWeight?: string;
+    lineHeight?: string;
+    color?: string;
+    tracking?: string;
+  };
   p?: {
     fontSize?: string;
     fontWeight?: string;
@@ -51,7 +72,7 @@ export function getTypographyConfig(content: any): TypographyConfig {
  * Génère les classes CSS pour un élément typographique
  */
 export function getTypographyClasses(
-  element: 'h1' | 'h2' | 'p' | 'nav' | 'footer',
+  element: 'h1' | 'h2' | 'h3' | 'h4' | 'h1Single' | 'p' | 'nav' | 'footer',
   config: TypographyConfig,
   defaults: {
     fontSize: string;
@@ -89,6 +110,27 @@ export const defaultTypography = {
     lineHeight: 'leading-tight',
     color: 'text-gray-900',
     tracking: 'tracking-tight'
+  },
+  h3: {
+    fontSize: 'text-lg',
+    fontWeight: 'font-semibold',
+    lineHeight: 'leading-normal',
+    color: 'text-gray-900',
+    tracking: 'tracking-normal'
+  },
+  h4: {
+    fontSize: 'text-sm',
+    fontWeight: 'font-normal',
+    lineHeight: 'leading-relaxed',
+    color: 'text-gray-600',
+    tracking: 'tracking-normal'
+  },
+  h1Single: {
+    fontSize: 'text-fluid-10xl',
+    fontWeight: 'font-medium',
+    lineHeight: 'leading-none',
+    color: 'text-gray-900',
+    tracking: 'tracking-tighter'
   },
   p: {
     fontSize: 'text-base',

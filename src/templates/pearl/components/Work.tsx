@@ -15,7 +15,7 @@ type Project = {
 };
 
 export default function WorkPearl({ content, fullContent }: { 
-  content?: { hero?: { title?: string; subtitle?: string }; description?: string; projects?: Project[]; adminProjects?: Project[] };
+  content?: { hero?: { title?: string; subtitle?: string }; description?: string; projects?: Project[]; adminProjects?: Project[]; columns?: number };
   fullContent?: any; // Contenu complet avec metadata
 }) {
   const title = content?.hero?.title || 'Réalisations';
@@ -27,7 +27,10 @@ export default function WorkPearl({ content, fullContent }: {
   // Récupérer les styles typographiques
   const typoConfig = getTypographyConfig(fullContent || {});
   const h1Classes = getTypographyClasses('h1', typoConfig, defaultTypography.h1);
+  const h3Classes = getTypographyClasses('h3', typoConfig, defaultTypography.h3);
+  const h4Classes = getTypographyClasses('h4', typoConfig, defaultTypography.h4);
   const pClasses = getTypographyClasses('p', typoConfig, defaultTypography.p);
+
 
   return (
     <section>
@@ -38,29 +41,40 @@ export default function WorkPearl({ content, fullContent }: {
 
       {projects.length === 0 ? (
         <div className="text-center py-16">
-          <p className="text-gray-500">Aucun projet pour l’instant.</p>
+          <p className="text-gray-500">Aucun projet pour l'instant.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className={`grid grid-cols-1 sm:grid-cols-2 gap-8 ${
+          content?.columns === 2 ? 'lg:grid-cols-2' :
+          content?.columns === 4 ? 'lg:grid-cols-4' :
+          'lg:grid-cols-3' // Par défaut 3 colonnes
+        }`}>
           {projects.map((project) => (
-            <article key={project.slug || project.id} className="group border border-gray-200 rounded-xl overflow-hidden hover:shadow-sm transition-shadow">
+            <article key={project.slug || project.id} className="group">
               {project.image && (
-                <Link href={`/work/${project.slug || project.id}`} className="block">
+                <Link href={`/work/${project.slug || project.id}`} className="block mb-4">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={project.image} alt={project.alt || project.title || 'Projet'} className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <img 
+                    src={project.image} 
+                    alt={project.alt || project.title || 'Projet'} 
+                    className="w-full object-cover rounded-lg"
+                    style={{ aspectRatio: '2400 / 1800' }}
+                  />
                 </Link>
               )}
-              <div className="p-5">
-                <h3 className="text-lg font-semibold text-gray-900 group-hover:text-gray-700">
-                  <Link href={`/work/${project.slug || project.id}`} className="hover:text-blue-600 transition-colors">
-                    {project.title || 'Projet'}
-                  </Link>
-                </h3>
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className={`${h3Classes}`}>
+                    <Link href={`/work/${project.slug || project.id}`} className="hover:text-blue-600 transition-colors">
+                      {project.title || 'Projet'}
+                    </Link>
+                  </h3>
+                  {project.category && (
+                    <small className="inline-block px-4 py-1.5 text-sm font-medium text-white bg-black rounded-full ml-4 whitespace-nowrap">{project.category}</small>
+                  )}
+                </div>
                 {(project.excerpt || project.description) && (
-                  <p className="mt-2 text-sm text-gray-600 line-clamp-3">{project.excerpt || project.description}</p>
-                )}
-                {project.category && (
-                  <span className="inline-block mt-3 text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600">{project.category}</span>
+                  <h4 className={`${h4Classes} line-clamp-3`}>{project.excerpt || project.description}</h4>
                 )}
               </div>
             </article>
