@@ -38,7 +38,7 @@ export default function FooterPearl({ footer, pages, layout = 'standard' }: { fo
   const VariantClassic = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
       <div className="space-y-4">
-        <div className="font-semibold text-xl text-gray-900">
+        <div className="text-xl font-bold tracking-tight text-gray-900">
           {footer?.logoImage ? (
             <img src={footer.logoImage} alt="Logo" className="h-8 max-w-[200px] object-contain" />
           ) : (
@@ -85,7 +85,7 @@ export default function FooterPearl({ footer, pages, layout = 'standard' }: { fo
   const VariantColumns = () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-8">
       <div className="space-y-4">
-        <div className="font-semibold text-xl text-gray-900">
+        <div className="text-xl font-bold tracking-tight text-gray-900">
           {footer?.logoImage ? (
             <img src={footer.logoImage} alt="Logo" className="h-8 max-w-[200px] object-contain" />
           ) : (
@@ -135,7 +135,7 @@ export default function FooterPearl({ footer, pages, layout = 'standard' }: { fo
 
   const VariantCentered = () => (
     <div className="text-center space-y-4 mb-8">
-      <div className="font-semibold text-xl text-gray-900">
+      <div className="text-xl font-bold tracking-tight text-gray-900">
         {footer?.logoImage ? (
           <img src={footer.logoImage} alt="Logo" className="h-8 mx-auto max-w-[200px] object-contain" />
         ) : (

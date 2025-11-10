@@ -70,7 +70,7 @@
 .preloader-copy p {
   text-transform: none; /* Respecter la casse du backend */
   text-align: center; /* Centré par défaut au début de l'animation */
-  font-size: 2rem; /* Taille plus grande, indépendante du header */
+  font-size: 1.25rem; /* Taille par défaut (medium) - sera surchargée par les classes de taille */
   font-weight: 700; /* font-bold */
   color: #fff;
   overflow: visible !important; /* Empêcher le coupage */
@@ -82,11 +82,38 @@
 .preloader-logo-image {
   display: block;
   margin: 0 auto;
-  max-width: 300px; /* Limiter la largeur pour éviter que ce soit trop gros */
-  max-height: 80px; /* Limiter la hauteur pour rester dans l'écran */
   width: auto;
   height: auto;
   object-fit: contain;
+}
+
+/* Tailles de logo depuis le backoffice */
+.preloader-logo-small {
+  max-width: 200px;
+  max-height: 60px;
+}
+
+.preloader-logo-medium {
+  max-width: 300px;
+  max-height: 80px;
+}
+
+.preloader-logo-large {
+  max-width: 400px;
+  max-height: 100px;
+}
+
+/* Tailles de texte pour le logo (quand c'est du texte) - spécificité élevée pour surcharger .preloader-copy p */
+.preloader-copy p.preloader-logo-text-small {
+  font-size: 1rem !important; /* text-base */
+}
+
+.preloader-copy p.preloader-logo-text-medium {
+  font-size: 1.25rem !important; /* text-xl */
+}
+
+.preloader-copy p.preloader-logo-text-large {
+  font-size: 1.5rem !important; /* text-2xl */
 }
 
 /* Classe pour aligner à gauche quand le texte arrive au header */

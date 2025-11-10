@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 import { Link } from 'next-view-transitions';
+import { getTypographyConfig, getTypographyClasses, defaultTypography } from '@/utils/typography';
 
 type Project = {
   id?: string;
@@ -13,18 +14,26 @@ type Project = {
   category?: string;
 };
 
-export default function WorkPearl({ content }: { content?: { hero?: { title?: string; subtitle?: string }; description?: string; projects?: Project[]; adminProjects?: Project[] } }) {
+export default function WorkPearl({ content, fullContent }: { 
+  content?: { hero?: { title?: string; subtitle?: string }; description?: string; projects?: Project[]; adminProjects?: Project[] };
+  fullContent?: any; // Contenu complet avec metadata
+}) {
   const title = content?.hero?.title || 'Réalisations';
   const subtitle = content?.hero?.subtitle || content?.description || '';
   const projectsFromProjects: Project[] = Array.isArray(content?.projects) ? (content?.projects as Project[]) : [];
   const projectsFromAdmin: Project[] = Array.isArray((content as any)?.adminProjects) ? ((content as any)?.adminProjects as Project[]) : [];
   const projects: Project[] = projectsFromProjects.length > 0 ? projectsFromProjects : projectsFromAdmin;
 
+  // Récupérer les styles typographiques
+  const typoConfig = getTypographyConfig(fullContent || {});
+  const h1Classes = getTypographyClasses('h1', typoConfig, defaultTypography.h1);
+  const pClasses = getTypographyClasses('p', typoConfig, defaultTypography.p);
+
   return (
     <section>
-      <div className="text-center py-10">
-        <h1 className="text-3xl font-bold text-gray-900">{title}</h1>
-        {subtitle && <p className="mt-3 text-gray-600 max-w-2xl mx-auto">{subtitle}</p>}
+      <div className="text-left py-10">
+        <h1 className={h1Classes}>{title}</h1>
+        {subtitle && <p className={`mt-3 max-w-2xl ${pClasses}`}>{subtitle}</p>}
       </div>
 
       {projects.length === 0 ? (

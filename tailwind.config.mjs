@@ -82,6 +82,30 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      // Typographie fluide avec clamp() - s'adapte automatiquement au viewport
+      fontSize: {
+        // Petites tailles
+        'fluid-xs': 'clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem)',      // 12px → 14px
+        'fluid-sm': 'clamp(0.875rem, 0.8rem + 0.375vw, 1rem)',      // 14px → 16px
+        'fluid-base': 'clamp(1rem, 0.95rem + 0.25vw, 1.125rem)',     // 16px → 18px
+        
+        // Tailles moyennes
+        'fluid-lg': 'clamp(1.125rem, 1rem + 0.625vw, 1.5rem)',       // 18px → 24px
+        'fluid-xl': 'clamp(1.25rem, 1.1rem + 0.75vw, 1.875rem)',     // 20px → 30px
+        'fluid-2xl': 'clamp(1.5rem, 1.3rem + 1vw, 2.25rem)',         // 24px → 36px
+        
+        // Grandes tailles (titres)
+        'fluid-3xl': 'clamp(1.875rem, 1.5rem + 1.875vw, 3rem)',      // 30px → 48px
+        'fluid-4xl': 'clamp(2rem, 1.5rem + 2.5vw, 3.75rem)',        // 32px → 60px (ajusté mobile)
+        'fluid-5xl': 'clamp(2.25rem, 1.8rem + 3vw, 4.5rem)',        // 36px → 72px (ajusté mobile)
+        'fluid-6xl': 'clamp(2.5rem, 2rem + 3.5vw, 6rem)',           // 40px → 96px (ajusté mobile)
+        
+        // Tailles hero (très grandes)
+        'fluid-7xl': 'clamp(2.75rem, 2.2rem + 4vw, 7.5rem)',       // 44px → 120px (ajusté mobile)
+        'fluid-8xl': 'clamp(3rem, 2.5rem + 4.5vw, 9rem)',            // 48px → 144px (ajusté mobile)
+        'fluid-9xl': 'clamp(3.5rem, 3rem + 5vw, 11rem)',            // 56px → 176px (ajusté mobile)
+        'fluid-10xl': 'clamp(3.5rem, 3rem + 5.5vw, 12.5rem)',       // 56px → 200px (ajusté mobile)
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

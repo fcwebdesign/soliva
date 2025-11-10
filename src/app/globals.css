@@ -1120,6 +1120,24 @@ body.admin-page,
   margin-bottom: 2rem;
 }
 
+/* ===== TYPOGRAPHIE FLUIDE - Classes utilitaires ===== */
+/* S'adapte automatiquement au viewport avec clamp() */
+/* Format: clamp(min-mobile, valeur-fluide, max-desktop) */
+.text-fluid-xs { font-size: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem); }
+.text-fluid-sm { font-size: clamp(0.875rem, 0.8rem + 0.375vw, 1rem); }
+.text-fluid-base { font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem); }
+.text-fluid-lg { font-size: clamp(1.125rem, 1rem + 0.625vw, 1.5rem); }
+.text-fluid-xl { font-size: clamp(1.25rem, 1.1rem + 0.75vw, 1.875rem); }
+.text-fluid-2xl { font-size: clamp(1.5rem, 1.3rem + 1vw, 2.25rem); }
+.text-fluid-3xl { font-size: clamp(1.875rem, 1.5rem + 1.875vw, 3rem); }
+.text-fluid-4xl { font-size: clamp(2rem, 1.5rem + 2.5vw, 3.75rem); line-height: 1.1; }
+.text-fluid-5xl { font-size: clamp(2.25rem, 1.8rem + 3vw, 4.5rem); line-height: 1.1; }
+.text-fluid-6xl { font-size: clamp(2.5rem, 2rem + 3.5vw, 6rem); line-height: 1.05; }
+.text-fluid-7xl { font-size: clamp(2.75rem, 2.2rem + 4vw, 7.5rem); line-height: 1.05; }
+.text-fluid-8xl { font-size: clamp(3rem, 2.5rem + 4.5vw, 9rem); line-height: 1; }
+.text-fluid-9xl { font-size: clamp(3.5rem, 3rem + 5vw, 11rem); line-height: 1; }
+.text-fluid-10xl { font-size: clamp(3.5rem, 3rem + 5.5vw, 12.5rem); line-height: 0.95; }
+
 .blog-description {
   margin-top: 2rem;
 }

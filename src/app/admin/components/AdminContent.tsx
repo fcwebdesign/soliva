@@ -5,6 +5,8 @@ import TemplateManager from './TemplateManager';
 import HeaderManager from './HeaderManager';
 import FooterManager from './FooterManager';
 import MinimalisteManager from './MinimalisteManager';
+import RevealSection from './sections/RevealSection';
+import TypographySection from './sections/TypographySection';
 import SeoBlock from '@/components/admin/SeoBlock';
 import SchemaScript from '@/components/SchemaScript';
 import { generateAllSchemas } from '@/lib/schema';
@@ -39,6 +41,9 @@ const AdminContent: React.FC<AdminContentProps> = ({
   onUpdate: onUpdateContent
 }) => {
   const renderContent = () => {
+    // Debug
+    console.log('🔍 AdminContent - currentPage:', currentPage, 'content:', !!content);
+    
     if (currentPage === 'ai') {
       return <AISettings />;
     }
@@ -66,6 +71,48 @@ const AdminContent: React.FC<AdminContentProps> = ({
         <HeaderManager
           content={content}
           onSave={onSave}
+        />
+      );
+    }
+    
+    if (currentPage === 'reveal') {
+      return (
+        <RevealSection
+          localData={content || {}}
+          updateField={(path, value) => {
+            const keys = path.split('.');
+            const newContent = { ...content };
+            let current = newContent as any;
+            
+            for (let i = 0; i < keys.length - 1; i++) {
+              if (!current[keys[i]]) current[keys[i]] = {};
+              current = current[keys[i]];
+            }
+            
+            current[keys[keys.length - 1]] = value;
+            onUpdateContent(newContent as Content);
+          }}
+        />
+      );
+    }
+    
+    if (currentPage === 'typography') {
+      return (
+        <TypographySection
+          localData={content || {}}
+          updateField={(path, value) => {
+            const keys = path.split('.');
+            const newContent = { ...content };
+            let current = newContent as any;
+            
+            for (let i = 0; i < keys.length - 1; i++) {
+              if (!current[keys[i]]) current[keys[i]] = {};
+              current = current[keys[i]];
+            }
+            
+            current[keys[keys.length - 1]] = value;
+            onUpdateContent(newContent as Content);
+          }}
         />
       );
     }

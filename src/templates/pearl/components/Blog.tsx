@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 import { Link } from 'next-view-transitions';
+import { getTypographyConfig, getTypographyClasses, defaultTypography } from '@/utils/typography';
 
 type Article = {
   id?: string;
@@ -9,18 +10,26 @@ type Article = {
   status?: 'draft' | 'published';
 };
 
-export default function BlogPearl({ content }: { content?: { hero?: { title?: string; subtitle?: string }; description?: string; articles?: Article[] } }) {
+export default function BlogPearl({ content, fullContent }: { 
+  content?: { hero?: { title?: string; subtitle?: string }; description?: string; articles?: Article[] };
+  fullContent?: any;
+}) {
   const title = content?.hero?.title || 'Journal';
   const subtitle = content?.hero?.subtitle || content?.description || '';
   const articles: Article[] = Array.isArray((content as any)?.articles) ? ((content as any)?.articles as Article[]) : [];
 
   const visibleArticles = articles.filter(a => (a.status === 'published' || !a.status));
 
+  // Récupérer les styles typographiques
+  const typoConfig = getTypographyConfig(fullContent || {});
+  const h1Classes = getTypographyClasses('h1', typoConfig, defaultTypography.h1);
+  const pClasses = getTypographyClasses('p', typoConfig, defaultTypography.p);
+
   return (
     <section>
-      <div className="text-center py-10">
-        <h1 className="text-3xl font-bold text-gray-900">{title}</h1>
-        {subtitle && <p className="mt-3 text-gray-600 max-w-2xl mx-auto">{subtitle}</p>}
+      <div className="text-left py-10">
+        <h1 className={h1Classes}>{title}</h1>
+        {subtitle && <p className={`mt-3 max-w-2xl ${pClasses}`}>{subtitle}</p>}
       </div>
 
       {visibleArticles.length === 0 ? (

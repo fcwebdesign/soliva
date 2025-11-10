@@ -14,7 +14,9 @@ import {
   Save,
   Globe,
   LogOut,
-  Brain
+  Brain,
+  Sparkles,
+  Type
 } from 'lucide-react';
 
 interface Page {
@@ -56,6 +58,8 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
   const SETTINGS = [
     { id: 'nav', label: 'Navigation', path: null, icon: Navigation },
     { id: 'metadata', label: 'Métadonnées', path: null, icon: Settings },
+    { id: 'typography', label: 'Typographie', path: null, icon: Type },
+    { id: 'reveal', label: 'Preloader / Reveal', path: null, icon: Sparkles },
     { id: 'templates', label: 'Templates', path: null, icon: Layout },
     { id: 'template-manager', label: 'Template Manager', path: '/admin/template-manager', icon: Palette },
     { id: 'footer', label: 'Footer', path: null, icon: Footprints },

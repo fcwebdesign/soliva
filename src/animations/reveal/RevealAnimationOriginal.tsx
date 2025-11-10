@@ -272,7 +272,7 @@ export default function RevealAnimation({ config, onComplete }: RevealAnimationP
           />
         ) : (
           <p 
-            className="text-xl font-bold tracking-tight"
+            className={`font-bold tracking-tight preloader-logo-text-${config.logoSize || 'medium'}`}
             style={{ color: config.colors.text }}
           >
             {config.text.subtitle}

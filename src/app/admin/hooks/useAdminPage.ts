@@ -22,6 +22,7 @@ export const useAdminPage = () => {
       blog: '/blog',
       nav: null,
       metadata: null,
+      reveal: null,
       templates: null,
       footer: null,
       backup: null
@@ -38,6 +39,8 @@ export const useAdminPage = () => {
       blog: { label: 'Blog', path: '/blog', icon: '📝' },
       nav: { label: 'Navigation', path: null, icon: '🧭' },
       metadata: { label: 'Métadonnées', path: null, icon: '⚙️' },
+      typography: { label: 'Typographie', path: null, icon: '🔤' },
+      reveal: { label: 'Preloader / Reveal', path: null, icon: '✨' },
       templates: { label: 'Templates', path: null, icon: '🎨' },
       footer: { label: 'Footer', path: null, icon: '🦶' },
       backup: { label: 'Sauvegarde', path: null, icon: '💾' }
@@ -88,7 +91,7 @@ export const useAdminPage = () => {
   // Initialiser la page depuis l'URL (une seule fois)
   useEffect(() => {
     const pageFromUrl = searchParams.get('page');
-    if (pageFromUrl && ['home', 'studio', 'contact', 'work', 'blog', 'nav', 'metadata', 'templates', 'footer', 'backup'].includes(pageFromUrl)) {
+    if (pageFromUrl && ['home', 'studio', 'contact', 'work', 'blog', 'nav', 'metadata', 'reveal', 'templates', 'footer', 'backup'].includes(pageFromUrl)) {
       setCurrentPage(pageFromUrl);
     } else {
       const defaultPage = sessionStorage.getItem('adminDefaultPage');
@@ -103,7 +106,7 @@ export const useAdminPage = () => {
   /*
   useEffect(() => {
     const pageFromUrl = searchParams.get('page');
-    const allowed = ['home', 'studio', 'contact', 'work', 'blog', 'nav', 'metadata', 'templates', 'footer', 'backup'];
+    const allowed = ['home', 'studio', 'contact', 'work', 'blog', 'nav', 'metadata', 'reveal', 'templates', 'footer', 'backup'];
 
     console.log('🌐 [URL] useEffect déclenché - pageFromUrl:', pageFromUrl, 'currentPage:', currentPage);
 
@@ -290,10 +293,13 @@ export const useAdminPage = () => {
         }
       }
       
+      // Nettoyer le contenu pour éviter les références circulaires
+      const cleanedContent = cleanContent(contentToSave);
+      
       const response = await fetch('/api/admin/content', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: contentToSave, status })
+        body: JSON.stringify({ content: cleanedContent, status })
       });
 
       if (!response.ok) {
@@ -302,8 +308,8 @@ export const useAdminPage = () => {
 
       setSaveStatus('success');
       setHasUnsavedChanges(false);
-      setOriginalContent(contentToSave);
-      setContent(contentToSave);
+      setOriginalContent(cleanedContent);
+      setContent(cleanedContent);
       setPageStatus(status);
       
       // Notifier le front pour mise à jour live (Nav/Footer/Pages)
@@ -405,6 +411,10 @@ export const useAdminPage = () => {
       newContent.nav = { ...newContent.nav, ...updates };
     } else if (pageKey === 'metadata') {
       newContent.metadata = { ...newContent.metadata, ...updates };
+    } else if (pageKey === 'reveal') {
+      // Pour reveal, on met à jour metadata.reveal
+      if (!newContent.metadata) newContent.metadata = {};
+      newContent.metadata.reveal = { ...newContent.metadata.reveal, ...updates };
     } else if (pageKey === 'footer') {
       newContent.footer = { ...newContent.footer, ...updates };
     } else {
@@ -422,15 +432,59 @@ export const useAdminPage = () => {
   };
 
   const cleanContent = (data: any): Content => {
-    const cleaned = { ...data };
+    // Fonction récursive pour nettoyer l'objet et supprimer les références circulaires
+    const seen = new WeakSet();
     
-    // Supprimer les propriétés temporaires
-    delete cleaned._isPreview;
-    delete cleaned._previewId;
-    delete cleaned._originalPage;
-    delete cleaned._status;
+    const clean = (obj: any): any => {
+      // Gérer les valeurs primitives
+      if (obj === null || obj === undefined) return obj;
+      if (typeof obj !== 'object') return obj;
+      
+      // Détecter les références circulaires
+      if (seen.has(obj)) {
+        return undefined; // Supprimer les références circulaires
+      }
+      
+      // Gérer les tableaux
+      if (Array.isArray(obj)) {
+        seen.add(obj);
+        const cleaned = obj.map(item => clean(item)).filter(item => item !== undefined);
+        seen.delete(obj);
+        return cleaned;
+      }
+      
+      // Gérer les objets
+      seen.add(obj);
+      const cleaned: any = {};
+      
+      for (const [key, value] of Object.entries(obj)) {
+        // Ignorer les propriétés temporaires spécifiques
+        if (['_isPreview', '_previewId', '_originalPage', '_status'].includes(key)) {
+          continue;
+        }
+        
+        // Ignorer les fonctions
+        if (typeof value === 'function') {
+          continue;
+        }
+        
+        // Ignorer les symboles
+        if (typeof value === 'symbol') {
+          continue;
+        }
+        
+        // Nettoyer récursivement
+        const cleanedValue = clean(value);
+        if (cleanedValue !== undefined) {
+          cleaned[key] = cleanedValue;
+        }
+      }
+      
+      seen.delete(obj);
+      return cleaned;
+    };
     
-    return cleaned;
+    return clean(data) as Content;
   };
 
   // Gestion des messages depuis l'aperçu
@@ -452,7 +506,10 @@ export const useAdminPage = () => {
   }, [content, currentPage, hasUnsavedChanges]);
 
   const currentPageConfig = getPageConfig(currentPage);
-  const currentPageData = content?.[currentPage as keyof Content];
+  // Pour reveal, les données sont dans metadata.reveal
+  const currentPageData = currentPage === 'reveal' 
+    ? content?.metadata?.reveal 
+    : content?.[currentPage as keyof Content];
 
   // Fonction pour gérer la génération d'articles
   const onArticleGenerated = async (article: any) => {

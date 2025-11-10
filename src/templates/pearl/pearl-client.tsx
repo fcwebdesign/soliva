@@ -9,28 +9,38 @@ import WorkPearl from './components/Work';
 import BlogPearl from './components/Blog';
 import { useRevealAnimation } from '@/animations/reveal/hooks/useRevealAnimation';
 import RevealAnimation from '@/animations/reveal/RevealAnimationOriginal';
+import { getTypographyConfig, getTypographyClasses, defaultTypography } from '@/utils/typography';
 import '@/animations/reveal/reveal-original.css';
 
 export default function PearlClient() {
   const [content, setContent] = useState<any>(null);
   const pathname = usePathname();
   
+  // Récupérer les styles typographiques une seule fois
+  const typoConfig = useMemo(() => getTypographyConfig(content || {}), [content]);
+  const h1Classes = useMemo(() => getTypographyClasses('h1', typoConfig, defaultTypography.h1), [typoConfig]);
+  const pClasses = useMemo(() => getTypographyClasses('p', typoConfig, defaultTypography.p), [typoConfig]);
+  
   // Calculer la config dynamiquement quand le contenu change
-  // Utilise l'identité (nav.logo) comme titre, et le sous-titre du hero ou une valeur par défaut
-  const revealConfig = useMemo(() => ({
-    text: {
-      title: content?.nav?.logo || content?.home?.hero?.title || "Pearl",
-      subtitle: content?.home?.hero?.subtitle || `Bienvenue sur ${content?.nav?.logo || "Pearl"}`,
-      author: "" // Plus d'auteur affiché
-    },
-    images: ['/img1.jpg', '/img2.jpg', '/img3.jpg', '/img4.jpg'],
-    duration: 4000,
-    colors: {
-      background: '#000000',
-      text: '#ffffff',
-      progress: '#ffffff'
-    }
-  }), [content]);
+  // Utilise la config du backoffice (metadata.reveal) ou des valeurs par défaut
+  const revealConfig = useMemo(() => {
+    const revealSettings = content?.metadata?.reveal || {};
+    return {
+      text: {
+        title: content?.nav?.logo || content?.home?.hero?.title || "Pearl",
+        subtitle: content?.home?.hero?.subtitle || `Bienvenue sur ${content?.nav?.logo || "Pearl"}`,
+        author: "" // Plus d'auteur affiché
+      },
+      images: revealSettings.images || ['/img1.jpg', '/img2.jpg', '/img3.jpg', '/img4.jpg'],
+      duration: 4000,
+      colors: {
+        background: revealSettings.backgroundColor || '#000000',
+        text: revealSettings.textColor || '#ffffff',
+        progress: revealSettings.progressColor || '#ffffff'
+      },
+      logoSize: revealSettings.logoSize || 'medium'
+    };
+  }, [content]);
 
   const { shouldShowReveal, isRevealComplete, completeReveal, config } = useRevealAnimation(revealConfig);
 
@@ -134,7 +144,8 @@ export default function PearlClient() {
                 subtitle: content.nav.logo || config.text.subtitle, // Respecter la casse du backend
                 author: config.text.author
               },
-              logoImage: content.nav?.logoImage // Passer l'image du logo si elle existe
+              logoImage: content.nav?.logoImage, // Passer l'image du logo si elle existe
+              logoSize: revealConfig.logoSize // Passer la taille du logo depuis la config
             }} 
             onComplete={completeReveal}
           />
@@ -190,8 +201,8 @@ export default function PearlClient() {
             ) : route === 'work-slug' && individualItem ? (
               // Page de projet individuel
               <div className="space-y-8">
-                <div className="text-center">
-                  <h1 className="text-3xl font-bold text-gray-900 mb-4">{individualItem.title}</h1>
+                <div className="text-left py-10">
+                  <h1 className={`${h1Classes} mb-4`}>{individualItem.title}</h1>
                   {individualItem.category && (
                     <p className="text-lg text-gray-600 mb-4">Catégorie: {individualItem.category}</p>
                   )}
@@ -228,8 +239,8 @@ export default function PearlClient() {
             ) : route === 'blog-slug' && individualItem ? (
               // Page d'article individuel
               <div className="space-y-8">
-                <div className="text-center">
-                  <h1 className="text-3xl font-bold text-gray-900 mb-4">{individualItem.title}</h1>
+                <div className="text-left py-10">
+                  <h1 className={`${h1Classes} mb-4`}>{individualItem.title}</h1>
                   {individualItem.publishedAt && (
                     <p className="text-lg text-gray-600 mb-4">
                       Publié le {new Date(individualItem.publishedAt).toLocaleDateString('fr-FR')}
@@ -255,29 +266,36 @@ export default function PearlClient() {
                   </Link>
                 </div>
               </div>
-            ) : Array.isArray(pageData?.blocks) && pageData.blocks.length > 0 && pageData.blocks.some((block: any) => block.content && block.content.trim() !== '') ? (
-              <BlockRenderer blocks={pageData.blocks} />
             ) : route === 'work' ? (
-              <WorkPearl content={content?.work} />
+              <WorkPearl content={content?.work} fullContent={content} />
             ) : route === 'blog' ? (
-              <BlogPearl content={content?.blog} />
+              <BlogPearl content={content?.blog} fullContent={content} />
             ) : (
-              <div className="text-center py-12">
-                <h1 className="text-3xl font-bold text-gray-900 mb-4">
-                  {pageData?.hero?.title || pageData?.title || 'Page'}
-                </h1>
-                {pageData?.hero?.subtitle || pageData?.description ? (
-                  <div
-                    className="text-gray-600 mb-8 max-w-2xl mx-auto"
-                    dangerouslySetInnerHTML={{ __html: pageData?.hero?.subtitle || pageData?.description }}
-                  />
-                ) : (
-                  <p className="text-gray-400">Aucun contenu pour l'instant</p>
+              <>
+                {/* Hero - toujours affiché si présent */}
+                {(pageData?.hero?.title || pageData?.title || pageData?.hero?.subtitle || pageData?.description) && (
+                  <div className="text-left py-10">
+                    <h1 className={`${h1Classes} mb-4`}>
+                      {pageData?.hero?.title || pageData?.title || 'Page'}
+                    </h1>
+                    {pageData?.hero?.subtitle || pageData?.description ? (
+                      <div
+                        className={`mb-8 max-w-2xl ${pClasses}`}
+                        dangerouslySetInnerHTML={{ __html: pageData?.hero?.subtitle || pageData?.description }}
+                      />
+                    ) : null}
+                  </div>
                 )}
-                <div className="bg-gray-50 rounded-lg p-8">
-                  <p className="text-gray-400">Ajoute des blocs depuis l'admin pour cette page.</p>
-                </div>
-              </div>
+                
+                {/* Blocs - affichés s'ils existent */}
+                {Array.isArray(pageData?.blocks) && pageData.blocks.length > 0 && pageData.blocks.some((block: any) => block.content && block.content.trim() !== '') ? (
+                  <BlockRenderer blocks={pageData.blocks} />
+                ) : !(pageData?.hero?.title || pageData?.title || pageData?.hero?.subtitle || pageData?.description) ? (
+                  <div className="bg-gray-50 rounded-lg p-8">
+                    <p className="text-gray-400">Ajoute des blocs depuis l'admin pour cette page.</p>
+                  </div>
+                ) : null}
+              </>
             )}
           </main>
           <FooterPearl footer={content.footer} pages={content.pages} layout={content.metadata?.layout || 'standard'} />
