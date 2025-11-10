@@ -19,6 +19,7 @@ interface RevealAnimationProps {
       author: string;
     };
     logoImage?: string; // Logo en image depuis le backoffice
+    logoSize?: 'small' | 'medium' | 'large'; // Taille du logo depuis le backoffice
     colors: {
       background: string;
       text: string;
@@ -80,6 +81,18 @@ export default function RevealAnimation({ config, onComplete }: RevealAnimationP
 
       const preloaderImages = gsap.utils.toArray(".preloader-images .img");
       const preloaderImagesInner = gsap.utils.toArray(".preloader-images .img img");
+      const imageCount = preloaderImages.length;
+
+      // Calculer dynamiquement les délais en fonction du nombre d'images
+      // Pour 4 images : 0.75s entre chaque (comportement original)
+      // Pour plus d'images : réduire légèrement le délai pour garder une animation fluide
+      // Pour moins d'images : augmenter le délai pour garder le rythme
+      const baseDelay = 0.75;
+      const delayPerImage = imageCount <= 2 ? 1.0 : imageCount <= 4 ? baseDelay : baseDelay * (4 / imageCount);
+      
+      // Calculer le temps total nécessaire pour toutes les images
+      const lastImageDelay = (imageCount - 1) * delayPerImage;
+      const totalImageAnimationTime = lastImageDelay + 1.5; // délai + durée de la dernière animation
 
       tl = gsap.timeline({ delay: 0.25 });
 
@@ -95,6 +108,7 @@ export default function RevealAnimation({ config, onComplete }: RevealAnimationP
         ease: "power3.in",
       });
 
+      // Animer les images avec délais dynamiques
       preloaderImages.forEach((preloaderImg: any, index: number) => {
         tl!.to(
           preloaderImg,
@@ -102,7 +116,7 @@ export default function RevealAnimation({ config, onComplete }: RevealAnimationP
             clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
             duration: 1,
             ease: "hop",
-            delay: index * 0.75,
+            delay: index * delayPerImage,
           },
           "-=5"
         );
@@ -115,17 +129,21 @@ export default function RevealAnimation({ config, onComplete }: RevealAnimationP
             scale: 1,
             duration: 1.5,
             ease: "hop",
-            delay: index * 0.75,
+            delay: index * delayPerImage,
           },
           "-=5.25"
         );
       });
 
+      // Calculer la position relative pour le texte en fonction du nombre d'images
+      // Le texte doit apparaître quand la dernière image commence à s'animer
+      const textStartOffset = Math.max(5.5, totalImageAnimationTime - 2);
+
       // D'abord rendre le contenu visible juste avant l'animation
       tl.set(".preloader-copy", {
         opacity: 1,
         visibility: "visible",
-      }, "-=5.5");
+      }, `-=${textStartOffset}`);
       
       if (!isImage && lines.length > 0) {
         // Animation du texte ligne par ligne
@@ -137,7 +155,7 @@ export default function RevealAnimation({ config, onComplete }: RevealAnimationP
             ease: "hop",
             stagger: 0.1,
           },
-          "-=5.5"
+          `-=${textStartOffset}`
         );
       } else if (isImage) {
         // Animation de l'image (même style que le texte)
@@ -148,10 +166,19 @@ export default function RevealAnimation({ config, onComplete }: RevealAnimationP
             duration: 2,
             ease: "hop",
           },
-          "-=5.5"
+          `-=${textStartOffset}`
         );
       }
 
+      // Fermer les images après que toutes les animations soient terminées
+      // Toutes les animations d'images sont positionnées à "-=5", donc on calcule
+      // le moment où la dernière image finit par rapport à ce point
+      // La dernière image finit à: lastImageDelay + 1.5 secondes après "-=5"
+      // Pour fermer juste après, on utilise: 5 - (lastImageDelay + 1.5) - buffer
+      // Avec un minimum de 1.0s pour garder une animation fluide
+      const lastImageEndTime = lastImageDelay + 1.5;
+      const closeImagesOffset = Math.max(1.0, 5 - lastImageEndTime - 0.2);
+      
       tl.to(
         ".preloader-images",
         {
@@ -159,7 +186,7 @@ export default function RevealAnimation({ config, onComplete }: RevealAnimationP
           duration: 1,
           ease: "hop",
         },
-        "-=1.5"
+        `-=${closeImagesOffset}`
       );
 
       // Faire disparaître le contenu
@@ -241,7 +268,7 @@ export default function RevealAnimation({ config, onComplete }: RevealAnimationP
           <img 
             src={config.logoImage} 
             alt="Logo" 
-            className="preloader-logo-image"
+            className={`preloader-logo-image preloader-logo-${config.logoSize || 'medium'}`}
           />
         ) : (
           <p 
