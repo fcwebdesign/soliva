@@ -10,11 +10,6 @@ export default function ThemeTransitions() {
   
   // Charger la configuration depuis le contenu
   useEffect(() => {
-    // Sur l'admin (key = 'soliva'), ne pas déclencher de polling réseau inutile
-    if (key === 'soliva') {
-      return () => {}; // Retourner une fonction de nettoyage vide
-    }
-    
     // Protection globale contre les transitions multiples
     const handleTransitionStart = () => {
       if (isTransitioning.current) {
@@ -34,6 +29,15 @@ export default function ThemeTransitions() {
     // Écouter les événements de transition
     document.addEventListener('transitionstart', handleTransitionStart);
     document.addEventListener('transitionend', handleTransitionEnd);
+    
+    // Sur l'admin (key = 'soliva'), ne pas déclencher de polling réseau inutile
+    // mais toujours écouter les événements de transition
+    if (key === 'soliva') {
+      return () => {
+        document.removeEventListener('transitionstart', handleTransitionStart);
+        document.removeEventListener('transitionend', handleTransitionEnd);
+      };
+    }
     
     const fetchContent = async () => {
       try {
@@ -68,10 +72,12 @@ export default function ThemeTransitions() {
   }, [key]);
 
   // Utiliser la config du contenu si disponible, sinon fallback sur la config statique
-  const staticConfig = getTransitionConfig(key);
+  // Pour 'soliva' (admin), utiliser la config par défaut pour que les transitions fonctionnent
+  // quand on navigue depuis l'admin vers le frontend
+  const staticConfig = getTransitionConfig(key === 'soliva' ? 'pearl' : key);
   const config = contentConfig?._transitionConfig || staticConfig;
   
-  console.log('🎨 Transition config utilisée:', config);
+  console.log('🎨 Transition config utilisée:', config, 'pour key:', key);
 
   // Styles communs pour toutes les transitions
   const commonStyles = `
