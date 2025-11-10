@@ -18,6 +18,7 @@ interface RevealAnimationProps {
       subtitle: string;
       author: string;
     };
+    logoImage?: string; // Logo en image depuis le backoffice
     colors: {
       background: string;
       text: string;
@@ -52,17 +53,30 @@ export default function RevealAnimation({ config, onComplete }: RevealAnimationP
         });
       };
 
-      const splitPreloaderCopy = createSplit(".preloader-copy p", "lines", "line");
+      // Vérifier si c'est une image ou du texte
+      const isImage = !!config.logoImage;
       
-      const lines = splitPreloaderCopy.lines;
+      let lines: any[] = [];
+      if (!isImage) {
+        const splitPreloaderCopy = createSplit(".preloader-copy p", "lines", "line");
+        lines = splitPreloaderCopy.lines;
+      }
 
-      // États initiaux - cacher le texte au début pour éviter le flash
+      // États initiaux - cacher le contenu au début pour éviter le flash
       gsap.set(".preloader-copy", {
         opacity: 0,
         visibility: "hidden",
       });
       
-      gsap.set(lines, { yPercent: 100 });
+      if (!isImage && lines.length > 0) {
+        gsap.set(lines, { yPercent: 100 });
+      } else if (isImage) {
+        // Masquer l'image plus bas pour mieux voir l'animation de révélation
+        gsap.set(".preloader-copy img, .preloader-logo-image", { 
+          yPercent: 150, // Partir de plus bas (150% au lieu de 100%)
+          overflow: "hidden"
+        });
+      }
 
       const preloaderImages = gsap.utils.toArray(".preloader-images .img");
       const preloaderImagesInner = gsap.utils.toArray(".preloader-images .img img");
@@ -107,22 +121,36 @@ export default function RevealAnimation({ config, onComplete }: RevealAnimationP
         );
       });
 
-      // D'abord rendre le texte visible juste avant l'animation
+      // D'abord rendre le contenu visible juste avant l'animation
       tl.set(".preloader-copy", {
         opacity: 1,
         visibility: "visible",
       }, "-=5.5");
       
-      tl.to(
-        lines,
-        {
-          yPercent: 0,
-          duration: 2,
-          ease: "hop",
-          stagger: 0.1,
-        },
-        "-=5.5"
-      );
+      if (!isImage && lines.length > 0) {
+        // Animation du texte ligne par ligne
+        tl.to(
+          lines,
+          {
+            yPercent: 0,
+            duration: 2,
+            ease: "hop",
+            stagger: 0.1,
+          },
+          "-=5.5"
+        );
+      } else if (isImage) {
+        // Animation de l'image (même style que le texte)
+        tl.to(
+          ".preloader-copy img, .preloader-logo-image",
+          {
+            yPercent: 0,
+            duration: 2,
+            ease: "hop",
+          },
+          "-=5.5"
+        );
+      }
 
       tl.to(
         ".preloader-images",
@@ -134,17 +162,29 @@ export default function RevealAnimation({ config, onComplete }: RevealAnimationP
         "-=1.5"
       );
 
-      // Faire disparaître le texte
-      tl.to(
-        lines,
-        {
-          y: "-125%",
-          duration: 2,
-          ease: "hop",
-          stagger: 0.1,
-        },
-        "-=2"
-      );
+      // Faire disparaître le contenu
+      if (!isImage && lines.length > 0) {
+        tl.to(
+          lines,
+          {
+            y: "-125%",
+            duration: 2,
+            ease: "hop",
+            stagger: 0.1,
+          },
+          "-=2"
+        );
+      } else if (isImage) {
+        tl.to(
+          ".preloader-copy img, .preloader-logo-image",
+          {
+            y: "-125%",
+            duration: 2,
+            ease: "hop",
+          },
+          "-=2"
+        );
+      }
 
       // Fermer le preloader et l'overlay (rideau)
       tl.to(
@@ -197,12 +237,20 @@ export default function RevealAnimation({ config, onComplete }: RevealAnimationP
       </div>
 
       <div className="preloader-copy" ref={textRef}>
-        <p 
-          className="text-xl font-bold tracking-tight"
-          style={{ color: config.colors.text }}
-        >
-          {config.text.subtitle}
-        </p>
+        {config.logoImage ? (
+          <img 
+            src={config.logoImage} 
+            alt="Logo" 
+            className="preloader-logo-image"
+          />
+        ) : (
+          <p 
+            className="text-xl font-bold tracking-tight"
+            style={{ color: config.colors.text }}
+          >
+            {config.text.subtitle}
+          </p>
+        )}
       </div>
     </div>
     </>

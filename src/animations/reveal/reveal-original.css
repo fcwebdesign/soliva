@@ -16,7 +16,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 7px;
+  height: 4px;
   transform: scaleX(0);
   transform-origin: left;
   will-change: transform;
@@ -60,7 +60,7 @@
   width: 30%;
   z-index: 99999 !important; /* Au-dessus de tout pour la transition vers le header et après */
   pointer-events: none; /* Ne pas bloquer les interactions */
-  overflow: visible !important; /* Empêcher le coupage du contenu */
+  overflow: hidden; /* Masquer la partie de l'image qui est en bas pendant l'animation */
   opacity: 0; /* Caché au début pour éviter le flash */
   visibility: hidden; /* Caché au début pour éviter le flash */
   clip-path: none !important; /* IMPORTANT: Retirer le clip-path pour que le logo reste visible */
@@ -70,11 +70,23 @@
 .preloader-copy p {
   text-transform: none; /* Respecter la casse du backend */
   text-align: center; /* Centré par défaut au début de l'animation */
-  font-size: 3rem; /* Taille plus grande, indépendante du header */
+  font-size: 2rem; /* Taille plus grande, indépendante du header */
   font-weight: 700; /* font-bold */
   color: #fff;
   overflow: visible !important; /* Empêcher le coupage */
   white-space: nowrap; /* Garder le texte sur une ligne */
+}
+
+/* Styles pour le logo en image */
+.preloader-copy img,
+.preloader-logo-image {
+  display: block;
+  margin: 0 auto;
+  max-width: 300px; /* Limiter la largeur pour éviter que ce soit trop gros */
+  max-height: 80px; /* Limiter la hauteur pour rester dans l'écran */
+  width: auto;
+  height: auto;
+  object-fit: contain;
 }
 
 /* Classe pour aligner à gauche quand le texte arrive au header */

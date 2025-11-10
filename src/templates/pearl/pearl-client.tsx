@@ -125,7 +125,7 @@ export default function PearlClient() {
           willChange: 'clip-path',
         }}
       >
-        {shouldShowReveal && content && content.nav?.logo && (
+        {shouldShowReveal && content && (content.nav?.logo || content.nav?.logoImage) && (
           <RevealAnimation 
             config={{
               ...config,
@@ -133,7 +133,8 @@ export default function PearlClient() {
                 title: content.nav.logo || config.text.title,
                 subtitle: content.nav.logo || config.text.subtitle, // Respecter la casse du backend
                 author: config.text.author
-              }
+              },
+              logoImage: content.nav?.logoImage // Passer l'image du logo si elle existe
             }} 
             onComplete={completeReveal}
           />
