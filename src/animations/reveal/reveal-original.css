@@ -61,8 +61,8 @@
   z-index: 99999 !important; /* Au-dessus de tout pour la transition vers le header et après */
   pointer-events: none; /* Ne pas bloquer les interactions */
   overflow: visible !important; /* Empêcher le coupage du contenu */
-  opacity: 1 !important; /* S'assurer qu'il reste visible */
-  visibility: visible !important; /* S'assurer qu'il reste visible */
+  opacity: 0; /* Caché au début pour éviter le flash */
+  visibility: hidden; /* Caché au début pour éviter le flash */
   clip-path: none !important; /* IMPORTANT: Retirer le clip-path pour que le logo reste visible */
 }
 
@@ -70,7 +70,7 @@
 .preloader-copy p {
   text-transform: none; /* Respecter la casse du backend */
   text-align: center; /* Centré par défaut au début de l'animation */
-  font-size: 1.25rem; /* text-xl = 1.25rem */
+  font-size: 3rem; /* Taille plus grande, indépendante du header */
   font-weight: 700; /* font-bold */
   color: #fff;
   overflow: visible !important; /* Empêcher le coupage */
@@ -91,7 +91,7 @@
   transform: translateY(60svh);
   transform-origin: top;
   will-change: transform;
-  z-index: 10; /* Au-dessus des images */
+  z-index: 10001 !important; /* Au-dessus du preloader et de l'overlay */
 }
 
 .preloader-header a {
@@ -101,7 +101,8 @@
   font-weight: 600;
   line-height: 0.9;
   display: block;
-  color: #fff;
+  color: #ffffff !important;
+  z-index: 100;
 }
 
 .preloader-header a .char,
@@ -110,6 +111,10 @@
   position: relative;
   display: inline-block;
   will-change: transform;
+}
+
+.line-mask {
+  text-align: left !important;
 }
 
 /* Section hero finale */

@@ -26,7 +26,7 @@ export default function PearlClient() {
     images: ['/img1.jpg', '/img2.jpg', '/img3.jpg', '/img4.jpg'],
     duration: 4000,
     colors: {
-      background: '#d4a574', // Beige pour mieux voir le logo
+      background: '#000000',
       text: '#ffffff',
       progress: '#ffffff'
     }
@@ -115,10 +115,15 @@ export default function PearlClient() {
     <div className="min-h-screen bg-white">
       {/* Overlay noir pour l'animation */}
       <div 
-        className={`fixed inset-0 z-[9998] transition-opacity duration-300 ${
+        id="reveal-overlay"
+        className={`fixed inset-0 z-[9998] ${
           shouldShowReveal && content ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
-        style={{ backgroundColor: config.colors.background }}
+        style={{ 
+          backgroundColor: config.colors.background,
+          clipPath: shouldShowReveal ? 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)' : 'polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)',
+          willChange: 'clip-path',
+        }}
       >
         {shouldShowReveal && content && content.nav?.logo && (
           <RevealAnimation 
