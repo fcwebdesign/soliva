@@ -13,6 +13,8 @@ import { TemplateProvider } from "@/templates/context";
 import ThemeTransitions from "@/templates/ThemeTransitions";
 import { Toaster } from "@/components/ui/sonner";
 import Preloader from "@/components/Preloader";
+import ColorPaletteProvider from "@/components/ColorPaletteProvider";
+import { resolvePaletteFromContent } from "@/utils/palette-resolver";
 
 
 interface RootLayoutProps {
@@ -43,6 +45,7 @@ export async function generateMetadata() {
 }
 
 export default async function RootLayout({ children }: RootLayoutProps) {
+  // OPTIMISATION: Lire le contenu une seule fois et le réutiliser
   const content = await readContent();
   const { isEnabled: isDraftMode } = await draftMode();
   const activeTemplate = await getActiveTemplate();
@@ -109,18 +112,21 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           {/* Preloader */}
           <Preloader />
           
-          <TemplateProvider value={{ key: templateKey }}>
-            {/* Per-template page transitions */}
-            <ThemeTransitions />
-            {isAutonomous ? (
-              // DÉLÉGATION TOTALE AU TEMPLATE
-              <TemplateRenderer keyName={activeTemplate.key} />
-            ) : (
-                              // SHELL GLOBAL PAR DÉFAUT
-              <>
-                <NavWrapper initialContent={{...content.nav, hiddenSystem: (content as any)?.pages?.hiddenSystem || []}} />
-                {children}
-                <ConditionalFooter initialContent={content.footer} />
+          {/* Color Palette Provider - applique les variables CSS globalement (uniquement pour les routes non-admin) */}
+          {!isAdminRoute && (
+            <ColorPaletteProvider palette={resolvePaletteFromContent(content)}>
+              <TemplateProvider value={{ key: templateKey }}>
+                {/* Per-template page transitions */}
+                <ThemeTransitions />
+                {isAutonomous ? (
+                  // DÉLÉGATION TOTALE AU TEMPLATE
+                  <TemplateRenderer keyName={activeTemplate.key} />
+                ) : (
+                  // SHELL GLOBAL PAR DÉFAUT
+                  <>
+                    <NavWrapper initialContent={{...content.nav, hiddenSystem: (content as any)?.pages?.hiddenSystem || []}} />
+                    {children}
+                    <ConditionalFooter initialContent={content.footer} />
                 
                 {/* JSON-LD Organization */}
                 <script
@@ -153,9 +159,20 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                     })
                   }}
                 />
-              </>
-            )}
-          </TemplateProvider>
+                  </>
+                )}
+              </TemplateProvider>
+            </ColorPaletteProvider>
+          )}
+          {isAdminRoute && (
+            <TemplateProvider value={{ key: 'soliva' }}>
+              {/* Per-template page transitions (no-op for admin since key=soliva) */}
+              <ThemeTransitions />
+              <NavWrapper initialContent={{...content.nav, hiddenSystem: (content as any)?.pages?.hiddenSystem || []}} />
+              {children}
+              <ConditionalFooter initialContent={content.footer} />
+            </TemplateProvider>
+          )}
           <Toaster 
             position="top-center"
             toastOptions={{

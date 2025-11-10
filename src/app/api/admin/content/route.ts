@@ -82,10 +82,9 @@ export async function PUT(request: NextRequest) {
       console.log('✅ Contenu écrit avec succès');
     }
     
-    // Retourner le contenu mis à jour
-    const updatedContent = await readContent();
-    
-    return NextResponse.json(updatedContent, {
+    // OPTIMISATION PERFORMANCE : Retourner directement le contenu sauvegardé
+    // au lieu de relire le fichier (évite de lire 475Mo à nouveau)
+    return NextResponse.json(content, {
       status: 200,
       headers: {
         'Content-Type': 'application/json',

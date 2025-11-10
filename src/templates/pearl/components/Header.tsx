@@ -22,21 +22,31 @@ export default function HeaderPearl({ nav, pages, variant = 'classic', layout = 
   const { key } = useTemplate();
   const model = buildNavModel({ nav, pages, pathname, templateKey: key !== 'default' ? key : undefined });
   
-  // Récupérer les styles typographiques pour la navigation
+  // Récupérer les styles typographiques pour la navigation (sans la couleur, on utilise la palette)
   const typoConfig = getTypographyConfig(fullContent || {});
-  const navClasses = getTypographyClasses('nav', typoConfig, defaultTypography.nav);
+  const navConfig = typoConfig.nav || {};
+  // Classes typographiques SANS la couleur (on utilise la palette pour les couleurs)
+  const navTypographyClasses = [
+    navConfig.fontSize || defaultTypography.nav.fontSize,
+    navConfig.fontWeight || defaultTypography.nav.fontWeight,
+    navConfig.lineHeight || defaultTypography.nav.lineHeight,
+    navConfig.tracking || defaultTypography.nav.tracking,
+  ].filter(Boolean).join(' ');
 
   // Composants réutilisables
+  // Utilisation de la palette : text-foreground au lieu de text-gray-900
   const Logo = () => (
     <Link href="/" className="flex items-center space-x-3">
       {model.brand.image ? (
         <img src={model.brand.image} alt="Logo" className="h-8 w-auto object-contain max-w-[180px] vt-brand" />
       ) : (
-        <span className="text-xl font-bold tracking-tight text-gray-900 truncate vt-brand">{model.brand.text}</span>
+        <span className="text-xl font-bold tracking-tight text-foreground truncate vt-brand">{model.brand.text}</span>
       )}
     </Link>
   );
 
+  // Utilisation de la palette : text-foreground au lieu de text-gray-900
+  // Les classes typographiques (taille, poids) sont appliquées, mais la couleur vient de la palette
   const Navigation = () => (
     <nav className="hidden md:flex items-center space-x-2">
       {model.items.map((item: any) => (
@@ -44,7 +54,7 @@ export default function HeaderPearl({ nav, pages, variant = 'classic', layout = 
           key={item.key}
           href={item.href}
           target={item.target}
-          className={`px-3 py-2 rounded-md transition-colors ${navClasses} ${item.active ? "text-gray-900" : "hover:text-gray-900"}`}
+          className={`px-3 py-2 rounded-md transition-colors ${navTypographyClasses} ${item.active ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}
         >
           {item.label}
         </Link>
@@ -52,10 +62,11 @@ export default function HeaderPearl({ nav, pages, variant = 'classic', layout = 
     </nav>
   );
 
+  // Utilisation de la palette : text-muted-foreground, hover:text-foreground, hover:bg-muted
   const MobileButton = ({ alwaysVisible = false }: { alwaysVisible?: boolean }) => (
     <button 
       type="button" 
-      className={(alwaysVisible ? '' : 'md:hidden ') + "inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-200"}
+      className={(alwaysVisible ? '' : 'md:hidden ') + "inline-flex items-center justify-center p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-inset focus:ring-ring"}
       onClick={() => setOpen(v => !v)} 
       aria-label="Ouvrir le menu" 
       aria-expanded={open}
@@ -66,8 +77,9 @@ export default function HeaderPearl({ nav, pages, variant = 'classic', layout = 
     </button>
   );
 
+  // Utilisation de la palette : bg-primary text-primary-foreground hover:opacity-90
   const CTAButton = () => (
-    <button className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">
+    <button className="bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 transition-opacity">
       Contact
     </button>
   );
@@ -225,8 +237,9 @@ export default function HeaderPearl({ nav, pages, variant = 'classic', layout = 
 
   const overlayMobileOnly = variant !== 'minimal';
 
+  // Utilisation de la palette : bg-background/80 au lieu de bg-white/80, border-border au lieu de border-gray-200
   return (
-    <header className="bg-white/80 backdrop-blur border-b border-gray-200 sticky top-0 z-40 w-full">
+    <header className="bg-background/80 backdrop-blur border-b border-border sticky top-0 z-40 w-full">
       <div className={`mx-auto px-4 sm:px-6 lg:px-8 ${
         layout === 'compact' ? 'max-w-7xl' :
         layout === 'wide' ? 'max-w-custom-1920' :
@@ -235,14 +248,16 @@ export default function HeaderPearl({ nav, pages, variant = 'classic', layout = 
         {renderHeaderContent()}
       </div>
       {open && (
-        <div className={(overlayMobileOnly ? 'md:hidden ' : '') + 'border-t border-gray-200'}>
+        <div className={(overlayMobileOnly ? 'md:hidden ' : '') + 'border-t border-border'}>
           <div className="px-4 py-3 space-y-1">
             {model.items.map((item: any) => (
               <div key={item.key} className="block">
                 <Link
                   href={item.href}
                   target={item.target}
-                  className={"px-3 py-2 rounded-md text-sm font-medium transition-colors " + (item.active ? "text-gray-900" : "text-gray-500 hover:text-gray-900")}
+                  // Utilisation de la palette : text-foreground et text-muted-foreground
+                  // On garde text-sm font-medium pour la cohérence mobile, mais les couleurs viennent de la palette
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${item.active ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}
                 >
                   {item.label}
                 </Link>

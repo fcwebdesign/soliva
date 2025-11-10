@@ -14,7 +14,8 @@
     "lighthouse:work": "lighthouse http://localhost:3000/work --output html --output-path ./lighthouse-work-report.html --view",
     "lighthouse:blog": "lighthouse http://localhost:3000/blog --output html --output-path ./lighthouse-blog-report.html --view",
     "lighthouse:all": "node scripts/lighthouse-simple.js",
-    "lighthouse:quick": "node scripts/lighthouse-quick.js"
+    "lighthouse:quick": "node scripts/lighthouse-quick.js",
+    "check:typography": "node scripts/check-typography-health.js"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

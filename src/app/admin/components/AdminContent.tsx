@@ -111,7 +111,15 @@ const AdminContent: React.FC<AdminContentProps> = ({
               current = current[keys[i]];
             }
 
-            current[keys[keys.length - 1]] = value;
+            // FIX CRITIQUE : Si on sauvegarde typography, utiliser la fonction de nettoyage centralisée
+            if (keys[keys.length - 1] === 'typography' && typeof value === 'object' && value !== null) {
+              // Utiliser la fonction de nettoyage centralisée
+              const { cleanTypography } = require('@/utils/clean-typography');
+              current[keys[keys.length - 1]] = cleanTypography(value);
+            } else {
+              current[keys[keys.length - 1]] = value;
+            }
+            
             onUpdateContent(newContent as Content);
           }}
         />

@@ -84,13 +84,40 @@ export function getTypographyClasses(
 ): string {
   const elementConfig = config[element] || {};
   
-  return [
+  // Si une couleur personnalisée (hex) est définie, on l'appliquera via style inline
+  // Sinon, on utilise la classe Tailwind (qui peut être un token de palette)
+  const colorValue = elementConfig.color || defaults.color;
+  const isCustomColor = colorValue && colorValue.startsWith('#');
+  
+  const classes = [
     elementConfig.fontSize || defaults.fontSize,
     elementConfig.fontWeight || defaults.fontWeight,
     elementConfig.lineHeight || defaults.lineHeight,
-    elementConfig.color || defaults.color,
+    // Si c'est une couleur hex, on ne l'ajoute pas aux classes (on l'appliquera via style)
+    // Sinon, on ajoute la classe Tailwind
+    !isCustomColor ? colorValue : null,
     elementConfig.tracking || defaults.tracking,
   ].filter(Boolean).join(' ');
+  
+  return classes;
+}
+
+/**
+ * Récupère la couleur personnalisée (hex) si elle existe, sinon null
+ */
+export function getCustomColor(
+  element: 'h1' | 'h2' | 'h3' | 'h4' | 'h1Single' | 'p' | 'nav' | 'footer',
+  config: TypographyConfig
+): string | null {
+  const elementConfig = config[element];
+  if (!elementConfig?.color) return null;
+  
+  // Si c'est une couleur hex, la retourner
+  if (elementConfig.color.startsWith('#')) {
+    return elementConfig.color;
+  }
+  
+  return null;
 }
 
 /**

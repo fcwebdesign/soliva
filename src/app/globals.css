@@ -4,12 +4,35 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --bg: #fff;
-  --fg: #0a0a0a;
-  --accent: oklch(0.97 0 0);
-  --surface: #f5f5f5;
-  --text: #333333;
-  --text-secondary: #666666;
+  /* Valeurs par défaut (fallback) - seront surchargées par ColorPaletteProvider */
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+  --card: #ffffff;
+  --card-foreground: #0a0a0a;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0a;
+  --primary: #111827;
+  --primary-foreground: #ffffff;
+  --secondary: #e5e7eb;
+  --secondary-foreground: #0a0a0a;
+  --muted: #f3f4f6;
+  --muted-foreground: #6b7280;
+  --accent: #3b82f6;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #3b82f6;
+  --radius: 0.75rem;
+
+  /* Aliases legacy (migration douce) */
+  --bg: var(--background);
+  --fg: var(--foreground);
+  --accent: var(--accent);
+  --surface: var(--muted);
+  --text: var(--foreground);
+  --text-secondary: var(--muted-foreground);
   --text-secondary-hsl: 0 0% 40%;
   --max-width: 1440px;
   

@@ -202,13 +202,29 @@ export const useAdminPage = () => {
   };
 
   const fetchContent = async () => {
+    let controller: AbortController | null = null;
+    let timeout: NodeJS.Timeout | null = null;
+    
     try {
       setLoading(true);
       // Utiliser un timeout pour éviter un chargement infini si l'API ne répond pas
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 10000); // 10s
-      const response = await fetch('/api/admin/content', { cache: 'no-store', signal: controller.signal });
-      clearTimeout(timeout);
+      controller = new AbortController();
+      timeout = setTimeout(() => {
+        if (controller && !controller.signal.aborted) {
+          controller.abort();
+        }
+      }, 10000); // 10s
+      
+      const response = await fetch('/api/admin/content', { 
+        cache: 'no-store', 
+        signal: controller.signal 
+      });
+      
+      // Nettoyer le timeout si la requête réussit
+      if (timeout) {
+        clearTimeout(timeout);
+        timeout = null;
+      }
       
       if (!response.ok) {
         throw new Error('Erreur lors du chargement');
@@ -223,14 +239,34 @@ export const useAdminPage = () => {
       setHasUnsavedChanges(false);
       
     } catch (err) {
-      console.error('Erreur:', err);
-      const message = err instanceof DOMException && err.name === 'AbortError' 
-        ? "Délai d'attente dépassé pour l'API (10s)."
-        : err instanceof Error 
-          ? err.message 
-          : 'Une erreur est survenue';
+      // Nettoyer le timeout en cas d'erreur
+      if (timeout) {
+        clearTimeout(timeout);
+        timeout = null;
+      }
+      
+      // Ignorer les erreurs d'abort si elles sont attendues (timeout ou navigation)
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        // Ne pas afficher d'erreur si c'est un timeout normal ou une navigation
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('Requête annulée (timeout ou navigation)');
+        }
+        return;
+      }
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Erreur chargement contenu:', err);
+      }
+      
+      const message = err instanceof Error 
+        ? err.message 
+        : 'Une erreur est survenue';
       setError(message);
     } finally {
+      // Nettoyage final
+      if (timeout) {
+        clearTimeout(timeout);
+      }
       setLoading(false);
     }
   };
@@ -297,14 +333,41 @@ export const useAdminPage = () => {
       // Nettoyer le contenu pour éviter les références circulaires
       const cleanedContent = cleanContent(contentToSave);
       
-      const response = await fetch('/api/admin/content', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: cleanedContent, status })
-      });
+      let controller: AbortController | null = null;
+      let response: Response;
+      
+      try {
+        // Créer un AbortController pour pouvoir annuler si nécessaire
+        controller = new AbortController();
+        
+        response = await fetch('/api/admin/content', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: cleanedContent, status }),
+          signal: controller.signal
+        });
 
-      if (!response.ok) {
-        throw new Error('Erreur lors de la sauvegarde');
+        if (!response.ok) {
+          // Récupérer le message d'erreur du serveur si disponible
+          let errorMessage = 'Erreur lors de la sauvegarde';
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.error || errorData.message || errorMessage;
+          } catch {
+            // Si la réponse n'est pas du JSON, utiliser le status
+            errorMessage = `Erreur ${response.status}: ${response.statusText}`;
+          }
+          throw new Error(errorMessage);
+        }
+      } catch (err) {
+        // Ignorer les erreurs d'abort (navigation ou annulation)
+        if (err instanceof DOMException && err.name === 'AbortError') {
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('Sauvegarde annulée');
+          }
+          return;
+        }
+        throw err;
       }
 
       setSaveStatus('success');
@@ -313,7 +376,7 @@ export const useAdminPage = () => {
       setContent(cleanedContent);
       setPageStatus(status);
       
-      // Notifier le front pour mise à jour live (Nav/Footer/Pages)
+      // Notifier le front pour mise à jour live (Nav/Footer/Pages/Typography)
       try {
         if (typeof window !== 'undefined') {
           window.dispatchEvent(new CustomEvent('content-updated', {
@@ -321,8 +384,11 @@ export const useAdminPage = () => {
               nav: contentToSave.nav,
               footer: contentToSave.footer,
               pages: contentToSave.pages,
+              metadata: contentToSave.metadata, // Inclure metadata pour typography
             }
           }));
+          // Déclencher un changement de storage pour forcer le rechargement
+          localStorage.setItem('content-updated', String(Date.now()));
           // Déclencher un changement de storage pour les wrappers qui l'utilisent
           if (currentPage === 'footer') {
             localStorage.setItem('footer-updated', String(Date.now()));
@@ -414,8 +480,9 @@ export const useAdminPage = () => {
       newContent.metadata = { ...newContent.metadata, ...updates };
     } else if (pageKey === 'reveal') {
       // Pour reveal, on met à jour metadata.reveal
-      if (!newContent.metadata) newContent.metadata = {};
-      newContent.metadata.reveal = { ...newContent.metadata.reveal, ...updates };
+      if (!newContent.metadata) newContent.metadata = { title: '', description: '' };
+      const metadata = newContent.metadata as any;
+      metadata.reveal = { ...metadata.reveal, ...updates };
     } else if (pageKey === 'footer') {
       newContent.footer = { ...newContent.footer, ...updates };
     } else {
@@ -509,7 +576,7 @@ export const useAdminPage = () => {
   const currentPageConfig = getPageConfig(currentPage);
   // Pour reveal, les données sont dans metadata.reveal
   const currentPageData = currentPage === 'reveal' 
-    ? content?.metadata?.reveal 
+    ? (content?.metadata as any)?.reveal 
     : content?.[currentPage as keyof Content];
 
   // Fonction pour gérer la génération d'articles

@@ -42,7 +42,7 @@ export default function FooterPearl({ footer, pages, layout = 'standard', fullCo
   const VariantClassic = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
       <div className="space-y-4">
-        <div className="text-xl font-bold tracking-tight text-gray-900">
+        <div className="text-xl font-bold tracking-tight text-foreground">
           {footer?.logoImage ? (
             <img src={footer.logoImage} alt="Logo" className="h-8 max-w-[200px] object-contain" />
           ) : (
@@ -63,9 +63,9 @@ export default function FooterPearl({ footer, pages, layout = 'standard', fullCo
                 return (
                   <li key={idx}>
                     {isInternal ? (
-                      <Link href={href} className="text-sm text-gray-700 hover:text-gray-900">{l.title}</Link>
+                      <Link href={href} className="text-sm text-muted-foreground hover:text-foreground">{l.title}</Link>
                     ) : (
-                      <a href={href} className="text-sm text-gray-700 hover:text-gray-900">{l.title}</a>
+                      <a href={href} className="text-sm text-muted-foreground hover:text-foreground">{l.title}</a>
                     )}
                   </li>
                 );
@@ -77,7 +77,7 @@ export default function FooterPearl({ footer, pages, layout = 'standard', fullCo
           <div className="space-y-2 text-left">
             <ul className="space-y-1">
               {footer.socialLinks.map((s: any, idx: number) => (
-                <li key={idx}><a href={s.url} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-700 hover:text-gray-900">{s.platform}</a></li>
+                <li key={idx}><a href={s.url} target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-foreground">{s.platform}</a></li>
               ))}
             </ul>
           </div>
@@ -89,7 +89,7 @@ export default function FooterPearl({ footer, pages, layout = 'standard', fullCo
   const VariantColumns = () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-8">
       <div className="space-y-4">
-        <div className="text-xl font-bold tracking-tight text-gray-900">
+        <div className="text-xl font-bold tracking-tight text-foreground">
           {footer?.logoImage ? (
             <img src={footer.logoImage} alt="Logo" className="h-8 max-w-[200px] object-contain" />
           ) : (
@@ -103,7 +103,7 @@ export default function FooterPearl({ footer, pages, layout = 'standard', fullCo
       <div>
         {Array.isArray(footer?.links) && footer.links.length > 0 && (
           <div className="space-y-2 text-left">
-            <div className="text-sm font-semibold text-gray-700">Liens</div>
+            <div className="text-sm font-semibold text-foreground">Liens</div>
             <ul className="space-y-1">
               {footer.links.map((l: any, idx: number) => {
                 const href = normalizeUrl(l.url);
@@ -111,9 +111,9 @@ export default function FooterPearl({ footer, pages, layout = 'standard', fullCo
                 return (
                   <li key={idx}>
                     {isInternal ? (
-                      <Link href={href} className="text-sm text-gray-700 hover:text-gray-900">{l.title}</Link>
+                      <Link href={href} className="text-sm text-muted-foreground hover:text-foreground">{l.title}</Link>
                     ) : (
-                      <a href={href} className="text-sm text-gray-700 hover:text-gray-900">{l.title}</a>
+                      <a href={href} className="text-sm text-muted-foreground hover:text-foreground">{l.title}</a>
                     )}
                   </li>
                 );
@@ -125,10 +125,10 @@ export default function FooterPearl({ footer, pages, layout = 'standard', fullCo
       <div>
         {Array.isArray(footer?.socialLinks) && footer.socialLinks.length > 0 && (
           <div className="space-y-2 text-left">
-            <div className="text-sm font-semibold text-gray-700">Réseaux</div>
+            <div className="text-sm font-semibold text-foreground">Réseaux</div>
             <ul className="space-y-1">
               {footer.socialLinks.map((s: any, idx: number) => (
-                <li key={idx}><a href={s.url} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-700 hover:text-gray-900">{s.platform}</a></li>
+                <li key={idx}><a href={s.url} target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-foreground">{s.platform}</a></li>
               ))}
             </ul>
           </div>
@@ -139,7 +139,7 @@ export default function FooterPearl({ footer, pages, layout = 'standard', fullCo
 
   const VariantCentered = () => (
     <div className="text-center space-y-4 mb-8">
-      <div className="text-xl font-bold tracking-tight text-gray-900">
+      <div className="text-xl font-bold tracking-tight text-foreground">
         {footer?.logoImage ? (
           <img src={footer.logoImage} alt="Logo" className="h-8 mx-auto max-w-[200px] object-contain" />
         ) : (
@@ -157,9 +157,9 @@ export default function FooterPearl({ footer, pages, layout = 'standard', fullCo
             return (
               <li key={idx}>
                 {isInternal ? (
-                  <Link href={href} className="text-gray-700 hover:text-gray-900">{l.title}</Link>
+                  <Link href={href} className="text-muted-foreground hover:text-foreground">{l.title}</Link>
                 ) : (
-                  <a href={href} className="text-gray-700 hover:text-gray-900">{l.title}</a>
+                  <a href={href} className="text-muted-foreground hover:text-foreground">{l.title}</a>
                 )}
               </li>
             );
@@ -169,7 +169,7 @@ export default function FooterPearl({ footer, pages, layout = 'standard', fullCo
       {Array.isArray(footer?.socialLinks) && footer.socialLinks.length > 0 && (
         <ul className="flex flex-wrap gap-4 justify-center text-sm">
           {footer.socialLinks.map((s: any, idx: number) => (
-            <li key={idx}><a href={s.url} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-gray-900">{s.platform}</a></li>
+            <li key={idx}><a href={s.url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">{s.platform}</a></li>
           ))}
         </ul>
       )}
@@ -191,7 +191,7 @@ export default function FooterPearl({ footer, pages, layout = 'standard', fullCo
   };
 
   return (
-    <footer className="bg-gray-50 border-t border-gray-200">
+    <footer className="bg-muted border-t border-border">
       <div className={`mx-auto px-4 sm:px-6 lg:px-8 py-12 ${
         layout === 'compact' ? 'max-w-7xl' :
         layout === 'wide' ? 'max-w-custom-1920' :
@@ -200,7 +200,7 @@ export default function FooterPearl({ footer, pages, layout = 'standard', fullCo
         {renderTop()}
 
         {/* Bas de page: copyright + liens */}
-        <div className={`border-t pt-6 text-center ${footerClasses}`}>
+        <div className={`border-t border-border pt-6 text-center ${footerClasses}`}>
           <p>{copyright}</p>
           {links.length > 0 && (
             <ul className="mt-3 flex flex-wrap gap-4 justify-center">
@@ -216,9 +216,9 @@ export default function FooterPearl({ footer, pages, layout = 'standard', fullCo
                 return (
                   <li key={key}>
                     {isInternal ? (
-                      <Link href={href} className="text-gray-500 hover:text-gray-900 transition-colors">{label}</Link>
+                      <Link href={href} className="text-muted-foreground hover:text-foreground transition-colors">{label}</Link>
                     ) : (
-                      <a href={href} target={target} className="text-gray-500 hover:text-gray-900 transition-colors" rel={target === '_blank' ? 'noopener noreferrer' : undefined}>{label}</a>
+                      <a href={href} target={target} className="text-muted-foreground hover:text-foreground transition-colors" rel={target === '_blank' ? 'noopener noreferrer' : undefined}>{label}</a>
                     )}
                   </li>
                 );

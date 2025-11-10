@@ -1,6 +1,13 @@
 "use client";
 import React, { useState, useEffect, useMemo } from 'react';
-import { Palette, Check, Filter } from 'lucide-react';
+import { Palette, Check, Filter, Sparkles, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 interface ColorPaletteSectionProps {
   localData: any;
@@ -833,31 +840,195 @@ const ColorPaletteSection: React.FC<ColorPaletteSectionProps> = ({ localData, up
   const [selectedPaletteId, setSelectedPaletteId] = useState<string>('classic');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [isInitialized, setIsInitialized] = useState(false);
+  
+  // États pour l'IA
+  const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedPalette, setGeneratedPalette] = useState<any>(null);
+  
+  // États pour le formulaire de génération
+  const [generatePrompt, setGeneratePrompt] = useState('');
+  const [generateStyle, setGenerateStyle] = useState('');
+  const [generateMood, setGenerateMood] = useState('');
+  const [generateIndustry, setGenerateIndustry] = useState('');
+  
+  // Palettes générées (stockées dans metadata.customPalettes)
+  const [customPalettes, setCustomPalettes] = useState<ColorPalette[]>([]);
+  const [isUpdatingPalettes, setIsUpdatingPalettes] = useState(false);
 
-  // Catégories disponibles
-  const categories = [
-    { id: 'all', name: 'Toutes', count: COLOR_PALETTES.length },
-    { id: 'classic', name: 'Classiques', count: COLOR_PALETTES.filter(p => p.category === 'classic').length },
-    { id: 'professional', name: 'Professionnelles', count: COLOR_PALETTES.filter(p => p.category === 'professional').length },
-    { id: 'dark', name: 'Sombres', count: COLOR_PALETTES.filter(p => p.category === 'dark').length },
-    { id: 'warm', name: 'Chaleureuses', count: COLOR_PALETTES.filter(p => p.category === 'warm').length },
-    { id: 'nature', name: 'Nature', count: COLOR_PALETTES.filter(p => p.category === 'nature').length },
-    { id: 'ocean', name: 'Océaniques', count: COLOR_PALETTES.filter(p => p.category === 'ocean').length },
-    { id: 'purple', name: 'Violettes', count: COLOR_PALETTES.filter(p => p.category === 'purple').length },
-    { id: 'bold', name: 'Audacieuses', count: COLOR_PALETTES.filter(p => p.category === 'bold').length },
-    { id: 'creative', name: 'Créatives', count: COLOR_PALETTES.filter(p => p.category === 'creative').length },
-    { id: 'pastel', name: 'Pastels', count: COLOR_PALETTES.filter(p => p.category === 'pastel').length },
-    { id: 'elegant', name: 'Élégantes', count: COLOR_PALETTES.filter(p => p.category === 'elegant').length },
-    { id: 'seasonal', name: 'Saisonnières', count: COLOR_PALETTES.filter(p => p.category === 'seasonal').length },
-  ];
+  // Charger les palettes personnalisées depuis le contenu
+  useEffect(() => {
+    // Ne pas recharger si on est en train de mettre à jour
+    if (isUpdatingPalettes) return;
+    
+    const savedCustomPalettes = localData?.metadata?.customPalettes || [];
+    // Éviter de mettre à jour si les palettes sont identiques (comparaison par JSON pour éviter les boucles)
+    setCustomPalettes(prev => {
+      const prevJson = JSON.stringify(prev);
+      const savedJson = JSON.stringify(savedCustomPalettes);
+      if (prevJson === savedJson) {
+        return prev; // Pas de changement, retourner la référence précédente
+      }
+      return savedCustomPalettes;
+    });
+  }, [localData?.metadata?.customPalettes, isUpdatingPalettes]);
+
+  // Combiner les palettes statiques et personnalisées
+  const allPalettes = useMemo(() => {
+    return [...COLOR_PALETTES, ...customPalettes];
+  }, [customPalettes]);
+
+  // Catégories disponibles (calculées dynamiquement avec les palettes personnalisées)
+  const categories = useMemo(() => {
+    return [
+      { id: 'all', name: 'Toutes', count: allPalettes.length },
+      { id: 'classic', name: 'Classiques', count: allPalettes.filter(p => p.category === 'classic').length },
+      { id: 'professional', name: 'Professionnelles', count: allPalettes.filter(p => p.category === 'professional').length },
+      { id: 'dark', name: 'Sombres', count: allPalettes.filter(p => p.category === 'dark').length },
+      { id: 'warm', name: 'Chaleureuses', count: allPalettes.filter(p => p.category === 'warm').length },
+      { id: 'nature', name: 'Nature', count: allPalettes.filter(p => p.category === 'nature').length },
+      { id: 'ocean', name: 'Océaniques', count: allPalettes.filter(p => p.category === 'ocean').length },
+      { id: 'purple', name: 'Violettes', count: allPalettes.filter(p => p.category === 'purple').length },
+      { id: 'bold', name: 'Audacieuses', count: allPalettes.filter(p => p.category === 'bold').length },
+      { id: 'creative', name: 'Créatives', count: allPalettes.filter(p => p.category === 'creative').length },
+      { id: 'pastel', name: 'Pastels', count: allPalettes.filter(p => p.category === 'pastel').length },
+      { id: 'elegant', name: 'Élégantes', count: allPalettes.filter(p => p.category === 'elegant').length },
+      { id: 'seasonal', name: 'Saisonnières', count: allPalettes.filter(p => p.category === 'seasonal').length },
+    ];
+  }, [allPalettes]);
 
   // Filtrer les palettes selon la catégorie sélectionnée
   const filteredPalettes = useMemo(() => {
-    if (selectedCategory === 'all') {
-      return COLOR_PALETTES;
+    const palettesToFilter = selectedCategory === 'all' ? allPalettes : allPalettes.filter(p => p.category === selectedCategory);
+    return palettesToFilter;
+  }, [selectedCategory, allPalettes]);
+
+  // Générer une palette avec l'IA
+  const handleGeneratePalette = async () => {
+    if (!generatePrompt.trim() && !generateStyle && !generateMood && !generateIndustry) {
+      toast.error('Veuillez remplir au moins un champ');
+      return;
     }
-    return COLOR_PALETTES.filter(p => p.category === selectedCategory);
-  }, [selectedCategory]);
+
+    setIsGenerating(true);
+    setGeneratedPalette(null);
+
+    try {
+      const response = await fetch('/api/admin/ai/generate-palette', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: generatePrompt,
+          style: generateStyle,
+          mood: generateMood,
+          industry: generateIndustry,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Erreur inconnue' }));
+        throw new Error(errorData.error || `Erreur ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      
+      if (!data.success || !data.palette) {
+        throw new Error('Réponse invalide de l\'API');
+      }
+
+      setGeneratedPalette(data.palette);
+      toast.success('Palette générée avec succès !');
+    } catch (error: any) {
+      console.error('Erreur génération palette:', error);
+      toast.error('Erreur lors de la génération', {
+        description: error.message || 'Impossible de générer la palette. Vérifiez la console pour plus de détails.'
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+
+  // Ajouter la palette générée à la liste
+  const handleAddGeneratedPalette = () => {
+    if (!generatedPalette) return;
+    
+    // Vérifier si la palette n'existe pas déjà (dans les palettes statiques ou personnalisées)
+    const existingInStatic = COLOR_PALETTES.find(p => p.id === generatedPalette.id);
+    const existingInCustom = customPalettes.find(p => p.id === generatedPalette.id);
+    if (existingInStatic || existingInCustom) {
+      toast.warning('Cette palette existe déjà');
+      return;
+    }
+    
+    // Ajouter la palette aux palettes personnalisées
+    const newCustomPalettes = [...customPalettes, generatedPalette];
+    
+    // Activer le flag pour éviter les rechargements pendant la mise à jour
+    setIsUpdatingPalettes(true);
+    
+    // Mettre à jour le state local d'abord
+    setCustomPalettes(newCustomPalettes);
+    
+    // Fermer le modal AVANT de sauvegarder pour éviter les conflits
+    setIsGenerateModalOpen(false);
+    
+    // Réinitialiser le formulaire
+    setGeneratedPalette(null);
+    setGeneratePrompt('');
+    setGenerateStyle('');
+    setGenerateMood('');
+    setGenerateIndustry('');
+    
+    // Sélectionner automatiquement la nouvelle palette
+    setSelectedPaletteId(generatedPalette.id);
+    
+    // Sauvegarder dans metadata.customPalettes (après avoir fermé le modal)
+    setTimeout(() => {
+      updateField('metadata.customPalettes', newCustomPalettes);
+      // Réactiver le rechargement après un court délai
+      setTimeout(() => {
+        setIsUpdatingPalettes(false);
+      }, 200);
+      toast.success('Palette ajoutée avec succès !');
+    }, 100);
+  };
+
+  // Supprimer une palette personnalisée
+  const handleDeletePalette = (e: React.MouseEvent, paletteId: string) => {
+    e.stopPropagation(); // Empêcher la sélection de la palette
+    
+    // Vérifier que c'est bien une palette personnalisée
+    const paletteToDelete = customPalettes.find(p => p.id === paletteId);
+    if (!paletteToDelete) {
+      toast.warning('Cette palette ne peut pas être supprimée');
+      return;
+    }
+    
+    // Si la palette supprimée est sélectionnée, sélectionner la palette par défaut
+    if (selectedPaletteId === paletteId) {
+      setSelectedPaletteId('classic');
+    }
+    
+    // Retirer la palette de la liste
+    const newCustomPalettes = customPalettes.filter(p => p.id !== paletteId);
+    
+    // Activer le flag pour éviter les rechargements pendant la mise à jour
+    setIsUpdatingPalettes(true);
+    
+    // Mettre à jour le state local
+    setCustomPalettes(newCustomPalettes);
+    
+    // Sauvegarder dans metadata.customPalettes
+    setTimeout(() => {
+      updateField('metadata.customPalettes', newCustomPalettes);
+      // Réactiver le rechargement après un court délai
+      setTimeout(() => {
+        setIsUpdatingPalettes(false);
+      }, 200);
+      toast.success('Palette supprimée avec succès !');
+    }, 100);
+  };
 
   // Charger la palette sélectionnée
   useEffect(() => {
@@ -877,7 +1048,7 @@ const ColorPaletteSection: React.FC<ColorPaletteSectionProps> = ({ localData, up
     console.log('🎨 [ColorPaletteSection] Palette sélectionnée:', selectedPaletteId);
   }, [selectedPaletteId, isInitialized, localData, updateField]);
 
-  const selectedPalette = COLOR_PALETTES.find(p => p.id === selectedPaletteId) || COLOR_PALETTES[0];
+  const selectedPalette = allPalettes.find(p => p.id === selectedPaletteId) || allPalettes[0];
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
@@ -887,12 +1058,23 @@ const ColorPaletteSection: React.FC<ColorPaletteSectionProps> = ({ localData, up
       </div>
       
       <div className="space-y-6">
-        {/* Description */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="text-sm text-blue-800">
-            <strong>💡 Note :</strong> Sélectionnez une palette de couleurs pour votre site. 
-            Les couleurs seront appliquées au template une fois la fonctionnalité frontend implémentée.
-          </p>
+        {/* Description et actions IA */}
+        <div className="flex items-start justify-between gap-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex-1">
+            <p className="text-sm text-blue-800">
+              <strong>💡 Note :</strong> Sélectionnez une palette de couleurs pour votre site. 
+              Les couleurs seront appliquées au template une fois la fonctionnalité frontend implémentée.
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setIsGenerateModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium"
+            >
+              <Sparkles className="w-4 h-4" />
+              Générer avec l'IA
+            </button>
+          </div>
         </div>
 
         {/* Filtres par catégorie */}
@@ -922,58 +1104,90 @@ const ColorPaletteSection: React.FC<ColorPaletteSectionProps> = ({ localData, up
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredPalettes.map((palette) => {
             const isSelected = selectedPaletteId === palette.id;
+            const isCustom = customPalettes.some(p => p.id === palette.id);
             
             return (
-              <button
+              <div
                 key={palette.id}
-                onClick={() => setSelectedPaletteId(palette.id)}
-                className={`relative p-4 border-2 rounded-lg transition-all text-left ${
+                className={`relative p-4 border-2 rounded-lg transition-all ${
                   isSelected
                     ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-200'
                     : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                 }`}
               >
-                {/* Badge de sélection */}
-                {isSelected && (
-                  <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1">
-                    <Check className="w-4 h-4" />
+                {/* Bouton de sélection (couvre toute la carte) */}
+                <button
+                  onClick={() => setSelectedPaletteId(palette.id)}
+                  className="w-full text-left"
+                >
+                  {/* Badge de sélection */}
+                  {isSelected && !isCustom && (
+                    <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1 z-10">
+                      <Check className="w-4 h-4" />
+                    </div>
+                  )}
+
+                  {/* Badge "Générée par IA" pour les palettes personnalisées */}
+                  {isCustom && (
+                    <div className="absolute top-2 left-2 bg-purple-500 text-white text-xs px-2 py-0.5 rounded flex items-center gap-1 z-10">
+                      <Sparkles className="w-3 h-3" />
+                      IA
+                    </div>
+                  )}
+
+                  {/* Badge de sélection pour les palettes personnalisées (positionné différemment) */}
+                  {isSelected && isCustom && (
+                    <div className="absolute top-2 right-12 bg-blue-500 text-white rounded-full p-1 z-10">
+                      <Check className="w-4 h-4" />
+                    </div>
+                  )}
+
+                  {/* Nom et description */}
+                  <div className="mb-3">
+                    <h4 className="text-sm font-semibold text-gray-900 mb-1">
+                      {palette.name}
+                    </h4>
+                    <p className="text-xs text-gray-500">
+                      {palette.description}
+                    </p>
                   </div>
+
+                  {/* Aperçu des couleurs */}
+                  <div className="grid grid-cols-4 gap-2">
+                    <div
+                      className="h-8 rounded border border-gray-200"
+                      style={{ backgroundColor: palette.colors.primary }}
+                      title="Primaire"
+                    />
+                    <div
+                      className="h-8 rounded border border-gray-200"
+                      style={{ backgroundColor: palette.colors.secondary }}
+                      title="Secondaire"
+                    />
+                    <div
+                      className="h-8 rounded border border-gray-200"
+                      style={{ backgroundColor: palette.colors.accent }}
+                      title="Accent"
+                    />
+                    <div
+                      className="h-8 rounded border border-gray-200"
+                      style={{ backgroundColor: palette.colors.background }}
+                      title="Fond"
+                    />
+                  </div>
+                </button>
+
+                {/* Bouton de suppression (uniquement pour les palettes personnalisées) */}
+                {isCustom && (
+                  <button
+                    onClick={(e) => handleDeletePalette(e, palette.id)}
+                    className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 z-20 transition-colors shadow-md"
+                    title="Supprimer cette palette"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 )}
-
-                {/* Nom et description */}
-                <div className="mb-3">
-                  <h4 className="text-sm font-semibold text-gray-900 mb-1">
-                    {palette.name}
-                  </h4>
-                  <p className="text-xs text-gray-500">
-                    {palette.description}
-                  </p>
-                </div>
-
-                {/* Aperçu des couleurs */}
-                <div className="grid grid-cols-4 gap-2">
-                  <div
-                    className="h-8 rounded border border-gray-200"
-                    style={{ backgroundColor: palette.colors.primary }}
-                    title="Primaire"
-                  />
-                  <div
-                    className="h-8 rounded border border-gray-200"
-                    style={{ backgroundColor: palette.colors.secondary }}
-                    title="Secondaire"
-                  />
-                  <div
-                    className="h-8 rounded border border-gray-200"
-                    style={{ backgroundColor: palette.colors.accent }}
-                    title="Accent"
-                  />
-                  <div
-                    className="h-8 rounded border border-gray-200"
-                    style={{ backgroundColor: palette.colors.background }}
-                    title="Fond"
-                  />
-                </div>
-              </button>
+              </div>
             );
           })}
         </div>
@@ -1015,6 +1229,135 @@ const ColorPaletteSection: React.FC<ColorPaletteSectionProps> = ({ localData, up
           </p>
         </div>
       </div>
+
+      {/* Modal de génération IA */}
+      <Dialog open={isGenerateModalOpen} onOpenChange={setIsGenerateModalOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-purple-600" />
+              Générer une palette avec l'IA
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 mt-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Description (optionnel)
+              </label>
+              <textarea
+                value={generatePrompt}
+                onChange={(e) => setGeneratePrompt(e.target.value)}
+                placeholder="Ex: Palette pour un site de luxe, élégante et sophistiquée..."
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                rows={3}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Style
+                </label>
+                <select
+                  value={generateStyle}
+                  onChange={(e) => setGenerateStyle(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                >
+                  <option value="">Aucun</option>
+                  <option value="moderne">Moderne</option>
+                  <option value="classique">Classique</option>
+                  <option value="minimaliste">Minimaliste</option>
+                  <option value="audacieux">Audacieux</option>
+                  <option value="élégant">Élégant</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Ambiance
+                </label>
+                <select
+                  value={generateMood}
+                  onChange={(e) => setGenerateMood(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                >
+                  <option value="">Aucune</option>
+                  <option value="chaleureux">Chaleureux</option>
+                  <option value="professionnel">Professionnel</option>
+                  <option value="créatif">Créatif</option>
+                  <option value="apaisant">Apaisant</option>
+                  <option value="énergique">Énergique</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Secteur d'activité (optionnel)
+              </label>
+              <input
+                type="text"
+                value={generateIndustry}
+                onChange={(e) => setGenerateIndustry(e.target.value)}
+                placeholder="Ex: E-commerce, Finance, Art, Tech..."
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              />
+            </div>
+
+            <button
+              onClick={handleGeneratePalette}
+              disabled={isGenerating}
+              className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isGenerating ? 'Génération en cours...' : 'Générer la palette'}
+            </button>
+
+            {generatedPalette && (
+              <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <h4 className="font-semibold text-gray-900 mb-3">
+                  Palette générée : {generatedPalette.name}
+                </h4>
+                <p className="text-sm text-gray-600 mb-4">{generatedPalette.description}</p>
+                
+                <div className="grid grid-cols-4 gap-2 mb-4">
+                  {Object.entries(generatedPalette.colors).map(([key, value]: [string, any]) => (
+                    <div key={key} className="space-y-1">
+                      <div
+                        className="w-full h-12 rounded border border-gray-200"
+                        style={{ backgroundColor: value }}
+                      />
+                      <div className="text-xs text-gray-600 font-mono">{value}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleAddGeneratedPalette}
+                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                  >
+                    Utiliser cette palette
+                  </button>
+                  <button
+                    onClick={() => {
+                      setGeneratedPalette(null);
+                      setGeneratePrompt('');
+                      setGenerateStyle('');
+                      setGenerateMood('');
+                      setGenerateIndustry('');
+                    }}
+                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium"
+                  >
+                    Nouvelle génération
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 };

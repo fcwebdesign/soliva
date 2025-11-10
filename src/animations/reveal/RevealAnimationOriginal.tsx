@@ -178,7 +178,7 @@ export default function RevealAnimation({ config, onComplete }: RevealAnimationP
       // Avec un minimum de 1.0s pour garder une animation fluide
       const lastImageEndTime = lastImageDelay + 1.5;
       const closeImagesOffset = Math.max(1.0, 5 - lastImageEndTime - 0.2);
-      
+
       tl.to(
         ".preloader-images",
         {

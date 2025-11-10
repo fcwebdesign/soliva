@@ -1,9 +1,11 @@
 
 import { promises as fs } from 'fs';
 import { join } from 'path';
+import { unstable_cache, revalidateTag } from 'next/cache';
 import type { Content } from '@/types/content';
 import { cleanContentLinks } from '@/utils/cleanLinks';
 import { logger } from '@/utils/logger';
+import { cleanTypographyRecursive, isValidTypography } from '@/utils/clean-typography';
 
 const DATA_FILE_PATH = join(process.cwd(), 'data', 'content.json');
 
@@ -247,15 +249,14 @@ export async function ensureDataFile(): Promise<void> {
 }
 
 /**
- * Lit et parse le JSON, fait une validation minimale
- * Lève une erreur claire si les clés de pages utilisées sont manquantes
+ * Fonction interne pour lire le contenu (sans cache)
  */
-export async function readContent(): Promise<Content> {
+async function _readContentInternal(): Promise<Content> {
   try {
-    logger.debug('📖 Lecture du fichier content.json...');
-    
     // S'assurer que le fichier existe
     await ensureDataFile();
+    
+    logger.debug('📖 Lecture du fichier content.json...');
     
     // Lire le fichier
     const fileContent = await fs.readFile(DATA_FILE_PATH, 'utf-8');
@@ -268,16 +269,22 @@ export async function readContent(): Promise<Content> {
     const cleanedContent = cleanContentLinks(content);
     logger.debug('🔧 Liens internes nettoyés');
     
+    // PROTECTION CRITIQUE : Nettoyer typography au chargement pour éviter la corruption
+    const cleanedContentWithTypography = cleanTypographyRecursive(cleanedContent);
+    if (cleanedContentWithTypography !== cleanedContent) {
+      logger.warn('⚠️ Typography corrompu détecté au chargement, nettoyage effectué');
+    }
+    
     // Validation plus souple - fusionner avec le seed si des pages manquent
     const requiredPages = ['home', 'contact', 'studio', 'work', 'blog', 'nav', 'metadata'];
-    const missingPages = requiredPages.filter(page => !(page in cleanedContent));
+    const missingPages = requiredPages.filter(page => !(page in cleanedContentWithTypography));
     
     if (missingPages.length > 0) {
       logger.warn('⚠️ Pages manquantes détectées:', missingPages);
       logger.info('🔄 Fusion avec le seed pour les pages manquantes...');
       
       // Fusionner avec le seed pour les pages manquantes
-      const mergedContent = { ...SEED_DATA, ...cleanedContent };
+      const mergedContent = { ...SEED_DATA, ...cleanedContentWithTypography };
       
       // Sauvegarder la version fusionnée
       await fs.writeFile(DATA_FILE_PATH, JSON.stringify(mergedContent, null, 2), 'utf-8');
@@ -287,25 +294,25 @@ export async function readContent(): Promise<Content> {
     }
     
     // Validation des sections critiques (plus souple)
-    if (!cleanedContent.home?.hero?.title) {
+    if (!cleanedContentWithTypography.home?.hero?.title) {
       logger.debug('⚠️ home.hero.title manquant, utilisation du seed');
-      const mergedContent = { ...SEED_DATA, ...cleanedContent };
+      const mergedContent = { ...SEED_DATA, ...cleanedContentWithTypography };
       await fs.writeFile(DATA_FILE_PATH, JSON.stringify(mergedContent, null, 2), 'utf-8');
       return mergedContent;
     }
     
-    if (!cleanedContent.nav?.items || !Array.isArray(cleanedContent.nav.items)) {
+    if (!cleanedContentWithTypography.nav?.items || !Array.isArray(cleanedContentWithTypography.nav.items)) {
       logger.debug('⚠️ nav.items manquant ou invalide, utilisation du seed');
-      logger.debug('🔍 cleanedContent.nav:', JSON.stringify(cleanedContent.nav, null, 2));
-      const mergedContent = { ...SEED_DATA, ...cleanedContent };
+      logger.debug('🔍 cleanedContent.nav:', JSON.stringify(cleanedContentWithTypography.nav, null, 2));
+      const mergedContent = { ...SEED_DATA, ...cleanedContentWithTypography };
       await fs.writeFile(DATA_FILE_PATH, JSON.stringify(mergedContent, null, 2), 'utf-8');
       return mergedContent;
     }
     
-    logger.debug('✅ nav.items valide:', JSON.stringify(cleanedContent.nav.items, null, 2));
+    logger.debug('✅ nav.items valide:', JSON.stringify(cleanedContentWithTypography.nav.items, null, 2));
     
     logger.debug('✅ Validation réussie, retour du contenu');
-    return cleanedContent;
+    return cleanedContentWithTypography;
   } catch (error) {
     logger.error('❌ Erreur dans readContent:', error);
     
@@ -331,8 +338,65 @@ export async function readContent(): Promise<Content> {
   }
 }
 
+/**
+ * Lit et parse le JSON, fait une validation minimale
+ * Lève une erreur claire si les clés de pages utilisées sont manquantes
+ * OPTIMISATION : Utilise le cache React pour éviter de relire 475Mo à chaque requête
+ */
+export async function readContent(): Promise<Content> {
+  return getCachedContent();
+}
+
 // Lock léger en mémoire pour éviter les writes concurrents
 let isWriting = false;
+
+// OPTIMISATION PERFORMANCE : Cache en mémoire pour éviter de relire 475Mo à chaque requête
+let contentCache: { content: Content; mtime: number } | null = null;
+let cacheFilePath: string | null = null;
+
+// Utilise unstable_cache avec revalidation pour invalider après sauvegarde
+const getCachedContent = unstable_cache(
+  async (): Promise<Content> => {
+    // Vérifier le cache en mémoire d'abord
+    try {
+      const stats = await fs.stat(DATA_FILE_PATH);
+      const currentMtime = stats.mtimeMs;
+      
+      // Si le cache existe et que le fichier n'a pas été modifié, retourner le cache
+      if (contentCache && cacheFilePath === DATA_FILE_PATH && contentCache.mtime === currentMtime) {
+        logger.debug('✅ Utilisation du cache (fichier non modifié)');
+        return contentCache.content;
+      }
+      
+      // Mettre à jour le chemin du cache
+      cacheFilePath = DATA_FILE_PATH;
+    } catch {
+      // Si on ne peut pas lire les stats, continuer sans cache
+    }
+    
+    // Lire le contenu
+    const content = await _readContentInternal();
+    
+    // Mettre en cache
+    try {
+      const stats = await fs.stat(DATA_FILE_PATH);
+      contentCache = {
+        content,
+        mtime: stats.mtimeMs
+      };
+      logger.debug('✅ Contenu mis en cache');
+    } catch {
+      // Si on ne peut pas lire les stats, continuer sans cache
+    }
+    
+    return content;
+  },
+  ['content'], // Clé du cache
+  {
+    tags: ['content'], // Tag pour revalidation
+    revalidate: false // Pas de revalidation automatique, on invalide manuellement avec revalidateTag
+  }
+);
 
 /**
  * Écrit le contenu avec validation et versioning
@@ -378,52 +442,115 @@ export async function writeContent(next: Content, opts?: { actor?: string }): Pr
 
     logger.debug('✅ Validation réussie, préparation de la sauvegarde...');
 
-    // Créer le dossier versions s'il n'existe pas
-    const versionsDir = join(process.cwd(), 'data', 'versions');
-    await fs.mkdir(versionsDir, { recursive: true });
-
-    // Sauvegarder la version actuelle
-    try {
-      const currentContent = await fs.readFile(DATA_FILE_PATH, 'utf-8');
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-      const backupPath = join(versionsDir, `content-${timestamp}.json`);
-      
-      await fs.writeFile(backupPath, currentContent, 'utf-8');
-      logger.debug(`✅ Version sauvegardée: ${backupPath}`);
-
-      // Nettoyage automatique : garder seulement les 15 plus récentes
-      try {
-        const files = await fs.readdir(versionsDir);
-        const versionFiles = files
-          .filter(file => file.startsWith('content-') && file.endsWith('.json'))
-          .map(file => ({
-            name: file,
-            path: join(versionsDir, file),
-            timestamp: file.replace('content-', '').replace('.json', '')
-          }))
-          .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
-
-        const MAX_VERSIONS = 15;
-        const toDelete = versionFiles.slice(MAX_VERSIONS);
-
-        for (const file of toDelete) {
-          await fs.unlink(file.path);
+    // PROTECTION CRITIQUE : Nettoyer typography avant de sauvegarder pour éviter la corruption
+    const metadata = (next as any).metadata;
+    if (metadata?.typography) {
+      if (!isValidTypography(metadata.typography)) {
+        logger.warn('⚠️ Typography corrompu détecté dans le contenu à sauvegarder, nettoyage...');
+        next = cleanTypographyRecursive(next) as Content;
+      } else {
+        // Vérifier aussi la taille (typography ne devrait jamais faire >100Ko)
+        const typoSize = JSON.stringify(metadata.typography).length;
+        if (typoSize > 100 * 1024) {
+          logger.warn(`⚠️ Typography trop volumineux (${(typoSize / 1024).toFixed(0)}Ko), nettoyage préventif...`);
+          next = cleanTypographyRecursive(next) as Content;
         }
-
-        if (toDelete.length > 0) {
-          logger.debug(`🧹 Auto-nettoyage: ${toDelete.length} anciennes versions supprimées`);
-        }
-      } catch (cleanupError) {
-        logger.warn('⚠️ Erreur lors du nettoyage automatique:', cleanupError);
       }
-    } catch (error) {
-      logger.warn('⚠️ Impossible de sauvegarder la version actuelle:', error);
+    }
+    
+    // Nettoyer aussi récursivement au cas où typography serait ailleurs (reveal.typography, etc.)
+    next = cleanTypographyRecursive(next) as Content;
+    
+    // Vérification finale : compter les occurrences de typography (ne devrait pas y en avoir beaucoup)
+    const contentStr = JSON.stringify(next);
+    const typographyCount = (contentStr.match(/"typography"/g) || []).length;
+    if (typographyCount > 10) {
+      logger.error(`🚨 ALERTE: ${typographyCount} occurrences de typography détectées ! Corruption probable !`);
+      logger.error('🔄 Nettoyage récursif complet...');
+      next = cleanTypographyRecursive(next) as Content;
     }
 
-    // Écriture atomique
+    // OPTIMISATION PERFORMANCE : Vérifier la taille du fichier avant de faire le backup
+    // Pour les gros fichiers (>50Mo), on désactive le versioning pour éviter les blocages
+    let shouldVersion = true;
+    let currentContentForBackup: string | null = null;
+    try {
+      const stats = await fs.stat(DATA_FILE_PATH);
+      const fileSizeMB = stats.size / (1024 * 1024);
+      if (fileSizeMB > 50) {
+        shouldVersion = false;
+        logger.warn(`⚠️ Fichier trop volumineux (${fileSizeMB.toFixed(1)}Mo), versioning désactivé pour cette sauvegarde`);
+      } else {
+        // Lire le contenu actuel AVANT de le modifier (pour le backup)
+        currentContentForBackup = await fs.readFile(DATA_FILE_PATH, 'utf-8');
+      }
+    } catch {
+      // Si le fichier n'existe pas encore, on peut versionner
+    }
+
+    // Écriture atomique (priorité : sauvegarder rapidement)
     const tempPath = `${DATA_FILE_PATH}.tmp`;
     await fs.writeFile(tempPath, JSON.stringify(next, null, 2), 'utf-8');
     await fs.rename(tempPath, DATA_FILE_PATH);
+
+    // OPTIMISATION PERFORMANCE : Invalider le cache après écriture
+    // CRITIQUE : Invalider le cache pour que le front reçoive les nouvelles données
+    contentCache = null;
+    cacheFilePath = null;
+    
+    // Invalider le cache Next.js pour forcer le rechargement
+    try {
+      revalidateTag('content');
+      logger.debug('✅ Cache Next.js invalidé');
+    } catch (error) {
+      logger.warn('⚠️ Impossible d\'invalider le cache Next.js:', error);
+    }
+
+    // Versioning asynchrone APRÈS la sauvegarde (ne bloque pas)
+    const versionsDir = join(process.cwd(), 'data', 'versions');
+    if (shouldVersion && currentContentForBackup) {
+      // Lancer le versioning en arrière-plan sans attendre
+      (async () => {
+        try {
+          await fs.mkdir(versionsDir, { recursive: true });
+          const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+          const backupPath = join(versionsDir, `content-${timestamp}.json`);
+          
+          await fs.writeFile(backupPath, currentContentForBackup!, 'utf-8');
+          logger.debug(`✅ Version sauvegardée: ${backupPath}`);
+
+          // Nettoyage automatique : garder seulement les 10 plus récentes (réduit de 15 à 10)
+          try {
+            const files = await fs.readdir(versionsDir);
+            const versionFiles = files
+              .filter(file => file.startsWith('content-') && file.endsWith('.json'))
+              .map(file => ({
+                name: file,
+                path: join(versionsDir, file),
+                timestamp: file.replace('content-', '').replace('.json', '')
+              }))
+              .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+
+            const MAX_VERSIONS = 10;
+            const toDelete = versionFiles.slice(MAX_VERSIONS);
+
+            for (const file of toDelete) {
+              await fs.unlink(file.path);
+            }
+
+            if (toDelete.length > 0) {
+              logger.debug(`🧹 Auto-nettoyage: ${toDelete.length} anciennes versions supprimées`);
+            }
+          } catch (cleanupError) {
+            logger.warn('⚠️ Erreur lors du nettoyage automatique:', cleanupError);
+          }
+        } catch (error) {
+          logger.warn('⚠️ Erreur lors du versioning asynchrone:', error);
+        }
+      })().catch(err => {
+        logger.warn('⚠️ Erreur dans le versioning asynchrone:', err);
+      });
+    }
 
     logger.debug(`✅ Contenu mis à jour par ${opts?.actor || 'admin'}`);
   } catch (error) {

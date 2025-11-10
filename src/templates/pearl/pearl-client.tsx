@@ -9,21 +9,25 @@ import WorkPearl from './components/Work';
 import BlogPearl from './components/Blog';
 import { useRevealAnimation } from '@/animations/reveal/hooks/useRevealAnimation';
 import RevealAnimation from '@/animations/reveal/RevealAnimationOriginal';
-import { getTypographyConfig, getTypographyClasses, defaultTypography } from '@/utils/typography';
+import { getTypographyConfig, getTypographyClasses, getCustomColor, defaultTypography } from '@/utils/typography';
 import '@/animations/reveal/reveal-original.css';
 
 export default function PearlClient() {
   const [content, setContent] = useState<any>(null);
   const pathname = usePathname();
   
-  // Récupérer les styles typographiques une seule fois
-  const typoConfig = useMemo(() => getTypographyConfig(content || {}), [content]);
+  // Récupérer les styles typographiques - mémoriser uniquement sur les changements de typography dans metadata
+  const typoConfig = useMemo(() => getTypographyConfig(content || {}), [content?.metadata?.typography]);
   const h1Classes = useMemo(() => getTypographyClasses('h1', typoConfig, defaultTypography.h1), [typoConfig]);
   const h1SingleClasses = useMemo(() => getTypographyClasses('h1Single', typoConfig, defaultTypography.h1Single), [typoConfig]);
   const pClasses = useMemo(() => getTypographyClasses('p', typoConfig, defaultTypography.p), [typoConfig]);
   
-  // Calculer la config dynamiquement quand le contenu change
-  // Utilise la config du backoffice (metadata.reveal) ou des valeurs par défaut
+  // Récupérer les couleurs personnalisées (hex) si elles existent
+  const h1CustomColor = useMemo(() => getCustomColor('h1', typoConfig), [typoConfig]);
+  const h1SingleCustomColor = useMemo(() => getCustomColor('h1Single', typoConfig), [typoConfig]);
+  const pCustomColor = useMemo(() => getCustomColor('p', typoConfig), [typoConfig]);
+  
+  // Calculer la config dynamiquement - mémoriser uniquement sur les changements de reveal
   const revealConfig = useMemo(() => {
     const revealSettings = content?.metadata?.reveal || {};
     return {
@@ -41,7 +45,7 @@ export default function PearlClient() {
       },
       logoSize: revealSettings.logoSize || 'medium'
     };
-  }, [content]);
+  }, [content?.metadata?.reveal, content?.nav?.logo, content?.home?.hero]);
 
   const { shouldShowReveal, isRevealComplete, completeReveal, config } = useRevealAnimation(revealConfig);
 
@@ -52,27 +56,56 @@ export default function PearlClient() {
     window.location.reload();
   };
 
+  // Charger le contenu au montage et écouter les mises à jour
   useEffect(() => {
     const loadContent = async () => {
       try {
-        const response = await fetch('/api/content', { cache: 'no-store' });
+        // Ajouter un timestamp pour forcer le rechargement et éviter le cache
+        const response = await fetch(`/api/content?t=${Date.now()}`, { 
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        });
         if (response.ok) {
           const data = await response.json();
           setContent(data);
-          console.log('📦 [PearlClient] Contenu chargé');
         }
       } catch (error) {
-        console.error('Erreur chargement contenu:', error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Erreur chargement contenu:', error);
+        }
       }
     };
+    
+    // Charger au montage
     loadContent();
-  }, [pathname]); // Recharger le contenu quand le pathname change
+    
+    // Écouter les événements de mise à jour du contenu (depuis l'admin)
+    const handleContentUpdate = () => {
+      // Forcer le rechargement avec un timestamp pour éviter le cache navigateur
+      loadContent();
+    };
+    
+    window.addEventListener('content-updated', handleContentUpdate);
+    
+    // Écouter aussi les changements de localStorage (pour les autres composants)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'content-updated' || e.key?.includes('updated')) {
+        loadContent();
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('content-updated', handleContentUpdate);
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []); // Charger au montage et écouter les mises à jour
 
   // Logique de routage (sans hook pour garder l'ordre stable)
   const route = useMemo(() => {
-    console.log('🧭 [PearlClient] Calcul de la route, pathname:', pathname);
     if (!content) {
-      console.log('🧭 [PearlClient] Pas de contenu, retour home');
       return 'home';
     }
     
@@ -106,18 +139,7 @@ export default function PearlClient() {
     return 'custom';
   }, [content, pathname]);
 
-  // Logs pour debug des transitions (AVANT le return conditionnel pour respecter les règles des hooks)
-  useEffect(() => {
-    console.log('🔄 [PearlClient] Pathname changé:', pathname);
-    console.log('🔄 [PearlClient] Route calculée:', route);
-    console.log('🔄 [PearlClient] document.startViewTransition disponible:', typeof document !== 'undefined' && 'startViewTransition' in document);
-    
-    // Vérifier si View Transitions est supporté
-    if (typeof document !== 'undefined') {
-      console.log('🔄 [PearlClient] View Transitions support:', CSS.supports('view-transition-name', 'test'));
-      console.log('🔄 [PearlClient] document.startViewTransition:', typeof (document as any).startViewTransition);
-    }
-  }, [pathname, route]);
+  // Supprimé les logs de debug qui ralentissent tout
 
   if (!content) {
     return (
@@ -165,7 +187,7 @@ export default function PearlClient() {
   if (!pageData) pageData = content?.home || { blocks: [] };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {/* Overlay noir pour l'animation */}
       <div 
         id="reveal-overlay"
@@ -215,7 +237,6 @@ export default function PearlClient() {
             variant={(() => {
               const variant = content.nav?.headerVariant || 'classic';
               if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/admin')) {
-                console.log('🟢 [PearlClient] Header variant utilisé (FRONT):', variant);
               }
               return variant;
             })()}
@@ -237,11 +258,11 @@ export default function PearlClient() {
                 <div className="text-center py-12">
                   {pageData?.hero?.subtitle || pageData?.description ? (
                     <div
-                      className="text-gray-600 mb-8 max-w-2xl mx-auto"
+                      className="text-muted-foreground mb-8 max-w-2xl mx-auto"
                       dangerouslySetInnerHTML={{ __html: pageData?.hero?.subtitle || pageData?.description }}
                     />
                   ) : (
-                    <p className="text-gray-400">Aucun contenu pour l'instant</p>
+                    <p className="text-muted-foreground">Aucun contenu pour l'instant</p>
                   )}
                 </div>
               )
@@ -249,9 +270,14 @@ export default function PearlClient() {
               // Page de projet individuel
               <div className="space-y-8">
                 <div className="text-left py-10">
-                  <h1 className={`${h1SingleClasses} mb-4`}>{individualItem.title}</h1>
+                  <h1 
+                    className={`${h1SingleClasses} mb-4`}
+                    style={h1SingleCustomColor ? { color: h1SingleCustomColor } : undefined}
+                  >
+                    {individualItem.title}
+                  </h1>
                   {individualItem.category && (
-                    <p className="text-lg text-gray-600 mb-4">Catégorie: {individualItem.category}</p>
+                    <p className="text-lg text-muted-foreground mb-4">Catégorie: {individualItem.category}</p>
                   )}
                 </div>
                 
@@ -273,12 +299,12 @@ export default function PearlClient() {
                   </div>
                 ) : (
                   <div className="text-center py-12">
-                    <p className="text-gray-400">Ce projet n'a pas encore de contenu.</p>
+                    <p className="text-muted-foreground">Ce projet n'a pas encore de contenu.</p>
                   </div>
                 )}
                 
                 <div className="text-center">
-                  <Link href="/work" className="text-blue-600 hover:text-blue-800">
+                  <Link href="/work" className="text-accent hover:text-accent/80">
                     ← Retour aux réalisations
                   </Link>
                 </div>
@@ -287,9 +313,15 @@ export default function PearlClient() {
               // Page d'article individuel
               <div className="space-y-8" data-view-transition-name={`article-${individualItem.slug || individualItem.id}`}>
                 <div className="text-left py-10">
-                  <h1 data-view-transition-name={`article-title-${individualItem.slug || individualItem.id}`} className={`${h1SingleClasses} mb-4`}>{individualItem.title}</h1>
+                  <h1 
+                    data-view-transition-name={`article-title-${individualItem.slug || individualItem.id}`}
+                    className={`${h1SingleClasses} mb-4`}
+                    style={h1SingleCustomColor ? { color: h1SingleCustomColor } : undefined}
+                  >
+                    {individualItem.title}
+                  </h1>
                   {individualItem.publishedAt && (
-                    <p className="text-lg text-gray-600 mb-4">
+                    <p className="text-lg text-muted-foreground mb-4">
                       Publié le {new Date(individualItem.publishedAt).toLocaleDateString('fr-FR')}
                     </p>
                   )}
@@ -303,14 +335,14 @@ export default function PearlClient() {
                   </div>
                 ) : (
                   <div className="text-center py-12">
-                    <p className="text-gray-400">Cet article n'a pas encore de contenu.</p>
+                    <p className="text-muted-foreground">Cet article n'a pas encore de contenu.</p>
                   </div>
                 )}
                 
                 <div className="text-center">
                   <Link 
                     href="/blog"
-                    className="text-blue-600 hover:text-blue-800"
+                    className="text-accent hover:text-accent/80"
                   >
                     ← Retour au journal
                   </Link>
@@ -325,12 +357,16 @@ export default function PearlClient() {
                 {/* Hero - toujours affiché si présent */}
                 {(pageData?.hero?.title || pageData?.title || pageData?.hero?.subtitle || pageData?.description) && (
                   <div className="text-left py-10">
-                    <h1 className={`${h1Classes} mb-4`}>
+                    <h1 
+                      className={`${h1Classes} mb-4`}
+                      style={h1CustomColor ? { color: h1CustomColor } : undefined}
+                    >
                       {pageData?.hero?.title || pageData?.title || 'Page'}
                     </h1>
                     {pageData?.hero?.subtitle || pageData?.description ? (
                       <div
                         className={`mb-8 max-w-2xl ${pClasses}`}
+                        style={pCustomColor ? { color: pCustomColor } : undefined}
                         dangerouslySetInnerHTML={{ __html: pageData?.hero?.subtitle || pageData?.description }}
                       />
                     ) : null}
@@ -341,8 +377,8 @@ export default function PearlClient() {
                 {Array.isArray(pageData?.blocks) && pageData.blocks.length > 0 && pageData.blocks.some((block: any) => block.content && block.content.trim() !== '') ? (
                   <BlockRenderer blocks={pageData.blocks} />
                 ) : !(pageData?.hero?.title || pageData?.title || pageData?.hero?.subtitle || pageData?.description) ? (
-                  <div className="bg-gray-50 rounded-lg p-8">
-                    <p className="text-gray-400">Ajoute des blocs depuis l'admin pour cette page.</p>
+                  <div className="bg-muted rounded-lg p-8">
+                    <p className="text-muted-foreground">Ajoute des blocs depuis l'admin pour cette page.</p>
                   </div>
                 ) : null}
               </>
