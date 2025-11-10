@@ -4,6 +4,7 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { buildNavModel } from "@/utils/navModel";
 import { useTemplate } from "@/templates/context";
+import { getTypographyConfig, getTypographyClasses, defaultTypography } from "@/utils/typography";
 
 export type HeaderVariant = 'classic' | 'centered' | 'minimal' | 'asymmetric' | 'split' | 'brand-centered';
 
@@ -12,13 +13,18 @@ interface HeaderPearlProps {
   pages: any;
   variant?: HeaderVariant;
   layout?: string;
+  fullContent?: any;
 }
 
-export default function HeaderPearl({ nav, pages, variant = 'classic', layout = 'standard' }: HeaderPearlProps) {
+export default function HeaderPearl({ nav, pages, variant = 'classic', layout = 'standard', fullContent }: HeaderPearlProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const { key } = useTemplate();
   const model = buildNavModel({ nav, pages, pathname, templateKey: key !== 'default' ? key : undefined });
+  
+  // Récupérer les styles typographiques pour la navigation
+  const typoConfig = getTypographyConfig(fullContent || {});
+  const navClasses = getTypographyClasses('nav', typoConfig, defaultTypography.nav);
 
   // Composants réutilisables
   const Logo = () => (
@@ -38,7 +44,7 @@ export default function HeaderPearl({ nav, pages, variant = 'classic', layout = 
           key={item.key}
           href={item.href}
           target={item.target}
-          className={"px-3 py-2 rounded-md text-sm font-medium transition-colors " + (item.active ? "text-gray-900" : "text-gray-500 hover:text-gray-900")}
+          className={`px-3 py-2 rounded-md transition-colors ${navClasses} ${item.active ? "text-gray-900" : "hover:text-gray-900"}`}
         >
           {item.label}
         </Link>

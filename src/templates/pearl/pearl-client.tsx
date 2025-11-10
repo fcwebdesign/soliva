@@ -156,7 +156,7 @@ export default function PearlClient() {
              {!shouldShowReveal && (
                <button 
                  onClick={resetAnimation}
-                 className="fixed top-4 right-4 z-50 bg-red-500 text-white px-4 py-2 rounded"
+                 className="fixed bottom-4 right-4 z-50 bg-red-500 text-white px-4 py-2 rounded shadow-lg hover:bg-red-600 transition-colors"
                >
                  Reset Animation
                </button>
@@ -177,6 +177,7 @@ export default function PearlClient() {
               return variant;
             })()}
             layout={content.metadata?.layout || 'standard'}
+            fullContent={content}
           />
           <main className={`mx-auto px-4 sm:px-6 lg:px-8 py-8 ${
             content.metadata?.layout === 'compact' ? 'max-w-7xl' :
@@ -298,7 +299,7 @@ export default function PearlClient() {
               </>
             )}
           </main>
-          <FooterPearl footer={content.footer} pages={content.pages} layout={content.metadata?.layout || 'standard'} />
+          <FooterPearl footer={content.footer} pages={content.pages} layout={content.metadata?.layout || 'standard'} fullContent={content} />
         </>
       )}
     </div>

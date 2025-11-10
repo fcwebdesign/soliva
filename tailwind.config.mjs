@@ -104,7 +104,7 @@ export default {
         'fluid-7xl': 'clamp(2.75rem, 2.2rem + 4vw, 7.5rem)',       // 44px → 120px (ajusté mobile)
         'fluid-8xl': 'clamp(3rem, 2.5rem + 4.5vw, 9rem)',            // 48px → 144px (ajusté mobile)
         'fluid-9xl': 'clamp(3.5rem, 3rem + 5vw, 11rem)',            // 56px → 176px (ajusté mobile)
-        'fluid-10xl': 'clamp(3.5rem, 3rem + 5.5vw, 12.5rem)',       // 56px → 200px (ajusté mobile)
+        'fluid-10xl': 'clamp(3.5rem, 3rem + 8vw, 12.5rem)',       // 56px → 200px (ajusté pour grands écrans)
       },
     },
   },

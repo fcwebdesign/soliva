@@ -24,6 +24,20 @@ export interface TypographyConfig {
     color?: string;
     tracking?: string;
   };
+  nav?: {
+    fontSize?: string;
+    fontWeight?: string;
+    lineHeight?: string;
+    color?: string;
+    tracking?: string;
+  };
+  footer?: {
+    fontSize?: string;
+    fontWeight?: string;
+    lineHeight?: string;
+    color?: string;
+    tracking?: string;
+  };
 }
 
 /**
@@ -37,7 +51,7 @@ export function getTypographyConfig(content: any): TypographyConfig {
  * Génère les classes CSS pour un élément typographique
  */
 export function getTypographyClasses(
-  element: 'h1' | 'h2' | 'p',
+  element: 'h1' | 'h2' | 'p' | 'nav' | 'footer',
   config: TypographyConfig,
   defaults: {
     fontSize: string;
@@ -81,6 +95,20 @@ export const defaultTypography = {
     fontWeight: 'font-normal',
     lineHeight: 'leading-relaxed',
     color: 'text-gray-700',
+    tracking: 'tracking-normal'
+  },
+  nav: {
+    fontSize: 'text-sm',
+    fontWeight: 'font-medium',
+    lineHeight: 'leading-normal',
+    color: 'text-gray-500',
+    tracking: 'tracking-normal'
+  },
+  footer: {
+    fontSize: 'text-sm',
+    fontWeight: 'font-normal',
+    lineHeight: 'leading-relaxed',
+    color: 'text-gray-600',
     tracking: 'tracking-normal'
   }
 };

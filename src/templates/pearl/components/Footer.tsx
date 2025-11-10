@@ -1,8 +1,12 @@
 import { Link } from "next-view-transitions";
+import { getTypographyConfig, getTypographyClasses, defaultTypography } from "@/utils/typography";
 
 type PageLink = { slug?: string; id?: string; title?: string };
 
-export default function FooterPearl({ footer, pages, layout = 'standard' }: { footer?: any; pages?: { pages?: PageLink[] }; layout?: string }) {
+export default function FooterPearl({ footer, pages, layout = 'standard', fullContent }: { footer?: any; pages?: { pages?: PageLink[] }; layout?: string; fullContent?: any }) {
+  // Récupérer les styles typographiques pour le footer
+  const typoConfig = getTypographyConfig(fullContent || {});
+  const footerClasses = getTypographyClasses('footer', typoConfig, defaultTypography.footer);
   const year = new Date().getFullYear();
   const copyright = footer?.copyright || ('© ' + year + ' Pearl. Tous droits réservés.');
   const links: string[] = footer?.bottomLinks || [];
@@ -46,7 +50,7 @@ export default function FooterPearl({ footer, pages, layout = 'standard' }: { fo
           )}
         </div>
         {footer?.description && (
-          <p className="text-sm text-gray-600 max-w-prose">{footer.description}</p>
+          <p className={`max-w-prose ${footerClasses}`}>{footer.description}</p>
         )}
       </div>
       <div className="flex flex-col md:flex-row md:justify-end gap-12">
@@ -93,7 +97,7 @@ export default function FooterPearl({ footer, pages, layout = 'standard' }: { fo
           )}
         </div>
         {footer?.description && (
-          <p className="text-sm text-gray-600 max-w-prose">{footer.description}</p>
+          <p className={`max-w-prose ${footerClasses}`}>{footer.description}</p>
         )}
       </div>
       <div>
@@ -143,7 +147,7 @@ export default function FooterPearl({ footer, pages, layout = 'standard' }: { fo
         )}
       </div>
       {footer?.description && (
-        <p className="text-sm text-gray-600 max-w-prose mx-auto">{footer.description}</p>
+        <p className={`max-w-prose mx-auto ${footerClasses}`}>{footer.description}</p>
       )}
       {Array.isArray(footer?.links) && footer.links.length > 0 && (
         <ul className="flex flex-wrap gap-4 justify-center text-sm">
@@ -196,7 +200,7 @@ export default function FooterPearl({ footer, pages, layout = 'standard' }: { fo
         {renderTop()}
 
         {/* Bas de page: copyright + liens */}
-        <div className="border-t pt-6 text-center text-gray-500 text-sm">
+        <div className={`border-t pt-6 text-center ${footerClasses}`}>
           <p>{copyright}</p>
           {links.length > 0 && (
             <ul className="mt-3 flex flex-wrap gap-4 justify-center">

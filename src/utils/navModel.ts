@@ -2,6 +2,7 @@ export type PageLink = {
   slug?: string;
   id?: string;
   title?: string;
+  status?: 'draft' | 'published';
 };
 
 export type PageLabels = Record<string, string | { title: string; customUrl?: string; target?: string }>;
@@ -27,11 +28,24 @@ export function buildNavModel({
   const defaultItems = nav.items?.length ? nav.items : defaults;
 
   const customPages = pages?.pages || [];
-  const customKeys = customPages.map((p) => p.slug || p.id).filter(Boolean) as string[];
-  const merged = [...defaultItems];
-  customKeys.forEach((k) => {
-    if (!merged.includes(k)) merged.push(k);
-  });
+  // Ne garder que les pages personnalisées qui sont explicitement dans nav.items
+  // et qui ne sont pas en draft ou dans hiddenSystem
+  const hiddenSystem = new Set(pages?.hiddenSystem || []);
+  const customKeysInNav = defaultItems
+    .filter((key) => {
+      // Vérifier si c'est une page personnalisée (pas dans les defaults système)
+      const isSystemPage = defaults.includes(key);
+      if (isSystemPage) return true; // Garder les pages système
+      
+      // Pour les pages personnalisées, vérifier qu'elles existent et sont valides
+      const customPage = customPages.find((p) => (p.slug || p.id) === key);
+      if (!customPage) return false; // Page personnalisée n'existe plus
+      if (customPage.status === 'draft') return false; // Exclure les drafts
+      if (hiddenSystem.has(key)) return false; // Exclure celles dans hiddenSystem
+      return true;
+    });
+  
+  const merged = customKeysInNav;
 
   const hidden = new Set(pages?.hiddenSystem || []);
   const visible = merged.filter((k) => !hidden.has(k));

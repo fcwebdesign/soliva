@@ -29,6 +29,20 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
       lineHeight: 'leading-relaxed',
       color: 'text-gray-700',
       tracking: 'tracking-normal'
+    },
+    nav: {
+      fontSize: 'text-sm',
+      fontWeight: 'font-medium',
+      lineHeight: 'leading-normal',
+      color: 'text-gray-500',
+      tracking: 'tracking-normal'
+    },
+    footer: {
+      fontSize: 'text-sm',
+      fontWeight: 'font-normal',
+      lineHeight: 'leading-relaxed',
+      color: 'text-gray-600',
+      tracking: 'tracking-normal'
     }
   });
 
@@ -58,6 +72,20 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
         lineHeight: typoConfig.p?.lineHeight || 'leading-relaxed',
         color: typoConfig.p?.color || 'text-gray-700',
         tracking: typoConfig.p?.tracking || 'tracking-normal'
+      },
+      nav: {
+        fontSize: typoConfig.nav?.fontSize || 'text-sm',
+        fontWeight: typoConfig.nav?.fontWeight || 'font-medium',
+        lineHeight: typoConfig.nav?.lineHeight || 'leading-normal',
+        color: typoConfig.nav?.color || 'text-gray-500',
+        tracking: typoConfig.nav?.tracking || 'tracking-normal'
+      },
+      footer: {
+        fontSize: typoConfig.footer?.fontSize || 'text-sm',
+        fontWeight: typoConfig.footer?.fontWeight || 'font-normal',
+        lineHeight: typoConfig.footer?.lineHeight || 'leading-relaxed',
+        color: typoConfig.footer?.color || 'text-gray-600',
+        tracking: typoConfig.footer?.tracking || 'tracking-normal'
       }
     });
     setIsInitialized(true);
@@ -77,11 +105,13 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
       h1: typography.h1,
       h2: typography.h2,
       p: typography.p,
+      nav: typography.nav,
+      footer: typography.footer,
     };
     updateField('metadata.typography', typoConfig);
   }, [typography, isInitialized, localData, updateField]);
 
-  const updateTypography = (element: 'h1' | 'h2' | 'p', property: string, value: string) => {
+  const updateTypography = (element: 'h1' | 'h2' | 'p' | 'nav' | 'footer', property: string, value: string) => {
     setTypography(prev => ({
       ...prev,
       [element]: {
@@ -245,6 +275,8 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
             {element === 'h1' && <h1>Exemple de titre H1</h1>}
             {element === 'h2' && <h2>Exemple de titre H2</h2>}
             {element === 'p' && <p>Exemple de paragraphe avec du texte pour voir le rendu.</p>}
+            {element === 'nav' && <nav><a href="#" className="hover:text-gray-900">Lien de navigation</a></nav>}
+            {element === 'footer' && <footer><p>Texte du footer avec exemple de lien</p></footer>}
           </div>
         </div>
       </div>
@@ -263,6 +295,8 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
         {renderElementConfig('h1', 'Titre H1')}
         {renderElementConfig('h2', 'Titre H2')}
         {renderElementConfig('p', 'Paragraphe')}
+        {renderElementConfig('nav', 'Navigation / Menu')}
+        {renderElementConfig('footer', 'Footer')}
       </div>
 
       {/* Note de sauvegarde automatique */}
