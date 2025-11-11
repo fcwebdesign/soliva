@@ -48,3 +48,17 @@ export default function ColorPaletteProvider({ palette, children, scopeId }: Pro
   );
 }
 
+/**
+ * Composant pour injecter uniquement le style dans le <head>
+ * Utilisé dans layout.tsx pour injecter les variables CSS globales
+ */
+export function ColorPaletteStyle({ palette }: { palette: BasePalette }) {
+  const { css: cssString } = generatePaletteStyles(palette);
+  
+  if (!cssString) return null;
+  
+  return (
+    <style dangerouslySetInnerHTML={{ __html: `:root { ${cssString} }` }} />
+  );
+}
+
