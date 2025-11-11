@@ -15,6 +15,7 @@ import { Toaster } from "@/components/ui/sonner";
 import Preloader from "@/components/Preloader";
 import { ColorPaletteStyle } from "@/components/ColorPaletteProvider";
 import { resolvePaletteFromContent } from "@/utils/palette-resolver";
+import { generatePaletteStyles } from "@/utils/palette-css-server";
 
 
 interface RootLayoutProps {
@@ -49,6 +50,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   const { isEnabled: isDraftMode } = await draftMode();
   const activeTemplate = await getActiveTemplate();
   const palette = resolvePaletteFromContent(content);
+  const { themeClass } = generatePaletteStyles(palette);
   
   // Vérifier si on est sur une route d'admin
   const headersList = await headers();
@@ -66,35 +68,35 @@ export default async function RootLayout({ children }: RootLayoutProps) {
     return (
       <ViewTransitions>
         <html lang="fr" className={`${isDraftMode ? 'preview-mode' : ''}`} data-template="soliva">
-        <head>
-          <meta name="cache-control" content="no-cache, no-store, must-revalidate" />
-          <meta name="pragma" content="no-cache" />
-          <meta name="expires" content="0" />
+          <head>
+            <meta name="cache-control" content="no-cache, no-store, must-revalidate" />
+            <meta name="pragma" content="no-cache" />
+            <meta name="expires" content="0" />
           {/* Pas de palette pour l'admin */}
-        </head>
-        <body className={`site layout-${content.metadata?.layout || 'standard'} ${isDraftMode ? 'preview-mode' : ''}`}>
-              <Preloader />
-              <TemplateProvider value={{ key: 'soliva' }}>
-                {/* Per-template page transitions (no-op for admin since key=soliva) */}
-                <ThemeTransitions />
-                <NavWrapper initialContent={{...content.nav, hiddenSystem: (content as any)?.pages?.hiddenSystem || []}} />
-                {children}
-                <ConditionalFooter initialContent={content.footer} />
-              </TemplateProvider>
-              <Toaster 
-                position="top-center"
-                toastOptions={{
-                  style: {
-                    marginTop: '-10px',
-                    backgroundColor: '#1f2937',
-                    color: '#ffffff',
-                    border: '1px solid #374151'
-                  },
-                  className: 'text-white',
-                  duration: 4000
-                }}
-                theme="dark"
-              />
+          </head>
+          <body className={`site layout-${content.metadata?.layout || 'standard'} ${isDraftMode ? 'preview-mode' : ''}`}>
+            <Preloader />
+            <TemplateProvider value={{ key: 'soliva' }}>
+              {/* Per-template page transitions (no-op for admin since key=soliva) */}
+              <ThemeTransitions />
+              <NavWrapper initialContent={{...content.nav, hiddenSystem: (content as any)?.pages?.hiddenSystem || []}} />
+              {children}
+              <ConditionalFooter initialContent={content.footer} />
+            </TemplateProvider>
+            <Toaster 
+              position="top-center"
+              toastOptions={{
+                style: {
+                  marginTop: '-10px',
+                  backgroundColor: '#1f2937',
+                  color: '#ffffff',
+                  border: '1px solid #374151'
+                },
+                className: 'text-white',
+                duration: 4000
+              }}
+              theme="dark"
+            />
           </body>
         </html>
       </ViewTransitions>
@@ -103,7 +105,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   
   return (
     <ViewTransitions>
-      <html lang="fr" className={`${isDraftMode ? 'preview-mode' : ''}`} data-template={templateKey}>
+      <html lang="fr" className={`${isDraftMode ? 'preview-mode' : ''} ${themeClass || ''}`} data-template={templateKey}>
         <head>
           <meta name="cache-control" content="no-cache, no-store, must-revalidate" />
           <meta name="pragma" content="no-cache" />
@@ -114,18 +116,18 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           {/* Preloader */}
           <Preloader />
           
-          <TemplateProvider value={{ key: templateKey }}>
-            {/* Per-template page transitions */}
-            <ThemeTransitions />
-            {isAutonomous ? (
-              // DÉLÉGATION TOTALE AU TEMPLATE
-              <TemplateRenderer keyName={activeTemplate.key} />
-            ) : (
-                              // SHELL GLOBAL PAR DÉFAUT
-              <>
-                <NavWrapper initialContent={{...content.nav, hiddenSystem: (content as any)?.pages?.hiddenSystem || []}} />
-                {children}
-                <ConditionalFooter initialContent={content.footer} />
+              <TemplateProvider value={{ key: templateKey }}>
+                {/* Per-template page transitions */}
+                <ThemeTransitions />
+                {isAutonomous ? (
+                  // DÉLÉGATION TOTALE AU TEMPLATE
+                  <TemplateRenderer keyName={activeTemplate.key} />
+                ) : (
+                  // SHELL GLOBAL PAR DÉFAUT
+                  <>
+                    <NavWrapper initialContent={{...content.nav, hiddenSystem: (content as any)?.pages?.hiddenSystem || []}} />
+                    {children}
+                    <ConditionalFooter initialContent={content.footer} />
                 
                 {/* JSON-LD Organization */}
                 <script
@@ -158,9 +160,9 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                     })
                   }}
                 />
-                </>
-              )}
-          </TemplateProvider>
+                  </>
+                )}
+              </TemplateProvider>
           <Toaster 
             position="top-center"
             toastOptions={{

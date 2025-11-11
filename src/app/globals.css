@@ -1711,26 +1711,37 @@ html.preview-mode body {
   object-fit: contain;
 }
 
-.logo-item img:hover {
-  filter: grayscale(0%);
-}
-
-/* Adaptation au thème clair pour les logos */
-.site [data-theme="light"] .logo-item img {
+/* Adaptation des logos selon la luminosité de la palette */
+/* Par défaut : logos en noir (pour fond clair) */
+.logos-section .logo-item img {
   filter: grayscale(100%) brightness(0) contrast(1);
 }
 
-.site [data-theme="light"] .logo-item img:hover {
-  filter: grayscale(0%) brightness(0) contrast(1);
+/* Si le fond est sombre (dark palette ou thème dark), logos inversés en blanc */
+.logos-section[data-theme="dark"] .logo-item img,
+.logos-section[data-block-theme="dark"] .logo-item img,
+[data-theme="dark"] .logos-section .logo-item img,
+[data-block-theme="dark"] .logos-section .logo-item img,
+html[data-theme="dark"] .logos-section .logo-item img,
+.dark .logos-section .logo-item img,
+.site [data-theme="dark"] .logos-section .logo-item img {
+  filter: grayscale(100%) brightness(0) contrast(0) invert(1) !important;
 }
 
-/* Adaptation au thème sombre pour les logos */
-.site [data-theme="dark"] .logo-item img {
-  filter: grayscale(100%) brightness(0) contrast(0) invert(1);
+/* Styles pour le bloc Citation - adaptation aux palettes */
+[data-block-type="quote"] {
+  background-color: var(--card) !important;
+  border-color: var(--border) !important;
+  color: var(--foreground) !important;
 }
 
-.site [data-theme="dark"] .logo-item img:hover {
-  filter: grayscale(0%) brightness(1) contrast(1) invert(0);
+[data-block-type="quote"] div,
+[data-block-type="quote"] cite {
+  color: var(--foreground) !important;
+}
+
+[data-block-type="quote"] footer span {
+  color: var(--muted-foreground) !important;
 }
 
 /* Styles pour la bordure du footer copyright - identique aux logos clients */
@@ -1759,13 +1770,8 @@ html.preview-mode body {
 
 /* Styles spécifiques pour les boutons de contact */
 .contact-button {
-  background-color: black !important;
-  color: white !important;
-}
-
-.site [data-theme="dark"] .contact-button {
-  background-color: white !important;
-  color: black !important;
+  background-color: var(--primary) !important;
+  color: var(--primary-foreground) !important;
 }
 
 /* Styles pour les boutons de contact dans l'admin - toujours noir avec texte blanc */
@@ -1783,11 +1789,7 @@ html.preview-mode body {
 
 /* Styles pour le texte de la section contact */
 .contact-section h2 {
-  color: black !important;
-}
-
-.site [data-theme="dark"] .contact-section h2 {
-  color: white !important;
+  color: var(--foreground) !important;
 }
 
 /* Styles pour le générateur de brief */

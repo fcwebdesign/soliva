@@ -57,16 +57,16 @@ export default function WorkPearl({ content, fullContent }: {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
           {/* Titre à gauche */}
           <div className="text-left">
-            <h1 
-              className={h1Classes}
-              style={h1CustomColor ? { color: h1CustomColor } : undefined}
-            >
-              {title}
-            </h1>
+        <h1 
+          className={h1Classes}
+          style={h1CustomColor ? { color: h1CustomColor } : undefined}
+        >
+          {title}
+        </h1>
           </div>
           
           {/* Description à droite, alignée à droite et en bas */}
-          {subtitle && (
+        {subtitle && (
             <div className="text-left md:text-right">
               <div
                 className={`max-w-2xl md:ml-auto ${pClasses}`}
@@ -74,7 +74,7 @@ export default function WorkPearl({ content, fullContent }: {
                 dangerouslySetInnerHTML={{ __html: subtitle }}
               />
             </div>
-          )}
+        )}
         </div>
       </div>
 
@@ -101,10 +101,10 @@ export default function WorkPearl({ content, fullContent }: {
                       } as React.CSSProperties)
                     }}
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img 
-                      src={project.image} 
-                      alt={project.alt || project.title || 'Projet'} 
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img 
+                    src={project.image} 
+                    alt={project.alt || project.title || 'Projet'} 
                       className={hoverClasses.image}
                       style={{ aspectRatio: '2400 / 1800', width: '100%', height: '100%' }}
                     />

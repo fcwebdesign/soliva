@@ -1109,7 +1109,7 @@
               "theme": "auto"
             },
             "title": "Would you like to see a demo ?",
-            "ctaText": "Yes"
+            "ctaText": "Yes i'm ok "
           },
           {
             "id": "content-1762854811118",
@@ -1238,7 +1238,8 @@
                 "src": "/uploads/1762855002229-ebe9efc9.webp",
                 "alt": ""
               }
-            ]
+            ],
+            "theme": "light"
           },
           {
             "id": "projects-1762855023277",

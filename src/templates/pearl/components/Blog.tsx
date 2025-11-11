@@ -33,16 +33,16 @@ export default function BlogPearl({ content, fullContent }: {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
           {/* Titre à gauche */}
           <div className="text-left">
-            <h1 
-              className={h1Classes}
-              style={h1CustomColor ? { color: h1CustomColor } : undefined}
-            >
-              {title}
-            </h1>
+        <h1 
+          className={h1Classes}
+          style={h1CustomColor ? { color: h1CustomColor } : undefined}
+        >
+          {title}
+        </h1>
           </div>
           
           {/* Description à droite, alignée à droite et en bas */}
-          {subtitle && (
+        {subtitle && (
             <div className="text-left md:text-right">
               <div
                 className={`max-w-2xl md:ml-auto ${pClasses}`}
@@ -50,7 +50,7 @@ export default function BlogPearl({ content, fullContent }: {
                 dangerouslySetInnerHTML={{ __html: subtitle }}
               />
             </div>
-          )}
+        )}
         </div>
       </div>
 

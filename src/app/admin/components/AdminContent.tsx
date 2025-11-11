@@ -117,7 +117,7 @@ const AdminContent: React.FC<AdminContentProps> = ({
               const { cleanTypography } = require('@/utils/clean-typography');
               current[keys[keys.length - 1]] = cleanTypography(value);
             } else {
-              current[keys[keys.length - 1]] = value;
+            current[keys[keys.length - 1]] = value;
             }
             
             onUpdateContent(newContent as Content);

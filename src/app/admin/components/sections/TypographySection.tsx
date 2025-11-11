@@ -258,8 +258,8 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
       
       // Charger les valeurs depuis localData seulement au chargement initial
       const savedConfigStr = JSON.stringify(localData.metadata.typography);
-      lastSavedRef.current = savedConfigStr;
-      prevTypographyRef.current = savedConfigStr;
+        lastSavedRef.current = savedConfigStr;
+        prevTypographyRef.current = savedConfigStr;
       setIsInitialized(true);
     }
   }, [localData?.metadata?.typography, isInitialized]);

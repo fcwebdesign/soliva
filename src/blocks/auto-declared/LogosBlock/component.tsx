@@ -17,7 +17,7 @@ export default function LogosBlock({ data }: { data: LogosData }) {
   
   return (
     <section className="logos-section py-28" data-block-type="logos" data-block-theme={data.theme || 'auto'}>
-      <div className="container mx-auto">
+      <div>
         {/* Titre de la section */}
         {title && (
           <div className="mb-12">
@@ -30,7 +30,14 @@ export default function LogosBlock({ data }: { data: LogosData }) {
         {/* Grille des logos clients */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 justify-items-center">
           {logos.map((logo, index) => (
-            <div key={index} className="logo-item">
+            <div 
+              key={index} 
+              className="logo-item rounded-lg p-4"
+              style={{
+                border: '1px solid var(--border)',
+                backgroundColor: 'var(--card)'
+              }}
+            >
               <Image
                 src={logo.src || logo.image}
                 alt={logo.alt || logo.name || `Logo client ${index + 1}`}

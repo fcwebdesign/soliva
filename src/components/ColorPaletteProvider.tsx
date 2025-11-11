@@ -33,9 +33,9 @@ export default function ColorPaletteProvider({ palette, children, scopeId }: Pro
   return (
     <>
       {cssString && (
-        <style dangerouslySetInnerHTML={{
+      <style dangerouslySetInnerHTML={{
           __html: `[data-theme="${scopeId}"] { ${cssString} }`
-        }} />
+      }} />
       )}
       <div 
         data-theme={scopeId} 

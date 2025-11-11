@@ -360,24 +360,24 @@ export default function PearlClient() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
                       {/* Titre à gauche */}
                       <div className="text-left">
-                        <h1 
+                    <h1 
                           className={h1Classes}
-                          style={h1CustomColor ? { color: h1CustomColor } : undefined}
-                        >
-                          {pageData?.hero?.title || pageData?.title || 'Page'}
-                        </h1>
+                      style={h1CustomColor ? { color: h1CustomColor } : undefined}
+                    >
+                      {pageData?.hero?.title || pageData?.title || 'Page'}
+                    </h1>
                       </div>
                       
                       {/* Description à droite, alignée à droite et en bas */}
-                      {pageData?.hero?.subtitle || pageData?.description ? (
+                    {pageData?.hero?.subtitle || pageData?.description ? (
                         <div className="text-left md:text-right">
-                          <div
+                      <div
                             className={`max-w-2xl md:ml-auto ${pClasses}`}
                             style={pCustomColor ? { color: pCustomColor } : { color: 'var(--foreground)' }}
-                            dangerouslySetInnerHTML={{ __html: pageData?.hero?.subtitle || pageData?.description }}
-                          />
+                        dangerouslySetInnerHTML={{ __html: pageData?.hero?.subtitle || pageData?.description }}
+                      />
                         </div>
-                      ) : null}
+                    ) : null}
                     </div>
                   </div>
                 )}

@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '../../../components/ui/dialog';
 import { Button } from '../../../components/ui/button';
-import { Badge } from '../../../components/ui/badge';
 import { X, ZoomIn, Download } from 'lucide-react';
 import { useTheme } from '../../../hooks/useTheme';
 
@@ -90,7 +89,7 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData }) {
 
   return (
     <section className="gallery-grid-section py-28" data-block-type="gallery-grid" data-block-theme={blockTheme}>
-      <div className="container mx-auto px-4">
+      <div className="px-4">
         {/* Filtres */}
         {showFilters && categories.length > 1 && (
           <div className="flex flex-wrap justify-center gap-2 mb-8">
@@ -112,7 +111,7 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData }) {
         {displayImages.length > 0 ? (
           <div className={containerClass}>
             {displayImages.map((image) => (
-              <div key={image.id} className={`group relative overflow-hidden rounded-lg bg-gray-100 ${isMasonry ? 'break-inside-avoid mb-4' : ''}`}>
+              <div key={image.id} className={`group relative overflow-hidden rounded-lg ${isMasonry ? 'break-inside-avoid mb-4' : ''}`} style={{ backgroundColor: 'var(--muted)' }}>
                 {/* Image */}
                 <div className={`${isMasonry ? 'relative' : 'aspect-square relative'} overflow-hidden`}>
                   {isMasonry ? (
@@ -159,12 +158,9 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData }) {
 
                   {/* Badge catégorie */}
                   {image.category && (
-                    <Badge 
-                      variant="secondary" 
-                      className="absolute top-2 left-2 bg-white/90 text-black capitalize"
-                    >
+                    <small className="absolute top-2 left-2 inline-block px-4 py-1.5 text-sm font-medium text-primary-foreground bg-primary rounded-full whitespace-nowrap capitalize">
                       {image.category}
-                    </Badge>
+                    </small>
                   )}
                 </div>
 
@@ -172,10 +168,10 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData }) {
                 {(showTitles || showDescriptions) && (image.title || image.description) && (
                   <div className="p-4">
                     {showTitles && image.title && (
-                      <h3 className="font-semibold text-gray-900 mb-1">{image.title}</h3>
+                      <h3 className="font-semibold mb-1" style={{ color: 'var(--foreground)' }}>{image.title}</h3>
                     )}
                     {showDescriptions && image.description && (
-                      <p className="text-sm text-gray-600 line-clamp-2">{image.description}</p>
+                      <p className="text-sm line-clamp-2" style={{ color: 'var(--muted-foreground)' }}>{image.description}</p>
                     )}
                   </div>
                 )}
@@ -185,8 +181,8 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData }) {
         ) : (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🖼️</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Aucune image</h3>
-            <p className="text-gray-600">Ajoutez des images à votre galerie depuis l'éditeur.</p>
+            <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--foreground)' }}>Aucune image</h3>
+            <p style={{ color: 'var(--muted-foreground)' }}>Ajoutez des images à votre galerie depuis l'éditeur.</p>
           </div>
         )}
 
@@ -218,14 +214,14 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData }) {
                 </div>
                 
                 {(selectedImage.title || selectedImage.description) && (
-                  <div className="p-6 bg-white">
+                  <div className="p-6" style={{ backgroundColor: 'var(--card)' }}>
                     {selectedImage.title && (
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                      <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--foreground)' }}>
                         {selectedImage.title}
                       </h3>
                     )}
                     {selectedImage.description && (
-                      <p className="text-gray-600">{selectedImage.description}</p>
+                      <p style={{ color: 'var(--muted-foreground)' }}>{selectedImage.description}</p>
                     )}
                   </div>
                 )}

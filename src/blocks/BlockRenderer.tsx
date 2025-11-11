@@ -14,12 +14,9 @@ export default function BlockRenderer({ blocks }: { blocks: AnyBlock[] }) {
 
   // Gestion du thème par bloc avec priorité sur le scroll
   useEffect(() => {
-    // Starter: forcer le thème clair et désactiver les changements auto
-    if (key === 'starter') {
-      try {
-        document.documentElement.setAttribute('data-theme', 'light');
-      } catch {}
-      return undefined; // ne pas attacher d'observer pour starter
+    // Starter et Pearl: désactiver les changements auto de thème au scroll
+    if (key === 'starter' || key === 'pearl') {
+      return undefined; // ne pas attacher d'observer pour starter et pearl
     }
 
     const observer = new IntersectionObserver((entries) => {
