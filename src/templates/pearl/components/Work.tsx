@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'next-view-transitions';
 import { getTypographyConfig, getTypographyClasses, getCustomColor, defaultTypography } from '@/utils/typography';
 
@@ -35,23 +35,47 @@ export default function WorkPearl({ content, fullContent }: {
   const h4CustomColor = getCustomColor('h4', typoConfig);
   const pCustomColor = getCustomColor('p', typoConfig);
 
+  // Récupérer la palette actuelle pour les animations de hover
+  const currentPaletteId = fullContent?.metadata?.colorPalette || 'classic';
+
+  // Fonction pour obtenir les classes d'animation selon la palette
+  // Pour l'instant, on applique le style mammothmurals à toutes les palettes
+  const getHoverAnimationClasses = (paletteId: string) => {
+    // Animation zoom arrière + clip-path (style mammothmurals exact)
+    return {
+      wrapper: 'work-hover-wrapper overflow-hidden rounded-lg transition-all duration-500 ease-out border-0',
+      image: 'work-hover-image w-full h-full object-cover transition-all duration-500 ease-out rounded-lg',
+      useMammothStyle: true
+    };
+  };
+
+  const hoverClasses = useMemo(() => getHoverAnimationClasses(currentPaletteId), [currentPaletteId]);
+
   return (
     <section>
-      <div className="text-left py-10">
-        <h1 
-          className={h1Classes}
-          style={h1CustomColor ? { color: h1CustomColor } : undefined}
-        >
-          {title}
-        </h1>
-        {subtitle && (
-          <p 
-            className={`mt-3 max-w-2xl ${pClasses}`}
-            style={pCustomColor ? { color: pCustomColor } : undefined}
-          >
-            {subtitle}
-          </p>
-        )}
+      <div className="py-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+          {/* Titre à gauche */}
+          <div className="text-left">
+            <h1 
+              className={h1Classes}
+              style={h1CustomColor ? { color: h1CustomColor } : undefined}
+            >
+              {title}
+            </h1>
+          </div>
+          
+          {/* Description à droite, alignée à droite et en bas */}
+          {subtitle && (
+            <div className="text-left md:text-right">
+              <div
+                className={`max-w-2xl md:ml-auto ${pClasses}`}
+                style={pCustomColor ? { color: pCustomColor } : { color: 'var(--foreground)' }}
+                dangerouslySetInnerHTML={{ __html: subtitle }}
+              />
+            </div>
+          )}
+        </div>
       </div>
 
       {projects.length === 0 ? (
@@ -61,20 +85,50 @@ export default function WorkPearl({ content, fullContent }: {
       ) : (
         <div className={`grid grid-cols-1 sm:grid-cols-2 gap-8 ${
           content?.columns === 2 ? 'lg:grid-cols-2' :
-          content?.columns === 4 ? 'lg:grid-cols-4' :
+          content?.columns === 4 ? 'lg:grid-cols-4 work-columns-4' :
           'lg:grid-cols-3' // Par défaut 3 colonnes
         }`}>
           {projects.map((project) => (
             <article key={project.slug || project.id} className="group">
               {project.image && (
                 <Link href={`/work/${project.slug || project.id}`} className="block mb-4">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img 
-                    src={project.image} 
-                    alt={project.alt || project.title || 'Projet'} 
-                    className="w-full object-cover rounded-lg"
-                    style={{ aspectRatio: '2400 / 1800' }}
-                  />
+                  <div 
+                    className={`${hoverClasses.wrapper} relative`}
+                    style={{ 
+                      aspectRatio: '2400 / 1800',
+                      ...(hoverClasses.useMammothStyle && {
+                        backgroundColor: 'var(--primary)'
+                      } as React.CSSProperties)
+                    }}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img 
+                      src={project.image} 
+                      alt={project.alt || project.title || 'Projet'} 
+                      className={hoverClasses.image}
+                      style={{ aspectRatio: '2400 / 1800', width: '100%', height: '100%' }}
+                    />
+                    {/* Icône flèche en haut à droite (apparaît au hover) */}
+                    {hoverClasses.useMammothStyle && (
+                      <div className="work-hover-arrow absolute top-4 right-4 w-8 h-8" style={{ color: 'var(--primary-foreground)' }}>
+                        <svg 
+                          width="24" 
+                          height="24" 
+                          viewBox="0 0 24 24" 
+                          fill="none" 
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-full h-full"
+                        >
+                          <path 
+                            fillRule="evenodd" 
+                            clipRule="evenodd" 
+                            d="M9 6.75C8.58579 6.75 8.25 6.41421 8.25 6C8.25 5.58579 8.58579 5.25 9 5.25H18C18.4142 5.25 18.75 5.58579 18.75 6V15C18.75 15.4142 18.4142 15.75 18 15.75C17.5858 15.75 17.25 15.4142 17.25 15V7.81066L6.53033 18.5303C6.23744 18.8232 5.76256 18.8232 5.46967 18.5303C5.17678 18.2374 5.17678 17.7626 5.46967 17.4697L16.1893 6.75H9Z" 
+                            fill="currentColor"
+                          />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
                 </Link>
               )}
               <div>

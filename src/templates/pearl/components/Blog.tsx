@@ -29,21 +29,29 @@ export default function BlogPearl({ content, fullContent }: {
 
   return (
     <section>
-      <div className="text-left py-10">
-        <h1 
-          className={h1Classes}
-          style={h1CustomColor ? { color: h1CustomColor } : undefined}
-        >
-          {title}
-        </h1>
-        {subtitle && (
-          <p 
-            className={`mt-3 max-w-2xl ${pClasses}`}
-            style={pCustomColor ? { color: pCustomColor } : undefined}
-          >
-            {subtitle}
-          </p>
-        )}
+      <div className="py-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+          {/* Titre à gauche */}
+          <div className="text-left">
+            <h1 
+              className={h1Classes}
+              style={h1CustomColor ? { color: h1CustomColor } : undefined}
+            >
+              {title}
+            </h1>
+          </div>
+          
+          {/* Description à droite, alignée à droite et en bas */}
+          {subtitle && (
+            <div className="text-left md:text-right">
+              <div
+                className={`max-w-2xl md:ml-auto ${pClasses}`}
+                style={pCustomColor ? { color: pCustomColor } : { color: 'var(--foreground)' }}
+                dangerouslySetInnerHTML={{ __html: subtitle }}
+              />
+            </div>
+          )}
+        </div>
       </div>
 
       {visibleArticles.length === 0 ? (

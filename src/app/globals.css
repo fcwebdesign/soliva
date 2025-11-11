@@ -25,6 +25,7 @@
   --input: #e5e7eb;
   --ring: #3b82f6;
   --radius: 0.75rem;
+  --spacing: 0.25rem; /* Base spacing unit (1rem = 4 * 0.25rem) */
 
   /* Aliases legacy (migration douce) */
   --bg: var(--background);
@@ -2927,6 +2928,43 @@ html.preview-mode body {
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/* Animation hover pour projets (style mammothmurals) */
+/* Le fond est déjà coloré, le zoom arrière révèle simplement le fond */
+
+/* Cacher la flèche sur mobile (pas de hover) */
+.work-hover-arrow {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .work-hover-wrapper:hover .work-hover-image {
+    transform: scale(0.8) !important;
+    clip-path: inset(6.25% 0% 6.25% 0% round 0.5rem) !important;
+  }
+  
+  /* Afficher la flèche uniquement sur les appareils avec hover */
+  .work-hover-arrow {
+    display: block;
+    transform: translate(40px, -40px);
+    transition: transform 0.5s ease-out;
+  }
+  
+  .work-hover-wrapper:hover .work-hover-arrow {
+    transform: translate(0, 0) !important;
+  }
+}
+
+/* Styles personnalisés pour l'affichage en 4 colonnes */
+@layer utilities {
+  .work-columns-4 .work-hover-arrow.h-8 {
+    height: calc(var(--spacing) * 5);
+  }
+
+  .work-columns-4 .work-hover-arrow.right-4 {
+    right: calc(var(--spacing) * 2);
+  }
 }
 
 .dark {

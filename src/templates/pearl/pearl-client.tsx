@@ -356,20 +356,29 @@ export default function PearlClient() {
               <>
                 {/* Hero - toujours affiché si présent */}
                 {(pageData?.hero?.title || pageData?.title || pageData?.hero?.subtitle || pageData?.description) && (
-                  <div className="text-left py-10">
-                    <h1 
-                      className={`${h1Classes} mb-4`}
-                      style={h1CustomColor ? { color: h1CustomColor } : undefined}
-                    >
-                      {pageData?.hero?.title || pageData?.title || 'Page'}
-                    </h1>
-                    {pageData?.hero?.subtitle || pageData?.description ? (
-                      <div
-                        className={`mb-8 max-w-2xl ${pClasses}`}
-                        style={pCustomColor ? { color: pCustomColor } : undefined}
-                        dangerouslySetInnerHTML={{ __html: pageData?.hero?.subtitle || pageData?.description }}
-                      />
-                    ) : null}
+                  <div className="py-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+                      {/* Titre à gauche */}
+                      <div className="text-left">
+                        <h1 
+                          className={h1Classes}
+                          style={h1CustomColor ? { color: h1CustomColor } : undefined}
+                        >
+                          {pageData?.hero?.title || pageData?.title || 'Page'}
+                        </h1>
+                      </div>
+                      
+                      {/* Description à droite, alignée à droite et en bas */}
+                      {pageData?.hero?.subtitle || pageData?.description ? (
+                        <div className="text-left md:text-right">
+                          <div
+                            className={`max-w-2xl md:ml-auto ${pClasses}`}
+                            style={pCustomColor ? { color: pCustomColor } : { color: 'var(--foreground)' }}
+                            dangerouslySetInnerHTML={{ __html: pageData?.hero?.subtitle || pageData?.description }}
+                          />
+                        </div>
+                      ) : null}
+                    </div>
                   </div>
                 )}
                 

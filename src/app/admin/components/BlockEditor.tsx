@@ -1519,6 +1519,32 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
               getDescriptionSuggestion={getDescriptionSuggestion}
               isLoadingDescriptionAI={isLoadingDescriptionAI}
             />
+            
+            {/* Paramètre nombre de colonnes */}
+            <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+              <div className="flex items-center space-x-2 mb-4">
+                <Columns className="w-6 h-6 text-gray-600" />
+                <h3 className="text-lg font-semibold text-gray-900">Affichage</h3>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nombre de colonnes
+                </label>
+                <select
+                  value={localData.columns || 3}
+                  onChange={(e) => updateField('columns', parseInt(e.target.value, 10))}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                >
+                  <option value={2}>2 colonnes</option>
+                  <option value={3}>3 colonnes (par défaut)</option>
+                  <option value={4}>4 colonnes</option>
+                </select>
+                <p className="text-sm text-gray-500 mt-2">
+                  Choisissez le nombre de colonnes pour l'affichage de la grille de projets.
+                </p>
+              </div>
+            </div>
           </div>
         )}
         {workActiveTab === 'filters' && renderFiltersBlock()}
