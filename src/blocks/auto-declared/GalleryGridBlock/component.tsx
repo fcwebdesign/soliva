@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '../../../components/ui/dialog';
 import { Button } from '../../../components/ui/button';
 import { X, ZoomIn, Download } from 'lucide-react';
 import { useTheme } from '../../../hooks/useTheme';
+import { useContentUpdate } from '../../../hooks/useContentUpdate';
 
 interface GalleryImage {
   id: string;
@@ -34,9 +35,29 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData | any
   const { mounted } = useTheme();
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>('all');
+  const [blockData, setBlockData] = useState<any>((data as any).data || data);
   
   // Extraire les données (peut être dans data directement ou dans data.data)
-  const blockData = (data as any).data || data;
+  const currentBlockData = (data as any).data || data;
+  
+  // Forcer la mise à jour des données quand le contenu change
+  useEffect(() => {
+    const newBlockData = (data as any).data || data;
+    // Comparer les images pour détecter les changements
+    const currentImages = JSON.stringify(blockData.images || []);
+    const newImages = JSON.stringify(newBlockData.images || []);
+    if (currentImages !== newImages) {
+      setBlockData(newBlockData);
+    }
+  }, [data, blockData.images]);
+  
+  // Écouter les mises à jour de contenu pour forcer le rechargement
+  useContentUpdate(() => {
+    // Forcer la mise à jour en réextrayant les données
+    const newBlockData = (data as any).data || data;
+    setBlockData(newBlockData);
+  });
+  
   const images = blockData.images || [];
   const layout = blockData.layout || 'grid-3';
   const gap = blockData.gap || 'medium';

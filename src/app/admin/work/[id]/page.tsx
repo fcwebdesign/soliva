@@ -440,6 +440,21 @@ export default function WorkProjectEdit() {
       setSaveStatus('success');
       setHasUnsavedChanges(false);
       
+      // Notifier le front pour mise à jour live des blocs projets
+      try {
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('content-updated', {
+            detail: {
+              work: newContent.work
+            }
+          }));
+          // Déclencher un changement de storage pour forcer le rechargement
+          localStorage.setItem('content-updated', String(Date.now()));
+        }
+      } catch {
+        // ignore
+      }
+      
       // Toast de succès
       toast.success('Projet sauvegardé avec succès', {
         description: projectToSave.status === 'published' ? 'Le projet est maintenant publié' : 'Brouillon enregistré'

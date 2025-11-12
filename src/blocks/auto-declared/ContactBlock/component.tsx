@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useMemo } from 'react';
 import { getTypographyConfig, getTypographyClasses, getCustomColor, defaultTypography } from '@/utils/typography';
+import { useContentUpdate, fetchContentWithNoCache } from '@/hooks/useContentUpdate';
 
 interface ContactData {
   title?: string;
@@ -24,7 +25,7 @@ export default function ContactBlock({ data }: { data: ContactData | any }) {
   useEffect(() => {
     const loadContent = async () => {
       try {
-        const response = await fetch('/api/content?t=' + Date.now(), { cache: 'no-store' });
+        const response = await fetchContentWithNoCache('/api/content');
         if (response.ok) {
           const data = await response.json();
           setContent(data);
@@ -34,14 +35,23 @@ export default function ContactBlock({ data }: { data: ContactData | any }) {
       }
     };
     loadContent();
-    
-    // Écouter les mises à jour de contenu
-    const handleContentUpdate = () => {
-      loadContent();
-    };
-    window.addEventListener('content-updated', handleContentUpdate);
-    return () => window.removeEventListener('content-updated', handleContentUpdate);
   }, []);
+  
+  // Écouter les mises à jour de contenu pour recharger la typographie
+  useContentUpdate(() => {
+    const loadContent = async () => {
+      try {
+        const response = await fetchContentWithNoCache('/api/content');
+        if (response.ok) {
+          const data = await response.json();
+          setContent(data);
+        }
+      } catch (error) {
+        // Ignorer silencieusement si erreur
+      }
+    };
+    loadContent();
+  });
   
   // Récupérer la config typographie
   const typoConfig = useMemo(() => {

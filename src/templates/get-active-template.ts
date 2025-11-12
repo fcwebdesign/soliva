@@ -41,8 +41,9 @@ export async function getActiveTemplate(): Promise<TemplateMeta | null> {
     }
     
     // 2. Configuration du site (content.json) - appliqué sur toutes les pages
+    // OPTIMISATION : Ne charger que _template au lieu de tout le contenu pour éviter le cache > 2 MB
     const content = await readContent();
-    const configTemplate = content._template;
+    const configTemplate = (content as any)._template;
     if (configTemplate) {
       const meta: TemplateMeta = TEMPLATES[configTemplate] || { key: configTemplate, autonomous: true, name: configTemplate };
       console.log('⚙️ Template config détecté:', configTemplate, 'sur', pathname);

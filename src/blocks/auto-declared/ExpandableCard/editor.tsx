@@ -18,6 +18,7 @@ interface CardItem {
 }
 
 interface ExpandableCardData {
+  title?: string;
   cards?: CardItem[];
 }
 
@@ -85,6 +86,20 @@ export default function ExpandableCardEditor({ data, onChange }: ExpandableCardE
 
   return (
     <div className="block-editor space-y-6">
+      {/* Titre de la section */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Titre de la section
+        </label>
+        <input
+          type="text"
+          value={data.title || ''}
+          onChange={(e) => onChange({ ...data, title: e.target.value })}
+          placeholder="Ex: Nos services"
+          className="block-input"
+        />
+      </div>
+
       <div className="flex justify-between items-center">
         <h4 className="text-sm font-medium">Cartes</h4>
         <button type="button" onClick={addCard} className="btn btn-secondary">Ajouter une carte</button>

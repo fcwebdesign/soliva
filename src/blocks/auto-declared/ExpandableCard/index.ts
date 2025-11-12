@@ -10,5 +10,8 @@ registerAutoBlock({
   type: 'expandable-card',
   component: ExpandableCard,
   editor: ExpandableCardEditor,
-  defaultData: { cards: [] }
+  defaultData: { 
+    title: '',
+    cards: [] 
+  }
 });

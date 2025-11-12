@@ -18,6 +18,10 @@ import { resolvePaletteFromContent } from "@/utils/palette-resolver";
 import { generatePaletteStyles } from "@/utils/palette-css-server";
 
 
+// Forcer le layout en dynamique pour éviter le cache > 2 MB
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 interface RootLayoutProps {
   children: ReactNode;
 }

@@ -1,7 +1,8 @@
 
 import { promises as fs } from 'fs';
 import { join } from 'path';
-import { unstable_cache, revalidateTag } from 'next/cache';
+// DÉSACTIVÉ : unstable_cache ne peut pas mettre en cache des objets > 2 MB
+// import { unstable_cache, revalidateTag } from 'next/cache';
 import type { Content } from '@/types/content';
 import { cleanContentLinks } from '@/utils/cleanLinks';
 import { logger } from '@/utils/logger';
@@ -354,49 +355,49 @@ let isWriting = false;
 let contentCache: { content: Content; mtime: number } | null = null;
 let cacheFilePath: string | null = null;
 
-// Utilise unstable_cache avec revalidation pour invalider après sauvegarde
-const getCachedContent = unstable_cache(
-  async (): Promise<Content> => {
-    // Vérifier le cache en mémoire d'abord
-    try {
-      const stats = await fs.stat(DATA_FILE_PATH);
-      const currentMtime = stats.mtimeMs;
-      
-      // Si le cache existe et que le fichier n'a pas été modifié, retourner le cache
-      if (contentCache && cacheFilePath === DATA_FILE_PATH && contentCache.mtime === currentMtime) {
-        logger.debug('✅ Utilisation du cache (fichier non modifié)');
-        return contentCache.content;
-      }
-      
-      // Mettre à jour le chemin du cache
-      cacheFilePath = DATA_FILE_PATH;
-    } catch {
-      // Si on ne peut pas lire les stats, continuer sans cache
+// DÉSACTIVÉ : unstable_cache ne peut pas mettre en cache des objets > 2 MB
+// Utilisation d'un cache en mémoire uniquement (pas de Data Cache Next.js)
+const getCachedContent = async (): Promise<Content> => {
+  // Vérifier le cache en mémoire d'abord
+  try {
+    const stats = await fs.stat(DATA_FILE_PATH);
+    const currentMtime = stats.mtimeMs;
+    
+    // Si le cache existe et que le fichier n'a pas été modifié, retourner le cache
+    if (contentCache && cacheFilePath === DATA_FILE_PATH && contentCache.mtime === currentMtime) {
+      logger.debug('✅ Utilisation du cache (fichier non modifié)');
+      return contentCache.content;
     }
     
-    // Lire le contenu
-    const content = await _readContentInternal();
-    
-    // Mettre en cache
-    try {
-      const stats = await fs.stat(DATA_FILE_PATH);
-      contentCache = {
-        content,
-        mtime: stats.mtimeMs
-      };
-      logger.debug('✅ Contenu mis en cache');
-    } catch {
-      // Si on ne peut pas lire les stats, continuer sans cache
-    }
-    
-    return content;
-  },
-  ['content'], // Clé du cache
-  {
-    tags: ['content'], // Tag pour revalidation
-    revalidate: false // Pas de revalidation automatique, on invalide manuellement avec revalidateTag
+    // Mettre à jour le chemin du cache
+    cacheFilePath = DATA_FILE_PATH;
+  } catch {
+    // Si on ne peut pas lire les stats, continuer sans cache
   }
-);
+  
+  // Lire le contenu
+  const content = await _readContentInternal();
+  
+  // Vérifier la taille du contenu
+  const contentSize = Buffer.byteLength(JSON.stringify(content), 'utf8');
+  if (contentSize > 2 * 1024 * 1024) {
+    logger.warn(`⚠️ Contenu volumineux (${(contentSize / 1024 / 1024).toFixed(2)} MB), cache Data Cache désactivé`);
+  }
+  
+  // Mettre en cache en mémoire uniquement (pas de Data Cache Next.js)
+  try {
+    const stats = await fs.stat(DATA_FILE_PATH);
+    contentCache = {
+      content,
+      mtime: stats.mtimeMs
+    };
+    logger.debug('✅ Contenu mis en cache (mémoire uniquement)');
+  } catch {
+    // Si on ne peut pas lire les stats, continuer sans cache
+  }
+  
+  return content;
+};
 
 /**
  * Écrit le contenu avec validation et versioning
@@ -493,18 +494,11 @@ export async function writeContent(next: Content, opts?: { actor?: string }): Pr
     await fs.writeFile(tempPath, JSON.stringify(next, null, 2), 'utf-8');
     await fs.rename(tempPath, DATA_FILE_PATH);
 
-    // OPTIMISATION PERFORMANCE : Invalider le cache après écriture
+    // OPTIMISATION PERFORMANCE : Invalider le cache en mémoire après écriture
     // CRITIQUE : Invalider le cache pour que le front reçoive les nouvelles données
     contentCache = null;
     cacheFilePath = null;
-    
-    // Invalider le cache Next.js pour forcer le rechargement
-    try {
-      revalidateTag('content');
-      logger.debug('✅ Cache Next.js invalidé');
-    } catch (error) {
-      logger.warn('⚠️ Impossible d\'invalider le cache Next.js:', error);
-    }
+    logger.debug('✅ Cache mémoire invalidé');
 
     // Versioning asynchrone APRÈS la sauvegarde (ne bloque pas)
     const versionsDir = join(process.cwd(), 'data', 'versions');

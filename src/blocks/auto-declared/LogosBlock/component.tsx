@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import Image from 'next/image';
 import { getTypographyConfig, getTypographyClasses, getCustomColor, defaultTypography } from '@/utils/typography';
+import { useContentUpdate, fetchContentWithNoCache } from '@/hooks/useContentUpdate';
 
 interface LogosData {
   title?: string;
@@ -17,7 +18,26 @@ interface LogosData {
 
 export default function LogosBlock({ data }: { data: LogosData | any }) {
   // Extraire les données (peut être dans data directement ou dans data.data)
-  const blockData = (data as any).data || data;
+  const [blockData, setBlockData] = useState<any>((data as any).data || data);
+  
+  // Forcer la mise à jour des données quand le contenu change
+  useEffect(() => {
+    const newBlockData = (data as any).data || data;
+    // Comparer les logos pour détecter les changements
+    const currentLogos = JSON.stringify(blockData.logos || []);
+    const newLogos = JSON.stringify(newBlockData.logos || []);
+    if (currentLogos !== newLogos || blockData.title !== newBlockData.title) {
+      setBlockData(newBlockData);
+    }
+  }, [data, blockData.logos, blockData.title]);
+  
+  // Écouter les mises à jour de contenu pour forcer le rechargement
+  useContentUpdate(() => {
+    // Forcer la mise à jour en réextrayant les données
+    const newBlockData = (data as any).data || data;
+    setBlockData(newBlockData);
+  });
+  
   const { title = "NOS CLIENTS", logos = [] } = blockData;
   
   const [fullContent, setFullContent] = useState<any>(null);
@@ -26,7 +46,7 @@ export default function LogosBlock({ data }: { data: LogosData | any }) {
   useEffect(() => {
     const loadContent = async () => {
       try {
-        const response = await fetch('/api/content?t=' + Date.now(), { cache: 'no-store' });
+        const response = await fetchContentWithNoCache('/api/content');
         if (response.ok) {
           const data = await response.json();
           setFullContent(data);
@@ -36,14 +56,23 @@ export default function LogosBlock({ data }: { data: LogosData | any }) {
       }
     };
     loadContent();
-    
-    // Écouter les mises à jour de contenu
-    const handleContentUpdate = () => {
-      loadContent();
-    };
-    window.addEventListener('content-updated', handleContentUpdate);
-    return () => window.removeEventListener('content-updated', handleContentUpdate);
   }, []);
+  
+  // Écouter les mises à jour de contenu pour recharger la typographie
+  useContentUpdate(() => {
+    const loadContent = async () => {
+      try {
+        const response = await fetchContentWithNoCache('/api/content');
+        if (response.ok) {
+          const data = await response.json();
+          setFullContent(data);
+        }
+      } catch (error) {
+        // Ignorer silencieusement si erreur
+      }
+    };
+    loadContent();
+  });
   
   // Récupérer la config typographie
   const typoConfig = useMemo(() => {

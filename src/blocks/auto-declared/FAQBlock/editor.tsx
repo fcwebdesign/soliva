@@ -9,6 +9,7 @@ interface FAQItem {
 }
 
 interface FAQBlockData {
+  title?: string;
   items?: FAQItem[];
   theme?: 'light' | 'dark' | 'auto';
 }
@@ -19,6 +20,7 @@ interface FAQBlockEditorProps {
 }
 
 export default function FAQBlockEditor({ data, onChange }: FAQBlockEditorProps) {
+  const title = data.title || '';
   const items = data.items || [];
   const theme = data.theme || 'auto';
 
@@ -68,6 +70,20 @@ export default function FAQBlockEditor({ data, onChange }: FAQBlockEditorProps) 
   return (
     <div className="block-editor">
       <div className="space-y-4">
+        {/* Titre de la section */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Titre de la section
+          </label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => onChange({ ...data, title: e.target.value })}
+            placeholder="Ex: Questions fréquentes"
+            className="block-input"
+          />
+        </div>
+
         {/* Sélecteur de thème */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">

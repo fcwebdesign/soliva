@@ -7,6 +7,7 @@ registerAutoBlock({
   component: FAQBlock,
   editor: FAQBlockEditor,
   defaultData: {
+    title: '',
     items: [],
     theme: 'auto'
   }

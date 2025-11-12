@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'next-view-transitions';
 import { getTypographyConfig, getTypographyClasses, getCustomColor, defaultTypography } from '@/utils/typography';
+import { useContentUpdate, fetchContentWithNoCache } from '@/hooks/useContentUpdate';
 
 interface ProjectsData {
   id?: string;
@@ -47,10 +48,7 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/api/content?t=' + Date.now(), {
-          cache: 'no-store',
-          headers: { 'Cache-Control': 'no-cache' }
-        });
+        const response = await fetchContentWithNoCache('/api/content');
         const content = await response.json();
         setFullContent(content);
         
@@ -111,14 +109,67 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
     };
     
     fetchData();
-    
-    // Écouter les mises à jour de contenu
-    const handleContentUpdate = () => {
-      fetchData();
-    };
-    window.addEventListener('content-updated', handleContentUpdate);
-    return () => window.removeEventListener('content-updated', handleContentUpdate);
   }, []);
+  
+  // Écouter les mises à jour de contenu pour recharger les projets
+  useContentUpdate(() => {
+    // Recharger les projets quand le contenu est mis à jour
+    const fetchData = async () => {
+      try {
+        const response = await fetchContentWithNoCache('/api/content');
+        const content = await response.json();
+        setFullContent(content);
+        
+        let projects: Project[] = [];
+        
+        if (content.work?.adminProjects) {
+          projects = content.work.adminProjects
+            .filter((p: any) => p.status === 'published' || !p.status)
+            .map((p: any, index: number) => ({
+              id: p.id || p.slug || `project-${index}`,
+              title: p.title,
+              description: p.description,
+              excerpt: p.excerpt,
+              category: p.category,
+              image: p.image,
+              alt: p.alt,
+              slug: p.slug,
+              status: p.status,
+              featured: p.featured
+            }));
+        } else if (content.work?.projects) {
+          projects = content.work.projects.map((p: any, index: number) => ({
+            id: p.id || p.slug || `project-${index}`,
+            title: p.title,
+            description: p.description,
+            excerpt: p.excerpt,
+            category: p.category,
+            image: p.image,
+            alt: p.alt,
+            slug: p.slug,
+            status: p.status,
+            featured: p.featured
+          }));
+        }
+        
+        const uniqueProjects = projects.filter((project, index, self) => 
+          index === self.findIndex(p => p.id === project.id)
+        );
+        
+        uniqueProjects.sort((a, b) => {
+          if (a.featured && !b.featured) return -1;
+          if (!a.featured && b.featured) return 1;
+          return 0;
+        });
+        
+        setAllProjects(uniqueProjects);
+      } catch (error) {
+        console.error('Erreur lors du rechargement des projets:', error);
+      }
+    };
+    
+    fetchData();
+  });
   
   // Gérer la largeur de la fenêtre
   useEffect(() => {
