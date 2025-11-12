@@ -2,11 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '../../../components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogPortal } from '../../../components/ui/dialog';
+import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Button } from '../../../components/ui/button';
-import { X, ZoomIn, Download } from 'lucide-react';
+import { ZoomIn, Download } from 'lucide-react';
 import { useTheme } from '../../../hooks/useTheme';
 import { useContentUpdate } from '../../../hooks/useContentUpdate';
+import { cn } from '@/lib/utils';
 
 interface GalleryImage {
   id: string;
@@ -21,7 +23,7 @@ interface GalleryImage {
 
 interface GalleryGridData {
   images?: GalleryImage[];
-  layout?: 'grid-2' | 'grid-3' | 'grid-4' | 'masonry';
+  layout?: 'grid-2' | 'grid-3' | 'grid-4' | 'masonry-2' | 'masonry-3' | 'masonry-4';
   gap?: 'small' | 'medium' | 'large';
   showFilters?: boolean;
   showTitles?: boolean;
@@ -69,7 +71,7 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData | any
   const blockTheme = blockData.theme || 'auto';
 
   // Obtenir les catégories uniques
-  const categories = ['all', ...Array.from(new Set(images.map(img => img.category).filter(Boolean)))];
+  const categories = ['all', ...Array.from(new Set(images.map(img => img.category).filter(Boolean) as string[]))];
   
   // Filtrer les images
   const filteredImages = activeFilter === 'all' 
@@ -84,7 +86,9 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData | any
     'grid-2': 'grid-cols-1 md:grid-cols-2',
     'grid-3': 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
     'grid-4': 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
-    'masonry': 'columns-1 md:columns-2 lg:columns-3 xl:columns-4'
+    'masonry-2': 'columns-1 md:columns-2',
+    'masonry-3': 'columns-1 md:columns-2 lg:columns-3',
+    'masonry-4': 'columns-1 md:columns-2 lg:columns-3 xl:columns-4'
   };
 
   const gapClasses = {
@@ -97,7 +101,7 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData | any
   const gapClass = gapClasses[gap] || 'gap-4';
   
   // Pour le masonry, utiliser columns au lieu de grid
-  const isMasonry = layout === 'masonry';
+  const isMasonry = layout?.startsWith('masonry');
   const containerClass = isMasonry ? `${gridClass} ${gapClass}` : `grid ${gridClass} ${gapClass}`;
 
   // Fonction pour télécharger une image
@@ -116,7 +120,7 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData | any
         {/* Filtres */}
         {showFilters && categories.length > 1 && (
           <div className="flex flex-wrap justify-center gap-2 mb-8">
-            {categories.map(category => (
+            {categories.map((category: string) => (
               <Button
                 key={category}
                 variant={activeFilter === category ? 'default' : 'outline'}
@@ -212,44 +216,70 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData | any
         {/* Lightbox */}
         {enableLightbox && selectedImage && (
           <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
-            <DialogContent className="max-w-4xl max-h-[90vh] p-0">
-              <DialogTitle className="sr-only">
-                {selectedImage.title || selectedImage.alt || 'Image de la galerie'}
-              </DialogTitle>
-              <div className="relative">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="absolute top-4 right-4 z-10 bg-black/50 hover:bg-black/70 text-white"
-                  onClick={() => setSelectedImage(null)}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
+            <DialogPortal>
+              {/* Overlay personnalisé avec backdrop-blur */}
+              <DialogPrimitive.Overlay
+                className={cn(
+                  "fixed inset-0 z-[99999] bg-black/60 backdrop-blur-md"
+                )}
+                style={{
+                  backdropFilter: 'blur(5px)',
+                  WebkitBackdropFilter: 'blur(5px)'
+                }}
+              />
+              <DialogPrimitive.Content
+                className={cn(
+                  "fixed left-[50%] top-[50%] z-[100000] max-w-[95vw] max-h-[95vh] w-auto h-auto p-0 border-0 shadow-none translate-x-[-50%] translate-y-[-50%]",
+                  "bg-transparent",
+                  "duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
+                )}
+                style={{ backgroundColor: 'transparent' }}
+                onInteractOutside={(e) => {
+                  setSelectedImage(null);
+                }}
+                onPointerDownOutside={(e) => {
+                  setSelectedImage(null);
+                }}
+              >
+                <DialogTitle className="sr-only">
+                  {selectedImage.title || selectedImage.alt || 'Image de la galerie'}
+                </DialogTitle>
                 
-                <div className="relative aspect-video">
-                  <Image
-                    src={selectedImage.src}
-                    alt={selectedImage.alt}
-                    fill
-                    className="object-contain"
-                    sizes="90vw"
-                  />
+                <div className="relative flex items-center justify-center">
+                  <div className="relative max-w-[95vw] max-h-[95vh]">
+                    <Image
+                      src={selectedImage.src}
+                      alt={selectedImage.alt}
+                      width={1920}
+                      height={1080}
+                      className="object-contain w-auto h-auto max-w-full max-h-[95vh]"
+                      sizes="95vw"
+                      priority
+                    />
+                  </div>
+                  
+                  {(selectedImage.title || selectedImage.description) && (
+                    <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 bg-black/70 backdrop-blur-sm rounded-lg p-4 max-w-2xl">
+                      {selectedImage.title && (
+                        <h3 className="text-xl font-semibold mb-2 text-white">
+                          {selectedImage.title}
+                        </h3>
+                      )}
+                      {selectedImage.description && (
+                        <p className="text-white/90">{selectedImage.description}</p>
+                      )}
+                    </div>
+                  )}
                 </div>
                 
-                {(selectedImage.title || selectedImage.description) && (
-                  <div className="p-6" style={{ backgroundColor: 'var(--card)' }}>
-                    {selectedImage.title && (
-                      <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--foreground)' }}>
-                        {selectedImage.title}
-                      </h3>
-                    )}
-                    {selectedImage.description && (
-                      <p style={{ color: 'var(--muted-foreground)' }}>{selectedImage.description}</p>
-                    )}
-                  </div>
-                )}
-              </div>
-            </DialogContent>
+                <DialogPrimitive.Close className="absolute right-4 top-4 rounded-full bg-black/50 hover:bg-black/70 text-white w-10 h-10 p-0 flex items-center justify-center opacity-100 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-white/50 disabled:pointer-events-none">
+                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  <span className="sr-only">Close</span>
+                </DialogPrimitive.Close>
+              </DialogPrimitive.Content>
+            </DialogPortal>
           </Dialog>
         )}
       </div>

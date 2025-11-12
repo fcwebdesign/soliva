@@ -24,7 +24,7 @@ interface GalleryImage {
 
 interface GalleryGridData {
   images?: GalleryImage[];
-  layout?: 'grid-2' | 'grid-3' | 'grid-4' | 'masonry';
+  layout?: 'grid-2' | 'grid-3' | 'grid-4' | 'masonry-2' | 'masonry-3' | 'masonry-4';
   gap?: 'small' | 'medium' | 'large';
   showFilters?: boolean;
   showTitles?: boolean;
@@ -171,10 +171,12 @@ export default function GalleryGridBlockEditor({ data, onChange }: { data: Galle
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="grid-2">2 colonnes</SelectItem>
-                <SelectItem value="grid-3">3 colonnes</SelectItem>
-                <SelectItem value="grid-4">4 colonnes</SelectItem>
-                <SelectItem value="masonry">Masonry</SelectItem>
+                <SelectItem value="grid-2">Grid 2 colonnes</SelectItem>
+                <SelectItem value="grid-3">Grid 3 colonnes</SelectItem>
+                <SelectItem value="grid-4">Grid 4 colonnes</SelectItem>
+                <SelectItem value="masonry-2">Masonry 2 colonnes</SelectItem>
+                <SelectItem value="masonry-3">Masonry 3 colonnes</SelectItem>
+                <SelectItem value="masonry-4">Masonry 4 colonnes</SelectItem>
               </SelectContent>
             </Select>
           </div>
