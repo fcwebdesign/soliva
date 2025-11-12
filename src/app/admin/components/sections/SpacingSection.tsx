@@ -108,11 +108,14 @@ const SpacingSection: React.FC<SpacingSectionProps> = ({ localData, updateField 
             />
           </div>
         </div>
-        <p className="text-xs text-gray-500 mt-2">Utilisables via `gap-[var(--gap)]` ou override local: style={{ '--gap': 'var(--gap-sm)' }}.</p>
+        <p className="text-xs text-gray-500 mt-2">
+          Utilisables via <code>gap-[var(--gap)]</code> ou override local:
+          {' '}
+          <code>{"style={{ '--gap': 'var(--gap-sm)' }}"}</code>.
+        </p>
       </div>
     </div>
   );
 };
 
 export default SpacingSection;
-
