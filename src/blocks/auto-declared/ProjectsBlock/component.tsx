@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
+'use client';
+
+import React, { useState, useEffect, useMemo } from 'react';
+import { Link } from 'next-view-transitions';
+import { getTypographyConfig, getTypographyClasses, getCustomColor, defaultTypography } from '@/utils/typography';
 
 interface ProjectsData {
   id?: string;
@@ -7,6 +10,7 @@ interface ProjectsData {
   maxProjects?: number;
   selectedProjects?: string[];
   theme?: 'light' | 'dark' | 'auto';
+  columns?: number;
 }
 
 interface Project {
@@ -22,29 +26,33 @@ interface Project {
   featured?: boolean;
 }
 
-export default function ProjectsBlock({ data }: { data: ProjectsData }) {
-  const { title = "NOS RÉALISATIONS", maxProjects = 6, selectedProjects = [] } = data;
+export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
+  // Extraire les données (peut être dans data directement ou dans data.data)
+  const blockData = (data as any).data || data;
+  const { title = "NOS RÉALISATIONS", maxProjects = 6, selectedProjects = [], columns = 3 } = blockData;
   
   // Générer un ID unique pour le carousel
-  const carouselId = data.id || `projects-${Math.random().toString(36).substr(2, 9)}`;
+  const carouselId = blockData.id || `projects-${Math.random().toString(36).substr(2, 9)}`;
   
   // État pour les projets récupérés depuis l'API
   const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fullContent, setFullContent] = useState<any>(null);
   
   // États pour la navigation du carousel
   const [currentPage, setCurrentPage] = useState(0);
   const [windowWidth, setWindowWidth] = useState(0);
   
-  // Récupérer les projets depuis l'API
+  // Récupérer les projets et le contenu complet depuis l'API
   useEffect(() => {
-    const fetchProjects = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('/api/content', {
+        const response = await fetch('/api/content?t=' + Date.now(), {
           cache: 'no-store',
           headers: { 'Cache-Control': 'no-cache' }
         });
         const content = await response.json();
+        setFullContent(content);
         
         // Récupérer les projets publiés depuis adminProjects ou projects
         let projects: Project[] = [];
@@ -52,7 +60,7 @@ export default function ProjectsBlock({ data }: { data: ProjectsData }) {
         if (content.work?.adminProjects) {
           // Priorité aux projets de l'admin (avec blocs)
           projects = content.work.adminProjects
-            .filter((p: any) => p.status === 'published')
+            .filter((p: any) => p.status === 'published' || !p.status)
             .map((p: any, index: number) => ({
               id: p.id || p.slug || `project-${index}`,
               title: p.title,
@@ -96,26 +104,21 @@ export default function ProjectsBlock({ data }: { data: ProjectsData }) {
         setAllProjects(uniqueProjects);
       } catch (error) {
         console.error('Erreur lors du chargement des projets:', error);
-        // Fallback vers des projets par défaut en cas d'erreur
         setAllProjects([]);
       } finally {
         setLoading(false);
       }
     };
     
-    fetchProjects();
+    fetchData();
+    
+    // Écouter les mises à jour de contenu
+    const handleContentUpdate = () => {
+      fetchData();
+    };
+    window.addEventListener('content-updated', handleContentUpdate);
+    return () => window.removeEventListener('content-updated', handleContentUpdate);
   }, []);
-
-  const withTpl = (href: string) => {
-    if (typeof window === 'undefined') return href;
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const tpl = params.get('template');
-      return tpl ? `${href}${href.includes('?') ? '&' : '?'}template=${tpl}` : href;
-    } catch {
-      return href;
-    }
-  };
   
   // Gérer la largeur de la fenêtre
   useEffect(() => {
@@ -125,249 +128,298 @@ export default function ProjectsBlock({ data }: { data: ProjectsData }) {
     return () => window.removeEventListener('resize', updateWidth);
   }, []);
   
+  // Récupérer les styles typographiques
+  const typoConfig = useMemo(() => {
+    return fullContent ? getTypographyConfig(fullContent) : {};
+  }, [fullContent]);
+  
+  const h3Classes = getTypographyClasses('h3', typoConfig, defaultTypography.h3);
+  const h4Classes = getTypographyClasses('h4', typoConfig, defaultTypography.h4);
+  const h3CustomColor = getCustomColor('h3', typoConfig);
+  const h4CustomColor = getCustomColor('h4', typoConfig);
+  
+  // Récupérer la palette actuelle pour les animations de hover
+  const currentPaletteId = fullContent?.metadata?.colorPalette || 'classic';
+  
+  // Fonction pour obtenir les classes d'animation selon la palette
+  const getHoverAnimationClasses = (paletteId: string) => {
+    // Animation zoom arrière + clip-path (style mammothmurals exact)
+    return {
+      wrapper: 'work-hover-wrapper overflow-hidden rounded-lg transition-all duration-500 ease-out border-0',
+      image: 'work-hover-image w-full h-full object-cover transition-all duration-500 ease-out rounded-lg',
+      useMammothStyle: true
+    };
+  };
+  
+  const hoverClasses = useMemo(() => getHoverAnimationClasses(currentPaletteId), [currentPaletteId]);
+  
   // Filtrer les projets selon la sélection
-  let displayedProjects;
+  let displayedProjects: Project[];
   if (selectedProjects && selectedProjects.length > 0) {
     displayedProjects = allProjects.filter(project => selectedProjects.includes(project.id));
   } else {
     displayedProjects = allProjects.slice(0, maxProjects);
   }
-
+  
   // État de chargement
   if (loading) {
     return (
-      <section className="projects-section py-28" data-block-type="projects" data-block-theme={data.theme || 'auto'}>
-        <div className="container mx-auto">
-          <div className="mb-12">
-            {title && (
-              <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-                {title}
-              </h2>
-            )}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="animate-pulse">
-                <div className="bg-gray-200 aspect-[1/1] rounded-lg mb-4"></div>
-                <div className="h-6 bg-gray-200 rounded mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded"></div>
-              </div>
-            ))}
-          </div>
+      <section className="projects-section py-28" data-block-type="projects" data-block-theme={blockData.theme || (data as any).theme || 'auto'}>
+        <div className="text-center py-16">
+          <p style={{ color: 'var(--muted-foreground)' }}>Chargement des projets...</p>
         </div>
       </section>
     );
   }
-
+  
   // Aucun projet trouvé
   if (displayedProjects.length === 0) {
     return (
-      <section className="projects-section py-28" data-block-type="projects" data-block-theme={data.theme || 'auto'}>
-        <div className="container mx-auto">
-          <div className="mb-12">
-            {title && (
-              <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-                {title}
-              </h2>
-            )}
-          </div>
-          <div className="text-center text-gray-500">
-            <p>Aucun projet publié pour le moment.</p>
-          </div>
+      <section className="projects-section py-28" data-block-type="projects" data-block-theme={blockData.theme || (data as any).theme || 'auto'}>
+        <div className="text-center py-16">
+          <p style={{ color: 'var(--muted-foreground)' }}>Aucun projet pour l'instant.</p>
         </div>
       </section>
     );
   }
-
-  return (
-    <section className="projects-section py-28" data-block-type="projects" data-block-theme={data.theme || 'auto'}>
-      <div className="container mx-auto">
-        {/* Titre de la section et navigation du carousel */}
-        {(() => {
-          const actualCount = displayedProjects.length;
-          
-          // Déterminer si on utilise un carousel ou si on a besoin de navigation
-          const useCarousel = actualCount > 3;
-          const needsNavigation = actualCount > 3;
-          
-          return (
-            <div className="mb-12 flex justify-between items-center">
-              {title && (
-                <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-                  {title}
-                </h2>
-              )}
-              
-              {/* Navigation - sur la même ligne que le titre */}
-              {needsNavigation && (() => {
-                
-                let projectsPerPage;
-                if (actualCount === 1) {
-                  projectsPerPage = 1;
-                } else if (actualCount === 2) {
-                  projectsPerPage = windowWidth < 768 ? 1 : 2;
-                } else {
-                  projectsPerPage = windowWidth < 768 ? 1 : windowWidth < 1024 ? 2 : 3;
-                }
-                
-                const maxPages = Math.ceil(displayedProjects.length / projectsPerPage);
-                const isFirstPage = currentPage === 0;
-                const isLastPage = currentPage === maxPages - 1;
-                
-                return (
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => {
-                        if (!isFirstPage) {
-                          const newPage = currentPage - 1;
-                          setCurrentPage(newPage);
-                          
-                          const carousel = document.getElementById(`carousel-${carouselId}`);
-                          if (carousel) {
-                            const translateX = -(newPage * (100 / projectsPerPage));
-                            carousel.style.transform = `translateX(${translateX}%)`;
-                          }
-                        }
-                      }}
-                      className={`w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 transition-all duration-300 flex items-center justify-center text-gray-500 hover:text-gray-700 ${
-                        isFirstPage ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
-                      }`}
-                    >
-                      ←
-                    </button>
-                    <button
-                      onClick={() => {
-                        if (!isLastPage) {
-                          const newPage = currentPage + 1;
-                          setCurrentPage(newPage);
-                          
-                          const carousel = document.getElementById(`carousel-${carouselId}`);
-                          if (carousel) {
-                            const translateX = -(newPage * (100 / projectsPerPage));
-                            carousel.style.transform = `translateX(${translateX}%)`;
-                          }
-                        }
-                      }}
-                      className={`w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 transition-all duration-300 flex items-center justify-center text-gray-500 hover:text-gray-700 ${
-                        isLastPage ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
-                      }`}
-                    >
-                      →
-                    </button>
-                  </div>
-                );
-              })()}
-            </div>
-          );
-        })()}
-        
-        {/* Grille des projets */}
-        {(() => {
-          const actualCount = displayedProjects.length;
-          const needsNavigation = actualCount > 3;
-          
-          if (needsNavigation) {
-            
-            let projectsPerPage;
-            let gridClass;
-            
-            if (actualCount === 1) {
-              projectsPerPage = 1;
-              gridClass = "grid grid-cols-1 gap-8";
-            } else if (actualCount === 2) {
-              projectsPerPage = windowWidth < 768 ? 1 : 2;
-              gridClass = "flex transition-transform duration-300 ease-in-out";
-            } else {
-              projectsPerPage = windowWidth < 768 ? 1 : windowWidth < 1024 ? 2 : 3;
-              gridClass = "flex transition-transform duration-300 ease-in-out";
-            }
-            
-            return (
-              <div className="relative">
-                <div className="overflow-hidden">
-                  <div className={gridClass} id={`carousel-${carouselId}`} style={{ transform: 'translateX(0%)' }}>
-                    {displayedProjects.map((project, index) => (
-                      <div key={project.id} className={`project-card flex-shrink-0 ${
-                        actualCount === 1 ? 'w-full' :
-                        actualCount === 2 ? 'w-full md:w-1/2' :
-                        'w-full md:w-1/2 lg:w-1/3'
-                      } px-4`}>
-                        <div className="project-image mb-4">
-                          <Image 
-                            src={project.image || '/img1.jpg'} 
-                            alt={project.alt || project.title}
-                            width={400}
-                            height={300}
-                            className={`w-full object-cover rounded-lg cursor-pointer ${
-                              actualCount === 1 ? 'h-96' : 'aspect-[1/1]'
-                            }`}
-                            onClick={() => {
-                              if (project.slug) {
-                                window.location.href = withTpl(`/work/${project.slug}`);
-                              }
-                            }}
-                          />
-                        </div>
-                        <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
-                        <p className="text-gray-600 text-sm leading-relaxed">
-                          {project.excerpt || project.description}
-                        </p>
-                        {project.category && (
-                          <span className="inline-block mt-2 px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded">
-                            {project.category}
-                          </span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
+  
+  const actualCount = displayedProjects.length;
+  
+  // Calculer le nombre de projets par page selon la largeur et le nombre de colonnes
+  let projectsPerPage;
+  if (actualCount === 1) {
+    projectsPerPage = 1;
+  } else if (actualCount === 2) {
+    projectsPerPage = windowWidth < 768 ? 1 : 2;
+  } else {
+    // Utiliser le nombre de colonnes configuré
+    if (columns === 2) {
+      projectsPerPage = windowWidth < 768 ? 1 : 2;
+    } else if (columns === 4) {
+      projectsPerPage = windowWidth < 768 ? 1 : windowWidth < 1024 ? 2 : 4;
+    } else {
+      // 3 colonnes par défaut
+      projectsPerPage = windowWidth < 768 ? 1 : windowWidth < 1024 ? 2 : 3;
+    }
+  }
+  
+  // Le carousel est nécessaire si on a plus de projets que ce qui peut être affiché sur une page
+  const needsNavigation = actualCount > projectsPerPage;
+  
+  const maxPages = Math.ceil(displayedProjects.length / projectsPerPage);
+  const isFirstPage = currentPage === 0;
+  const isLastPage = currentPage === maxPages - 1;
+  
+  // Fonction pour rendre un projet avec le style de survol
+  const renderProject = (project: Project) => (
+    <article key={project.slug || project.id} className="group">
+      {project.image && (
+        <Link href={`/work/${project.slug || project.id}`} className="block mb-4">
+          <div 
+            className={`${hoverClasses.wrapper} relative`}
+            style={{ 
+              aspectRatio: '2400 / 1800',
+              ...(hoverClasses.useMammothStyle && {
+                backgroundColor: 'var(--primary)'
+              } as React.CSSProperties)
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img 
+              src={project.image} 
+              alt={project.alt || project.title || 'Projet'} 
+              className={hoverClasses.image}
+              style={{ aspectRatio: '2400 / 1800', width: '100%', height: '100%' }}
+            />
+            {/* Icône flèche en haut à droite (apparaît au hover) */}
+            {hoverClasses.useMammothStyle && (
+              <div className="work-hover-arrow absolute top-4 right-4 w-8 h-8" style={{ color: 'var(--primary-foreground)' }}>
+                <svg 
+                  width="24" 
+                  height="24" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-full h-full"
+                >
+                  <path 
+                    fillRule="evenodd" 
+                    clipRule="evenodd" 
+                    d="M9 6.75C8.58579 6.75 8.25 6.41421 8.25 6C8.25 5.58579 8.58579 5.25 9 5.25H18C18.4142 5.25 18.75 5.58579 18.75 6V15C18.75 15.4142 18.4142 15.75 18 15.75C17.5858 15.75 17.25 15.4142 17.25 15V7.81066L6.53033 18.5303C6.23744 18.8232 5.76256 18.8232 5.46967 18.5303C5.17678 18.2374 5.17678 17.7626 5.46967 17.4697L16.1893 6.75H9Z" 
+                    fill="currentColor"
+                  />
+                </svg>
               </div>
-            );
-          } else {
-            let gridClass;
-            if (actualCount === 1) {
-              gridClass = "grid grid-cols-1 gap-8";
-            } else if (actualCount === 2) {
-              gridClass = "grid grid-cols-1 md:grid-cols-2 gap-8";
-            } else {
-              gridClass = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8";
-            }
-            
-            return (
-              <div className={gridClass}>
-                {displayedProjects.map(project => (
-                  <div key={project.id} className="project-card">
-                    <div className="project-image mb-4">
-                      <Image 
-                        src={project.image || '/img1.jpg'} 
-                        alt={project.alt || project.title}
-                        width={400}
-                        height={300}
-                        className={`w-full object-cover rounded-lg cursor-pointer ${
-                          actualCount === 1 ? 'h-96' : 'aspect-[1/1]'
-                        }`}
-                        onClick={() => {
-                          if (project.slug) {
-                            window.location.href = withTpl(`/work/${project.slug}`);
-                          }
-                        }}
-                      />
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">
-                      {project.excerpt || project.description}
-                    </p>
-                    {project.category && (
-                      <span className="inline-block mt-2 px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded">
-                        {project.category}
-                      </span>
-                    )}
+            )}
+          </div>
+        </Link>
+      )}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <h3 
+            className={h3Classes}
+            style={h3CustomColor ? { color: h3CustomColor } : { color: 'var(--foreground)' }}
+          >
+            <Link href={`/work/${project.slug || project.id}`} className="hover:text-accent transition-colors">
+              {project.title || 'Projet'}
+            </Link>
+          </h3>
+          {project.category && (
+            <small className="inline-block px-4 py-1.5 text-sm font-medium text-primary-foreground bg-primary rounded-full ml-4 whitespace-nowrap">{project.category}</small>
+          )}
+        </div>
+        {(project.excerpt || project.description) && (
+          <h4 
+            className={`${h4Classes} line-clamp-3`}
+            style={h4CustomColor ? { color: h4CustomColor } : { color: 'var(--foreground)' }}
+          >
+            {project.excerpt || project.description}
+          </h4>
+        )}
+      </div>
+    </article>
+  );
+  
+  return (
+    <section className="projects-section py-28" data-block-type="projects" data-block-theme={blockData.theme || (data as any).theme || 'auto'}>
+      <div>
+        {/* Titre de la section et navigation du carousel */}
+        <div className="mb-12 flex justify-between items-center">
+          {title && (
+            <h2 
+              className={h3Classes}
+              style={h3CustomColor ? { color: h3CustomColor } : { color: 'var(--foreground)' }}
+            >
+              {title}
+            </h2>
+          )}
+          
+          {/* Navigation - sur la même ligne que le titre */}
+          {needsNavigation && (
+            <div className="flex space-x-2">
+              <button
+                onClick={() => {
+                  if (!isFirstPage) {
+                    const newPage = currentPage - 1;
+                    setCurrentPage(newPage);
+                    
+                    const carousel = document.getElementById(`carousel-${carouselId}`);
+                    if (carousel) {
+                      // Calculer la translation en pixels pour plus de précision
+                      const firstItem = carousel.querySelector('div');
+                      if (firstItem) {
+                        const itemWidth = firstItem.offsetWidth;
+                        const gap = 32; // 2rem = 32px
+                        const translateX = -(newPage * (itemWidth + gap));
+                        carousel.style.transform = `translateX(${translateX}px)`;
+                      }
+                    }
+                  }
+                }}
+                className={`w-8 h-8 rounded-full transition-all duration-300 flex items-center justify-center font-semibold ${
+                  isFirstPage ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
+                }`}
+                style={{
+                  backgroundColor: isFirstPage ? 'var(--muted)' : 'var(--primary)',
+                  color: isFirstPage ? 'var(--muted-foreground)' : 'var(--primary-foreground)',
+                  border: isFirstPage ? '1px solid var(--border)' : 'none'
+                }}
+                onMouseEnter={(e) => {
+                  if (!isFirstPage) {
+                    e.currentTarget.style.opacity = '0.9';
+                    e.currentTarget.style.transform = 'scale(1.1)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isFirstPage) {
+                    e.currentTarget.style.opacity = '1';
+                    e.currentTarget.style.transform = 'scale(1)';
+                  }
+                }}
+              >
+                ←
+              </button>
+              <button
+                onClick={() => {
+                  if (!isLastPage) {
+                    const newPage = currentPage + 1;
+                    setCurrentPage(newPage);
+                    
+                    const carousel = document.getElementById(`carousel-${carouselId}`);
+                    if (carousel) {
+                      // Calculer la translation en pixels pour plus de précision
+                      const firstItem = carousel.querySelector('div');
+                      if (firstItem) {
+                        const itemWidth = firstItem.offsetWidth;
+                        const gap = 32; // 2rem = 32px
+                        const translateX = -(newPage * (itemWidth + gap));
+                        carousel.style.transform = `translateX(${translateX}px)`;
+                      }
+                    }
+                  }
+                }}
+                className={`w-8 h-8 rounded-full transition-all duration-300 flex items-center justify-center font-semibold ${
+                  isLastPage ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
+                }`}
+                style={{
+                  backgroundColor: isLastPage ? 'var(--muted)' : 'var(--primary)',
+                  color: isLastPage ? 'var(--muted-foreground)' : 'var(--primary-foreground)',
+                  border: isLastPage ? '1px solid var(--border)' : 'none'
+                }}
+                onMouseEnter={(e) => {
+                  if (!isLastPage) {
+                    e.currentTarget.style.opacity = '0.9';
+                    e.currentTarget.style.transform = 'scale(1.1)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isLastPage) {
+                    e.currentTarget.style.opacity = '1';
+                    e.currentTarget.style.transform = 'scale(1)';
+                  }
+                }}
+              >
+                →
+              </button>
+            </div>
+          )}
+        </div>
+        
+        {/* Grille des projets avec carousel si nécessaire */}
+        {needsNavigation ? (
+          <div className="relative">
+            <div className="overflow-hidden">
+              <div 
+                className="flex transition-transform duration-300 ease-in-out" 
+                id={`carousel-${carouselId}`} 
+                style={{ transform: 'translateX(0%)' }}
+              >
+                {displayedProjects.map((project, index) => (
+                  <div 
+                    key={project.id} 
+                    className={`flex-shrink-0 ${
+                      actualCount === 1 ? 'w-full' :
+                      actualCount === 2 ? 'w-full md:w-[calc(50%-1rem)]' :
+                      columns === 2 ? 'w-full md:w-[calc(50%-1rem)]' :
+                      columns === 4 ? 'w-full md:w-[calc(50%-1rem)] lg:w-[calc(25%-1.5rem)]' :
+                      'w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.33rem)]' // 3 colonnes par défaut
+                    } ${index < displayedProjects.length - 1 ? 'mr-8' : ''}`}
+                  >
+                    {renderProject(project)}
                   </div>
                 ))}
               </div>
-            );
-          }
-        })()}
+            </div>
+          </div>
+        ) : (
+          <div className={`grid grid-cols-1 sm:grid-cols-2 gap-8 ${
+            columns === 2 ? 'lg:grid-cols-2' :
+            columns === 4 ? 'lg:grid-cols-4 work-columns-4' :
+            'lg:grid-cols-3' // Par défaut 3 colonnes
+          }`}>
+            {displayedProjects.map(project => renderProject(project))}
+          </div>
+        )}
       </div>
     </section>
   );

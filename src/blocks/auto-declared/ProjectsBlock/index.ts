@@ -10,6 +10,7 @@ registerAutoBlock({
     title: 'NOS RÉALISATIONS',
     maxProjects: 6,
     selectedProjects: [],
-    theme: 'auto'
+    theme: 'auto',
+    columns: 3
   }
 });

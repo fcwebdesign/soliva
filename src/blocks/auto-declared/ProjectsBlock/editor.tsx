@@ -5,6 +5,7 @@ interface ProjectsData {
   maxProjects?: number;
   selectedProjects?: string[];
   theme?: 'light' | 'dark' | 'auto';
+  columns?: number;
 }
 
 interface Project {
@@ -136,6 +137,23 @@ export default function ProjectsBlockEditor({ data, onChange }: { data: Projects
             min="1"
             max="12"
           />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Nombre de colonnes
+          </label>
+          <select
+            value={data.columns || 3}
+            onChange={(e) => updateField('columns', parseInt(e.target.value, 10))}
+            className="block-input"
+          >
+            <option value={2}>2 colonnes</option>
+            <option value={3}>3 colonnes (par défaut)</option>
+            <option value={4}>4 colonnes</option>
+          </select>
+          <p className="text-xs text-gray-500 mt-1">
+            Choisissez le nombre de colonnes pour l'affichage de la grille de projets.
+          </p>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">

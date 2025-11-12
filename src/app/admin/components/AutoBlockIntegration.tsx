@@ -71,15 +71,36 @@ export function renderAutoBlockEditor(block: any, onUpdate?: (updates: any) => v
     return null;
   }
 
+  // Extraire les données du bloc (structure plate depuis l'admin)
+  // Les blocs peuvent avoir { id, type, items, content, ... } ou { id, type, data: {...} }
+  const blockData = block.data && typeof block.data === 'object' && Object.keys(block.data).length > 0
+    ? block.data
+    : (() => {
+        // Structure plate : extraire toutes les propriétés sauf id, type
+        const { id, type, ...rest } = block;
+        return rest;
+      })();
+
   return (
     <div className="block-editor">
       {autoBlock.editor ? (
         <autoBlock.editor
-          data={block}
+          data={blockData}
           onChange={(updates: any) => {
-            if (onUpdate) onUpdate(updates);
+            // Mettre à jour le bloc avec les nouvelles données
+            // Si le bloc a déjà une structure avec data, fusionner dans data
+            // Sinon, fusionner directement (structure plate)
+            let updatedBlock: any;
+            if (block.data && typeof block.data === 'object') {
+              // Structure avec data : fusionner les updates dans data
+              updatedBlock = { ...block, data: { ...block.data, ...updates } };
+            } else {
+              // Structure plate : fusionner directement
+              updatedBlock = { ...block, ...updates };
+            }
+            if (onUpdate) onUpdate(updatedBlock);
             // Cette fonction sera appelée par le parent
-            console.log('🔄 Mise à jour du bloc auto-déclaré:', updates);
+            console.log('🔄 Mise à jour du bloc auto-déclaré:', { block, updates, updatedBlock });
           }}
         />
       ) : (
