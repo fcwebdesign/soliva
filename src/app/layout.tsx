@@ -16,6 +16,7 @@ import Preloader from "@/components/Preloader";
 import { ColorPaletteStyle } from "@/components/ColorPaletteProvider";
 import { resolvePaletteFromContent } from "@/utils/palette-resolver";
 import { generatePaletteStyles } from "@/utils/palette-css-server";
+import { getSpacingConfig, spacingVarsCSS } from "@/utils/spacing";
 
 
 // Forcer le layout en dynamique pour éviter le cache > 2 MB
@@ -55,6 +56,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   const activeTemplate = await getActiveTemplate();
   const palette = resolvePaletteFromContent(content);
   const { themeClass } = generatePaletteStyles(palette);
+  const spacingConfig = getSpacingConfig(content);
   
   // Vérifier si on est sur une route d'admin
   const headersList = await headers();
@@ -115,6 +117,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           <meta name="pragma" content="no-cache" />
           <meta name="expires" content="0" />
           <ColorPaletteStyle palette={palette} />
+          <style id="spacing-vars">{spacingVarsCSS(spacingConfig)}</style>
         </head>
         <body className={`${templateKey === 'pearl' ? '' : 'site'} layout-${content.metadata?.layout || 'standard'} ${isDraftMode ? 'preview-mode' : ''}`}>
           {/* Preloader */}
