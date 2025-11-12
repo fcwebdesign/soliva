@@ -26,6 +26,7 @@ interface GalleryGridData {
   images?: GalleryImage[];
   layout?: 'grid-2' | 'grid-3' | 'grid-4' | 'masonry-2' | 'masonry-3' | 'masonry-4';
   gap?: 'small' | 'medium' | 'large';
+  sectionTitle?: string;
   showFilters?: boolean;
   showTitles?: boolean;
   showDescriptions?: boolean;
@@ -157,6 +158,16 @@ export default function GalleryGridBlockEditor({ data, onChange }: { data: Galle
   return (
     <div className="block-editor">
       <div className="space-y-6">
+        {/* Titre de section */}
+        <div>
+          <Label className="block text-sm font-medium text-gray-700 mb-2">Titre de section</Label>
+          <Input
+            value={data.sectionTitle || ''}
+            onChange={(e) => updateField('sectionTitle', e.target.value)}
+            placeholder="Ex: Notre Galerie"
+          />
+        </div>
+
         {/* Configuration générale */}
         <div className="grid grid-cols-2 gap-4">
           <div>

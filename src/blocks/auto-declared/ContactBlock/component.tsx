@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
+import { Link } from 'next-view-transitions';
 import { getTypographyConfig, getTypographyClasses, getCustomColor, defaultTypography } from '@/utils/typography';
 import { useContentUpdate, fetchContentWithNoCache } from '@/hooks/useContentUpdate';
 
@@ -109,12 +110,12 @@ export default function ContactBlock({ data }: { data: ContactData | any }) {
           
           {/* Bouton CTA */}
           {ctaText && ctaLink && (
-            <a 
+            <Link 
               href={ctaLink}
               className="contact-button inline-flex items-center px-6 py-3 rounded-lg font-medium text-sm transition-all duration-300"
             >
               {ctaText}
-            </a>
+            </Link>
           )}
         </div>
       </div>
