@@ -137,14 +137,9 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData | any
     'masonry-4': 'columns-1 md:columns-2 lg:columns-3 xl:columns-4'
   };
 
-  const gapClasses = {
-    small: 'gap-2',
-    medium: 'gap-4',
-    large: 'gap-6'
-  };
-
   const gridClass = layoutClasses[layout] || 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
-  const gapClass = gapClasses[gap] || 'gap-4';
+  // Gap géré via variable CSS exposée par le BO; on mappe l'option de bloc vers la variable locale
+  const localGapVar = gap === 'small' ? 'var(--gap-sm)' : gap === 'large' ? 'var(--gap-lg)' : 'var(--gap-md)';
   
   // Pour le masonry, on évite CSS columns (qui change l'ordre visuel)
   // et on utilise une grille avec N colonnes fixes pour préserver l'ordre gauche->droite
@@ -153,14 +148,14 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData | any
     ? Math.max(2, Math.min(4, parseInt(layout.split('-')[1] || '3', 10) || 3))
     : 0;
   const containerClass = isMasonry
-    ? `grid ${gapClass} ${
+    ? `grid gap-[var(--gap)] ${
         masonryColumns === 2
           ? 'grid-cols-1 md:grid-cols-2'
           : masonryColumns === 3
           ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
           : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
       }`
-    : `grid ${gridClass} ${gapClass}`;
+    : `grid ${gridClass} gap-[var(--gap)]`;
 
   // Fonction pour télécharger une image
   const downloadImage = (image: GalleryImage) => {
@@ -200,11 +195,11 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData | any
 
         {/* Grille d'images */}
         {displayImages.length > 0 ? (
-          <div className={containerClass}>
+          <div className={containerClass} style={{ ['--gap' as any]: localGapVar }}>
             {isMasonry
               ? // Masonry rendu en colonnes contrôlées pour préserver l'ordre gauche->droite
                 Array.from({ length: masonryColumns }).map((_, colIndex) => (
-                  <div key={`masonry-col-${colIndex}`} className={cn('flex flex-col', gapClass)}>
+                  <div key={`masonry-col-${colIndex}`} className={cn('flex flex-col', 'gap-[var(--gap)]')}>
                     {displayImages
                       .filter((_, idx) => idx % masonryColumns === colIndex)
                       .map((image) => (
