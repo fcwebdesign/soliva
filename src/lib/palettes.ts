@@ -47,3 +47,4 @@ export const defaultPaletteColors = {
   border: '#e5e7eb'
 };
 
+

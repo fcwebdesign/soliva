@@ -35,3 +35,4 @@ export const varsFromPalette = (p: ResolvedPalette) => {
   } as Record<string,string>;
 };
 
+

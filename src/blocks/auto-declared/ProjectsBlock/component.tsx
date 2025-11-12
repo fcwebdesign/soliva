@@ -133,8 +133,10 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
     return fullContent ? getTypographyConfig(fullContent) : {};
   }, [fullContent]);
   
+  const h2Classes = getTypographyClasses('h2', typoConfig, defaultTypography.h2);
   const h3Classes = getTypographyClasses('h3', typoConfig, defaultTypography.h3);
   const h4Classes = getTypographyClasses('h4', typoConfig, defaultTypography.h4);
+  const h2CustomColor = getCustomColor('h2', typoConfig);
   const h3CustomColor = getCustomColor('h3', typoConfig);
   const h4CustomColor = getCustomColor('h4', typoConfig);
   
@@ -287,8 +289,9 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
         <div className="mb-12 flex justify-between items-center">
           {title && (
             <h2 
-              className={h3Classes}
-              style={h3CustomColor ? { color: h3CustomColor } : { color: 'var(--foreground)' }}
+              className={h2Classes}
+              style={h2CustomColor ? { color: h2CustomColor } : { color: 'var(--foreground)' }}
+              data-block-type="h2"
             >
               {title}
             </h2>
@@ -337,7 +340,21 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
                   }
                 }}
               >
-                ←
+                <svg 
+                  width="20" 
+                  height="20" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-5 h-5"
+                >
+                  <path 
+                    fillRule="evenodd" 
+                    clipRule="evenodd" 
+                    d="M10.5303 5.46967C10.8232 5.76256 10.8232 6.23744 10.5303 6.53033L5.81066 11.25H20C20.4142 11.25 20.75 11.5858 20.75 12C20.75 12.4142 20.4142 12.75 20 12.75H5.81066L10.5303 17.4697C10.8232 17.7626 10.8232 18.2374 10.5303 18.5303C10.2374 18.8232 9.76256 18.8232 9.46967 18.5303L3.46967 12.5303C3.17678 12.2374 3.17678 11.7626 3.46967 11.4697L9.46967 5.46967C9.76256 5.17678 10.2374 5.17678 10.5303 5.46967Z" 
+                    fill="currentColor"
+                  />
+                </svg>
               </button>
               <button
                 onClick={() => {
@@ -379,7 +396,21 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
                   }
                 }}
               >
-                →
+                <svg 
+                  width="20" 
+                  height="20" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-5 h-5"
+                >
+                  <path 
+                    fillRule="evenodd" 
+                    clipRule="evenodd" 
+                    d="M13.4697 5.46967C13.7626 5.17678 14.2374 5.17678 14.5303 5.46967L20.5303 11.4697C20.8232 11.7626 20.8232 12.2374 20.5303 12.5303L14.5303 18.5303C14.2374 18.8232 13.7626 18.8232 13.4697 18.5303C13.1768 18.2374 13.1768 17.7626 13.4697 17.4697L18.1893 12.75H4C3.58579 12.75 3.25 12.4142 3.25 12C3.25 11.5858 3.58579 11.25 4 11.25H18.1893L13.4697 6.53033C13.1768 6.23744 13.1768 5.76256 13.4697 5.46967Z" 
+                    fill="currentColor"
+                  />
+                </svg>
               </button>
             </div>
           )}

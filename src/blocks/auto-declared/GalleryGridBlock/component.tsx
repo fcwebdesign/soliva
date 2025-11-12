@@ -30,20 +30,22 @@ interface GalleryGridData {
   theme?: 'light' | 'dark' | 'auto';
 }
 
-export default function GalleryGridBlock({ data }: { data: GalleryGridData }) {
+export default function GalleryGridBlock({ data }: { data: GalleryGridData | any }) {
   const { mounted } = useTheme();
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>('all');
   
-  const images = data.images || [];
-  const layout = data.layout || 'grid-3';
-  const gap = data.gap || 'medium';
-  const showFilters = data.showFilters !== false;
-  const showTitles = data.showTitles !== false;
-  const showDescriptions = data.showDescriptions !== false;
-  const enableLightbox = data.enableLightbox !== false;
-  const enableDownload = data.enableDownload !== false;
-  const blockTheme = data.theme || 'auto';
+  // Extraire les données (peut être dans data directement ou dans data.data)
+  const blockData = (data as any).data || data;
+  const images = blockData.images || [];
+  const layout = blockData.layout || 'grid-3';
+  const gap = blockData.gap || 'medium';
+  const showFilters = blockData.showFilters !== false;
+  const showTitles = blockData.showTitles !== false;
+  const showDescriptions = blockData.showDescriptions !== false;
+  const enableLightbox = blockData.enableLightbox !== false;
+  const enableDownload = blockData.enableDownload !== false;
+  const blockTheme = blockData.theme || 'auto';
 
   // Obtenir les catégories uniques
   const categories = ['all', ...Array.from(new Set(images.map(img => img.category).filter(Boolean)))];

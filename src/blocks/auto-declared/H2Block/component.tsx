@@ -44,7 +44,11 @@ export default function H2Block({ data }: { data: H2Data | any }) {
   
   // Classes typographiques pour h2 (sans la couleur pour la gérer via style)
   const h2Classes = useMemo(() => {
-    const classes = getTypographyClasses('h2', typoConfig, defaultTypography.h2);
+    // S'assurer que la config typographie existe et utilise les valeurs par défaut si nécessaire
+    const safeTypoConfig = typoConfig?.h2 ? { h2: typoConfig.h2 } : {};
+    
+    const classes = getTypographyClasses('h2', safeTypoConfig, defaultTypography.h2);
+    
     // Retirer uniquement les classes de couleur Tailwind
     return classes
       .replace(/\btext-(gray|black|white|red|blue|green|yellow|purple|pink|indigo|orange)-\d+\b/g, '')

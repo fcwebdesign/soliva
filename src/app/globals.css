@@ -343,7 +343,8 @@ body.admin-page,
   line-height: 1.2;
 }
 
-.site h2 {
+/* .site h2 ne s'applique pas aux H2 des blocs auto-déclarés (avec data-block-type="h2") */
+.site h2:not([data-block-type="h2"]) {
   font-weight: 700;
   letter-spacing: -0.04rem;
   line-height: 1.125;
@@ -1792,6 +1793,12 @@ html[data-theme="dark"] .logos-section .logo-item img,
   color: var(--foreground) !important;
 }
 
+/* Désactiver l'uppercase pour les H2 des blocs auto-déclarés */
+[data-block-type="h2"] {
+  text-transform: none !important;
+}
+
+
 /* Styles pour le générateur de brief */
 .brief-generator {
   margin-top: 3rem;
@@ -2787,27 +2794,21 @@ html.preview-mode body {
   transition: all 0.3s ease;
 }
 
-.service-offering-block:hover {
+/* Désactivé - pas de fond au survol */
+/* .service-offering-block:hover {
   background-color: rgba(0, 0, 0, 0.02);
-}
+} */
 
-.service-offering-block h3 {
-  font-size: clamp(1.5rem, 2vw, 2.5rem);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  color: var(--text);
-  margin: 0;
-}
 
-.service-offering-block p {
+/* Désactivé pour permettre l'utilisation de la typographie configurée dans l'admin */
+/* .service-offering-block p {
   font-size: 1rem;
   line-height: 1.1;
   color: var(--text-secondary);
   margin-bottom: 1rem;
   font-weight: 300;
   text-wrap: balance;
-}
+} */
 
 /* Responsive design pour les blocs de service */
 @media (max-width: 768px) {
@@ -2815,10 +2816,6 @@ html.preview-mode body {
     padding: 1.5rem 0;
   }
 
-  .service-offering-block h3 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
 
   .service-offerings-section {
     padding: 2rem 0;

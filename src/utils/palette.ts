@@ -74,3 +74,4 @@ export const resolvePalette = (p: BasePalette): ResolvedPalette => {
   return { ...p, ring, muted, card, popover, input, primaryFg, secondaryFg, accentFg, isDark };
 };
 
+
