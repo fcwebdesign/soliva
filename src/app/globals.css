@@ -35,7 +35,7 @@
   --text: var(--foreground);
   --text-secondary: var(--muted-foreground);
   --text-secondary-hsl: 0 0% 40%;
-  --max-width: 1440px;
+  --max-width: 1536px;
   
   /* Layout system classes */
   .layout-compact {
@@ -43,7 +43,7 @@
   }
   
   .layout-standard {
-    --max-width: 1440px;
+    --max-width: 1536px;
   }
   
   .layout-wide {

@@ -1,9 +1,13 @@
 export interface SpacingConfig {
-  sectionY?: string; // ex: '7rem' ou 'clamp(72px, 12vw, 128px)'
+  // Valeur directe (px/rem/clamp) lorsqu'en mode "custom"
+  sectionY?: string;
+  // Mode auto: clamp calculé depuis la cible et le layout
+  mode?: 'auto' | 'custom';
+  autoTarget?: number;
   gap?: {
-    sm?: string; // ex: '0.5rem'
-    md?: string; // ex: '1rem'
-    lg?: string; // ex: '1.5rem'
+    sm?: string;
+    md?: string;
+    lg?: string;
   };
   defaultGap?: 'sm' | 'md' | 'lg';
 }
@@ -18,11 +22,37 @@ export const defaultSpacing: SpacingConfig = {
   defaultGap: 'md',
 };
 
+function getLayoutWidth(layout: string | undefined): number {
+  if (layout === 'compact') return 1280;
+  if (layout === 'wide') return 1920;
+  return 1536; // standard
+}
+
+function clampFromTarget(targetPx: number, layoutWidth: number): string {
+  const vw = (targetPx / layoutWidth) * 100;
+  const minPx = Math.round(targetPx * 0.6);
+  const maxPx = Math.round(targetPx * 1.4);
+  return `clamp(${minPx}px, ${vw.toFixed(2)}vw, ${maxPx}px)`;
+}
+
 export function getSpacingConfig(content: any): SpacingConfig {
   const meta = content?.metadata || {};
   const spacing = meta.spacing || {};
+  const mode: 'auto' | 'custom' = spacing.mode || 'custom';
+
+  let sectionY = spacing.sectionY || defaultSpacing.sectionY;
+  if (mode === 'auto') {
+    const layoutWidth = getLayoutWidth(meta?.layout);
+    const target = typeof spacing.autoTarget === 'number' && !isNaN(spacing.autoTarget)
+      ? spacing.autoTarget
+      : 120; // valeur par défaut raisonnable
+    sectionY = clampFromTarget(target, layoutWidth);
+  }
+
   return {
-    sectionY: spacing.sectionY || defaultSpacing.sectionY,
+    mode,
+    autoTarget: spacing.autoTarget,
+    sectionY,
     gap: {
       sm: spacing.gap?.sm || defaultSpacing.gap!.sm,
       md: spacing.gap?.md || defaultSpacing.gap!.md,
@@ -40,4 +70,3 @@ export function spacingVarsCSS(config: SpacingConfig): string {
   const chosenValue = chosen === 'sm' ? gapSm : chosen === 'lg' ? gapLg : gapMd;
   return `:root{--section:${config.sectionY || defaultSpacing.sectionY};--gap-sm:${gapSm};--gap-md:${gapMd};--gap-lg:${gapLg};--gap:${chosenValue};}`;
 }
-
