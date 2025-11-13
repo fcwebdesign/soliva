@@ -48,3 +48,6 @@ data/versions/
 data/content.json.backup*
 data/content.json.cleaned*
 data/content.json.corrupted
+
+# Ignore large backups
+data/backups/

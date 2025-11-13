@@ -120,6 +120,26 @@
   color: white;
 }
 
+/* Global section spacing: top-only + last pb (front only) */
+.site:not(.admin-page) main > section,
+.site:not(.admin-page) main > div > section,
+.site:not(.admin-page) section[data-block-type] {
+  padding-top: var(--section);
+  padding-bottom: 0 !important;
+}
+
+.site:not(.admin-page) main > section:first-child,
+.site:not(.admin-page) main > div > section:first-child,
+.site:not(.admin-page) section[data-block-type]:first-child {
+  padding-top: 0;
+}
+
+.site:not(.admin-page) main > section:last-child,
+.site:not(.admin-page) main > div > section:last-child,
+.site:not(.admin-page) section[data-block-type]:last-child {
+  padding-bottom: var(--section) !important;
+}
+
 .site [data-theme="dark"] .text-gray-900 {
   color: white;
 }
