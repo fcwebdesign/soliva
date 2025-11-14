@@ -13,6 +13,7 @@ import { TemplateProvider } from "@/templates/context";
 import ThemeTransitions from "@/templates/ThemeTransitions";
 import { Toaster } from "@/components/ui/sonner";
 import Preloader from "@/components/Preloader";
+import TransitionGuard from "@/components/TransitionGuard";
 import { ColorPaletteStyle } from "@/components/ColorPaletteProvider";
 import { resolvePaletteFromContent } from "@/utils/palette-resolver";
 import { generatePaletteStyles } from "@/utils/palette-css-server";
@@ -83,6 +84,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           </head>
           <body className={`site layout-${content.metadata?.layout || 'standard'} ${isDraftMode ? 'preview-mode' : ''}`}>
             <Preloader />
+            <TransitionGuard />
             <TemplateProvider value={{ key: 'soliva' }}>
               {/* Per-template page transitions (no-op for admin since key=soliva) */}
               <ThemeTransitions />
@@ -123,6 +125,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <body className={`${templateKey === 'pearl' ? '' : 'site'} layout-${content.metadata?.layout || 'standard'} ${isDraftMode ? 'preview-mode' : ''}`}>
           {/* Preloader */}
           <Preloader />
+          <TransitionGuard />
           
               <TemplateProvider value={{ key: templateKey }}>
                 {/* Per-template page transitions */}

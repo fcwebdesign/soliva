@@ -1,10 +1,10 @@
 "use client";
 import { useTransitionRouter } from "next-view-transitions";
-import { useCallback, useRef } from "react";
+import { useCallback } from "react";
+import { isTransitionInProgress, startTransition, endTransition } from "@/utils/transitionLock";
 
 export function usePageTransitions() {
   const router = useTransitionRouter();
-  const isTransitioning = useRef(false);
 
   const isSafari = useCallback((): boolean => {
     const ua = navigator.userAgent.toLowerCase();
@@ -17,32 +17,28 @@ export function usePageTransitions() {
   }, [isSafari]);
 
   const triggerPageTransition = useCallback((path: string): void => {
-    // Éviter les transitions multiples
-    if (isTransitioning.current) {
-      console.log('🚫 Transition déjà en cours, ignorée');
+    // Utiliser le verrouillage global
+    if (!startTransition()) {
       return;
     }
-    
-    isTransitioning.current = true;
     
     if (isBasicTransition()) {
       const curtain = document.getElementById("curtain");
       if (!curtain) {
-        isTransitioning.current = false;
+        endTransition();
         return;
       }
 
       curtain.style.transform = "translateY(0%)";
 
-      const delay = isSafari() ? 1000 : 600;
-
+      // SUPPRESSION DU DÉLAI : La transition doit démarrer immédiatement
+      // Pas de setTimeout - navigation immédiate
+      router.push(path);
+      
+      // Réinitialiser le flag après la navigation (court délai pour laisser le temps à la navigation)
       setTimeout(() => {
-        router.push(path);
-        // Réinitialiser le flag après la navigation
-        setTimeout(() => {
-          isTransitioning.current = false;
-        }, 100);
-      }, delay);
+        endTransition();
+      }, 100);
 
       return;
     }
@@ -67,7 +63,7 @@ export function usePageTransitions() {
     ).addEventListener('finish', () => {
       // Réinitialiser le flag après l'animation
       setTimeout(() => {
-        isTransitioning.current = false;
+        endTransition();
       }, 100);
     });
   }, [router, isBasicTransition, isSafari]);
@@ -80,10 +76,9 @@ export function usePageTransitions() {
       return;
     }
 
-    // Éviter les transitions multiples
-    if (isTransitioning.current) {
+    // Utiliser le verrouillage global
+    if (isTransitionInProgress()) {
       e.preventDefault();
-      console.log('🚫 Navigation ignorée - transition en cours');
       return;
     }
 
@@ -92,8 +87,14 @@ export function usePageTransitions() {
     if (isBasicTransition()) {
       triggerPageTransition(path);
     } else {
+      if (!startTransition()) {
+        return;
+      }
       router.push(path, {
-        onTransitionReady: () => triggerPageTransition(path),
+        onTransitionReady: () => {
+          triggerPageTransition(path);
+          setTimeout(() => endTransition(), 100);
+        },
       });
     }
   }, [router, isBasicTransition, triggerPageTransition]);
@@ -106,9 +107,8 @@ export function usePageTransitions() {
     if (isInternal && !withMod) {
       e.preventDefault();
       
-      // Éviter les transitions multiples
-      if (isTransitioning.current) {
-        console.log('🚫 Clic de lien ignoré - transition en cours');
+      // Utiliser le verrouillage global
+      if (isTransitionInProgress()) {
         return;
       }
       
@@ -119,8 +119,14 @@ export function usePageTransitions() {
         if (isBasicTransition()) {
           triggerPageTransition(href);
         } else {
+          if (!startTransition()) {
+            return;
+          }
           router.push(href, {
-            onTransitionReady: () => triggerPageTransition(href),
+            onTransitionReady: () => {
+              triggerPageTransition(href);
+              setTimeout(() => endTransition(), 100);
+            },
           });
         }
       }
