@@ -241,10 +241,10 @@ export default function TestimonialBlock({ data }: { data: TestimonialData | any
   );
 
   return (
-    <div 
+    <section 
       className="testimonial-block"
       data-block-type="testimonial"
-      data-theme={theme}
+      data-block-theme={theme}
     >
       <div className="space-y-8">
         {/* Titre de la section et navigation du carousel */}
@@ -416,6 +416,6 @@ export default function TestimonialBlock({ data }: { data: TestimonialData | any
           </div>
         )}
       </div>
-    </div>
+    </section>
   );
 }

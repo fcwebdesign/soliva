@@ -86,7 +86,7 @@ export default function ContactBlock({ data }: { data: ContactData | any }) {
 
   return (
     <section 
-      className="contact-section py-28" 
+      className="contact-section" 
       data-block-type="contact" 
       data-block-theme={data.theme || 'auto'}
     >

@@ -51,7 +51,7 @@ export default function FourColumnsBlock({ data }: { data: FourColumnsData }) {
   
   // Ne rien rendre tant que le composant n'est pas monté
   if (!mounted) {
-    return <div className="four-columns-section py-28" style={{ minHeight: '200px' }}></div>;
+    return <div className="four-columns-section" style={{ minHeight: '200px' }}></div>;
   }
 
   // Fonction optimisée pour rendre les sous-blocs en utilisant les blocs scalables
@@ -133,7 +133,7 @@ export default function FourColumnsBlock({ data }: { data: FourColumnsData }) {
   };
   
   return (
-    <section className="four-columns-section py-28" data-block-type="four-columns" data-block-theme={blockTheme}>
+    <section className="four-columns-section" data-block-type="four-columns" data-block-theme={blockTheme}>
       <div className="container mx-auto">
         <div className={`grid ${layoutClass} ${gapClass} ${alignmentClass}`}>
           <div className="space-y-4">

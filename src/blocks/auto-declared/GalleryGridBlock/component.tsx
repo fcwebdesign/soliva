@@ -168,7 +168,7 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData | any
   };
 
   return (
-    <section className="gallery-grid-section py-[var(--section)]" data-block-type="gallery-grid" data-block-theme={blockTheme}>
+    <section className="gallery-grid-section" data-block-type="gallery-grid" data-block-theme={blockTheme}>
       <div className="px-4">
         {/* Titre de section */}
         {sectionTitle && (

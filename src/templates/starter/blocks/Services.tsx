@@ -22,7 +22,7 @@ export default function ServicesBlockStarter({ title, subtitle, offerings = [], 
   ));
 
   return (
-    <section className="starter-services py-16" data-block-type="services">
+    <section className="starter-services" data-block-type="services">
       <div className="container mx-auto px-5">
         {(title || subtitle) && (
           <header className="mb-8">

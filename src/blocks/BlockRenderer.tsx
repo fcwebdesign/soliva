@@ -52,9 +52,21 @@ export default function BlockRenderer({ blocks }: { blocks: AnyBlock[] }) {
   return (
     <div className="blocks-container">
       {blocks.map((block) => {
+        // Debug pour les blocs image
+        if (process.env.NODE_ENV !== 'production' && block.type === 'image') {
+          console.log('🖼️ BlockRenderer - Bloc image détecté:', { 
+            block, 
+            hasTemplateComponent: !!(registry[block.type] ?? defaultRegistry[block.type]),
+            scalable: getAutoDeclaredBlock(block.type)
+          });
+        }
+
         // 1) Template registry override en priorité
         const TemplateComponent = registry[block.type] ?? defaultRegistry[block.type];
         if (TemplateComponent) {
+          if (process.env.NODE_ENV !== 'production' && block.type === 'image') {
+            console.log('✅ BlockRenderer - Utilisation du TemplateComponent pour image');
+          }
           const props = { ...block, 'data-block-type': block.type, 'data-block-theme': block.theme || 'auto' } as any;
           return <TemplateComponent key={block.id} {...props} />;
         }
@@ -62,6 +74,9 @@ export default function BlockRenderer({ blocks }: { blocks: AnyBlock[] }) {
         // 2) Fallback sur les blocs auto-déclarés (scalable)
         const scalable = getAutoDeclaredBlock(block.type);
         if (scalable?.component) {
+          if (process.env.NODE_ENV !== 'production' && block.type === 'image') {
+            console.log('✅ BlockRenderer - Utilisation du bloc auto-déclaré ImageBlock');
+          }
           const BlockComponent = scalable.component as any;
           const data = { ...block, title: (block as any).title || '', content: (block as any).content || '', theme: (block as any).theme || 'auto' };
           return <BlockComponent key={block.id} data={data} />;

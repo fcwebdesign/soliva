@@ -100,7 +100,7 @@ export default function LogosBlock({ data }: { data: LogosData | any }) {
   }, [typoConfig]);
   
   return (
-    <section className="logos-section py-28" data-block-type="logos" data-block-theme={data.theme || 'auto'}>
+    <section className="logos-section" data-block-type="logos" data-block-theme={data.theme || 'auto'}>
       <div>
         {/* Titre de la section */}
         {title && (

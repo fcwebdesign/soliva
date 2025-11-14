@@ -122,7 +122,7 @@ export default function ServicesBlock({ data }: { data: ServicesData | any }) {
   }, [typoConfig]);
   
   return (
-    <section className="service-offerings-section py-28">
+    <section className="service-offerings-section" data-block-type="services" data-block-theme={data.theme || 'auto'}>
       <div>
         {title && (
           <div className="mb-12">

@@ -217,7 +217,7 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
   // État de chargement
   if (loading) {
     return (
-      <section className="projects-section py-28" data-block-type="projects" data-block-theme={blockData.theme || (data as any).theme || 'auto'}>
+      <section className="projects-section" data-block-type="projects" data-block-theme={blockData.theme || (data as any).theme || 'auto'}>
         <div className="text-center py-16">
           <p style={{ color: 'var(--muted-foreground)' }}>Chargement des projets...</p>
         </div>
@@ -228,7 +228,7 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
   // Aucun projet trouvé
   if (displayedProjects.length === 0) {
     return (
-      <section className="projects-section py-28" data-block-type="projects" data-block-theme={blockData.theme || (data as any).theme || 'auto'}>
+      <section className="projects-section" data-block-type="projects" data-block-theme={blockData.theme || (data as any).theme || 'auto'}>
         <div className="text-center py-16">
           <p style={{ color: 'var(--muted-foreground)' }}>Aucun projet pour l'instant.</p>
         </div>
@@ -334,7 +334,7 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
   );
   
   return (
-    <section className="projects-section py-28" data-block-type="projects" data-block-theme={blockData.theme || (data as any).theme || 'auto'}>
+    <section className="projects-section" data-block-type="projects" data-block-theme={blockData.theme || (data as any).theme || 'auto'}>
       <div>
         {/* Titre de la section et navigation du carousel */}
         <div className="mb-12 flex justify-between items-center">

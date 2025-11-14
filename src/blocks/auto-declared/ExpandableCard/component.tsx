@@ -158,7 +158,7 @@ export default function ExpandableCard({ data }: { data: ExpandableCardData | an
   }
 
   return (
-    <div className="expandable-card-block">
+    <section className="expandable-card-block" data-block-type="expandable-card" data-block-theme={blockData?.theme || 'auto'}>
       {/* Titre de la section */}
       {title && (
         <div className="mb-12">
@@ -238,6 +238,6 @@ export default function ExpandableCard({ data }: { data: ExpandableCardData | an
       ))}
         </section>
       )}
-    </div>
+    </section>
   );
 }

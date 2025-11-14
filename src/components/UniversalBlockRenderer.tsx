@@ -170,7 +170,7 @@ const UniversalBlockRenderer: React.FC<UniversalBlockRendererProps> = ({ blocks 
       
       case 'cta-minimaliste':
         return (
-          <section key={block.id} id="contact" className="py-[var(--section)] border-t border-black/5">
+          <section key={block.id} id="contact" data-block-type="contact" className="border-t border-black/5">
             <div className="container flex flex-col md:flex-row items-end md:items-center justify-between gap-6">
               <h3 className="title text-3xl md:text-5xl font-semibold tracking-tight">
                 {block.text || "Travaillons ensemble"}

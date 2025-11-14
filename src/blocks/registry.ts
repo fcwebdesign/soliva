@@ -4,7 +4,8 @@
 import type { BlockComponent } from './types';
 
 // Composants par défaut (legacy)
-import Image from './defaults/Image';
+// Note: image est maintenant géré par le système auto-déclaré (ImageBlock)
+// import Image from './defaults/Image';
 
 // Starter template
 import ServicesStarter from '../templates/starter/blocks/Services';
@@ -12,7 +13,8 @@ import ServicesStarter from '../templates/starter/blocks/Services';
 export type BlockRegistry = Record<string, BlockComponent>;
 
 export const defaultRegistry: BlockRegistry = {
-  image: Image as BlockComponent,
+  // image retiré : utilise maintenant le système auto-déclaré ImageBlock
+  // image: Image as BlockComponent,
 };
 
 export const registries: Record<string, BlockRegistry> = {
