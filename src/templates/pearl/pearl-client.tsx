@@ -11,6 +11,7 @@ import { useRevealAnimation } from '@/animations/reveal/hooks/useRevealAnimation
 import RevealAnimation from '@/animations/reveal/RevealAnimationOriginal';
 import { getTypographyConfig, getTypographyClasses, getCustomColor, defaultTypography } from '@/utils/typography';
 import '@/animations/reveal/reveal-original.css';
+import './pearl.css';
 
 export default function PearlClient() {
   const [content, setContent] = useState<any>(null);
