@@ -20,9 +20,30 @@ export default function TransitionGuard() {
   // Intercepter startViewTransition() une seule fois au montage
   useEffect(() => {
     interceptViewTransitions();
+    
+    // Intercepter les erreurs de Promise non capturées liées aux transitions
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      const error = event.reason;
+      const errorMessage = error?.message || error?.toString() || '';
+      
+      // Gérer silencieusement les erreurs "Skipped ViewTransition"
+      if (errorMessage.includes('Skipped ViewTransition') || 
+          errorMessage.includes('another transition starting')) {
+        console.log('⚠️ Erreur de transition interceptée (Promise non capturée)');
+        event.preventDefault(); // Empêcher l'erreur de remonter
+        return;
+      }
+    };
+    
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+    
+    return () => {
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+    };
   }, []);
 
   // Intercepter les clics rapides (double-clics) sur les liens
+  // ET optimiser le chargement des images lors des transitions
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;

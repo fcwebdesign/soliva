@@ -42,8 +42,9 @@ export default function ImageBlock({ data }: { data: ImageData | any }) {
           src={imageSrc} 
           alt={imageAlt} 
           className="w-full h-auto max-h-[90vh] object-cover"
-          loading="lazy"
+          loading="eager"
           decoding="async"
+          fetchPriority="high"
         />
       </div>
     </section>

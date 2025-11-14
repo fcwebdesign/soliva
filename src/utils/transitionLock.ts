@@ -68,13 +68,59 @@ export function interceptViewTransitions(): void {
     }, 3000);
 
     try {
-      // Appeler la fonction native
-      // Si cette ligne échoue avec "Skipped ViewTransition", on gère l'erreur silencieusement
-      const transition = originalStartViewTransition(callback);
+      // Appeler la fonction native dans un try/catch qui capture aussi les erreurs asynchrones
+      let transition: any;
+      
+      try {
+        transition = originalStartViewTransition(callback);
+      } catch (syncError: any) {
+        // Erreur synchrone
+        if (syncError?.message?.includes('Skipped ViewTransition') || 
+            syncError?.message?.includes('another transition starting')) {
+          console.log('⚠️ Transition ignorée par le navigateur (déjà en cours - synchrone)');
+          transitionLock = false;
+          isTransitioning = false;
+          if (transitionTimeout) {
+            clearTimeout(transitionTimeout);
+            transitionTimeout = null;
+          }
+          return {
+            finished: Promise.resolve(),
+            updateCallbackDone: Promise.resolve(),
+            ready: Promise.resolve(),
+            skipTransition: () => {}
+          };
+        }
+        throw syncError;
+      }
 
-      // Déverrouiller quand la transition se termine
+      // Wrapper les Promises pour capturer les erreurs asynchrones
       if (transition && transition.finished && typeof transition.finished.then === 'function') {
-        transition.finished.then(() => {
+        // Créer un wrapper autour de la Promise finished pour intercepter les erreurs
+        // On ne peut pas modifier directement transition.finished car c'est une propriété en lecture seule
+        const originalFinished = transition.finished;
+        
+        // Wrapper la Promise pour capturer les erreurs
+        const wrappedFinished = originalFinished.catch((error: any) => {
+          // Gérer l'erreur "Skipped ViewTransition" dans la Promise
+          if (error?.message?.includes('Skipped ViewTransition') || 
+              error?.message?.includes('another transition starting')) {
+            console.log('⚠️ Transition ignorée par le navigateur (déjà en cours - asynchrone)');
+            transitionLock = false;
+            isTransitioning = false;
+            if (transitionTimeout) {
+              clearTimeout(transitionTimeout);
+              transitionTimeout = null;
+            }
+            // Retourner une Promise résolue pour éviter que l'erreur remonte
+            return Promise.resolve();
+          }
+          // Pour les autres erreurs, re-lancer
+          throw error;
+        });
+
+        // Déverrouiller quand la transition se termine
+        wrappedFinished.then(() => {
           // Petit délai pour être sûr que tout est terminé
           setTimeout(() => {
             transitionLock = false;
@@ -111,7 +157,7 @@ export function interceptViewTransitions(): void {
       // C'est une erreur attendue quand une transition est déjà en cours
       if (error?.message?.includes('Skipped ViewTransition') || 
           error?.message?.includes('another transition starting')) {
-        console.log('⚠️ Transition ignorée par le navigateur (déjà en cours)');
+        console.log('⚠️ Transition ignorée par le navigateur (déjà en cours - catch)');
         // Déverrouiller immédiatement car la transition n'a pas démarré
         transitionLock = false;
         isTransitioning = false;
