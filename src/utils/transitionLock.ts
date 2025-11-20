@@ -1,16 +1,17 @@
 /**
  * Système de verrouillage global pour les View Transitions
- * Empêche les transitions multiples qui causent l'erreur "Skipped ViewTransition"
  * 
- * STRATÉGIE : Intercepter startViewTransition() au niveau global
- * plutôt que d'intercepter les clics (qui ajoutent des délais)
+ * STRATÉGIE SIMPLIFIÉE :
+ * 1. Intercepter UNIQUEMENT startViewTransition() au niveau global
+ * 2. Laisser next-view-transitions gérer TOUT le reste
+ * 3. Pas de prévention de clics, pas de délais, pas de complexité
+ * 
+ * Principe : Si une transition est en cours, ignorer silencieusement les nouvelles tentatives
  */
 
 let isTransitioning = false;
 let transitionTimeout: NodeJS.Timeout | null = null;
 let isIntercepted = false;
-// Verrou atomique pour éviter les race conditions
-let transitionLock = false;
 
 /**
  * Intercepte document.startViewTransition() au niveau global
@@ -30,14 +31,9 @@ export function interceptViewTransitions(): void {
   const originalStartViewTransition = (document as any).startViewTransition.bind(document);
 
   // Remplacer par notre version qui vérifie le verrouillage
-  // Utiliser un verrou atomique pour éviter les race conditions
   (document as any).startViewTransition = function(callback: () => void | Promise<void>) {
-    // Si une transition est déjà en cours, ignorer complètement SANS appeler la fonction native
-    // Cela évite l'erreur "Skipped ViewTransition" du navigateur
-    // IMPORTANT : Ne pas exécuter le callback car cela pourrait causer des problèmes de navigation
-    if (transitionLock || isTransitioning) {
-      console.log('🚫 startViewTransition ignoré - une transition est déjà en cours');
-      
+    // ✅ Vérification atomique : Si une transition est déjà en cours, ignorer complètement
+    if (isTransitioning) {
       // Retourner un objet mock qui simule l'API ViewTransition
       // Le callback n'est PAS exécuté pour éviter les conflits
       return {
@@ -48,118 +44,68 @@ export function interceptViewTransitions(): void {
       };
     }
 
-    // VERROUILLER IMMÉDIATEMENT (atomique) - AVANT d'appeler la fonction native
-    // Cette ligne doit être exécutée AVANT d'appeler originalStartViewTransition
-    // pour éviter qu'un autre appel ne passe entre les deux
-    transitionLock = true;
+    // VERROUILLER IMMÉDIATEMENT (atomique)
     isTransitioning = true;
-
+    
     // Nettoyer le timeout précédent s'il existe
     if (transitionTimeout) {
       clearTimeout(transitionTimeout);
       transitionTimeout = null;
     }
 
-    // Déverrouiller après un délai de sécurité (en cas d'erreur)
+    // Timeout de sécurité adaptatif (durée transition + marge)
+    const defaultTransitionDuration = 1500;
+    const safetyMargin = 500;
     transitionTimeout = setTimeout(() => {
-      transitionLock = false;
       isTransitioning = false;
       transitionTimeout = null;
-    }, 3000);
+    }, defaultTransitionDuration + safetyMargin);
 
     try {
-      // Appeler la fonction native dans un try/catch qui capture aussi les erreurs asynchrones
-      let transition: any;
-      
-      try {
-        transition = originalStartViewTransition(callback);
-      } catch (syncError: any) {
-        // Erreur synchrone
-        if (syncError?.message?.includes('Skipped ViewTransition') || 
-            syncError?.message?.includes('another transition starting')) {
-          console.log('⚠️ Transition ignorée par le navigateur (déjà en cours - synchrone)');
-          transitionLock = false;
-          isTransitioning = false;
-          if (transitionTimeout) {
-            clearTimeout(transitionTimeout);
-            transitionTimeout = null;
-          }
-          return {
-            finished: Promise.resolve(),
-            updateCallbackDone: Promise.resolve(),
-            ready: Promise.resolve(),
-            skipTransition: () => {}
-          };
-        }
-        throw syncError;
-      }
+      // Appeler la fonction native
+      const transition = originalStartViewTransition(callback);
 
-      // Wrapper les Promises pour capturer les erreurs asynchrones
+      // Si la transition a une Promise finished, écouter sa résolution
       if (transition && transition.finished && typeof transition.finished.then === 'function') {
-        // Créer un wrapper autour de la Promise finished pour intercepter les erreurs
-        // On ne peut pas modifier directement transition.finished car c'est une propriété en lecture seule
-        const originalFinished = transition.finished;
-        
-        // Wrapper la Promise pour capturer les erreurs
-        const wrappedFinished = originalFinished.catch((error: any) => {
-          // Gérer l'erreur "Skipped ViewTransition" dans la Promise
-          if (error?.message?.includes('Skipped ViewTransition') || 
-              error?.message?.includes('another transition starting')) {
-            console.log('⚠️ Transition ignorée par le navigateur (déjà en cours - asynchrone)');
-            transitionLock = false;
+        transition.finished
+          .then(() => {
+            // ✅ Déverrouiller immédiatement quand la transition se termine
             isTransitioning = false;
             if (transitionTimeout) {
               clearTimeout(transitionTimeout);
               transitionTimeout = null;
             }
-            // Retourner une Promise résolue pour éviter que l'erreur remonte
-            return Promise.resolve();
-          }
-          // Pour les autres erreurs, re-lancer
-          throw error;
-        });
-
-        // Déverrouiller quand la transition se termine
-        wrappedFinished.then(() => {
-          // Petit délai pour être sûr que tout est terminé
-          setTimeout(() => {
-            transitionLock = false;
+          })
+          .catch((error: any) => {
+            // Gérer l'erreur "Skipped ViewTransition" silencieusement
+            if (error?.message?.includes('Skipped ViewTransition') || 
+                error?.message?.includes('another transition starting')) {
+              // Déverrouiller immédiatement car la transition n'a pas démarré
+              isTransitioning = false;
+              if (transitionTimeout) {
+                clearTimeout(transitionTimeout);
+                transitionTimeout = null;
+              }
+              return;
+            }
+            // Pour les autres erreurs, déverrouiller quand même
             isTransitioning = false;
             if (transitionTimeout) {
               clearTimeout(transitionTimeout);
               transitionTimeout = null;
             }
-          }, 100);
-        }).catch(() => {
-          // En cas d'erreur, déverrouiller quand même
-          transitionLock = false;
-          isTransitioning = false;
-          if (transitionTimeout) {
-            clearTimeout(transitionTimeout);
-            transitionTimeout = null;
-          }
-        });
+          });
       } else {
-        // Si la transition n'a pas de .finished, déverrouiller après un délai
-        setTimeout(() => {
-          transitionLock = false;
-          isTransitioning = false;
-          if (transitionTimeout) {
-            clearTimeout(transitionTimeout);
-            transitionTimeout = null;
-          }
-        }, 2000);
+        // Si pas de .finished, utiliser le timeout de sécurité
+        // (ne devrait jamais arriver avec l'API moderne)
       }
 
       return transition;
     } catch (error: any) {
       // Gérer l'erreur "Skipped ViewTransition" silencieusement
-      // C'est une erreur attendue quand une transition est déjà en cours
       if (error?.message?.includes('Skipped ViewTransition') || 
           error?.message?.includes('another transition starting')) {
-        console.log('⚠️ Transition ignorée par le navigateur (déjà en cours - catch)');
         // Déverrouiller immédiatement car la transition n'a pas démarré
-        transitionLock = false;
         isTransitioning = false;
         if (transitionTimeout) {
           clearTimeout(transitionTimeout);
@@ -175,19 +121,16 @@ export function interceptViewTransitions(): void {
       }
       
       // Pour les autres erreurs, déverrouiller et re-lancer
-      transitionLock = false;
       isTransitioning = false;
       if (transitionTimeout) {
         clearTimeout(transitionTimeout);
         transitionTimeout = null;
       }
-      // Re-lancer l'erreur pour que l'app sache qu'il y a eu un problème
       throw error;
     }
   };
 
   isIntercepted = true;
-  console.log('✅ View Transitions interceptées au niveau global');
 }
 
 /**
@@ -199,37 +142,35 @@ export function isTransitionInProgress(): boolean {
 
 /**
  * Démarre une transition (verrouille)
- * Retourne true si la transition peut démarrer, false si une transition est déjà en cours
+ * ⚠️ DÉPRÉCIÉ : Ne plus utiliser directement, l'interception globale gère tout
  */
 export function startTransition(): boolean {
+  // Cette fonction existe pour compatibilité mais ne devrait plus être utilisée
+  // L'interception globale gère tout automatiquement
   if (isTransitioning) {
-    console.log('🚫 Transition déjà en cours, ignorée');
     return false;
   }
-  
   isTransitioning = true;
   
-  // Nettoyer le timeout précédent s'il existe
   if (transitionTimeout) {
     clearTimeout(transitionTimeout);
   }
   
-  // Déverrouiller après un délai de sécurité (3 secondes max)
-  // Cela évite que le verrou reste actif indéfiniment en cas d'erreur
+  const defaultTransitionDuration = 1500;
+  const safetyMargin = 500;
   transitionTimeout = setTimeout(() => {
     isTransitioning = false;
     transitionTimeout = null;
-    console.log('🔓 Verrou de transition libéré (timeout de sécurité)');
-  }, 3000);
+  }, defaultTransitionDuration + safetyMargin);
   
   return true;
 }
 
 /**
  * Termine une transition (déverrouille)
+ * ⚠️ DÉPRÉCIÉ : Ne plus utiliser directement, l'interception globale gère tout
  */
 export function endTransition(): void {
-  transitionLock = false;
   isTransitioning = false;
   
   if (transitionTimeout) {
@@ -237,31 +178,3 @@ export function endTransition(): void {
     transitionTimeout = null;
   }
 }
-
-/**
- * Wrapper pour router.push qui gère le verrouillage
- */
-export function safePush(
-  router: any,
-  path: string,
-  options?: { onTransitionReady?: () => void }
-): void {
-  if (!startTransition()) {
-    return;
-  }
-  
-  // Déverrouiller après la navigation
-  const originalOnTransitionReady = options?.onTransitionReady;
-  
-  router.push(path, {
-    ...options,
-    onTransitionReady: () => {
-      originalOnTransitionReady?.();
-      // Déverrouiller après un court délai pour laisser la transition se terminer
-      setTimeout(() => {
-        endTransition();
-      }, 100);
-    },
-  });
-}
-

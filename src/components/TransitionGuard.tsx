@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { interceptViewTransitions, endTransition, isTransitionInProgress } from "@/utils/transitionLock";
+import { interceptViewTransitions, isTransitionInProgress } from "@/utils/transitionLock";
 
 /**
  * Composant global qui intercepte startViewTransition() au niveau global
@@ -21,7 +21,8 @@ export default function TransitionGuard() {
   useEffect(() => {
     interceptViewTransitions();
     
-    // Intercepter les erreurs de Promise non capturées liées aux transitions
+    // ✅ OPTIMISATION : Intercepter TOUTES les erreurs "Skipped ViewTransition"
+    // Même si elles sont gérées dans transitionLock.ts, elles peuvent remonter
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
       const error = event.reason;
       const errorMessage = error?.message || error?.toString() || '';
@@ -29,21 +30,36 @@ export default function TransitionGuard() {
       // Gérer silencieusement les erreurs "Skipped ViewTransition"
       if (errorMessage.includes('Skipped ViewTransition') || 
           errorMessage.includes('another transition starting')) {
-        console.log('⚠️ Erreur de transition interceptée (Promise non capturée)');
         event.preventDefault(); // Empêcher l'erreur de remonter
+        event.stopPropagation(); // Empêcher la propagation
+        return;
+      }
+    };
+    
+    // ✅ OPTIMISATION : Intercepter aussi les erreurs synchrones
+    const handleError = (event: ErrorEvent) => {
+      const errorMessage = event.message || event.error?.message || '';
+      
+      // Gérer silencieusement les erreurs "Skipped ViewTransition"
+      if (errorMessage.includes('Skipped ViewTransition') || 
+          errorMessage.includes('another transition starting')) {
+        event.preventDefault(); // Empêcher l'erreur de remonter
+        event.stopPropagation(); // Empêcher la propagation
         return;
       }
     };
     
     window.addEventListener('unhandledrejection', handleUnhandledRejection);
+    window.addEventListener('error', handleError);
     
     return () => {
       window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+      window.removeEventListener('error', handleError);
     };
   }, []);
 
-  // Intercepter les clics rapides (double-clics) sur les liens
-  // ET optimiser le chargement des images lors des transitions
+  // ✅ SIMPLIFICATION : Intercepter uniquement les double-clics très rapides (< 100ms)
+  // L'interception globale de startViewTransition() gère le reste
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -62,9 +78,9 @@ export default function TransitionGuard() {
         const now = Date.now();
         const timeSinceLastClick = now - lastClickTime.current;
 
-        // Si un clic a eu lieu il y a moins de 150ms ET qu'une transition est en cours
-        // → C'est probablement un double-clic accidentel, l'ignorer
-        if (timeSinceLastClick < 150 && isTransitionInProgress()) {
+        // ✅ SIMPLIFICATION : Empêcher uniquement les double-clics très rapides (< 100ms)
+        // ET si une transition est en cours
+        if (timeSinceLastClick < 100 && isTransitionInProgress()) {
           e.preventDefault();
           e.stopPropagation();
           e.stopImmediatePropagation();
@@ -83,20 +99,14 @@ export default function TransitionGuard() {
     };
   }, []);
 
-  // Déverrouiller quand le pathname change (transition terminée)
+  // ✅ SIMPLIFICATION : Ne plus déverrouiller ici
+  // L'interception globale de startViewTransition() déverrouille automatiquement
+  // via l'événement 'finished' de la transition
+  // Le pathname change est juste utilisé pour le tracking
   useEffect(() => {
-    // Si le pathname a changé, c'est qu'une transition s'est terminée
     if (lastPathname.current !== pathname) {
       lastPathname.current = pathname;
-      
-      // Déverrouiller après un court délai pour être sûr que la transition est terminée
-      const timer = setTimeout(() => {
-        endTransition();
-      }, 200);
-
-      return () => clearTimeout(timer);
     }
-    return undefined;
   }, [pathname]);
 
   return null; // Ce composant ne rend rien

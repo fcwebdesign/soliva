@@ -52,12 +52,11 @@ export default function ThemeTransitions() {
       try {
         // Utiliser /api/content/metadata au lieu de /api/content pour éviter de charger 45 Mo
         // La config de transition est incluse dans les métadonnées
-        const response = await fetch(`/api/content/metadata?t=${Date.now()}`, { 
-          cache: 'no-store',
+        // ✅ OPTIMISATION : Cache navigateur (config change rarement, pas besoin de recharger à chaque fois)
+        const response = await fetch('/api/content/metadata', { 
+          cache: 'force-cache', // Cache navigateur pour réduire la latence
           headers: {
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache',
-            'Expires': '0'
+            'Cache-Control': 'public, max-age=3600' // Cache 1h (config change rarement)
           }
         });
         if (response.ok) {

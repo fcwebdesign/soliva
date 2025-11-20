@@ -1,7 +1,7 @@
 "use client";
 import { useTransitionRouter } from "next-view-transitions";
 import { useCallback } from "react";
-import { isTransitionInProgress, startTransition, endTransition } from "@/utils/transitionLock";
+import { isTransitionInProgress } from "@/utils/transitionLock";
 
 export function usePageTransitions() {
   const router = useTransitionRouter();
@@ -17,29 +17,19 @@ export function usePageTransitions() {
   }, [isSafari]);
 
   const triggerPageTransition = useCallback((path: string): void => {
-    // Utiliser le verrouillage global
-    if (!startTransition()) {
-      return;
-    }
+    // ✅ SIMPLIFICATION : Ne plus utiliser startTransition() manuellement
+    // L'interception globale de startViewTransition() gère tout automatiquement
     
     if (isBasicTransition()) {
       const curtain = document.getElementById("curtain");
       if (!curtain) {
-        endTransition();
         return;
       }
 
       curtain.style.transform = "translateY(0%)";
 
-      // SUPPRESSION DU DÉLAI : La transition doit démarrer immédiatement
-      // Pas de setTimeout - navigation immédiate
+      // Navigation immédiate - l'interception globale gère le verrouillage
       router.push(path);
-      
-      // Réinitialiser le flag après la navigation (court délai pour laisser le temps à la navigation)
-      setTimeout(() => {
-        endTransition();
-      }, 100);
-
       return;
     }
 
@@ -47,11 +37,9 @@ export function usePageTransitions() {
     document.documentElement.animate(
       [
         {
-          // Étape 1 : cercle très petit au centre
           clipPath: "circle(0% at 50% 50%)"
         },
         {
-          // Étape 2 : cercle qui s'agrandit pour couvrir tout l'écran
           clipPath: "circle(150% at 50% 50%)",
         },
       ],
@@ -60,12 +48,9 @@ export function usePageTransitions() {
         easing: "cubic-bezier(0.9, 0, 0.1, 1)",
         pseudoElement: "::view-transition-new(root)",
       }
-    ).addEventListener('finish', () => {
-      // Réinitialiser le flag après l'animation
-      setTimeout(() => {
-        endTransition();
-      }, 100);
-    });
+    );
+    // ✅ SIMPLIFICATION : Ne plus déverrouiller manuellement
+    // L'interception globale gère le déverrouillage automatiquement
   }, [router, isBasicTransition, isSafari]);
 
   const handleNavigation = useCallback((path: string) => (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => {
@@ -87,13 +72,11 @@ export function usePageTransitions() {
     if (isBasicTransition()) {
       triggerPageTransition(path);
     } else {
-      if (!startTransition()) {
-        return;
-      }
+      // ✅ SIMPLIFICATION : Laisser next-view-transitions gérer tout
+      // L'interception globale gère le verrouillage automatiquement
       router.push(path, {
         onTransitionReady: () => {
           triggerPageTransition(path);
-          setTimeout(() => endTransition(), 100);
         },
       });
     }
@@ -119,13 +102,11 @@ export function usePageTransitions() {
         if (isBasicTransition()) {
           triggerPageTransition(href);
         } else {
-          if (!startTransition()) {
-            return;
-          }
+          // ✅ SIMPLIFICATION : Laisser next-view-transitions gérer tout
+          // L'interception globale gère le verrouillage automatiquement
           router.push(href, {
             onTransitionReady: () => {
               triggerPageTransition(href);
-              setTimeout(() => endTransition(), 100);
             },
           });
         }

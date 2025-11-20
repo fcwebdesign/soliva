@@ -1,52 +1,30 @@
 "use client";
 import { Link } from "next-view-transitions";
 import type { LinkProps } from "next/link";
-import { useTransitionRouter } from "next-view-transitions";
 import { useCallback } from "react";
-import { isTransitionInProgress, startTransition, endTransition } from "@/utils/transitionLock";
+import { isTransitionInProgress } from "@/utils/transitionLock";
 
 /**
  * Wrapper sécurisé pour les Link de next-view-transitions
- * Empêche les transitions multiples en vérifiant le verrouillage global
+ * 
+ * STRATÉGIE SIMPLIFIÉE :
+ * - Laisser next-view-transitions gérer TOUT
+ * - Empêcher uniquement les clics si une transition est en cours
+ * - Pas de prévention de clics complexe, pas de délais
  */
 export default function SafeLink({ href, onClick, ...props }: LinkProps) {
-  const router = useTransitionRouter();
-
   const handleClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
-    // Si une transition est déjà en cours, empêcher le clic
+    // ✅ SIMPLIFICATION : Empêcher uniquement si une transition est en cours
+    // L'interception globale de startViewTransition() gère le reste
     if (isTransitionInProgress()) {
       e.preventDefault();
       e.stopPropagation();
       return;
     }
 
-    // Vérifier si c'est un lien interne
-    const hrefStr = typeof href === 'string' ? href : (href as any).pathname || '';
-    const isInternal = hrefStr.startsWith("/") || hrefStr.startsWith("#");
-    const withMod = e.metaKey || e.ctrlKey || e.shiftKey || e.altKey;
-
-    // Pour les liens internes sans modificateur, utiliser le verrouillage
-    if (isInternal && !withMod && !hrefStr.startsWith("#")) {
-      // Démarrer la transition avant le clic
-      if (!startTransition()) {
-        e.preventDefault();
-        e.stopPropagation();
-        return;
-      }
-
-      // Appeler le onClick original s'il existe
-      onClick?.(e);
-
-      // Déverrouiller après un délai pour laisser la transition se terminer
-      // Le Link de next-view-transitions gère la transition, on déverrouille après
-      setTimeout(() => {
-        endTransition();
-      }, 2000); // Délai basé sur la durée moyenne des transitions
-    } else {
-      // Pour les liens externes ou avec modificateur, laisser passer
-      onClick?.(e);
-    }
-  }, [href, onClick]);
+    // Appeler le onClick original s'il existe
+    onClick?.(e);
+  }, [onClick]);
 
   return <Link href={href} onClick={handleClick} {...props} />;
 }
