@@ -25,9 +25,12 @@ interface StorytellingSectionProps {
 const StorytellingSection: React.FC<StorytellingSectionProps> = ({ block }) => {
   const sectionRef = useRef<HTMLElement>(null);
   const stepsRef = useRef<HTMLUListElement>(null);
+  const triggersRef = useRef<ScrollTrigger[]>([]);
 
   useGSAP(() => {
-    if (!sectionRef.current || !stepsRef.current) return;
+    if (!sectionRef.current || !stepsRef.current) {
+      return () => {}; // Retourner une fonction vide pour satisfaire TypeScript
+    }
 
     const steps = stepsRef.current.children;
 
@@ -36,7 +39,7 @@ const StorytellingSection: React.FC<StorytellingSectionProps> = ({ block }) => {
       const start = index / steps.length;
       const end = (index + 1) / steps.length;
 
-      gsap.fromTo(step as HTMLElement,
+      const tween = gsap.fromTo(step as HTMLElement,
         { 
           opacity: 0.2, 
           y: 20 
@@ -52,8 +55,30 @@ const StorytellingSection: React.FC<StorytellingSectionProps> = ({ block }) => {
           }
         }
       );
+
+      // Stocker la référence au ScrollTrigger créé
+      if (tween.scrollTrigger) {
+        triggersRef.current.push(tween.scrollTrigger);
+      }
     });
-  }, { scope: sectionRef });
+
+    // Fonction de nettoyage
+    return () => {
+      // Nettoyer tous les ScrollTriggers créés par ce composant
+      triggersRef.current.forEach(trigger => {
+        try {
+          // Utiliser kill(true) pour forcer le nettoyage immédiat
+          trigger.kill(true);
+        } catch (e) {
+          // Ignorer les erreurs
+        }
+      });
+      triggersRef.current = [];
+    };
+  }, { 
+    scope: sectionRef,
+    revertOnUpdate: true // Restaure le DOM avant démontage
+  });
 
   return (
     <section ref={sectionRef} className="relative border-t border-white/10 bg-[rgb(8,8,10)] text-white">

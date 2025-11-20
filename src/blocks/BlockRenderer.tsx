@@ -161,6 +161,9 @@ export default function BlockRenderer({ blocks, content: contentProp }: { blocks
         }
       };
     }
+    
+    // Retourner undefined si la condition n'est pas remplie
+    return undefined;
   }, [blocks, fullContent]);
 
   // Helper pour obtenir le nom d'animation depuis le type de bloc

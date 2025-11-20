@@ -59,8 +59,34 @@ export default function HomeClient({ content }: HomeClientProps) {
     // Enregistrer le temps de chargement de la page
     (window as any).pageLoadTime = Date.now();
     
+    // Référence pour stocker le ScrollTrigger créé
+    let pinTrigger: ScrollTrigger | null = null;
+    let observer: IntersectionObserver | null = null;
+    let splitTitle: any = null; // ← Stocker SplitText du titre
+    let splitBaseline: any = null; // ← Stocker SplitText de la baseline
+    
+    // ⚠️ IMPORTANT : Nettoyer les ScrollTriggers existants de .home-mask AVANT
+    // pour éviter les conflits quand le contenu change
+    try {
+      const homeMask = document.querySelector('.home-mask');
+      if (homeMask) {
+        ScrollTrigger.getAll().forEach(trigger => {
+          try {
+            const triggerElement = trigger.vars?.trigger || trigger.trigger;
+            if (triggerElement === homeMask || (typeof triggerElement === 'string' && triggerElement === '.home-mask')) {
+              trigger.kill(true);
+            }
+          } catch (e) {
+            // Ignorer
+          }
+        });
+      }
+    } catch (e) {
+      // Ignorer
+    }
+    
     // Animation des caractères du h1 (toujours active)
-    const splitTitle = SplitText.create("h1", {
+    splitTitle = SplitText.create("h1", {
       type: "chars",
       charsClass: "letter",
       mask: "chars",
@@ -96,7 +122,7 @@ export default function HomeClient({ content }: HomeClientProps) {
 
   
     // Animation des mots du h2 (baseline) - animation d'arrivée normale
-    const splitBaseline = SplitText.create(".baseline", {
+    splitBaseline = SplitText.create(".baseline", {
       type: "words",
       wordsClass: "word",
       mask: "words",
@@ -114,7 +140,7 @@ export default function HomeClient({ content }: HomeClientProps) {
 
     // Effet de pin pour la section hero
     if (previewContent?.blocks && previewContent.blocks.length > 0) {
-      ScrollTrigger.create({
+      pinTrigger = ScrollTrigger.create({
         trigger: ".home-mask",
         start: "top top",
         end: "bottom top",
@@ -166,26 +192,60 @@ export default function HomeClient({ content }: HomeClientProps) {
     // Animation des blocs de service avec IntersectionObserver
     if (previewContent?.blocks && previewContent.blocks.length > 0) {
       const blocks = document.querySelectorAll('.service-offering-block');
-      const observer = new IntersectionObserver(
+      observer = new IntersectionObserver(
         (entries: IntersectionObserverEntry[]) => {
           entries.forEach(entry => {
             if (entry.isIntersecting) {
               entry.target.classList.add('is-visible');
-              observer.unobserve(entry.target); // Pour ne l'animer qu'une fois
+              observer?.unobserve(entry.target); // Pour ne l'animer qu'une fois
             }
           });
         },
         { threshold: 0.15 }
       );
       blocks.forEach(block => observer.observe(block));
-      
-      // Cleanup function
-      return () => observer.disconnect();
     }
 
-    // Retourner undefined pour satisfaire TypeScript
-    return undefined;
-  }, [previewContent?.blocks]);
+    // Cleanup function
+    return () => {
+      // 0. ⚠️ CRITIQUE : Nettoyer SplitText EN PREMIER
+      if (splitTitle) {
+        try {
+          splitTitle.revert();
+        } catch (e) {
+          // Ignorer
+        }
+      }
+      if (splitBaseline) {
+        try {
+          splitBaseline.revert();
+        } catch (e) {
+          // Ignorer
+        }
+      }
+      
+      // 1. Nettoyer le ScrollTrigger
+      if (pinTrigger) {
+        try {
+          pinTrigger.kill(true);
+        } catch (e) {
+          // Ignorer les erreurs
+        }
+      }
+      
+      // 2. Nettoyer l'IntersectionObserver
+      if (observer) {
+        try {
+          observer.disconnect();
+        } catch (e) {
+          // Ignorer les erreurs
+        }
+      }
+    };
+  }, {
+    dependencies: [previewContent?.blocks],
+    revertOnUpdate: true // Restaure le DOM avant démontage
+  });
   
 
 

@@ -3,9 +3,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import SplitText from 'gsap/SplitText';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Image from 'next/image';
 
-gsap.registerPlugin(SplitText);
+gsap.registerPlugin(SplitText, ScrollTrigger);
 
 interface HeroSignatureProps {
   block: {
@@ -24,9 +25,13 @@ const HeroSignature: React.FC<HeroSignatureProps> = ({ block }) => {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const triggersRef = useRef<ScrollTrigger[]>([]);
+  const splitTextRef = useRef<any>(null); // ← Stocker l'instance SplitText
 
   useGSAP(() => {
-    if (!heroRef.current) return;
+    if (!heroRef.current) {
+      return () => {}; // Retourner une fonction vide pour satisfaire TypeScript
+    }
 
     // Animation du titre avec SplitText
     if (titleRef.current) {
@@ -34,6 +39,9 @@ const HeroSignature: React.FC<HeroSignatureProps> = ({ block }) => {
         type: "chars, words",
         charsClass: "char"
       });
+
+      // ⚠️ Stocker pour le cleanup
+      splitTextRef.current = splitTitle;
 
       gsap.fromTo(splitTitle.chars, 
         { 
@@ -54,7 +62,7 @@ const HeroSignature: React.FC<HeroSignatureProps> = ({ block }) => {
 
     // Animation de l'image au scroll
     if (imageRef.current) {
-      gsap.to(imageRef.current, {
+      const tween = gsap.to(imageRef.current, {
         y: -80,
         scrollTrigger: {
           trigger: heroRef.current,
@@ -63,10 +71,41 @@ const HeroSignature: React.FC<HeroSignatureProps> = ({ block }) => {
           scrub: 1
         }
       });
+
+      // Stocker la référence au ScrollTrigger créé
+      if (tween.scrollTrigger) {
+        triggersRef.current.push(tween.scrollTrigger);
+      }
     }
 
     setIsLoaded(true);
-  }, { scope: heroRef });
+
+    // Fonction de nettoyage
+    return () => {
+      // 0. ⚠️ CRITIQUE : Nettoyer SplitText EN PREMIER (restaure le DOM)
+      if (splitTextRef.current) {
+        try {
+          splitTextRef.current.revert();
+          splitTextRef.current = null;
+        } catch (e) {
+          // Ignorer
+        }
+      }
+      
+      // 1. Nettoyer tous les ScrollTriggers créés par ce composant
+      triggersRef.current.forEach(trigger => {
+        try {
+          trigger.kill(true);
+        } catch (e) {
+          // Ignorer les erreurs
+        }
+      });
+      triggersRef.current = [];
+    };
+  }, { 
+    scope: heroRef,
+    revertOnUpdate: true // Restaure le DOM avant démontage
+  });
 
   // Curseur custom
   useEffect(() => {

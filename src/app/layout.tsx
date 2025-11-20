@@ -15,6 +15,7 @@ import { Toaster } from "@/components/ui/sonner";
 import Preloader from "@/components/Preloader";
 import TransitionGuard from "@/components/TransitionGuard";
 import ScrollRestoration from "@/components/ScrollRestoration";
+import ScrollTriggerCleanup from "@/components/ScrollTriggerCleanup";
 import { ColorPaletteStyle } from "@/components/ColorPaletteProvider";
 import { resolvePaletteFromContent } from "@/utils/palette-resolver";
 import { generatePaletteStyles } from "@/utils/palette-css-server";
@@ -89,6 +90,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             <Preloader />
             <TransitionGuard />
             <ScrollRestoration />
+            <ScrollTriggerCleanup />
             <TemplateProvider value={{ key: 'soliva' }}>
               {/* Per-template page transitions (no-op for admin since key=soliva) */}
               <ThemeTransitions />
@@ -131,6 +133,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           <Preloader />
           <TransitionGuard />
           <ScrollRestoration />
+          <ScrollTriggerCleanup />
           
               <TemplateProvider value={{ key: templateKey }}>
                 {/* Per-template page transitions */}

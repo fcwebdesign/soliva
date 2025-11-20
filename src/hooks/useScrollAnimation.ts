@@ -8,11 +8,6 @@ import type { ScrollAnimationType } from '@/app/admin/components/sections/Scroll
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
-// Désactiver les markers de debug de ScrollTrigger pour éviter les erreurs DOM
-if (typeof window !== 'undefined') {
-  ScrollTrigger.config({ markers: false });
-}
-
 export interface AnimationConfig {
   type: ScrollAnimationType;
   duration?: number;
@@ -42,9 +37,48 @@ export function useScrollAnimation(
   const timeoutRefs = useRef<NodeJS.Timeout[]>([]);
   const rafRef = useRef<number | null>(null);
   const isMountedRef = useRef(true);
+  const elementSnapshot = useRef<HTMLElement | null>(null);
+  const splitTextRef = useRef<any>(null); // ← AJOUT : Stocker l'instance SplitText
 
   useGSAP(() => {
-    if (!enabled || !elementRef.current) return;
+    if (!enabled || !elementRef.current) {
+      console.log('⏭️ [useScrollAnimation] Skipped - enabled:', enabled, 'hasElement:', !!elementRef.current);
+      return;
+    }
+
+    const elementInfo = elementRef.current.className || elementRef.current.tagName || 'unknown';
+    console.log(`🎬 [useScrollAnimation] useGSAP démarré pour: ${elementInfo} (blockType: ${blockType})`);
+
+    // ⚠️ IMPORTANT : Nettoyer les ScrollTriggers existants AVANT de créer les nouveaux
+    // Ceci est critique quand les configurations changent depuis l'admin
+    if (elementSnapshot.current || elementRef.current) {
+      try {
+        const element = elementSnapshot.current || elementRef.current;
+        const triggers = ScrollTrigger.getAll();
+        let cleaned = 0;
+        
+        console.log(`🧹 [useScrollAnimation] Vérification de ${triggers.length} triggers existants`);
+        
+        triggers.forEach(trigger => {
+          try {
+            const triggerElement = trigger.vars?.trigger || trigger.trigger;
+            if (triggerElement === element) {
+              trigger.kill(true);
+              cleaned++;
+              console.log(`  ✅ Trigger nettoyé pour: ${elementInfo}`);
+            }
+          } catch (e) {
+            console.error(`  ❌ Erreur nettoyage trigger:`, e);
+          }
+        });
+        
+        if (cleaned > 0) {
+          console.log(`🧹 [useScrollAnimation] ${cleaned} triggers nettoyés pour: ${elementInfo}`);
+        }
+      } catch (e) {
+        console.error('🧹 [useScrollAnimation] Erreur lors du nettoyage:', e);
+      }
+    }
 
     // Récupérer la configuration depuis le contenu
     const scrollAnimations = content?.metadata?.scrollAnimations;
@@ -90,10 +124,21 @@ export function useScrollAnimation(
 
     const createScrollAnimation = () => {
       // Vérifications multiples avant de créer l'animation
-      if (!isMountedRef.current) return;
-      if (!elementRef.current) return;
+      if (!isMountedRef.current) {
+        console.log('⏭️ [useScrollAnimation] createScrollAnimation skipped - not mounted');
+        return;
+      }
+      if (!elementRef.current) {
+        console.log('⏭️ [useScrollAnimation] createScrollAnimation skipped - no element');
+        return;
+      }
       
       const element = elementRef.current;
+      const elementInfo = element.className || element.tagName || 'unknown';
+      console.log(`🎨 [useScrollAnimation] createScrollAnimation pour: ${elementInfo}`);
+      
+      // Sauvegarder une référence à l'élément pour le cleanup ultérieur
+      elementSnapshot.current = element;
       
       // Vérifier que l'élément existe toujours dans le DOM
       if (!document.body || !document.body.contains(element)) {
@@ -126,7 +171,13 @@ export function useScrollAnimation(
       animationConfig = scrollAnimations.global;
     }
 
-    if (!animationConfig || animationConfig.type === 'none') return;
+    if (!animationConfig || animationConfig.type === 'none') {
+      console.log('⏭️ [useScrollAnimation] Pas d\'animation configurée');
+      return;
+    }
+    
+    console.log(`🎯 [useScrollAnimation] Animation: ${animationConfig.type} pour ${blockType || 'element'}`);
+
 
     const {
       type,
@@ -458,6 +509,9 @@ export function useScrollAnimation(
               wordsClass: 'word'
             });
 
+            // ⚠️ CRITIQUE : Stocker l'instance pour la nettoyer plus tard
+            splitTextRef.current = split;
+
             gsap.set(split.words, { y: '100%', opacity: 0 });
             
             gsap.to(split.words, {
@@ -502,6 +556,9 @@ export function useScrollAnimation(
               linesClass: 'line',
               wordsClass: 'word'
             });
+
+            // ⚠️ CRITIQUE : Stocker l'instance pour la nettoyer plus tard
+            splitTextRef.current = split;
 
             gsap.set(split.words, { y: '-100%', opacity: 0 });
             
@@ -591,13 +648,20 @@ export function useScrollAnimation(
         setupAnimation();
       }
     });
-  }, { scope: elementRef, dependencies: [config, blockType, enabled, content] });
+  }, { 
+    scope: elementRef, 
+    dependencies: [config, blockType, enabled, content],
+    revertOnUpdate: true // ← CRITIQUE : Restaure le DOM avant mise à jour/démontage
+  });
 
   // Cleanup
   useEffect(() => {
     isMountedRef.current = true;
+    const elementInfo = elementRef.current?.className || elementRef.current?.tagName || 'unknown';
+    console.log(`🟢 [useScrollAnimation] Composant monté: ${elementInfo} (${blockType})`);
     
     return () => {
+      console.log(`🔴 [useScrollAnimation] Composant démonte: ${elementInfo} (${blockType})`);
       isMountedRef.current = false;
       
       // Nettoyer le requestAnimationFrame
@@ -630,34 +694,72 @@ export function useScrollAnimation(
         animationRef.current = null;
       }
       
-      // Nettoyer les ScrollTriggers associés à cet élément
-      // Utiliser un try/catch global pour éviter toute erreur
+      // 🔥 SOLUTION ULTIME : Tuer TOUTES les animations sur cet élément AVANT de nettoyer les triggers
       try {
-        if (elementRef.current) {
-          const element = elementRef.current;
-          // Vérifier que l'élément existe toujours dans le DOM avant de nettoyer
-          if (document.body && document.body.contains(element)) {
-            const triggers = ScrollTrigger.getAll();
-            triggers.forEach(trigger => {
-              try {
-                // Vérifier que le trigger existe encore
-                if (!trigger || !trigger.vars) return;
-                
-                const triggerElement = trigger.vars?.trigger || trigger.trigger;
-                if (triggerElement === element) {
-                  // Vérifier que l'élément existe toujours avant de tuer
-                  if (document.body.contains(element)) {
-                    trigger.kill();
-                  }
-                }
-              } catch (e) {
-                // Ignorer silencieusement toutes les erreurs
-              }
-            });
+        console.log(`🔥 [useScrollAnimation] Cleanup AGRESSIF pour: ${elementInfo}`);
+        
+        // 0. ⚠️ CRITIQUE : Nettoyer SplitText EN PREMIER (restaure le DOM)
+        if (splitTextRef.current) {
+          try {
+            console.log(`  🔥 Revert SplitText...`);
+            splitTextRef.current.revert(); // Restaure le DOM à son état initial
+            splitTextRef.current = null;
+            console.log(`  ✅ SplitText restauré`);
+          } catch (e) {
+            console.error(`  ❌ Erreur revert SplitText:`, e);
           }
         }
+        
+        // 1. Tuer TOUTES les animations GSAP sur cet élément spécifique
+        if (elementSnapshot.current) {
+          try {
+            gsap.killTweensOf(elementSnapshot.current);
+            console.log(`  🔥 Tweens tués pour snapshot`);
+          } catch (e) {
+            console.error(`  ❌ Erreur kill tweens snapshot:`, e);
+          }
+        }
+        
+        if (elementRef.current) {
+          try {
+            gsap.killTweensOf(elementRef.current);
+            console.log(`  🔥 Tweens tués pour ref actuelle`);
+          } catch (e) {
+            console.error(`  ❌ Erreur kill tweens ref:`, e);
+          }
+        }
+        
+        // 2. Nettoyer les ScrollTriggers associés
+        const triggers = ScrollTrigger.getAll();
+        console.log(`🧹 [useScrollAnimation] ${triggers.length} triggers à vérifier`);
+        
+        let killed = 0;
+        triggers.forEach((trigger, index) => {
+          try {
+            if (!trigger) return;
+            
+            const triggerElement = trigger.vars?.trigger || trigger.trigger;
+            const shouldKill = 
+              (elementSnapshot.current && triggerElement === elementSnapshot.current) ||
+              (elementRef.current && triggerElement === elementRef.current);
+            
+            if (shouldKill) {
+              console.log(`  ✅ Killing trigger ${index + 1}`);
+              // kill(true) = immediate, pas de manipulation DOM
+              trigger.kill(true);
+              killed++;
+            }
+          } catch (e) {
+            console.error(`  ❌ Erreur kill trigger ${index + 1}:`, e);
+          }
+        });
+        
+        console.log(`🧹 [useScrollAnimation] ${killed} triggers tués`);
+        
+        // 3. Nettoyer la snapshot
+        elementSnapshot.current = null;
       } catch (e) {
-        // Ignorer silencieusement toutes les erreurs de cleanup
+        console.error('🧹 [useScrollAnimation] ERREUR cleanup:', e);
       }
     };
   }, []);
