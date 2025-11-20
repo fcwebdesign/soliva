@@ -93,7 +93,7 @@ export async function GET() {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=3600', // Cache 1h pour les métadonnées
+        'Cache-Control': 'no-cache, no-store, must-revalidate', // Pas de cache pour toujours avoir la dernière version
       }
     });
   } catch (error) {

@@ -59,8 +59,6 @@ export async function POST(request: NextRequest) {
     // UTILISER LA FONCTION UTILITAIRE CENTRALISÉE (évite les bugs de localisation)
     // Cette fonction sauvegarde automatiquement aux deux endroits (_transitionConfig et metadata._transitionConfig)
     setTransitionConfig(content, finalConfig);
-    
-    console.log('💾 [Transitions] Config sauvegardée:', finalConfig);
 
     // NOUVELLE LOGIQUE : Sauvegarder selon le template (comme /api/admin/content)
     if (currentTemplate && currentTemplate !== 'soliva') {

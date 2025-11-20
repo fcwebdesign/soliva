@@ -52,11 +52,13 @@ export default function ThemeTransitions() {
       try {
         // Utiliser /api/content/metadata au lieu de /api/content pour éviter de charger 45 Mo
         // La config de transition est incluse dans les métadonnées
-        // ✅ OPTIMISATION : Cache navigateur (config change rarement, pas besoin de recharger à chaque fois)
-        const response = await fetch('/api/content/metadata', { 
-          cache: 'force-cache', // Cache navigateur pour réduire la latence
+        // ✅ SOLUTION SIMPLE : Pas de cache pour toujours avoir la dernière version
+        const response = await fetch(`/api/content/metadata?t=${Date.now()}`, { 
+          cache: 'no-store',
           headers: {
-            'Cache-Control': 'public, max-age=3600' // Cache 1h (config change rarement)
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
           }
         });
         if (response.ok) {
@@ -67,9 +69,6 @@ export default function ThemeTransitions() {
           
           // Vérifier si la config a changé avant de mettre à jour
           if (transitionConfig && configString !== lastConfigRef.current) {
-            if (process.env.NODE_ENV === 'development') {
-              console.log('🔄 [ThemeTransitions] Nouvelle config détectée, mise à jour');
-            }
             lastConfigRef.current = configString;
             // Stocker la config à la racine pour la cohérence
             setContentConfig({ ...data, _transitionConfig: transitionConfig });
@@ -87,10 +86,11 @@ export default function ThemeTransitions() {
       fetchContent();
     };
     
-    window.addEventListener('admin:content-updated', handleContentUpdate);
+    // ✅ CORRECTION : Écouter le bon événement (content-updated, pas admin:content-updated)
+    window.addEventListener('content-updated', handleContentUpdate);
     
     return () => {
-      window.removeEventListener('admin:content-updated', handleContentUpdate);
+      window.removeEventListener('content-updated', handleContentUpdate);
       document.removeEventListener('transitionstart', handleTransitionStart);
       document.removeEventListener('transitionend', handleTransitionEnd);
     };
