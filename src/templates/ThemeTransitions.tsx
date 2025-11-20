@@ -309,24 +309,42 @@ export default function ThemeTransitions() {
     `,
 
     'curtain': `
-      html::view-transition-old(root) { animation-name: vt-curtain-out; }
-      html::view-transition-new(root) { animation-name: vt-curtain-in; }
+      /* Fond de couleur pour le rideau */
+      html::view-transition-group(root) {
+        background-color: CURTAIN_COLOR_PLACEHOLDER;
+      }
+      
+      html::view-transition-old(root) { 
+        animation-name: vt-curtain-out; 
+      }
+      html::view-transition-new(root) { 
+        animation-name: vt-curtain-in; 
+        background-color: CURTAIN_COLOR_PLACEHOLDER;
+      }
 
       @keyframes vt-curtain-out { 
         from { 
           clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+          opacity: 1;
+          filter: brightness(1);
         }
         to { 
           clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%);
+          opacity: 0;
+          filter: brightness(0);
         }
       }
       
       @keyframes vt-curtain-in { 
         from { 
           clip-path: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%);
+          opacity: 0;
+          filter: brightness(0.3);
         }
         to { 
           clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+          opacity: 1;
+          filter: brightness(1);
         }
       }
     `
@@ -425,13 +443,21 @@ export default function ThemeTransitions() {
     console.warn(`⚠️ [ThemeTransitions] Type de transition "${transitionType}" non trouvé, utilisation de "slide-up" par défaut`);
   }
   
+  // Extraire la couleur du rideau si elle existe (pour l'animation curtain)
+  const curtainColor = (config as any)?.curtainColor || 'var(--fg, #000000)';
+  
+  // Remplacer le placeholder dans le style curtain avec la couleur réelle
+  const finalTransitionStyle = transitionType === 'curtain' 
+    ? transitionStyle.replace(/CURTAIN_COLOR_PLACEHOLDER/g, curtainColor)
+    : transitionStyle;
+  
   // Utiliser une clé unique basée sur la config pour forcer le re-render quand elle change
   const styleKey = `${transitionType}-${config?.duration || 1500}-${contentConfig?._transitionConfig ? 'dynamic' : 'static'}`;
   
   return (
     <style jsx global key={styleKey}>{`
       ${commonStyles}
-      ${transitionStyle}
+      ${finalTransitionStyle}
       ${config?.customStyles || ''}
     `}</style>
   );

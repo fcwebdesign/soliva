@@ -17,6 +17,7 @@ export interface TransitionConfig {
   easing: string;
   updatedAt?: string;
   customStyles?: string;
+  curtainColor?: string; // Couleur de fond pour l'animation curtain (ex: '#000000', 'var(--fg)')
 }
 
 /**

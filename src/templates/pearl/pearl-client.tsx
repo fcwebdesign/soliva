@@ -376,7 +376,7 @@ export default function PearlClient() {
           >
             {route === 'home' ? (
               Array.isArray(pageData?.blocks) && pageData.blocks.length > 0 ? (
-                <BlockRenderer blocks={pageData.blocks} />
+                <BlockRenderer blocks={pageData.blocks} content={fullContent || metadata} />
               ) : (
                 <div className="text-center py-12">
                   {pageData?.hero?.subtitle || pageData?.description ? (
@@ -507,7 +507,7 @@ export default function PearlClient() {
                 
                 {/* Blocs - affichés s'ils existent */}
                 {Array.isArray(pageData?.blocks) && pageData.blocks.length > 0 && pageData.blocks.some((block: any) => block.content && block.content.trim() !== '') ? (
-                  <BlockRenderer blocks={pageData.blocks} />
+                  <BlockRenderer blocks={pageData.blocks} content={fullContent || metadata} />
                 ) : !(pageData?.hero?.title || pageData?.title || pageData?.hero?.subtitle || pageData?.description) ? (
                   <div className="bg-muted rounded-lg p-8">
                     <p className="text-muted-foreground">Ajoute des blocs depuis l'admin pour cette page.</p>

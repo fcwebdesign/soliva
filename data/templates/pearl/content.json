@@ -4,10 +4,10 @@
     "title": "Site pearl",
     "description": "Description du site pearl",
     "_transitionConfig": {
-      "type": "slide-up",
+      "type": "rotate",
       "duration": 900,
       "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
-      "updatedAt": "2025-11-20T08:56:10.240Z"
+      "updatedAt": "2025-11-20T10:45:57.651Z"
     },
     "footer": {
       "footerVariant": "classic"
@@ -521,7 +521,7 @@
       "work": "Image",
       "blog": "Coffee"
     },
-    "colorPalette": "forest",
+    "colorPalette": "sunset",
     "customPalettes": [
       {
         "id": "phare-élégant-havrais",
@@ -548,6 +548,59 @@
       },
       "defaultGap": "md",
       "autoTarget": 160
+    },
+    "scrollAnimations": {
+      "enabled": true,
+      "global": {
+        "type": "rotate-in",
+        "duration": 1,
+        "delay": 0,
+        "stagger": 0,
+        "easing": "power4.out",
+        "threshold": 0.3
+      },
+      "blocks": {
+        "GalleryGridBlock": {
+          "type": "rotate-in",
+          "duration": 1,
+          "delay": 0,
+          "stagger": 0,
+          "easing": "power4.out",
+          "threshold": 0.3
+        },
+        "LogosBlock": {
+          "type": "rotate-in",
+          "duration": 1,
+          "delay": 0,
+          "stagger": 0,
+          "easing": "power4.out",
+          "threshold": 0.3
+        },
+        "ImageBlock": {
+          "type": "rotate-in",
+          "duration": 1,
+          "delay": 0,
+          "stagger": 0,
+          "easing": "power4.out",
+          "threshold": 0.3
+        },
+        "FaqBlock": {
+          "type": "split-text-up",
+          "duration": 1,
+          "delay": 0,
+          "stagger": 0,
+          "easing": "power4.out",
+          "threshold": 0.3
+        },
+        "TestimonialBlock": {
+          "type": "fade-in",
+          "duration": 1,
+          "delay": 0,
+          "stagger": 0,
+          "easing": "power4.out",
+          "threshold": 0.3
+        }
+      }
     }
   },
   "site": {
@@ -1041,10 +1094,10 @@
     "customSlug": ""
   },
   "_transitionConfig": {
-    "type": "slide-up",
+    "type": "rotate",
     "duration": 900,
     "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
-    "updatedAt": "2025-11-20T08:56:10.240Z"
+    "updatedAt": "2025-11-20T10:45:57.651Z"
   },
   "footer": {
     "logo": "Pearl",
@@ -1118,7 +1171,7 @@
         "content": "<p>editeur de texte</p>\n<h2>test h2</h2>\n<h3>test H3</h3>",
         "slug": "shwocase",
         "status": "published",
-        "description": "<p>Découvrez notre showcase, un véritable écrin de créativité ! </p>",
+        "description": "<p>Découvrez notre showcase, un véritable écrin de créativité !</p><p></p><p></p>",
         "blocks": [
           {
             "id": "contact-1762854772936",
@@ -1136,7 +1189,7 @@
             "id": "content-1762854811118",
             "type": "content",
             "data": {
-              "content": "<p>sdfsfdsfggdgf</p>"
+              "content": "<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>sdfsfdsfggdgf</p></li><li class=\"mb-1\"><p>ddskmfsd</p></li><li class=\"mb-1\"><p>dfpkgdpfg</p></li><li class=\"mb-1\"><p>dskgkdg</p></li><li class=\"mb-1\"><p>dflgdmfgmdflgmdlkmgd</p></li></ul><p></p>"
             },
             "content": "<p>editeur de texte</p>"
           },

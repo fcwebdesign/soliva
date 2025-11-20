@@ -24,6 +24,7 @@ export interface TransitionConfig {
   duration?: number;
   easing?: string;
   customStyles?: string;
+  curtainColor?: string; // Couleur de fond pour l'animation curtain (ex: '#000000', 'var(--fg)')
 }
 
 // Configuration par défaut des transitions

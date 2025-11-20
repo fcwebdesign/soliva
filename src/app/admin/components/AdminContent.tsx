@@ -9,6 +9,7 @@ import RevealSection from './sections/RevealSection';
 import TypographySection from './sections/TypographySection';
 import SpacingSection from './sections/SpacingSection';
 import ColorPaletteSection from './sections/ColorPaletteSection';
+import ScrollAnimationsSection from './sections/ScrollAnimationsSection';
 import SeoBlock from '@/components/admin/SeoBlock';
 import SchemaScript from '@/components/SchemaScript';
 import { generateAllSchemas } from '@/lib/schema';
@@ -164,6 +165,27 @@ const AdminContent: React.FC<AdminContentProps> = ({
 
             current[keys[keys.length - 1]] = value;
             onUpdateContent(newContent as Content);
+          }}
+        />
+      );
+    }
+
+    if (currentPage === 'scroll-animations') {
+      return (
+        <ScrollAnimationsSection
+          localData={content || {}}
+          updateField={(path, value) => {
+            const keys = path.split('.');
+            const newContent = { ...content } as any;
+            let current = newContent;
+
+            for (let i = 0; i < keys.length - 1; i++) {
+              if (!current[keys[i]]) current[keys[i]] = {};
+              current = current[keys[i]];
+            }
+
+            current[keys[keys.length - 1]] = value;
+            onUpdateContent(newContent);
           }}
         />
       );

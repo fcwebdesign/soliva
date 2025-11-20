@@ -134,6 +134,7 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
     { id: 'typography', label: 'Typographie', path: null, icon: Type },
     { id: 'spacing', label: 'Espacement', path: null, icon: Layout },
     { id: 'colors', label: 'Palette de Couleurs', path: null, icon: Palette },
+    { id: 'scroll-animations', label: 'Animations Scroll', path: null, icon: Sparkles },
     { id: 'reveal', label: 'Preloader / Reveal', path: null, icon: Sparkles },
     { id: 'templates', label: 'Templates', path: null, icon: Layout },
     { id: 'template-manager', label: 'Template Manager', path: '/admin/template-manager', icon: Palette },

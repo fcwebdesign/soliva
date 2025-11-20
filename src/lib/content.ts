@@ -818,6 +818,36 @@ export async function writeContent(next: Content, opts?: { actor?: string }): Pr
       }
     }
     
+    // ✅ PROTECTION : Vérifier les duplications dans metadata
+    // metadata peut contenir nav et footer (configuration normale), mais pas de duplication complète
+    if (metadata) {
+      const metadataKeys = Object.keys(metadata);
+      const suspiciousKeys = ['_template', 'home', 'studio', 'work', 'blog', 'pages'];
+      
+      // Vérifier si metadata contient des clés qui indiquent une duplication complète
+      // Si plusieurs clés suspectes sont présentes ET qu'elles sont volumineuses, c'est une duplication
+      const foundSuspicious = suspiciousKeys.filter(sk => metadataKeys.includes(sk));
+      
+      if (foundSuspicious.length > 0) {
+        // Vérifier la taille de chaque clé suspecte
+        for (const sk of foundSuspicious) {
+          if (metadata[sk]) {
+            const size = JSON.stringify(metadata[sk]).length;
+            if (size > 10000) { // > 10 KB = probablement une duplication
+              logger.warn(`⚠️ Duplication détectée dans metadata.${sk} (${(size / 1024).toFixed(2)} KB), suppression automatique`);
+              delete metadata[sk];
+            }
+          }
+        }
+      }
+      
+      // Vérifier la taille totale de metadata (ne devrait pas être énorme)
+      const metadataSize = JSON.stringify(metadata).length;
+      if (metadataSize > 500000) { // > 500 KB = suspect
+        logger.warn(`⚠️ Metadata trop volumineux (${(metadataSize / 1024).toFixed(2)} KB), vérification recommandée`);
+      }
+    }
+    
     // Nettoyer aussi récursivement au cas où typography serait ailleurs (reveal.typography, etc.)
     next = cleanTypographyRecursive(next) as Content;
     
