@@ -1,0 +1,33 @@
+/* Styles spécifiques au template Pearl */
+/* Ce fichier contient uniquement les styles spécifiques à Pearl */
+/* Les styles globaux (padding, spacing, etc.) restent dans globals.css */
+
+/* TODO: Migration future */
+/* Les styles Pearl actuellement dans globals.css seront migrés ici progressivement */
+/* Pour l'instant, on garde globals.css pour les styles globaux uniquement */
+
+/* Template Pearl - Styles spécifiques */
+.template-pearl {
+  /* Variables spécifiques à Pearl si nécessaire */
+}
+
+/* Styles pour les composants Pearl spécifiques */
+.pearl-header {
+  /* Styles du header Pearl */
+}
+
+.pearl-footer {
+  /* Styles du footer Pearl */
+}
+
+/* Styles pour les blocs dans le contexte Pearl */
+.template-pearl .block-image-section {
+  /* Styles spécifiques pour les images dans Pearl */
+}
+
+.template-pearl .contact-section {
+  /* Styles spécifiques pour le contact dans Pearl */
+}
+
+/* Ajouter ici les autres styles spécifiques à Pearl au fur et à mesure */
+

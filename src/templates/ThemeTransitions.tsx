@@ -13,9 +13,14 @@ export default function ThemeTransitions() {
   // Charger la configuration depuis le contenu
   useEffect(() => {
     // Protection globale contre les transitions multiples
+    // NOTE: Ce système utilise des événements CSS qui ne sont pas déclenchés par les View Transitions
+    // Le verrouillage réel est géré par transitionLock.ts et TransitionGuard.tsx
     const handleTransitionStart = () => {
       if (isTransitioning.current) {
-        console.log('🚫 Transition déjà en cours, ignorée');
+        // Log silencieux en dev uniquement (pas de spam dans la console)
+        if (process.env.NODE_ENV === 'development' && false) { // Désactivé pour éviter le spam
+          console.log('🚫 Transition déjà en cours, ignorée');
+        }
         return false;
       }
       isTransitioning.current = true;
@@ -28,7 +33,9 @@ export default function ThemeTransitions() {
       }, 100);
     };
     
-    // Écouter les événements de transition
+    // Écouter les événements de transition CSS (pas View Transitions)
+    // Ces événements ne sont pas déclenchés par les View Transitions, donc ce code est principalement
+    // pour la compatibilité avec d'éventuelles transitions CSS personnalisées
     document.addEventListener('transitionstart', handleTransitionStart);
     document.addEventListener('transitionend', handleTransitionEnd);
     

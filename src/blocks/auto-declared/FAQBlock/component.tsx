@@ -131,9 +131,10 @@ export default function FAQBlock({ data }: { data: FAQBlockData | any }) {
   }
 
   return (
-    <div 
+    <section 
       className="faq-block"
-      data-theme={theme}
+      data-block-type="faq"
+      data-block-theme={theme || 'auto'}
     >
       <div className="space-y-4">
         {/* Titre de la section */}
@@ -194,7 +195,7 @@ export default function FAQBlock({ data }: { data: FAQBlockData | any }) {
           );
         })}
       </div>
-    </div>
+    </section>
   );
 }
 
