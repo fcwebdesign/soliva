@@ -191,10 +191,28 @@ const ProjectPage = ({ params }: ProjectPageProps): React.JSX.Element => {
         }
       }
       
-      // Sinon, charger normalement depuis l'API
-      const response = await fetch('/api/content', {
-        cache: 'no-store',
-        headers: { 'Cache-Control': 'no-cache' }
+      // ✅ OPTIMISATION : Utiliser l'API spécifique pour le projet au lieu de /api/content (41 MB)
+      // Si le projet n'est pas trouvé dans les métadonnées, charger via l'API spécifique
+      try {
+        const projectResponse = await fetch(`/api/content/project/${resolvedParams.slug}`, {
+          cache: 'force-cache',
+          headers: { 'Cache-Control': 'public, max-age=300' }
+        });
+        
+        if (projectResponse.ok) {
+          const projectData = await projectResponse.json();
+          setProject(projectData.project);
+          setLoading(false);
+          return;
+        }
+      } catch (projectError) {
+        console.warn('Projet non trouvé via API spécifique, fallback sur metadata');
+      }
+      
+      // Fallback : charger les métadonnées (beaucoup plus léger que /api/content)
+      const response = await fetch('/api/content/metadata', {
+        cache: 'force-cache',
+        headers: { 'Cache-Control': 'public, max-age=300' }
       });
       const content = await response.json();
       

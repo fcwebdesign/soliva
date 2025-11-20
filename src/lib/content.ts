@@ -254,6 +254,12 @@ export async function ensureDataFile(): Promise<void> {
  */
 async function _readContentInternal(): Promise<Content> {
   try {
+    // ✅ DEBUG : Tracer d'où vient l'appel
+    const stack = new Error().stack;
+    const caller = stack?.split('\n')[2] || 'unknown';
+    logger.debug(`🔍 [readContent] Appelé depuis: ${caller}`);
+    console.log(`🔍 [readContent] Appelé depuis:`, caller);
+    
     // S'assurer que le fichier existe
     await ensureDataFile();
     
@@ -345,6 +351,14 @@ async function _readContentInternal(): Promise<Content> {
  * OPTIMISATION : Utilise le cache React pour éviter de relire 475Mo à chaque requête
  */
 export async function readContent(): Promise<Content> {
+  // ✅ DEBUG : Tracer d'où vient l'appel à readContent()
+  const stack = new Error().stack;
+  const callerLines = stack?.split('\n').slice(1, 5) || [];
+  console.log('🔍 [readContent] Appelé depuis:');
+  callerLines.forEach((line, i) => {
+    console.log(`  ${i + 1}. ${line.trim()}`);
+  });
+  
   return getCachedContent();
 }
 
@@ -358,6 +372,14 @@ let cacheFilePath: string | null = null;
 // DÉSACTIVÉ : unstable_cache ne peut pas mettre en cache des objets > 2 MB
 // Utilisation d'un cache en mémoire uniquement (pas de Data Cache Next.js)
 const getCachedContent = async (): Promise<Content> => {
+  // ✅ DEBUG : Tracer d'où vient l'appel à getCachedContent()
+  const stack = new Error().stack;
+  const callerLines = stack?.split('\n').slice(1, 5) || [];
+  console.log('🔍 [getCachedContent] Appelé depuis:');
+  callerLines.forEach((line, i) => {
+    console.log(`  ${i + 1}. ${line.trim()}`);
+  });
+  
   // Vérifier le cache en mémoire d'abord
   try {
     const stats = await fs.stat(DATA_FILE_PATH);
@@ -366,8 +388,11 @@ const getCachedContent = async (): Promise<Content> => {
     // Si le cache existe et que le fichier n'a pas été modifié, retourner le cache
     if (contentCache && cacheFilePath === DATA_FILE_PATH && contentCache.mtime === currentMtime) {
       logger.debug('✅ Utilisation du cache (fichier non modifié)');
+      console.log('✅ [getCachedContent] Cache utilisé, pas de lecture fichier');
       return contentCache.content;
     }
+    
+    console.log('⚠️ [getCachedContent] Cache invalide ou absent, lecture fichier nécessaire');
     
     // Mettre à jour le chemin du cache
     cacheFilePath = DATA_FILE_PATH;
@@ -442,6 +467,23 @@ export async function writeContent(next: Content, opts?: { actor?: string }): Pr
     }
 
     logger.debug('✅ Validation réussie, préparation de la sauvegarde...');
+
+    // ✅ PROTECTION : Supprimer les champs colors/spacing s'ils contiennent des duplications
+    // (bug où le contenu complet était copié dans ces champs)
+    if ((next as any).colors && typeof (next as any).colors === 'object') {
+      const colorsSize = JSON.stringify((next as any).colors).length;
+      if (colorsSize > 1000000) { // > 1 MB = probablement une duplication
+        logger.warn('⚠️ Champ colors trop volumineux détecté, suppression pour éviter duplication');
+        delete (next as any).colors;
+      }
+    }
+    if ((next as any).spacing && typeof (next as any).spacing === 'object') {
+      const spacingSize = JSON.stringify((next as any).spacing).length;
+      if (spacingSize > 1000000) { // > 1 MB = probablement une duplication
+        logger.warn('⚠️ Champ spacing trop volumineux détecté, suppression pour éviter duplication');
+        delete (next as any).spacing;
+      }
+    }
 
     // PROTECTION CRITIQUE : Nettoyer typography avant de sauvegarder pour éviter la corruption
     const metadata = (next as any).metadata;

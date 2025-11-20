@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readContent, writeContent } from '@/lib/content';
+import { invalidateMetadataCache } from '@/lib/load-template-metadata';
 import { setTransitionConfig } from '@/utils/transitionConfig';
 import { join } from 'path';
 import { existsSync, mkdirSync, writeFileSync, readFileSync } from 'fs';
@@ -79,11 +80,18 @@ export async function POST(request: NextRequest) {
       // Aussi sauvegarder dans content.json pour l'affichage actuel
       await writeContent(content);
       
+      // ✅ OPTIMISATION : Invalider le cache des métadonnées après sauvegarde
+      invalidateMetadataCache();
+      
       console.log(`✅ [Transitions] Contenu sauvegardé dans le template "${currentTemplate}"`);
     } else {
       // Pour soliva ou pas de template, sauvegarder normalement
       console.log('📁 [Transitions] Sauvegarde dans content.json (template soliva ou par défaut)');
       await writeContent(content);
+      
+      // ✅ OPTIMISATION : Invalider le cache des métadonnées après sauvegarde
+      invalidateMetadataCache();
+      
       console.log('✅ [Transitions] Contenu écrit avec succès');
     }
 

@@ -1,11 +1,12 @@
 import React from "react";
-import { readContent } from '@/lib/content';
+import { loadTemplateMetadata } from '@/lib/load-template-metadata';
 import HomeClient from './home-client';
 import BlockRenderer from '@/components/BlockRenderer';
 import PageHeader from '@/components/PageHeader';
 
 export default async function Home() {
-  const content = await readContent();
+  // ✅ OPTIMISATION : Utiliser loadTemplateMetadata au lieu de readContent (41 MB → ~100 Ko)
+  const content = await loadTemplateMetadata();
 
   // Support de l'alias de page d'accueil: content.pages.home = { mode: 'system' | 'custom', id?: string }
   const homeSel = (content as any)?.pages?.home as { mode?: 'system' | 'custom'; id?: string } | undefined;

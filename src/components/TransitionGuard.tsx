@@ -58,46 +58,11 @@ export default function TransitionGuard() {
     };
   }, []);
 
-  // ✅ SIMPLIFICATION : Intercepter uniquement les double-clics très rapides (< 100ms)
-  // L'interception globale de startViewTransition() gère le reste
-  useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const link = target.closest("a[href]") as HTMLAnchorElement;
-      
-      if (!link) return;
-
-      const href = link.getAttribute("href");
-      if (!href || href.startsWith("#")) return;
-
-      // Vérifier si c'est un lien interne
-      const isInternal = href.startsWith("/");
-      const withMod = e.metaKey || e.ctrlKey || e.shiftKey || e.altKey;
-
-      if (isInternal && !withMod) {
-        const now = Date.now();
-        const timeSinceLastClick = now - lastClickTime.current;
-
-        // ✅ SIMPLIFICATION : Empêcher uniquement les double-clics très rapides (< 100ms)
-        // ET si une transition est en cours
-        if (timeSinceLastClick < 100 && isTransitionInProgress()) {
-          e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
-          return;
-        }
-
-        lastClickTime.current = now;
-      }
-    };
-
-    // Intercepter avec capture pour être le premier
-    document.addEventListener("click", handleClick, { capture: true, passive: false });
-
-    return () => {
-      document.removeEventListener("click", handleClick, { capture: true });
-    };
-  }, []);
+  // ✅ OPTIMISATION : Ne plus intercepter les clics du tout
+  // Laisser le Link de next-view-transitions gérer directement les clics
+  // L'interception globale de startViewTransition() dans transitionLock.ts
+  // empêche déjà les doubles transitions au niveau de l'API native
+  // Cela élimine toute latence liée à l'interception des événements
 
   // ✅ SIMPLIFICATION : Ne plus déverrouiller ici
   // L'interception globale de startViewTransition() déverrouille automatiquement

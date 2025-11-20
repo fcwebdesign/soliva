@@ -1,6 +1,6 @@
 import "./globals.css";
 import { ViewTransitions } from "next-view-transitions";
-import { readContent } from "@/lib/content";
+import { loadTemplateMetadata } from "@/lib/load-template-metadata";
 import { draftMode, headers } from 'next/headers';
 import { SITE_NAME, SITE_URL, DEFAULT_OG_IMAGE } from "@/lib/seo";
 import { ReactNode } from "react";
@@ -30,14 +30,15 @@ interface RootLayoutProps {
 }
 
 export async function generateMetadata() {
-  const content = await readContent();
+  // ✅ OPTIMISATION : Utiliser loadTemplateMetadata au lieu de readContent (41 MB → ~100 Ko)
+  const content = await loadTemplateMetadata();
   return {
     metadataBase: new URL(SITE_URL),
     title: { 
-      default: content.metadata.title || SITE_NAME, 
+      default: content.metadata?.title || SITE_NAME, 
       template: `%s — ${SITE_NAME}` 
     },
-    description: content.metadata.description || "Site officiel de " + SITE_NAME,
+    description: content.metadata?.description || "Site officiel de " + SITE_NAME,
     alternates: { canonical: SITE_URL },
     openGraph: {
       type: "website",
@@ -53,7 +54,8 @@ export async function generateMetadata() {
 }
 
 export default async function RootLayout({ children }: RootLayoutProps) {
-  const content = await readContent();
+  // ✅ OPTIMISATION : Utiliser loadTemplateMetadata au lieu de readContent (85 KB au lieu de 86 MB)
+  const content = await loadTemplateMetadata();
   const { isEnabled: isDraftMode } = await draftMode();
   const activeTemplate = await getActiveTemplate();
   const palette = resolvePaletteFromContent(content);

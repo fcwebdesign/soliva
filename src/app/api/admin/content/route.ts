@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readContent, writeContent } from '@/lib/content';
+import { invalidateMetadataCache } from '@/lib/load-template-metadata';
 import type { Content } from '@/types/content';
 import { join } from 'path';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
@@ -73,12 +74,19 @@ export async function PUT(request: NextRequest) {
       // Aussi sauvegarder dans content.json pour l'affichage actuel
       await writeContent(content, { actor: 'admin-api' });
       
+      // ✅ OPTIMISATION : Invalider le cache des métadonnées après sauvegarde
+      invalidateMetadataCache();
+      
       console.log(`✅ Contenu sauvegardé dans le template "${currentTemplate}"`);
       
     } else {
       // Pour soliva ou pas de template, sauvegarder normalement
       console.log('📁 Sauvegarde dans content.json (template soliva ou par défaut)');
       await writeContent(content, { actor: 'admin-api' });
+      
+      // ✅ OPTIMISATION : Invalider le cache des métadonnées après sauvegarde
+      invalidateMetadataCache();
+      
       console.log('✅ Contenu écrit avec succès');
     }
     

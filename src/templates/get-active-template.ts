@@ -1,5 +1,5 @@
 import { draftMode, headers } from 'next/headers';
-import { readContent } from '@/lib/content';
+import { loadTemplateMetadata } from '@/lib/load-template-metadata';
 import { TEMPLATES, type TemplateMeta } from './registry';
 
 export async function getActiveTemplate(): Promise<TemplateMeta | null> {
@@ -41,9 +41,9 @@ export async function getActiveTemplate(): Promise<TemplateMeta | null> {
     }
     
     // 2. Configuration du site (content.json) - appliqué sur toutes les pages
-    // OPTIMISATION : Ne charger que _template au lieu de tout le contenu pour éviter le cache > 2 MB
-    const content = await readContent();
-    const configTemplate = (content as any)._template;
+    // ✅ OPTIMISATION : Utiliser loadTemplateMetadata au lieu de readContent (41 MB → ~100 Ko)
+    const content = await loadTemplateMetadata();
+    const configTemplate = content._template;
     if (configTemplate) {
       const meta: TemplateMeta = TEMPLATES[configTemplate] || { key: configTemplate, autonomous: true, name: configTemplate };
       console.log('⚙️ Template config détecté:', configTemplate, 'sur', pathname);

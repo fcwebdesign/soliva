@@ -34,6 +34,10 @@ export function interceptViewTransitions(): void {
   (document as any).startViewTransition = function(callback: () => void | Promise<void>) {
     // ✅ Vérification atomique : Si une transition est déjà en cours, ignorer complètement
     if (isTransitioning) {
+      // ✅ DEBUG : Log pour comprendre pourquoi une transition est bloquée
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🚫 [TransitionLock] Transition bloquée - une transition est déjà en cours');
+      }
       // Retourner un objet mock qui simule l'API ViewTransition
       // Le callback n'est PAS exécuté pour éviter les conflits
       return {
@@ -53,13 +57,14 @@ export function interceptViewTransitions(): void {
       transitionTimeout = null;
     }
 
-    // Timeout de sécurité adaptatif (durée transition + marge)
-    const defaultTransitionDuration = 1500;
-    const safetyMargin = 500;
+    // ✅ OPTIMISATION : Timeout de sécurité très court pour éviter de bloquer
+    // La transition se termine généralement très rapidement via l'événement 'finished'
+    // Ce timeout est juste une sécurité au cas où 'finished' ne se déclencherait pas
+    const safetyTimeout = 300; // Très court pour éviter de bloquer les nouvelles transitions
     transitionTimeout = setTimeout(() => {
       isTransitioning = false;
       transitionTimeout = null;
-    }, defaultTransitionDuration + safetyMargin);
+    }, safetyTimeout);
 
     try {
       // Appeler la fonction native

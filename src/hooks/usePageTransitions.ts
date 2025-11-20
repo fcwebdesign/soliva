@@ -17,9 +17,6 @@ export function usePageTransitions() {
   }, [isSafari]);
 
   const triggerPageTransition = useCallback((path: string): void => {
-    // ✅ SIMPLIFICATION : Ne plus utiliser startTransition() manuellement
-    // L'interception globale de startViewTransition() gère tout automatiquement
-    
     if (isBasicTransition()) {
       const curtain = document.getElementById("curtain");
       if (!curtain) {
@@ -27,31 +24,15 @@ export function usePageTransitions() {
       }
 
       curtain.style.transform = "translateY(0%)";
-
-      // Navigation immédiate - l'interception globale gère le verrouillage
+      // Navigation immédiate
       router.push(path);
       return;
     }
 
-    // Chrome → animation native via clipPath avec cercle
-    document.documentElement.animate(
-      [
-        {
-          clipPath: "circle(0% at 50% 50%)"
-        },
-        {
-          clipPath: "circle(150% at 50% 50%)",
-        },
-      ],
-      {
-        duration: 2000,
-        easing: "cubic-bezier(0.9, 0, 0.1, 1)",
-        pseudoElement: "::view-transition-new(root)",
-      }
-    );
-    // ✅ SIMPLIFICATION : Ne plus déverrouiller manuellement
-    // L'interception globale gère le déverrouillage automatiquement
-  }, [router, isBasicTransition, isSafari]);
+    // Chrome → Navigation immédiate, l'animation se fait automatiquement via View Transitions
+    // Plus besoin d'attendre onTransitionReady, ça crée de la latence
+    router.push(path);
+  }, [router, isBasicTransition]);
 
   const handleNavigation = useCallback((path: string) => (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => {
     const currentPath = window.location.pathname;
@@ -69,17 +50,8 @@ export function usePageTransitions() {
 
     e.preventDefault();
 
-    if (isBasicTransition()) {
-      triggerPageTransition(path);
-    } else {
-      // ✅ SIMPLIFICATION : Laisser next-view-transitions gérer tout
-      // L'interception globale gère le verrouillage automatiquement
-      router.push(path, {
-        onTransitionReady: () => {
-          triggerPageTransition(path);
-        },
-      });
-    }
+    // ✅ OPTIMISATION : Navigation immédiate, pas d'attente
+    triggerPageTransition(path);
   }, [router, isBasicTransition, triggerPageTransition]);
 
   const handleLinkClick = useCallback((href: string, e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => {
@@ -98,18 +70,8 @@ export function usePageTransitions() {
       if (href.startsWith("#")) {
         document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
       } else {
-        // Utiliser le système de transitions personnalisé
-        if (isBasicTransition()) {
-          triggerPageTransition(href);
-        } else {
-          // ✅ SIMPLIFICATION : Laisser next-view-transitions gérer tout
-          // L'interception globale gère le verrouillage automatiquement
-          router.push(href, {
-            onTransitionReady: () => {
-              triggerPageTransition(href);
-            },
-          });
-        }
+        // ✅ OPTIMISATION : Navigation immédiate, pas d'attente
+        triggerPageTransition(href);
       }
     }
   }, [router, isBasicTransition, triggerPageTransition]);

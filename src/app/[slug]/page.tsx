@@ -155,7 +155,8 @@ export default function Page() {
     try {
       console.log('🔍 Recherche de la page:', slug);
       
-      const response = await fetch('/api/content');
+      // ✅ OPTIMISATION : Utiliser l'API metadata au lieu de /api/content (41 MB)
+      const response = await fetch('/api/content/metadata');
       const data = await response.json();
       
       console.log('📄 Contenu reçu:', data);
