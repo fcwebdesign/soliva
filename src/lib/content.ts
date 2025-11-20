@@ -468,21 +468,338 @@ export async function writeContent(next: Content, opts?: { actor?: string }): Pr
 
     logger.debug('✅ Validation réussie, préparation de la sauvegarde...');
 
-    // ✅ PROTECTION : Supprimer les champs colors/spacing s'ils contiennent des duplications
-    // (bug où le contenu complet était copié dans ces champs)
-    if ((next as any).colors && typeof (next as any).colors === 'object') {
-      const colorsSize = JSON.stringify((next as any).colors).length;
-      if (colorsSize > 1000000) { // > 1 MB = probablement une duplication
-        logger.warn('⚠️ Champ colors trop volumineux détecté, suppression pour éviter duplication');
-        delete (next as any).colors;
+    // ✅ PROTECTION CRITIQUE : Validation complète pour éviter toutes les duplications
+    // Liste des champs valides à la racine (selon Content interface)
+    const validRootFields = new Set([
+      '_template',
+      '_templateVersion',
+      'metadata',
+      'nav',
+      'home',
+      'contact',
+      'studio',
+      'work',
+      'blog',
+      'footer',
+      'pages',
+      '_transitionConfig',
+      'typography' // Peut exister à la racine pour certains templates
+    ]);
+    
+    // Liste des champs suspects qui ne devraient JAMAIS être à la racine
+    const suspiciousRootFields = ['colors', 'spacing', 'site', 'reveal'];
+    
+    // Vérifier tous les champs à la racine
+    const rootKeys = Object.keys(next);
+    const suspiciousKeys = ['_template', 'metadata', 'home', 'studio', 'work', 'blog', 'nav', 'footer', 'pages'];
+    
+    for (const key of rootKeys) {
+      const value = (next as any)[key];
+      
+      // Ignorer les champs valides
+      if (validRootFields.has(key)) {
+        continue;
+      }
+      
+      // Vérifier les champs suspects
+      if (suspiciousRootFields.includes(key)) {
+        const size = JSON.stringify(value).length;
+        const valueKeys = typeof value === 'object' && value !== null && !Array.isArray(value) 
+          ? Object.keys(value) 
+          : [];
+        const hasSuspiciousKeys = suspiciousKeys.some(sk => valueKeys.includes(sk));
+        
+        if (size > 100000 || hasSuspiciousKeys) {
+          logger.warn(`⚠️ Champ "${key}" invalide détecté (${(size / 1024).toFixed(2)} KB, duplication probable), suppression automatique`);
+          delete (next as any)[key];
+        }
+      }
+      
+      // Vérifier les champs inconnus qui pourraient être des duplications
+      if (!validRootFields.has(key) && !suspiciousRootFields.includes(key)) {
+        const size = JSON.stringify(value).length;
+        const valueKeys = typeof value === 'object' && value !== null && !Array.isArray(value) 
+          ? Object.keys(value) 
+          : [];
+        const hasSuspiciousKeys = suspiciousKeys.some(sk => valueKeys.includes(sk));
+        
+        // Si un champ inconnu contient des clés suspectes ET fait > 10 KB, c'est probablement une duplication
+        if (hasSuspiciousKeys && size > 10000) {
+          logger.warn(`⚠️ Champ inconnu "${key}" détecté avec structure suspecte (${(size / 1024).toFixed(2)} KB), suppression automatique`);
+          delete (next as any)[key];
+        }
       }
     }
-    if ((next as any).spacing && typeof (next as any).spacing === 'object') {
-      const spacingSize = JSON.stringify((next as any).spacing).length;
-      if (spacingSize > 1000000) { // > 1 MB = probablement une duplication
-        logger.warn('⚠️ Champ spacing trop volumineux détecté, suppression pour éviter duplication');
-        delete (next as any).spacing;
+    
+    // ✅ PROTECTION : Vérifier les doublons dans les articles et projets
+    if ((next as any).blog?.articles && Array.isArray((next as any).blog.articles)) {
+      const articles = (next as any).blog.articles;
+      const articleIds = new Set<string>();
+      const articleSlugs = new Set<string>();
+      const duplicates: Array<{ id: string; title: string; reason: string }> = [];
+      
+      for (const article of articles) {
+        // Vérifier les IDs dupliqués
+        if (article.id) {
+          if (articleIds.has(article.id)) {
+            duplicates.push({ id: article.id, title: article.title || 'Sans titre', reason: 'ID dupliqué' });
+          } else {
+            articleIds.add(article.id);
+          }
+        }
+        
+        // Vérifier les slugs dupliqués
+        if (article.slug) {
+          if (articleSlugs.has(article.slug)) {
+            duplicates.push({ id: article.id || 'inconnu', title: article.title || 'Sans titre', reason: 'Slug dupliqué' });
+          } else {
+            articleSlugs.add(article.slug);
+          }
+        }
+        
+        // ✅ PROTECTION : Vérifier que les blocs ne contiennent pas de duplications
+        if (article.blocks && Array.isArray(article.blocks)) {
+          const blockIds = new Set<string>();
+          const duplicateBlocks: string[] = [];
+          
+          for (const block of article.blocks) {
+            if (block.id) {
+              if (blockIds.has(block.id)) {
+                duplicateBlocks.push(block.id);
+              } else {
+                blockIds.add(block.id);
+              }
+            }
+          }
+          
+          if (duplicateBlocks.length > 0) {
+            logger.warn(`⚠️ Blocs en double dans l'article "${article.title}":`, duplicateBlocks.join(', '));
+            // Nettoyer les blocs en double en gardant le premier
+            const uniqueBlocks = article.blocks.filter((block: any, index: number, self: any[]) => {
+              if (!block.id) return true;
+              const firstIndex = self.findIndex((b: any) => b.id === block.id);
+              return firstIndex === index;
+            });
+            article.blocks = uniqueBlocks;
+          }
+          
+          // ✅ PROTECTION : Vérifier la taille des blocs (ne devrait pas être énorme)
+          const blocksSize = JSON.stringify(article.blocks).length;
+          if (blocksSize > 500000) { // > 500 KB = suspect
+            logger.warn(`⚠️ Blocs volumineux dans l'article "${article.title}" (${(blocksSize / 1024).toFixed(2)} KB), vérification recommandée`);
+          }
+        }
       }
+      
+      if (duplicates.length > 0) {
+        logger.warn(`⚠️ Articles en double détectés (${duplicates.length}):`, duplicates.map(d => `${d.title} (${d.reason})`).join(', '));
+        // Nettoyer les doublons en gardant le premier
+        const uniqueArticles = articles.filter((article: any, index: number, self: any[]) => {
+          if (!article.id) return true; // Garder les articles sans ID
+          const firstIndex = self.findIndex((a: any) => a.id === article.id);
+          return firstIndex === index;
+        });
+        (next as any).blog.articles = uniqueArticles;
+        logger.info(`✅ Articles nettoyés: ${articles.length} → ${uniqueArticles.length}`);
+      }
+    }
+    
+    // ✅ PROTECTION : Vérifier les doublons dans les projets
+    if ((next as any).work?.adminProjects && Array.isArray((next as any).work.adminProjects)) {
+      const projects = (next as any).work.adminProjects;
+      const projectIds = new Set<string>();
+      const projectSlugs = new Set<string>();
+      const duplicates: Array<{ id: string; title: string; reason: string }> = [];
+      
+      for (const project of projects) {
+        // Vérifier les IDs dupliqués
+        if (project.id) {
+          if (projectIds.has(project.id)) {
+            duplicates.push({ id: project.id, title: project.title || 'Sans titre', reason: 'ID dupliqué' });
+          } else {
+            projectIds.add(project.id);
+          }
+        }
+        
+        // Vérifier les slugs dupliqués
+        if (project.slug) {
+          if (projectSlugs.has(project.slug)) {
+            duplicates.push({ id: project.id || 'inconnu', title: project.title || 'Sans titre', reason: 'Slug dupliqué' });
+          } else {
+            projectSlugs.add(project.slug);
+          }
+        }
+        
+        // ✅ PROTECTION : Vérifier que les blocs ne contiennent pas de duplications
+        if (project.blocks && Array.isArray(project.blocks)) {
+          const blockIds = new Set<string>();
+          const duplicateBlocks: string[] = [];
+          
+          for (const block of project.blocks) {
+            if (block.id) {
+              if (blockIds.has(block.id)) {
+                duplicateBlocks.push(block.id);
+              } else {
+                blockIds.add(block.id);
+              }
+            }
+          }
+          
+          if (duplicateBlocks.length > 0) {
+            logger.warn(`⚠️ Blocs en double dans le projet "${project.title}":`, duplicateBlocks.join(', '));
+            // Nettoyer les blocs en double en gardant le premier
+            const uniqueBlocks = project.blocks.filter((block: any, index: number, self: any[]) => {
+              if (!block.id) return true;
+              const firstIndex = self.findIndex((b: any) => b.id === block.id);
+              return firstIndex === index;
+            });
+            project.blocks = uniqueBlocks;
+          }
+          
+          // ✅ PROTECTION : Vérifier la taille des blocs (ne devrait pas être énorme)
+          const blocksSize = JSON.stringify(project.blocks).length;
+          if (blocksSize > 500000) { // > 500 KB = suspect
+            logger.warn(`⚠️ Blocs volumineux dans le projet "${project.title}" (${(blocksSize / 1024).toFixed(2)} KB), vérification recommandée`);
+          }
+        }
+      }
+      
+      if (duplicates.length > 0) {
+        logger.warn(`⚠️ Projets en double détectés (${duplicates.length}):`, duplicates.map(d => `${d.title} (${d.reason})`).join(', '));
+        // Nettoyer les doublons en gardant le premier
+        const uniqueProjects = projects.filter((project: any, index: number, self: any[]) => {
+          if (!project.id) return true; // Garder les projets sans ID
+          const firstIndex = self.findIndex((p: any) => p.id === project.id);
+          return firstIndex === index;
+        });
+        (next as any).work.adminProjects = uniqueProjects;
+        logger.info(`✅ Projets nettoyés: ${projects.length} → ${uniqueProjects.length}`);
+      }
+    }
+    
+    // ✅ PROTECTION : Vérifier les doublons dans les pages custom
+    if ((next as any).pages?.pages && Array.isArray((next as any).pages.pages)) {
+      const customPages = (next as any).pages.pages;
+      const pageIds = new Set<string>();
+      const pageSlugs = new Set<string>();
+      const duplicates: Array<{ id: string; title: string; reason: string }> = [];
+      
+      for (const page of customPages) {
+        // Vérifier les IDs dupliqués
+        if (page.id) {
+          if (pageIds.has(page.id)) {
+            duplicates.push({ id: page.id, title: page.title || 'Sans titre', reason: 'ID dupliqué' });
+          } else {
+            pageIds.add(page.id);
+          }
+        }
+        
+        // Vérifier les slugs dupliqués
+        if (page.slug) {
+          if (pageSlugs.has(page.slug)) {
+            duplicates.push({ id: page.id || 'inconnu', title: page.title || 'Sans titre', reason: 'Slug dupliqué' });
+          } else {
+            pageSlugs.add(page.slug);
+          }
+        }
+        
+        // ✅ PROTECTION : Vérifier que les blocs ne contiennent pas de duplications
+        if (page.blocks && Array.isArray(page.blocks)) {
+          const blockIds = new Set<string>();
+          const duplicateBlocks: string[] = [];
+          
+          for (const block of page.blocks) {
+            if (block.id) {
+              if (blockIds.has(block.id)) {
+                duplicateBlocks.push(block.id);
+              } else {
+                blockIds.add(block.id);
+              }
+            }
+          }
+          
+          if (duplicateBlocks.length > 0) {
+            logger.warn(`⚠️ Blocs en double dans la page "${page.title}":`, duplicateBlocks.join(', '));
+            // Nettoyer les blocs en double en gardant le premier
+            const uniqueBlocks = page.blocks.filter((block: any, index: number, self: any[]) => {
+              if (!block.id) return true;
+              const firstIndex = self.findIndex((b: any) => b.id === block.id);
+              return firstIndex === index;
+            });
+            page.blocks = uniqueBlocks;
+          }
+          
+          // ✅ PROTECTION : Vérifier la taille des blocs (ne devrait pas être énorme)
+          const blocksSize = JSON.stringify(page.blocks).length;
+          if (blocksSize > 500000) { // > 500 KB = suspect
+            logger.warn(`⚠️ Blocs volumineux dans la page "${page.title}" (${(blocksSize / 1024).toFixed(2)} KB), vérification recommandée`);
+          }
+        }
+      }
+      
+      if (duplicates.length > 0) {
+        logger.warn(`⚠️ Pages custom en double détectées (${duplicates.length}):`, duplicates.map(d => `${d.title} (${d.reason})`).join(', '));
+        // Nettoyer les doublons en gardant le premier
+        const uniquePages = customPages.filter((page: any, index: number, self: any[]) => {
+          if (!page.id) return true; // Garder les pages sans ID
+          const firstIndex = self.findIndex((p: any) => p.id === page.id);
+          return firstIndex === index;
+        });
+        (next as any).pages.pages = uniquePages;
+        logger.info(`✅ Pages custom nettoyées: ${customPages.length} → ${uniquePages.length}`);
+      }
+    }
+    
+    // ✅ PROTECTION : Vérifier pinnedSystem (pages système épinglées)
+    if ((next as any).pages?.pinnedSystem && Array.isArray((next as any).pages.pinnedSystem)) {
+      const pinnedSystem = (next as any).pages.pinnedSystem;
+      const pinnedIds = new Set<string>();
+      const duplicates: string[] = [];
+      
+      for (const pageId of pinnedSystem) {
+        if (pinnedIds.has(pageId)) {
+          duplicates.push(pageId);
+        } else {
+          pinnedIds.add(pageId);
+        }
+      }
+      
+      if (duplicates.length > 0) {
+        logger.warn(`⚠️ Pages système dupliquées dans pinnedSystem:`, duplicates.join(', '));
+        // Nettoyer les doublons en gardant le premier
+        const uniquePinned = pinnedSystem.filter((pageId: string, index: number, self: string[]) => {
+          const firstIndex = self.indexOf(pageId);
+          return firstIndex === index;
+        });
+        (next as any).pages.pinnedSystem = uniquePinned;
+        logger.info(`✅ Pages système nettoyées: ${pinnedSystem.length} → ${uniquePinned.length}`);
+      }
+    }
+    
+    // ✅ PROTECTION ADDITIONNELLE : Vérifier la taille totale du contenu
+    const totalSize = JSON.stringify(next).length;
+    if (totalSize > 5000000) { // > 5 MB = problème (devrait être < 1 MB normalement)
+      logger.warn(`⚠️ Contenu volumineux détecté (${(totalSize / 1024 / 1024).toFixed(2)} MB), vérification recommandée`);
+      
+      // Analyser les sections les plus volumineuses
+      const sectionSizes: Array<{ key: string; size: number }> = [];
+      for (const key of rootKeys) {
+        if (validRootFields.has(key)) {
+          const size = JSON.stringify((next as any)[key]).length;
+          if (size > 100000) { // > 100 KB
+            sectionSizes.push({ key, size });
+          }
+        }
+      }
+      
+      if (sectionSizes.length > 0) {
+        logger.warn('⚠️ Sections volumineuses détectées:', sectionSizes.map(s => `${s.key}: ${(s.size / 1024).toFixed(2)} KB`).join(', '));
+      }
+    }
+    
+    if (totalSize > 50000000) { // > 50 MB = erreur bloquante
+      logger.error('❌ ERREUR CRITIQUE: Contenu trop volumineux (>50MB), sauvegarde bloquée');
+      throw new Error('Le contenu est trop volumineux. Vérifiez les duplications avant de sauvegarder.');
     }
 
     // PROTECTION CRITIQUE : Nettoyer typography avant de sauvegarder pour éviter la corruption

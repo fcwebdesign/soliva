@@ -7,7 +7,7 @@
       "type": "slide-up",
       "duration": 900,
       "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
-      "updatedAt": "2025-11-20T08:42:58.894Z"
+      "updatedAt": "2025-11-20T08:56:10.240Z"
     },
     "footer": {
       "footerVariant": "classic"
@@ -521,7 +521,7 @@
       "work": "Image",
       "blog": "Coffee"
     },
-    "colorPalette": "rose-pastel",
+    "colorPalette": "forest",
     "customPalettes": [
       {
         "id": "phare-élégant-havrais",
@@ -1044,7 +1044,7 @@
     "type": "slide-up",
     "duration": 900,
     "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
-    "updatedAt": "2025-11-20T08:42:58.894Z"
+    "updatedAt": "2025-11-20T08:56:10.240Z"
   },
   "footer": {
     "logo": "Pearl",

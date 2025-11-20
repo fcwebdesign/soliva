@@ -74,11 +74,14 @@ export async function POST(request: NextRequest) {
         mkdirSync(templateDir, { recursive: true });
       }
       
-      // Sauvegarder dans le template spécifique
-      writeFileSync(templateContentPath, JSON.stringify(content, null, 2));
-      
-      // Aussi sauvegarder dans content.json pour l'affichage actuel
+      // ✅ PROTECTION : Valider le contenu avant de sauvegarder
+      // writeContent() valide automatiquement, donc on sauvegarde d'abord dans content.json
+      // puis on copie le fichier validé vers le template
       await writeContent(content);
+      
+      // Lire le contenu validé depuis content.json et le copier vers le template
+      const validatedContent = await readContent();
+      writeFileSync(templateContentPath, JSON.stringify(validatedContent, null, 2));
       
       // ✅ OPTIMISATION : Invalider le cache des métadonnées après sauvegarde
       invalidateMetadataCache();
