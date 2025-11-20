@@ -46,7 +46,7 @@ export default function LogosBlock({ data }: { data: LogosData | any }) {
   useEffect(() => {
     const loadContent = async () => {
       try {
-        const response = await fetchContentWithNoCache('/api/content');
+        const response = await fetchContentWithNoCache('/api/content/metadata');
         if (response.ok) {
           const data = await response.json();
           setFullContent(data);
@@ -62,7 +62,7 @@ export default function LogosBlock({ data }: { data: LogosData | any }) {
   useContentUpdate(() => {
     const loadContent = async () => {
       try {
-        const response = await fetchContentWithNoCache('/api/content');
+        const response = await fetchContentWithNoCache('/api/content/metadata');
         if (response.ok) {
           const data = await response.json();
           setFullContent(data);

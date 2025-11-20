@@ -79,7 +79,7 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData | any
   useEffect(() => {
     const loadContent = async () => {
       try {
-        const response = await fetchContentWithNoCache('/api/content');
+        const response = await fetchContentWithNoCache('/api/content/metadata');
         if (response.ok) {
           const json = await response.json();
           setFullContent(json);
@@ -93,7 +93,7 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData | any
   useContentUpdate(() => {
     const loadContent = async () => {
       try {
-        const response = await fetchContentWithNoCache('/api/content');
+        const response = await fetchContentWithNoCache('/api/content/metadata');
         if (response.ok) {
           const json = await response.json();
           setFullContent(json);

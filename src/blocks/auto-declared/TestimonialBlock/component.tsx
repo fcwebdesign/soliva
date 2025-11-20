@@ -59,7 +59,7 @@ export default function TestimonialBlock({ data }: { data: TestimonialData | any
   useEffect(() => {
     const loadContent = async () => {
       try {
-        const response = await fetchContentWithNoCache('/api/content');
+        const response = await fetchContentWithNoCache('/api/content/metadata');
         if (response.ok) {
           const data = await response.json();
           setFullContent(data);
@@ -75,7 +75,7 @@ export default function TestimonialBlock({ data }: { data: TestimonialData | any
   useContentUpdate(() => {
     const loadContent = async () => {
       try {
-        const response = await fetchContentWithNoCache('/api/content');
+        const response = await fetchContentWithNoCache('/api/content/metadata');
         if (response.ok) {
           const data = await response.json();
           setFullContent(data);

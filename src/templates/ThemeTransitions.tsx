@@ -50,8 +50,9 @@ export default function ThemeTransitions() {
     
     const fetchContent = async () => {
       try {
-        // Ajouter un timestamp pour éviter le cache
-        const response = await fetch(`/api/content?t=${Date.now()}`, { 
+        // Utiliser /api/content/metadata au lieu de /api/content pour éviter de charger 45 Mo
+        // La config de transition est incluse dans les métadonnées
+        const response = await fetch(`/api/content/metadata?t=${Date.now()}`, { 
           cache: 'no-store',
           headers: {
             'Cache-Control': 'no-cache, no-store, must-revalidate',

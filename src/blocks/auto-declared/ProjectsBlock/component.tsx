@@ -48,7 +48,7 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetchContentWithNoCache('/api/content');
+        const response = await fetchContentWithNoCache('/api/content/metadata');
         const content = await response.json();
         setFullContent(content);
         
@@ -116,7 +116,7 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
     // Recharger les projets quand le contenu est mis à jour
     const fetchData = async () => {
       try {
-        const response = await fetchContentWithNoCache('/api/content');
+        const response = await fetchContentWithNoCache('/api/content/metadata');
         const content = await response.json();
         setFullContent(content);
         

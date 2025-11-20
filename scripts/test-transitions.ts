@@ -255,7 +255,7 @@ class TransitionTester {
 
         // Analyser par délai
         console.log('📈 Analyse par délai entre clics:');
-        const delays = [...new Set(this.results.map(r => r.delay))].sort((a, b) => a - b);
+        const delays = Array.from(new Set(this.results.map(r => r.delay))).sort((a, b) => a - b);
         
         delays.forEach(delay => {
           const testsForDelay = successfulTests.filter(r => r.delay === delay);

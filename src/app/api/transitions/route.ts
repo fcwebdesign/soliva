@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { readContent, writeContent } from '@/lib/content';
 import { setTransitionConfig } from '@/utils/transitionConfig';
 import { join } from 'path';
-import { existsSync, mkdirSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, writeFileSync, readFileSync } from 'fs';
 
 export async function POST(request: NextRequest) {
   try {

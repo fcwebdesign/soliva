@@ -1,5 +1,6 @@
 "use client";
-import { Link, LinkProps } from "next-view-transitions";
+import { Link } from "next-view-transitions";
+import type { LinkProps } from "next/link";
 import { useTransitionRouter } from "next-view-transitions";
 import { useCallback } from "react";
 import { isTransitionInProgress, startTransition, endTransition } from "@/utils/transitionLock";
@@ -20,11 +21,12 @@ export default function SafeLink({ href, onClick, ...props }: LinkProps) {
     }
 
     // Vérifier si c'est un lien interne
-    const isInternal = href.startsWith("/") || href.startsWith("#");
+    const hrefStr = typeof href === 'string' ? href : (href as any).pathname || '';
+    const isInternal = hrefStr.startsWith("/") || hrefStr.startsWith("#");
     const withMod = e.metaKey || e.ctrlKey || e.shiftKey || e.altKey;
 
     // Pour les liens internes sans modificateur, utiliser le verrouillage
-    if (isInternal && !withMod && !href.startsWith("#")) {
+    if (isInternal && !withMod && !hrefStr.startsWith("#")) {
       // Démarrer la transition avant le clic
       if (!startTransition()) {
         e.preventDefault();

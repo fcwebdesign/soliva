@@ -68,7 +68,7 @@ export default function TransitionGuard() {
           e.preventDefault();
           e.stopPropagation();
           e.stopImmediatePropagation();
-          return false;
+          return;
         }
 
         lastClickTime.current = now;
@@ -96,6 +96,7 @@ export default function TransitionGuard() {
 
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [pathname]);
 
   return null; // Ce composant ne rend rien

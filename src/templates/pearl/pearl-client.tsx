@@ -14,8 +14,34 @@ import '@/animations/reveal/reveal-original.css';
 import './pearl.css';
 
 export default function PearlClient() {
-  const [content, setContent] = useState<any>(null);
+  const [metadata, setMetadata] = useState<any>(null); // Métadonnées uniquement (< 100 Ko)
+  const [fullContent, setFullContent] = useState<any>(null); // Contenu complet (chargé uniquement si nécessaire)
   const pathname = usePathname();
+  
+  // Utiliser metadata comme source principale, fullContent comme complément
+  const content = useMemo(() => {
+    if (!metadata) return null;
+    // Fusionner metadata avec fullContent si disponible
+    if (fullContent) {
+      return {
+        ...metadata,
+        // Remplacer les articles/projets par les versions complètes si disponibles
+        blog: {
+          ...metadata.blog,
+          articles: fullContent.blog?.articles || metadata.blog?.articles
+        },
+        work: {
+          ...metadata.work,
+          // Préserver toutes les propriétés de metadata.work (columns, filters, etc.)
+          ...(fullContent.work && {
+            adminProjects: fullContent.work?.adminProjects || metadata.work?.adminProjects,
+            projects: fullContent.work?.projects || metadata.work?.projects
+          })
+        }
+      };
+    }
+    return metadata;
+  }, [metadata, fullContent]);
   
   // Récupérer les styles typographiques - mémoriser uniquement sur les changements de typography dans metadata
   const typoConfig = useMemo(() => getTypographyConfig(content || {}), [content?.metadata?.typography]);
@@ -57,43 +83,57 @@ export default function PearlClient() {
     window.location.reload();
   };
 
-  // Charger le contenu au montage et écouter les mises à jour
+  // Phase 1 : Charger les métadonnées (léger, < 100 Ko)
   useEffect(() => {
-    const loadContent = async () => {
+    const loadMetadata = async () => {
       try {
-        // Ajouter un timestamp pour forcer le rechargement et éviter le cache
-        const response = await fetch(`/api/content?t=${Date.now()}`, { 
-          cache: 'no-store',
+        const response = await fetch(`/api/content/metadata?t=${Date.now()}`, {
+          cache: 'no-store', // Pas de cache pour éviter les problèmes de colonnes
           headers: {
-            'Cache-Control': 'no-cache'
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
           }
         });
         if (response.ok) {
           const data = await response.json();
-          setContent(data);
+          setMetadata(data);
+          console.log('✅ Métadonnées chargées');
         }
       } catch (error) {
         if (process.env.NODE_ENV === 'development') {
-          console.error('Erreur chargement contenu:', error);
+          console.error('Erreur chargement métadonnées:', error);
+        }
+        // Fallback : charger l'ancienne API si la nouvelle échoue
+        try {
+          const fallbackResponse = await fetch('/api/content', { cache: 'no-store' });
+          if (fallbackResponse.ok) {
+            const fallbackData = await fallbackResponse.json();
+            setMetadata(fallbackData);
+            setFullContent(fallbackData);
+          }
+        } catch (fallbackError) {
+          console.error('Erreur fallback:', fallbackError);
         }
       }
     };
     
-    // Charger au montage
-    loadContent();
+    loadMetadata();
     
     // Écouter les événements de mise à jour du contenu (depuis l'admin)
     const handleContentUpdate = () => {
-      // Forcer le rechargement avec un timestamp pour éviter le cache navigateur
-      loadContent();
+      // Recharger les métadonnées
+      loadMetadata();
+      // Réinitialiser le contenu complet pour forcer le rechargement
+      setFullContent(null);
     };
     
     window.addEventListener('content-updated', handleContentUpdate);
     
-    // Écouter aussi les changements de localStorage (pour les autres composants)
+    // Écouter aussi les changements de localStorage
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'content-updated' || e.key?.includes('updated')) {
-        loadContent();
+        loadMetadata();
+        setFullContent(null);
       }
     };
     window.addEventListener('storage', handleStorageChange);
@@ -102,7 +142,85 @@ export default function PearlClient() {
       window.removeEventListener('content-updated', handleContentUpdate);
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, []); // Charger au montage et écouter les mises à jour
+  }, []);
+
+  // Phase 2 : Charger le contenu complet uniquement pour les pages individuelles
+  useEffect(() => {
+    if (!metadata) return;
+    
+    const pathSegments = pathname?.split('/').filter(Boolean) || [];
+    const route = pathSegments[0] || 'home';
+    const slug = pathSegments[1];
+    
+    // Réinitialiser fullContent si on n'est plus sur une page individuelle
+    if (route !== 'blog' && route !== 'work') {
+      setFullContent(null);
+      return;
+    }
+    
+    // Charger le contenu complet uniquement pour les pages individuelles
+    if (route === 'blog' && slug) {
+      // Page d'article individuel
+      const loadArticle = async () => {
+        try {
+          const response = await fetch(`/api/content/article/${slug}`, {
+            cache: 'force-cache',
+            headers: {
+              'Cache-Control': 'public, max-age=300'
+            }
+          });
+          if (response.ok) {
+            const data = await response.json();
+            // Mettre à jour uniquement les articles dans le contenu
+            setFullContent({
+              blog: {
+                ...metadata.blog,
+                articles: metadata.blog?.articles?.map((a: any) => 
+                  (a.slug === slug || a.id === slug) ? data.article : a
+                ) || [data.article]
+              }
+            });
+          }
+        } catch (error) {
+          console.error('Erreur chargement article:', error);
+        }
+      };
+      loadArticle();
+    } else if (route === 'work' && slug) {
+      // Page de projet individuel
+      const loadProject = async () => {
+        try {
+          const response = await fetch(`/api/content/project/${slug}`, {
+            cache: 'force-cache',
+            headers: {
+              'Cache-Control': 'public, max-age=300'
+            }
+          });
+          if (response.ok) {
+            const data = await response.json();
+            // Mettre à jour uniquement les projets dans le contenu
+            setFullContent({
+              work: {
+                ...metadata.work,
+                adminProjects: metadata.work?.adminProjects?.map((p: any) =>
+                  (p.slug === slug || p.id === slug) ? data.project : p
+                ) || [data.project],
+                projects: metadata.work?.projects?.map((p: any) =>
+                  (p.slug === slug || p.id === slug) ? data.project : p
+                ) || [data.project]
+              }
+            });
+          }
+        } catch (error) {
+          console.error('Erreur chargement projet:', error);
+        }
+      };
+      loadProject();
+    } else {
+      // Sur les listes (blog ou work sans slug), réinitialiser fullContent
+      setFullContent(null);
+    }
+  }, [metadata, pathname]);
 
   // Logique de routage (sans hook pour garder l'ordre stable)
   const route = useMemo(() => {
@@ -163,8 +281,10 @@ export default function PearlClient() {
     // Pour les pages de projet individuelles, trouver le projet spécifique
     const pathSegments = pathname?.split('/').filter(Boolean) || [];
     const slug = pathSegments[1] || '';
-    individualItem = content?.work?.adminProjects?.find((p: any) => p.slug === slug || p.id === slug) ||
-                     content?.work?.projects?.find((p: any) => p.slug === slug || p.id === slug);
+    // Chercher d'abord dans fullContent (contenu complet), puis dans metadata (métadonnées)
+    const workContent = fullContent?.work || content?.work;
+    individualItem = workContent?.adminProjects?.find((p: any) => p.slug === slug || p.id === slug) ||
+                     workContent?.projects?.find((p: any) => p.slug === slug || p.id === slug);
     pageData = content?.work;
   } else if (route === 'blog') {
     pageData = content?.blog;
@@ -172,7 +292,9 @@ export default function PearlClient() {
     // Pour les articles individuels, trouver l'article spécifique
     const pathSegments = pathname?.split('/').filter(Boolean) || [];
     const slug = pathSegments[1] || '';
-    individualItem = content?.blog?.articles?.find((a: any) => a.slug === slug || a.id === slug);
+    // Chercher d'abord dans fullContent (contenu complet), puis dans metadata (métadonnées)
+    const blogContent = fullContent?.blog || content?.blog;
+    individualItem = blogContent?.articles?.find((a: any) => a.slug === slug || a.id === slug);
     pageData = content?.blog;
   } else if (route === 'studio') {
     pageData = content?.studio;

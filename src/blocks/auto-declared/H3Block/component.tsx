@@ -19,7 +19,7 @@ export default function H3Block({ data }: { data: H3Data | any }) {
   useEffect(() => {
     const loadContent = async () => {
       try {
-        const response = await fetchContentWithNoCache('/api/content');
+        const response = await fetchContentWithNoCache('/api/content/metadata');
         if (response.ok) {
           const data = await response.json();
           setFullContent(data);
@@ -35,7 +35,7 @@ export default function H3Block({ data }: { data: H3Data | any }) {
   useContentUpdate(() => {
     const loadContent = async () => {
       try {
-        const response = await fetchContentWithNoCache('/api/content');
+        const response = await fetchContentWithNoCache('/api/content/metadata');
         if (response.ok) {
           const data = await response.json();
           setFullContent(data);

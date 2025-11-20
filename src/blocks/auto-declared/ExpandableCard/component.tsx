@@ -39,7 +39,7 @@ export default function ExpandableCard({ data }: { data: ExpandableCardData | an
   useEffect(() => {
     const loadContent = async () => {
       try {
-        const response = await fetchContentWithNoCache('/api/content');
+        const response = await fetchContentWithNoCache('/api/content/metadata');
         if (response.ok) {
           const data = await response.json();
           setFullContent(data);
@@ -55,7 +55,7 @@ export default function ExpandableCard({ data }: { data: ExpandableCardData | an
   useContentUpdate(() => {
     const loadContent = async () => {
       try {
-        const response = await fetchContentWithNoCache('/api/content');
+        const response = await fetchContentWithNoCache('/api/content/metadata');
         if (response.ok) {
           const data = await response.json();
           setFullContent(data);
