@@ -11,6 +11,7 @@ import { Button } from '../../../components/ui/button';
 import { Plus, ChevronDown } from 'lucide-react';
 
 interface TwoColumnsData {
+  title?: string;
   leftColumn?: any[];
   rightColumn?: any[];
   layout?: 'left-right' | 'right-left' | 'stacked-mobile';
@@ -398,6 +399,21 @@ export default function TwoColumnsBlockEditor({ data, onChange }: { data: TwoCol
   return (
     <div className="block-editor">
       <div className="space-y-4">
+        {/* Titre (H2) optionnel */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Titre (H2)
+          </label>
+          <input
+            type="text"
+            value={data.title || ''}
+            onChange={(e) => updateField('title', e.target.value)}
+            placeholder="Titre de la section"
+            className="block-input"
+          />
+          <p className="text-xs text-gray-500 mt-1">Affiché au-dessus des colonnes.</p>
+        </div>
+
         {/* Configuration du layout */}
         <div className="grid grid-cols-3 gap-4">
           <div>

@@ -7,6 +7,7 @@ registerAutoBlock({
   component: TwoColumnsBlock,
   editor: TwoColumnsBlockEditor,
   defaultData: {
+    title: '',
     leftColumn: [],
     rightColumn: [],
     layout: 'left-right',

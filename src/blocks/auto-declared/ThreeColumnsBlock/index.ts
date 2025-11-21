@@ -7,6 +7,7 @@ registerAutoBlock({
   component: ThreeColumnsBlock,
   editor: ThreeColumnsBlockEditor,
   defaultData: {
+    title: '',
     leftColumn: [],
     middleColumn: [],
     rightColumn: [],

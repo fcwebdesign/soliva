@@ -5,6 +5,7 @@ import { useTheme } from '../../../hooks/useTheme';
 import { getAutoDeclaredBlock } from '../registry';
 
 interface FourColumnsData {
+  title?: string;
   column1?: any[];
   column2?: any[];
   column3?: any[];
@@ -20,6 +21,7 @@ export default function FourColumnsBlock({ data }: { data: FourColumnsData }) {
   // Supporte à la fois { data: {...} } et des props à plat
   const blockData = (data as any).data || data;
 
+  const title = blockData.title || '';
   const column1 = blockData.column1 || [];
   const column2 = blockData.column2 || [];
   const column3 = blockData.column3 || [];
@@ -136,6 +138,19 @@ export default function FourColumnsBlock({ data }: { data: FourColumnsData }) {
   
   return (
     <section className="four-columns-section" data-block-type="four-columns" data-block-theme={blockTheme}>
+      {title && (() => {
+        const heading = getAutoDeclaredBlock('h2');
+        const HeadingComponent = heading?.component;
+        return (
+          <div className="mb-8">
+            {HeadingComponent ? (
+              <HeadingComponent data={{ content: title, theme: blockTheme }} />
+            ) : (
+              <h2 className="text-3xl font-bold text-gray-900">{title}</h2>
+            )}
+          </div>
+        );
+      })()}
       <div className={`grid ${layoutClass} ${gapClass} ${alignmentClass}`} style={{ gap: gapValue }}>
         <div className="flex flex-col" style={{ gap: gapValue }}>
           {column1.map(renderSubBlock)}
