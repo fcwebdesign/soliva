@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import BlockEditor from '../components/BlockEditor';
 import BlockRenderer from '@/blocks/BlockRenderer';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, RefreshCw } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Eye, EyeOff } from 'lucide-react';
 import { TemplateProvider } from '@/templates/context';
 
 export const runtime = "nodejs";
@@ -31,6 +31,7 @@ export default function AdminPreviewPage() {
   const [error, setError] = useState<string | null>(null);
   const [pageOptions, setPageOptions] = useState<Array<{ value: string; label: string }>>([]);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
+  const [hiddenBlockIds, setHiddenBlockIds] = useState<Set<string>>(new Set());
 
   // Callback depuis BlockEditor
   const handleUpdate = (data: any) => {
@@ -127,6 +128,20 @@ export default function AdminPreviewPage() {
     setTimeout(() => el.classList.remove('ring', 'ring-blue-200'), 800);
   };
 
+  const toggleVisibility = (blockId: string) => {
+    setHiddenBlockIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(blockId)) {
+        next.delete(blockId);
+      } else {
+        next.add(blockId);
+      }
+      return next;
+    });
+  };
+
+  const visibleBlocks = blocks.filter((b) => !hiddenBlockIds.has(b.id));
+
   return (
     <TemplateProvider value={{ key: forcedTemplate || (initialPageData?._template || 'soliva') }}>
     <div className="flex flex-col h-screen w-full bg-gray-50" data-template={forcedTemplate || initialPageData?._template || 'soliva'}>
@@ -201,13 +216,17 @@ export default function AdminPreviewPage() {
                     >
                       <div className="flex items-center justify-between">
                         <span className="font-medium">{b.type}</span>
-                        <span className="text-[10px] text-gray-500">#{idx + 1}</span>
-                      </div>
-                      {b.title || b.content ? (
-                        <div className="text-[10px] text-gray-500 truncate">
-                          {(b.title || b.content || '').toString().substring(0, 60)}
+                        <div className="flex items-center gap-2 text-[10px] text-gray-500">
+                          <span>#{idx + 1}</span>
+                          <span
+                            onClick={(e) => { e.stopPropagation(); toggleVisibility(b.id); }}
+                            className="ml-1 text-gray-500 hover:text-gray-700"
+                            title={hiddenBlockIds.has(b.id) ? 'Afficher' : 'Masquer'}
+                          >
+                            {hiddenBlockIds.has(b.id) ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </span>
                         </div>
-                      ) : null}
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -229,24 +248,24 @@ export default function AdminPreviewPage() {
               <span className="text-xs text-gray-500">{blocks.length} bloc{blocks.length > 1 ? 's' : ''}</span>
             </div>
             <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 min-h-[240px]">
-              {blocks.length > 0 && previewData ? (
+              {visibleBlocks.length > 0 && previewData ? (
                 <>
                   <div className="site">
-                    <BlockRenderer blocks={blocks as any} content={previewData} />
+                    <BlockRenderer blocks={visibleBlocks as any} content={previewData} />
                   </div>
                   <div className="mt-4 rounded bg-gray-50 border border-gray-200 p-3 text-xs text-gray-600">
                     <div className="font-semibold mb-1">Debug preview</div>
                     <div>Page: {pageKey}</div>
                     <div>Template: {forcedTemplate || (initialPageData?._template || 'soliva')}</div>
-                    <div>Blocs: {blocks.length}</div>
-                    <div>Types: {blocks.map(b => b.type).join(', ')}</div>
+                    <div>Blocs: {visibleBlocks.length} / {blocks.length}</div>
+                    <div>Types: {visibleBlocks.map(b => b.type).join(', ')}</div>
                   </div>
                 </>
               ) : (
                 <div className="text-sm text-gray-500 text-center py-16 space-y-2">
                   <div>{loading ? 'Chargement...' : error ? `Erreur: ${error}` : 'Ajoute un bloc dans la colonne de gauche pour prévisualiser.'}</div>
                   <div className="text-xs">Page: {pageKey} · Template: {forcedTemplate || (initialPageData?._template || 'soliva')}</div>
-                  <div className="text-xs">Blocs: {blocks.length}</div>
+                  <div className="text-xs">Blocs visibles: {visibleBlocks.length} / {blocks.length}</div>
                 </div>
               )}
             </div>
