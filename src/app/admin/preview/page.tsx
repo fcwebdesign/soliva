@@ -18,6 +18,7 @@ export default function AdminPreviewPage() {
   const pageKey = searchParams.get('page') || 'studio';
   const forcedTemplate = searchParams.get('template') || null;
   const [adminContent, setAdminContent] = useState<any>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<string>(forcedTemplate || '');
 
   // Placeholder: on s'appuie sur BlockEditor pour la colonne gauche
   // et on passera le state aux props de PreviewPanel via lifting d’état.
@@ -29,6 +30,7 @@ export default function AdminPreviewPage() {
   const [initialPageData, setInitialPageData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [pageOptions, setPageOptions] = useState<Array<{ value: string; label: string }>>([]);
 
   // Callback depuis BlockEditor
   const handleUpdate = (data: any) => {
@@ -68,6 +70,21 @@ export default function AdminPreviewPage() {
         setPreviewData({ ...pageData, _template: nextTemplate });
         setBlocks(Array.isArray(pageData.blocks) ? pageData.blocks : []);
         console.log('[Preview] Page chargée', pageKey, { template: nextTemplate, blocks: pageData.blocks?.length || 0 });
+
+        // Options de pages pour le sélecteur
+        const opts: Array<{ value: string; label: string }> = [
+          { value: 'home', label: 'Home' },
+          { value: 'studio', label: 'Studio' },
+          { value: 'contact', label: 'Contact' },
+          { value: 'work', label: 'Work' },
+          { value: 'blog', label: 'Blog' },
+        ];
+        if (data?.pages?.pages) {
+          data.pages.pages.forEach((p: any) => {
+            if (p?.id) opts.push({ value: p.slug || p.id, label: p.title || p.id });
+          });
+        }
+        setPageOptions(opts);
       } catch (e: any) {
         setError(e.message || 'Erreur chargement');
         console.error('[Preview] Erreur chargement', e);
@@ -76,7 +93,24 @@ export default function AdminPreviewPage() {
       }
     };
     load();
-  }, [pageKey]);
+  }, [pageKey, forcedTemplate]);
+
+  const templateOptions = [
+    { value: '', label: 'Default (soliva)' },
+    { value: 'pearl', label: 'Pearl' },
+  ];
+
+  const handlePageChange = (nextPage: string) => {
+    const tpl = forcedTemplate || selectedTemplate;
+    const query = tpl ? `?page=${nextPage}&template=${tpl}` : `?page=${nextPage}`;
+    router.push(`/admin/preview${query}`);
+  };
+
+  const handleTemplateChange = (nextTpl: string) => {
+    setSelectedTemplate(nextTpl);
+    const query = nextTpl ? `?page=${pageKey}&template=${nextTpl}` : `?page=${pageKey}`;
+    router.push(`/admin/preview${query}`);
+  };
 
   return (
     <TemplateProvider value={{ key: forcedTemplate || (initialPageData?._template || 'soliva') }}>
@@ -89,8 +123,34 @@ export default function AdminPreviewPage() {
           </Button>
           <div className="text-sm text-gray-600">Prévisualisation live (beta)</div>
         </div>
-        <div className="flex items-center gap-2 text-xs text-gray-500">
-          <RefreshCw className="h-4 w-4" /> Auto-live depuis l’éditeur
+        <div className="flex items-center gap-4 text-xs text-gray-500">
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Page</span>
+            <select
+              className="border border-gray-200 rounded px-2 py-1 text-sm text-gray-700 bg-white"
+              value={pageKey}
+              onChange={(e) => handlePageChange(e.target.value)}
+            >
+              {pageOptions.map((o) => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Template</span>
+            <select
+              className="border border-gray-200 rounded px-2 py-1 text-sm text-gray-700 bg-white"
+              value={forcedTemplate || selectedTemplate}
+              onChange={(e) => handleTemplateChange(e.target.value)}
+            >
+              {templateOptions.map((o) => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            <RefreshCw className="h-4 w-4" /> Auto-live depuis l’éditeur
+          </div>
         </div>
       </div>
 
