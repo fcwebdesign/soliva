@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import BlockEditor from '../components/BlockEditor';
 import BlockRenderer from '@/blocks/BlockRenderer';
@@ -20,9 +20,8 @@ export default function AdminPreviewPage() {
   const [adminContent, setAdminContent] = useState<any>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<string>(forcedTemplate || '');
 
-  // Placeholder: on s'appuie sur BlockEditor pour la colonne gauche
-  // et on passera le state aux props de PreviewPanel via lifting d’état.
-  // En attendant, on se contente d’un layout deux colonnes avec le BlockRenderer.
+  // Ref pour scroller vers un bloc dans l’éditeur
+  const editorPaneRef = useRef<HTMLDivElement>(null);
 
   // État local pour la preview (sera alimenté via les callbacks de BlockEditor)
   const [previewData, setPreviewData] = useState<any>(null);
@@ -31,12 +30,16 @@ export default function AdminPreviewPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [pageOptions, setPageOptions] = useState<Array<{ value: string; label: string }>>([]);
+  const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
 
   // Callback depuis BlockEditor
   const handleUpdate = (data: any) => {
     setPreviewData(data);
     if (Array.isArray((data as any)?.blocks)) {
       setBlocks((data as any).blocks);
+      if (!selectedBlockId && (data as any).blocks.length > 0) {
+        setSelectedBlockId((data as any).blocks[0].id);
+      }
     }
   };
 
@@ -112,6 +115,18 @@ export default function AdminPreviewPage() {
     router.push(`/admin/preview${query}`);
   };
 
+  const scrollToBlock = (blockId: string) => {
+    setSelectedBlockId(blockId);
+    const pane = editorPaneRef.current;
+    if (!pane) return;
+    const el = pane.querySelector<HTMLElement>(`[data-block-id="${blockId}"]`);
+    if (!el) return;
+    const y = el.offsetTop - 60;
+    pane.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+    el.classList.add('ring', 'ring-blue-200');
+    setTimeout(() => el.classList.remove('ring', 'ring-blue-200'), 800);
+  };
+
   return (
     <TemplateProvider value={{ key: forcedTemplate || (initialPageData?._template || 'soliva') }}>
     <div className="flex flex-col h-screen w-full bg-gray-50" data-template={forcedTemplate || initialPageData?._template || 'soliva'}>
@@ -156,7 +171,7 @@ export default function AdminPreviewPage() {
 
       {/* Split view */}
       <div className="flex flex-1 overflow-hidden">
-        <div className="w-[420px] min-w-[360px] max-w-[520px] border-r border-gray-200 overflow-y-auto bg-white">
+        <div className="w-[420px] min-w-[360px] max-w-[520px] border-r border-gray-200 overflow-y-auto bg-white" ref={editorPaneRef}>
           {error ? (
             <div className="p-6 text-sm text-red-600">Erreur: {error}</div>
           ) : loading ? (
@@ -166,6 +181,38 @@ export default function AdminPreviewPage() {
               <div className="p-4 text-xs text-gray-500">
                 Page: <strong>{pageKey}</strong> · Template: <strong>{forcedTemplate || (initialPageData?._template || 'soliva')}</strong>
               </div>
+
+              {/* Outline simple des blocs */}
+              <div className="px-4 pb-4">
+                <div className="text-xs font-semibold text-gray-700 mb-2">Plan</div>
+                <div className="space-y-2">
+                  {blocks.length === 0 && (
+                    <div className="text-xs text-gray-500">Aucun bloc pour l’instant.</div>
+                  )}
+                  {blocks.map((b, idx) => (
+                    <button
+                      key={b.id || idx}
+                      onClick={() => scrollToBlock(b.id)}
+                      className={`w-full text-left text-xs border rounded px-3 py-2 transition-colors ${
+                        selectedBlockId === b.id
+                          ? 'border-blue-300 bg-blue-50 text-blue-700'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium">{b.type}</span>
+                        <span className="text-[10px] text-gray-500">#{idx + 1}</span>
+                      </div>
+                      {b.title || b.content ? (
+                        <div className="text-[10px] text-gray-500 truncate">
+                          {(b.title || b.content || '').toString().substring(0, 60)}
+                        </div>
+                      ) : null}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
             <BlockEditor
               pageData={initialPageData}
               pageKey={pageKey}
