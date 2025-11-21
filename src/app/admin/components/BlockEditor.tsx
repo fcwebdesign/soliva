@@ -2050,6 +2050,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
   // Déterminer si cette page doit afficher le sommaire
   const shouldShowSommaire = ['home', 'studio', 'contact', 'project', 'article', 'custom'].includes(pageKey) || 
                             pageKey.startsWith('project-') || pageKey.startsWith('article-');
+  const canPreviewBlocks = !['blog', 'work', 'backup', 'footer', 'metadata'].includes(pageKey);
 
   return (
     <>

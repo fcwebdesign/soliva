@@ -45,6 +45,7 @@ import {
   Zap,
   X
 } from 'lucide-react';
+import { Eye } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -140,6 +141,7 @@ export default function Sidebar({ currentPage, onPageChange }: SidebarProps) {
     { id: 'template-manager', label: 'Template Manager', path: '/admin/template-manager', icon: Palette },
     { id: 'footer', label: 'Footer', path: null, icon: Footprints },
     { id: 'backup', label: 'Sauvegarde', path: null, icon: Save },
+    { id: 'preview-live', label: 'Preview live', path: '/admin/preview?page=studio&template=pearl', icon: Eye },
     { id: 'ai', label: 'IA', path: '/admin/ai', icon: Brain },
   ];
 
