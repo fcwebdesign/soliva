@@ -506,7 +506,7 @@ export default function PearlClient() {
                 )}
                 
                 {/* Blocs - affichés s'ils existent */}
-                {Array.isArray(pageData?.blocks) && pageData.blocks.length > 0 && pageData.blocks.some((block: any) => block.content && block.content.trim() !== '') ? (
+                {Array.isArray(pageData?.blocks) && pageData.blocks.length > 0 ? (
                   <BlockRenderer blocks={pageData.blocks} content={fullContent || metadata} />
                 ) : !(pageData?.hero?.title || pageData?.title || pageData?.hero?.subtitle || pageData?.description) ? (
                   <div className="bg-muted rounded-lg p-8">

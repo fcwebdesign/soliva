@@ -4,7 +4,7 @@ import { useGSAP } from "@gsap/react";
 import { useTransition } from "@/hooks/useTransition";
 import { TRANSITION_CONFIG } from "@/config";
 import PreviewBar from "@/components/PreviewBar";
-import BlockRenderer from "@/components/BlockRenderer";
+import BlockRenderer from "@/blocks/BlockRenderer";
 
 import gsap from "gsap";
 import SplitText from "gsap/SplitText";

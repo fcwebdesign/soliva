@@ -9,7 +9,7 @@ import PreviewBar from '@/components/PreviewBar';
 import gsap from "gsap";
 import SplitText from "gsap/SplitText";
 import ReactLenis from "lenis/react";
-import BlockRenderer from '@/components/BlockRenderer';
+import BlockRenderer from '@/blocks/BlockRenderer';
 import FormattedText from '@/components/FormattedText';
 import PageHeader from '@/components/PageHeader';
 import { generateAllSchemas, generateBreadcrumbSchema } from '@/lib/schema';

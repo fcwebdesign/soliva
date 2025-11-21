@@ -1,4 +1,15 @@
 "use client";
+/**
+ * ⚠️ DEPRECATED - NE PAS UTILISER CE FICHIER
+ * 
+ * Ce fichier est une ancienne version du BlockRenderer.
+ * Utilisez plutôt : import BlockRenderer from '@/blocks/BlockRenderer'
+ * 
+ * Raison : Cette version ne gère pas correctement le système de registre
+ * par template et peut causer des problèmes avec les blocs auto-déclarés.
+ * 
+ * Ce fichier sera supprimé dans une future version.
+ */
 import React, { useState, useEffect } from 'react';
 import FormattedText from './FormattedText';
 import HeroSignature from './HeroSignature';
@@ -7,6 +18,14 @@ import ScrollAnimated from './ScrollAnimated';
 // Import du système scalable (charge automatiquement tous les blocs)
 import '../blocks/auto-declared';
 import { getAutoDeclaredBlock } from '../blocks/auto-declared/registry';
+
+// Log de warning en développement
+if (process.env.NODE_ENV === 'development') {
+  console.warn(
+    '⚠️ DEPRECATED: Vous utilisez @/components/BlockRenderer qui est déprécié.\n' +
+    'Utilisez plutôt: import BlockRenderer from "@/blocks/BlockRenderer"'
+  );
+}
 
 interface Block {
   id: string;

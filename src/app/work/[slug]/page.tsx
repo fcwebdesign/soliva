@@ -7,7 +7,7 @@ import { TRANSITION_CONFIG } from "@/config";
 import { notFound } from "next/navigation";
 import FormattedText from "@/components/FormattedText";
 import PreviewBar from "@/components/PreviewBar";
-import BlockRenderer from "@/components/BlockRenderer";
+import BlockRenderer from "@/blocks/BlockRenderer";
 import Image from "next/image";
 
 import gsap from "gsap";

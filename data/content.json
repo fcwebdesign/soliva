@@ -1,20 +1,19 @@
 {
-  "_template": "pearl",
   "metadata": {
     "title": "Site pearl",
     "description": "Description du site pearl",
+    "layout": "wide",
     "_transitionConfig": {
       "type": "rotate",
       "duration": 900,
       "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
-      "updatedAt": "2025-11-20T10:45:57.651Z"
+      "updatedAt": "2025-11-20T20:38:50.601Z"
     },
     "footer": {
       "footerVariant": "classic"
     },
-    "layout": "wide",
     "nav": {
-      "headerVariant": "classic"
+      "headerVariant": "centered"
     },
     "reveal": {
       "backgroundColor": "#000000",
@@ -521,7 +520,7 @@
       "work": "Image",
       "blog": "Coffee"
     },
-    "colorPalette": "sunset",
+    "colorPalette": "forest",
     "customPalettes": [
       {
         "id": "phare-élégant-havrais",
@@ -547,12 +546,12 @@
         "lg": "1.5rem"
       },
       "defaultGap": "md",
-      "autoTarget": 160
+      "autoTarget": 90
     },
     "scrollAnimations": {
       "enabled": true,
       "global": {
-        "type": "rotate-in",
+        "type": "blur-in",
         "duration": 1,
         "delay": 0,
         "stagger": 0,
@@ -561,7 +560,7 @@
       },
       "blocks": {
         "GalleryGridBlock": {
-          "type": "rotate-in",
+          "type": "blur-in",
           "duration": 1,
           "delay": 0,
           "stagger": 0,
@@ -569,7 +568,7 @@
           "threshold": 0.3
         },
         "LogosBlock": {
-          "type": "rotate-in",
+          "type": "blur-in",
           "duration": 1,
           "delay": 0,
           "stagger": 0,
@@ -577,7 +576,7 @@
           "threshold": 0.3
         },
         "ImageBlock": {
-          "type": "rotate-in",
+          "type": "blur-in",
           "duration": 1,
           "delay": 0,
           "stagger": 0,
@@ -585,7 +584,7 @@
           "threshold": 0.3
         },
         "FaqBlock": {
-          "type": "split-text-up",
+          "type": "blur-in",
           "duration": 1,
           "delay": 0,
           "stagger": 0,
@@ -593,7 +592,47 @@
           "threshold": 0.3
         },
         "TestimonialBlock": {
-          "type": "fade-in",
+          "type": "blur-in",
+          "duration": 1,
+          "delay": 0,
+          "stagger": 0,
+          "easing": "power4.out",
+          "threshold": 0.3
+        },
+        "ContactBlock": {
+          "type": "blur-in",
+          "duration": 1,
+          "delay": 0,
+          "stagger": 0,
+          "easing": "power4.out",
+          "threshold": 0.3
+        },
+        "ExpandableCardBlock": {
+          "type": "blur-in",
+          "duration": 1,
+          "delay": 0,
+          "stagger": 0,
+          "easing": "power4.out",
+          "threshold": 0.3
+        },
+        "H2Block": {
+          "type": "blur-in",
+          "duration": 1,
+          "delay": 0,
+          "stagger": 0,
+          "easing": "power4.out",
+          "threshold": 0.3
+        },
+        "ServicesBlock": {
+          "type": "blur-in",
+          "duration": 1,
+          "delay": 0,
+          "stagger": 0,
+          "easing": "power4.out",
+          "threshold": 0.3
+        },
+        "ContentBlock": {
+          "type": "blur-in",
           "duration": 1,
           "delay": 0,
           "stagger": 0,
@@ -603,348 +642,84 @@
       }
     }
   },
-  "site": {
-    "title": "Site pearl",
-    "description": "Description du site pearl",
-    "logo": ""
-  },
   "nav": {
     "logo": "Pearl",
-    "logoImage": "",
-    "location": "paris, le havre",
     "items": [
       "studio",
       "contact",
       "blog",
       "work",
-      "shwocase"
+      "showcase",
+      "test-page"
     ],
+    "location": "paris, le havre",
+    "logoImage": "",
     "pageLabels": {
       "studio": "About",
-      "blog": "Blog"
-    },
-    "headerVariant": "classic"
+      "blog": "Blog",
+      "custom-1763644801620": {
+        "title": "Nouveau lien",
+        "url": "custom",
+        "customUrl": "",
+        "target": "_blank"
+      }
+    }
   },
   "home": {
-    "title": "Accueil pearl",
-    "description": "Page d'accueil du template pearl",
     "hero": {
       "title": "Bienvenue sur pearl",
       "subtitle": "Template pearl généré avec l'IA",
       "cta": "Découvrir"
     },
+    "title": "Accueil pearl",
+    "description": "Page d'accueil du template pearl",
+    "blocks": []
+  },
+  "contact": {
+    "hero": {
+      "title": "Contact"
+    },
+    "title": "Contact pearl",
+    "description": "Page contact du template pearl",
     "blocks": []
   },
   "studio": {
-    "title": "Studio pearl",
-    "description": "Page studio du template pearl",
-    "blocks": [
-      {
-        "id": "content-1762768005725",
-        "type": "content",
-        "data": {
-          "content": ""
-        },
-        "content": "<p></p>"
-      },
-      {
-        "id": "faq-1762852977786",
-        "type": "faq",
-        "data": {
-          "items": [
-            {
-              "id": "faq-1762853761310",
-              "question": "Nouvelle question ?",
-              "answer": "<p>Réponse à la question...jhsdjhdhshshsdhjsd</p>"
-            },
-            {
-              "id": "faq-1762853799109",
-              "question": "Nouvelle question ? 2",
-              "answer": "<p>Réponse à la question...fdkjdfddidfdffd</p>"
-            }
-          ],
-          "theme": "auto",
-          "title": "test"
-        },
-        "items": [
-          {
-            "id": "faq-1762852981039",
-            "question": "dfsfdssfdNouvelle question ?",
-            "answer": "<p>Réponse à la question...</p>"
-          },
-          {
-            "id": "faq-1762852983163",
-            "question": "Nouvelle question ?fdsfdsfsdf",
-            "answer": "<p>Réponse à la question...</p>"
-          }
-        ]
-      },
-      {
-        "id": "contact-1762853006344",
-        "type": "contact",
-        "data": {
-          "title": "",
-          "ctaText": "",
-          "ctaLink": "",
-          "theme": "auto"
-        },
-        "title": "dgfgfddfg",
-        "ctaText": "gfdgfdgdff"
-      },
-      {
-        "id": "services-1762853380786",
-        "type": "services",
-        "data": {
-          "title": "OUR CORE OFFERINGS",
-          "theme": "auto",
-          "offerings": [
-            {
-              "id": "service-1762853766108",
-              "title": "qdcdfddsf",
-              "description": "<p>fdfdfs</p>",
-              "icon": ""
-            }
-          ],
-          "id": "services-1762853380786",
-          "type": "services",
-          "data": {
-            "title": "OUR CORE OFFERINGS",
-            "theme": "auto",
-            "offerings": [
-              {
-                "id": "service-1762853396587",
-                "title": "",
-                "description": "",
-                "icon": ""
-              }
-            ],
-            "id": "services-1762853380786",
-            "type": "services",
-            "data": {
-              "title": "OUR CORE OFFERINGS",
-              "theme": "auto",
-              "offerings": [
-                {
-                  "id": "service-1762853395844",
-                  "title": "",
-                  "description": "",
-                  "icon": ""
-                }
-              ],
-              "id": "services-1762853380786",
-              "type": "services",
-              "data": {
-                "title": "OUR CORE OFFERINGS",
-                "theme": "auto",
-                "offerings": [
-                  {
-                    "id": "service-1762853395237",
-                    "title": "",
-                    "description": "",
-                    "icon": ""
-                  }
-                ],
-                "id": "services-1762853380786",
-                "type": "services",
-                "data": {
-                  "title": "OUR CORE OFFERINGS",
-                  "theme": "auto",
-                  "offerings": [
-                    {
-                      "id": "service-1762853394595",
-                      "title": "",
-                      "description": "",
-                      "icon": ""
-                    }
-                  ],
-                  "id": "services-1762853380786",
-                  "type": "services",
-                  "data": {
-                    "title": "OUR CORE OFFERINGS",
-                    "theme": "auto",
-                    "offerings": [
-                      {
-                        "id": "service-1762853394038",
-                        "title": "",
-                        "description": "",
-                        "icon": ""
-                      }
-                    ],
-                    "id": "services-1762853380786",
-                    "type": "services",
-                    "data": {
-                      "title": "OUR CORE OFFERINGS",
-                      "theme": "auto",
-                      "offerings": [
-                        {
-                          "id": "service-1762853393612",
-                          "title": "",
-                          "description": "",
-                          "icon": ""
-                        }
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      {
-        "id": "image-1763097136273",
-        "type": "image",
-        "data": {
-          "id": "",
-          "type": "image",
-          "image": {
-            "src": "/uploads/1763097655445-de112663.webp",
-            "alt": ""
-          }
-        }
-      },
-      {
-        "id": "image-1763181837763",
-        "type": "image",
-        "data": {
-          "id": "",
-          "type": "image",
-          "image": {
-            "src": "/uploads/1763181842065-4c8c1b26.webp",
-            "alt": ""
-          }
-        }
-      }
-    ],
     "hero": {
       "title": "About us."
     },
     "content": "",
+    "blocks": [
+      {
+        "id": "image-1763705064111",
+        "type": "image",
+        "data": {
+          "id": "",
+          "type": "image",
+          "image": {
+            "src": "/uploads/1763705071367-c45d1097.webp",
+            "alt": ""
+          }
+        }
+      },
+      {
+        "id": "contact-1763705096762",
+        "type": "contact",
+        "data": {
+          "title": "xcwxwxxcw",
+          "ctaText": "yes",
+          "ctaLink": "/contact",
+          "theme": "auto"
+        }
+      }
+    ],
+    "title": "Studio pearl",
+    "description": "Page studio du template pearl",
     "customSlug": "about"
   },
   "work": {
-    "title": "Projets pearl",
-    "description": "<p>Nous transformons vos idées en succès visibles grâce à une approche sur-mesure, en mettant l'accent sur la performance et l'innovation.</p>",
-    "blocks": [],
     "hero": {
       "title": "Projects."
     },
-    "adminProjects": [
-      {
-        "id": "projet-test",
-        "title": "Healthcare Mobile App",
-        "content": "",
-        "status": "published",
-        "client": "lisa",
-        "category": "web",
-        "year": "2025",
-        "featured": false,
-        "slug": "projet-test",
-        "image": "/uploads/1762792157057-66fbfb9c.webp",
-        "publishedAt": "2025-10-28T09:47:12.339Z",
-        "excerpt": "App Visual Direction\n \n"
-      },
-      {
-        "id": "projet-2",
-        "title": "Dazzle © Branding",
-        "content": "",
-        "status": "published",
-        "client": "lisa",
-        "category": "Print",
-        "year": "2025",
-        "featured": false,
-        "slug": "projet-2",
-        "image": "/uploads/1762792173758-8cd77c5e.webp",
-        "_lastModified": "2025-11-10T11:02:12.299Z",
-        "publishedAt": "2025-11-10T11:02:38.646Z",
-        "excerpt": "Fashion Brand Launch"
-      },
-      {
-        "id": "velin",
-        "title": "Velin",
-        "content": "",
-        "status": "published",
-        "client": "lisa",
-        "category": "Print",
-        "year": "2025",
-        "featured": false,
-        "slug": "velin",
-        "image": "/uploads/1762792189976-10f35e40.webp",
-        "_lastModified": "2025-11-10T11:47:31.587Z",
-        "excerpt": "kincare Rebrand",
-        "publishedAt": "2025-11-10T11:48:21.252Z"
-      },
-      {
-        "id": "oko",
-        "title": "Oko",
-        "content": "",
-        "status": "published",
-        "client": "lisa",
-        "category": "Print",
-        "year": "2025",
-        "featured": false,
-        "slug": "oko",
-        "image": "/uploads/1762970076588-afff33fc.webp",
-        "_lastModified": "2025-11-10T11:48:38.988Z",
-        "excerpt": "kincare Rebrand",
-        "publishedAt": "2025-11-10T11:49:18.253Z"
-      }
-    ],
-    "projects": [
-      {
-        "title": "Healthcare Mobile App",
-        "content": "",
-        "category": "web",
-        "client": "lisa",
-        "year": "2025",
-        "featured": false,
-        "status": "published",
-        "publishedAt": "2025-10-28T09:47:12.339Z",
-        "slug": "projet-test",
-        "image": "/uploads/1762792157057-66fbfb9c.webp",
-        "excerpt": "App Visual Direction\n \n"
-      },
-      {
-        "title": "Dazzle © Branding",
-        "content": "",
-        "category": "Print",
-        "client": "lisa",
-        "year": "2025",
-        "featured": false,
-        "status": "published",
-        "publishedAt": "2025-11-10T11:02:38.646Z",
-        "slug": "projet-2",
-        "image": "/uploads/1762792173758-8cd77c5e.webp",
-        "excerpt": "Fashion Brand Launch"
-      },
-      {
-        "title": "Velin",
-        "excerpt": "kincare Rebrand",
-        "content": "",
-        "category": "Print",
-        "client": "lisa",
-        "year": "2025",
-        "featured": false,
-        "status": "published",
-        "publishedAt": "2025-11-10T11:48:21.252Z",
-        "slug": "velin",
-        "image": "/uploads/1762792189976-10f35e40.webp"
-      },
-      {
-        "title": "Oko",
-        "excerpt": "kincare Rebrand",
-        "content": "",
-        "category": "Print",
-        "client": "lisa",
-        "year": "2025",
-        "featured": false,
-        "status": "published",
-        "publishedAt": "2025-11-10T11:49:18.253Z",
-        "slug": "oko",
-        "image": "/uploads/1762970076588-afff33fc.webp"
-      }
-    ],
-    "columns": 2,
     "filters": [
       "All",
       "Strategy",
@@ -954,30 +729,140 @@
       "Mobile App",
       "Print"
     ],
+    "description": "<p>Nous transformons vos idées en succès visibles grâce à une approche sur-mesure, en mettant l'accent sur la performance et l'innovation.</p>",
+    "projects": [
+      {
+        "title": "Healthcare Mobile App",
+        "category": "web",
+        "image": "/uploads/1762792157057-66fbfb9c.webp",
+        "slug": "projet-test",
+        "content": "",
+        "client": "lisa",
+        "year": "2025",
+        "featured": false,
+        "status": "published",
+        "publishedAt": "2025-10-28T09:47:12.339Z",
+        "excerpt": "App Visual Direction\n \n"
+      },
+      {
+        "title": "Dazzle © Branding",
+        "category": "Print",
+        "image": "/uploads/1762792173758-8cd77c5e.webp",
+        "slug": "projet-2",
+        "content": "",
+        "client": "lisa",
+        "year": "2025",
+        "featured": false,
+        "status": "published",
+        "publishedAt": "2025-11-10T11:02:38.646Z",
+        "excerpt": "Fashion Brand Launch"
+      },
+      {
+        "title": "Velin",
+        "category": "Print",
+        "image": "/uploads/1762792189976-10f35e40.webp",
+        "slug": "velin",
+        "excerpt": "kincare Rebrand",
+        "content": "",
+        "client": "lisa",
+        "year": "2025",
+        "featured": false,
+        "status": "published",
+        "publishedAt": "2025-11-10T11:48:21.252Z"
+      },
+      {
+        "title": "Oko",
+        "category": "Print",
+        "image": "/uploads/1762970076588-afff33fc.webp",
+        "slug": "oko",
+        "excerpt": "kincare Rebrand",
+        "content": "",
+        "client": "lisa",
+        "year": "2025",
+        "featured": false,
+        "status": "published",
+        "publishedAt": "2025-11-10T11:49:18.253Z"
+      }
+    ],
+    "adminProjects": [
+      {
+        "id": "projet-test",
+        "title": "Healthcare Mobile App",
+        "content": "",
+        "slug": "projet-test",
+        "status": "published",
+        "publishedAt": "2025-10-28T09:47:12.339Z",
+        "excerpt": "App Visual Direction\n \n",
+        "client": "lisa",
+        "category": "web",
+        "year": "2025",
+        "featured": false,
+        "image": "/uploads/1762792157057-66fbfb9c.webp"
+      },
+      {
+        "id": "projet-2",
+        "title": "Dazzle © Branding",
+        "content": "",
+        "slug": "projet-2",
+        "status": "published",
+        "publishedAt": "2025-11-10T11:02:38.646Z",
+        "excerpt": "Fashion Brand Launch",
+        "client": "lisa",
+        "category": "Print",
+        "year": "2025",
+        "featured": false,
+        "image": "/uploads/1762792173758-8cd77c5e.webp",
+        "_lastModified": "2025-11-10T11:02:12.299Z"
+      },
+      {
+        "id": "velin",
+        "title": "Velin",
+        "content": "",
+        "slug": "velin",
+        "status": "published",
+        "publishedAt": "2025-11-10T11:48:21.252Z",
+        "excerpt": "kincare Rebrand",
+        "client": "lisa",
+        "category": "Print",
+        "year": "2025",
+        "featured": false,
+        "image": "/uploads/1762792189976-10f35e40.webp",
+        "_lastModified": "2025-11-10T11:47:31.587Z"
+      },
+      {
+        "id": "oko",
+        "title": "Oko",
+        "content": "",
+        "slug": "oko",
+        "status": "published",
+        "publishedAt": "2025-11-10T11:49:18.253Z",
+        "excerpt": "kincare Rebrand",
+        "client": "lisa",
+        "category": "Print",
+        "year": "2025",
+        "featured": false,
+        "image": "/uploads/1762970076588-afff33fc.webp",
+        "_lastModified": "2025-11-10T11:48:38.988Z"
+      }
+    ],
+    "title": "Projets pearl",
+    "blocks": [],
+    "columns": 2,
     "customSlug": ""
   },
-  "contact": {
-    "title": "Contact pearl",
-    "description": "Page contact du template pearl",
-    "blocks": [],
-    "hero": {
-      "title": "Contact"
-    }
-  },
   "blog": {
-    "title": "Blog pearl",
-    "description": "Page blog du template pearl",
-    "blocks": [],
     "hero": {
       "title": "Blog"
     },
+    "description": "Page blog du template pearl",
     "articles": [
       {
         "id": "test-article",
         "title": "test article",
+        "slug": "test-article",
+        "publishedAt": "2025-10-28T08:01:22.153Z",
         "content": "<p>dsfddfdfsfsd</p>",
         "status": "published",
-        "slug": "test-article",
         "hasCustomSlug": true,
         "blocks": [
           {
@@ -985,12 +870,13 @@
             "type": "content",
             "content": "<p>dsfddfdfsfsd</p>"
           }
-        ],
-        "publishedAt": "2025-10-28T08:01:22.153Z"
+        ]
       },
       {
+        "id": "article-le-pouvoir-cache-des-prompts-en-ia-comment-les-utiliser-efficacement-618594",
         "title": "Le pouvoir caché des prompts en IA : comment les utiliser efficacement",
         "slug": "le-pouvoir-cache-des-prompts-en-ia-comment-les-utiliser-efficacement",
+        "publishedAt": "2025-10-28T10:50:33.140Z",
         "status": "published",
         "blocks": [
           {
@@ -1085,19 +971,13 @@
             }
           ]
         },
-        "id": "article-le-pouvoir-cache-des-prompts-en-ia-comment-les-utiliser-efficacement-618594",
-        "publishedAt": "2025-10-28T10:50:33.140Z",
         "hasCustomSlug": true,
         "content": "<p>Imaginez un chef cuisinier étoilé sans ses ingrédients de qualité. Il peut avoir les meilleures compétences, mais sans les bons produits, le résultat ne sera jamais à la hauteur. Les prompts en intelligence artificielle, c'est un peu la même histoire. Ils peuvent transformer un modèle d'IA en chef-d'œuvre ou en plat insipide. Dans un monde où l'efficacité est reine, soyons clairs : bien manier les prompts, c'est le secret pour tirer le meilleur parti de votre IA.</p><p>Selon une étude récente, 60% des utilisateurs d'IA ne parviennent pas à exploiter pleinement le potentiel de leurs modèles, simplement parce qu'ils ne comprennent pas l'importance des prompts. Alors, comment passer de l'utilisateur moyen à l'expert avisé ? Comment transformer vos interactions avec l'IA en véritables réussites ? C'est ce que nous allons découvrir ensemble.</p>\n<h2>Comprendre le rôle crucial des prompts</h2>\n<p>Parlons cash : les prompts sont la clé de voûte de toute interaction avec une IA. Ce sont des instructions ou des questions formulées pour guider l'IA vers une réponse ou une action spécifique. Pensez à eux comme à des GPS pour vos modèles d'IA. Mal orientés, vous risquez de vous perdre en route. Bien utilisés, ils vous amèneront à destination sans encombre.</p><p>Un exemple concret ? Prenons OpenAI et son GPT-3. Ce modèle est capable de générer des textes impressionnants, mais sans un prompt bien conçu, vous pourriez obtenir des résultats médiocres. Il ne s'agit pas seulement de demander quelque chose à l'IA, mais de le faire de manière précise et ciblée. Netflix utilise des prompts pour affiner les recommandations de films en fonction des préférences des utilisateurs. C'est la précision de ces prompts qui permet de personnaliser l'expérience utilisateur de manière si efficace.</p><ul class=\"list-disc list-inside space-y-2\"><li><p><strong>Précision :</strong> Un prompt précis réduit les ambiguïtés, améliorant ainsi la qualité de la réponse de l'IA.</p></li><li><p><strong>Clarté :</strong> Un prompt clair permet d'éviter les malentendus, assurant que l'IA comprend parfaitement votre demande.</p></li></ul><p>En bref, maîtriser l'art des prompts, c'est comme avoir une conversation fluide avec un interlocuteur intelligent. Vous savez quoi demander et comment le demander pour obtenir les meilleures réponses.</p>\n<h2>Les erreurs courantes à éviter avec les prompts</h2>\n<p>Il est facile de tomber dans le piège des erreurs courantes lorsqu'on utilise des prompts en IA. La vérité, c'est que beaucoup de ces erreurs proviennent d'une mauvaise compréhension de ce qu'est réellement un bon prompt. Dans 80% des cas, ces erreurs peuvent transformer une interaction prometteuse en un dialogue de sourds.</p><p>Première erreur : être trop vague. Un prompt tel que \"Raconte-moi une histoire\" est trop général et peut donner lieu à des réponses très diverses et souvent peu pertinentes. En revanche, un prompt comme \"Raconte-moi une histoire sur un voyage spatial pour enfants\" est beaucoup plus ciblé et dirigera l'IA vers un résultat plus pertinent.</p><p>Ensuite, évitez les prompts trop complexes. Un prompt surchargé de détails peut embrouiller l'IA au lieu de l'aider. Il vaut mieux fractionner votre demande en plusieurs prompts simples et clairs. Shopify, par exemple, utilise des prompts simples pour générer des descriptions de produits claires et concises, garantissant ainsi que chaque élément est bien traité et compris.</p><p>Enfin, ne négligez pas le contexte. Un prompt déconnecté de son contexte peut aboutir à des réponses qui n'ont aucun sens. Assurez-vous que votre prompt est bien ancré dans le sujet que vous traitez. En synthèse, la simplicité et la précision sont vos meilleures alliées pour éviter les erreurs courantes avec les prompts.</p>\n<h2>Optimiser l'efficacité des prompts avec des techniques avancées</h2>\n<p>Si vous voulez vraiment maximiser l'efficacité de vos prompts, il est temps de passer à la vitesse supérieure. Les techniques avancées de création de prompts peuvent transformer votre interaction avec l'IA. C'est comme passer d'une voiture citadine à une Formule 1.</p><p>Une technique avancée consiste à utiliser des prompts conditionnels. Ces prompts s'adaptent en fonction des réponses précédentes de l'IA. Par exemple, si vous demandez à une IA de vous aider à planifier un voyage et qu'elle vous propose des destinations, votre prompt suivant pourrait être \"Détaille les activités à faire à [destination]\". Ce type de prompt dynamique permet de construire une conversation fluide et cohérente.</p><p>Le \"prompt engineering\" est un autre outil puissant pour optimiser vos interactions. Cela implique de tester et d'affiner continuellement vos prompts pour maximiser leur efficacité. Des entreprises comme WordPress utilisent cette méthode pour améliorer continuellement leurs systèmes de suggestion de contenu.</p><ul class=\"list-disc list-inside space-y-2\"><li><p><strong>Prompt chaining :</strong> Enchaînez des prompts pour guider progressivement l'IA vers la réponse souhaitée.</p></li><li><p><strong>Feedback loops :</strong> Intégrez des boucles de rétroaction pour ajuster les prompts en fonction des réponses obtenues.</p></li></ul><p>En adoptant ces techniques, vous transformez vos prompts en véritables leviers de performance, exploitant ainsi tout le potentiel de votre IA.</p>\n<h2>L'impact des prompts bien conçus sur les résultats</h2>\n<p>On ne le dira jamais assez : un prompt bien conçu peut faire des merveilles. Dans le monde de l'IA, la qualité des résultats dépend souvent de la qualité des prompts. Un prompt bien formulé permet non seulement d'obtenir des réponses pertinentes, mais il peut aussi améliorer la qualité globale des interactions.</p><p>Prenons l'exemple de Netflix encore une fois. Leur système de recommandation est l'un des plus puissants du marché, et ce, grâce à l'utilisation de prompts bien conçus. Ces prompts aident l'IA à comprendre les préférences des utilisateurs et à proposer des suggestions personnalisées qui augmentent le temps de visionnage et la satisfaction des utilisateurs.</p><p>De plus, des études ont montré que des prompts efficaces peuvent réduire le temps de traitement et les ressources nécessaires pour générer des réponses. Cela signifie des économies substantielles pour les entreprises qui dépendent de l'IA pour leurs opérations.</p><p>En fin de compte, l'impact des prompts bien conçus se traduit par une meilleure performance, une satisfaction accrue des utilisateurs et des économies de coûts. C'est un trio gagnant qu'aucune entreprise ne peut se permettre d'ignorer.</p>\n<h2>Exemples concrets d'amélioration par les prompts</h2>\n<p>Rien de tel que des exemples concrets pour illustrer l'impact des prompts en IA. Voyons comment des entreprises ont transformé leurs opérations grâce à l'utilisation astucieuse des prompts.</p><p>Un exemple frappant est celui de Nike, qui utilise des prompts pour améliorer son service client. En intégrant des prompts bien conçus dans leur chatbot, Nike a pu réduire de 30% le temps de réponse moyen et augmenter la satisfaction client de manière significative. Cela montre que les prompts ne sont pas seulement des outils d'interaction, mais des leviers stratégiques pour l'amélioration continue.</p><p>Un autre exemple est celui de Shopify. En utilisant des prompts pour analyser les comportements d'achat, Shopify a pu optimiser ses recommandations de produits, augmentant ainsi le taux de conversion. Ce n'est pas une coïncidence si leurs ventes ont connu une croissance de 15% après l'implémentation de cette stratégie.</p><p>Ces exemples démontrent que, lorsqu'ils sont bien utilisés, les prompts ne sont pas simplement des outils techniques, mais des moteurs de transformation et de croissance pour les entreprises.</p>\n<h2>L'avenir des prompts en IA : vers une personnalisation accrue</h2>\n<p>L'avenir des prompts en IA est prometteur. Avec l'évolution rapide des technologies d'IA, les prompts vont jouer un rôle de plus en plus central dans l'interaction homme-machine. La personnalisation sera au cœur de cette évolution.</p><p>À mesure que les IA deviennent plus sophistiquées, les prompts devront évoluer pour devenir encore plus précis et personnalisés. On peut s'attendre à ce que les entreprises développent des systèmes capables de générer automatiquement des prompts basés sur le profil et le comportement de chaque utilisateur. Cela permettra de créer des interactions encore plus riches et pertinentes.</p><p>Des initiatives comme celles de Google, qui explore déjà l'utilisation de l'IA pour générer des prompts contextuels en temps réel, montrent la voie. Leur objectif est de rendre les interactions avec les IA aussi naturelles que possible. Cela ne se fera pas du jour au lendemain, mais les progrès récents indiquent clairement que nous sommes sur la bonne voie.</p><p>En définitive, l'avenir des prompts en IA sera marqué par une personnalisation accrue, rendant chaque interaction unique et optimisée pour l'utilisateur.</p>\n<h2>Conclusion : La maîtrise des prompts, un atout indispensable</h2>\n<p>En conclusion, les prompts en IA ne sont pas simplement des outils accessoires, mais des éléments fondamentaux pour tirer pleinement parti des capacités des modèles d'intelligence artificielle. Leur importance est souvent sous-estimée, mais comme nous l'avons vu, des prompts bien conçus peuvent transformer une simple interaction en une expérience utilisateur exceptionnelle.</p><blockquote><p><strong>\"Un prompt bien formulé est l'art de poser les bonnes questions pour obtenir les meilleures réponses.\"</strong></p></blockquote><p>Les entreprises qui investissent dans l'optimisation de leurs prompts constatent des améliorations significatives en termes de performance et de satisfaction client. Alors, que vous soyez une entreprise ou un utilisateur individuel, il est impératif de comprendre et de maîtriser l'art des prompts pour rester compétitif dans un monde de plus en plus axé sur l'IA.</p><p><br>✨ <em>Cet article fait partie de notre ligne éditoriale : Chez Soliva, nous croyons que l'innovation doit être accessible à tous. Parce qu'au final, la seule promesse qui compte, c'est celle qu'on peut tenir.</em></p>"
       }
     ],
+    "title": "Blog pearl",
+    "blocks": [],
     "customSlug": ""
-  },
-  "_transitionConfig": {
-    "type": "rotate",
-    "duration": 900,
-    "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
-    "updatedAt": "2025-11-20T10:45:57.651Z"
   },
   "footer": {
     "logo": "Pearl",
@@ -1143,6 +1023,18 @@
     ],
     "legalPageLabels": {}
   },
+  "_template": "pearl",
+  "site": {
+    "title": "Site pearl",
+    "description": "Description du site pearl",
+    "logo": ""
+  },
+  "_transitionConfig": {
+    "type": "rotate",
+    "duration": 900,
+    "easing": "cubic-bezier(0.87, 0, 0.13, 1)",
+    "updatedAt": "2025-11-20T20:38:50.601Z"
+  },
   "pages": {
     "pages": [
       {
@@ -1151,13 +1043,26 @@
         "content": "",
         "slug": "test-page",
         "status": "published",
-        "description": "<p>Description de la page de test</p>",
+        "description": "<p>Description de la page de test </p>",
         "blocks": [
           {
-            "id": "block-1761637080720",
+            "id": "image-1763705263025",
+            "type": "image",
+            "data": {
+              "id": "",
+              "type": "image",
+              "image": {
+                "src": "/uploads/1763705268949-a6bd497f.webp",
+                "alt": ""
+              }
+            }
+          },
+          {
+            "id": "content-1763706598572",
             "type": "content",
-            "content": "",
-            "title": "Description"
+            "data": {
+              "content": "<p>Soliva conçoit des sites sur-mesure en Next.js, rapides à charger et faciles à maintenir. Nous optimisons la performance et les Core Web Vitals, intégrons GSAP pour des animations fluides, et posons une base SEO mesurable dès le départ. IA utile incluse dans votre CMS pour gagner du temps sur les contenus et les mises à jour.</p>"
+            }
           }
         ],
         "hero": {
@@ -1166,10 +1071,10 @@
         "publishedAt": "2025-10-28T07:38:42.832Z"
       },
       {
-        "id": "shwocase",
+        "id": "showcase",
         "title": "Showcase",
-        "content": "<p>editeur de texte</p>\n<h2>test h2</h2>\n<h3>test H3</h3>",
-        "slug": "shwocase",
+        "content": "<p>editeur de texte</p>",
+        "slug": "showcase",
         "status": "published",
         "description": "<p>Découvrez notre showcase, un véritable écrin de créativité !</p><p></p><p></p>",
         "blocks": [
@@ -1192,22 +1097,6 @@
               "content": "<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>sdfsfdsfggdgf</p></li><li class=\"mb-1\"><p>ddskmfsd</p></li><li class=\"mb-1\"><p>dfpkgdpfg</p></li><li class=\"mb-1\"><p>dskgkdg</p></li><li class=\"mb-1\"><p>dflgdmfgmdflgmdlkmgd</p></li></ul><p></p>"
             },
             "content": "<p>editeur de texte</p>"
-          },
-          {
-            "id": "h2-1762854841529",
-            "type": "h2",
-            "data": {
-              "content": "H2"
-            },
-            "content": "test h2"
-          },
-          {
-            "id": "h3-1762854861568",
-            "type": "h3",
-            "data": {
-              "content": "H3"
-            },
-            "content": "test H3"
           },
           {
             "id": "quote-1762854884761",
@@ -1570,6 +1459,44 @@
                 "src": "/uploads/1763097705460-3cad9ed7.webp",
                 "alt": ""
               }
+            }
+          },
+          {
+            "id": "two-columns-1763700830594",
+            "type": "two-columns",
+            "data": {
+              "leftColumn": [
+                {
+                  "id": "",
+                  "type": "image",
+                  "image": {
+                    "src": "/uploads/1763700845701-dd914ef0.webp",
+                    "alt": ""
+                  }
+                }
+              ],
+              "rightColumn": [
+                {
+                  "id": "",
+                  "type": "image",
+                  "image": {
+                    "src": "/uploads/1763700857196-edab0984.webp",
+                    "alt": ""
+                  }
+                }
+              ],
+              "layout": "left-right",
+              "gap": "medium",
+              "alignment": "top",
+              "theme": "auto",
+              "title": "Deux colonnes"
+            }
+          },
+          {
+            "id": "content-1763705179307",
+            "type": "content",
+            "data": {
+              "content": "<p>Nous concevons des sites Next.js rapides, stables et simples à gérer. Core Web Vitals maîtrisés, SEO mesurable, animations GSAP fluides sans sacrifier la performance. IA utile intégrée au CMS pour accélérer la rédaction, la traduction et la mise à jour des fiches produits.</p>"
             }
           }
         ],

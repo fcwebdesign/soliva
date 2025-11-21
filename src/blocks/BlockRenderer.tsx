@@ -230,12 +230,17 @@ export default function BlockRenderer({ blocks, content: contentProp }: { blocks
 
   if (!blocks || !Array.isArray(blocks)) return null;
 
+  // Debug: afficher tous les blocs reçus
+  if (process.env.NODE_ENV !== 'production' && blocks.length > 0) {
+    console.log('🎨 [BlockRenderer] Rendu de', blocks.length, 'blocs:', blocks.map(b => ({ id: b.id, type: b.type })));
+  }
+
   return (
     <div className="blocks-container">
       {blocks.map((block) => {
-        // Debug pour les blocs image
-        if (process.env.NODE_ENV !== 'production' && block.type === 'image') {
-          console.log('🖼️ BlockRenderer - Bloc image détecté:', { 
+        // Debug pour TOUS les types de blocs en développement
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`🎨 [BlockRenderer] Traitement bloc ${block.type}:`, { 
             block, 
             hasTemplateComponent: !!(registry[block.type] ?? defaultRegistry[block.type]),
             scalable: getAutoDeclaredBlock(block.type)
@@ -245,8 +250,8 @@ export default function BlockRenderer({ blocks, content: contentProp }: { blocks
         // 1) Template registry override en priorité
         const TemplateComponent = registry[block.type] ?? defaultRegistry[block.type];
         if (TemplateComponent) {
-          if (process.env.NODE_ENV !== 'production' && block.type === 'image') {
-            console.log('✅ BlockRenderer - Utilisation du TemplateComponent pour image');
+          if (process.env.NODE_ENV !== 'production') {
+            console.log(`✅ [BlockRenderer] Utilisation du TemplateComponent pour ${block.type}`);
           }
           const props = { ...block, 'data-block-type': block.type, 'data-block-theme': block.theme || 'auto' } as any;
           const blockElement = <TemplateComponent key={block.id} {...props} />;
@@ -256,8 +261,8 @@ export default function BlockRenderer({ blocks, content: contentProp }: { blocks
         // 2) Fallback sur les blocs auto-déclarés (scalable)
         const scalable = getAutoDeclaredBlock(block.type);
         if (scalable?.component) {
-          if (process.env.NODE_ENV !== 'production' && block.type === 'image') {
-            console.log('✅ BlockRenderer - Utilisation du bloc auto-déclaré ImageBlock');
+          if (process.env.NODE_ENV !== 'production') {
+            console.log(`✅ [BlockRenderer] Utilisation du bloc auto-déclaré pour ${block.type}`);
           }
           const BlockComponent = scalable.component as any;
           const data = { ...block, title: (block as any).title || '', content: (block as any).content || '', theme: (block as any).theme || 'auto' };

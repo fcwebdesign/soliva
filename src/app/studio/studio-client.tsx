@@ -5,7 +5,7 @@ import { useTransition } from "@/hooks/useTransition";
 import { TRANSITION_CONFIG } from "@/config";
 import FormattedText from "@/components/FormattedText";
 import PreviewBar from "@/components/PreviewBar";
-import BlockRenderer from "@/components/BlockRenderer";
+import BlockRenderer from "@/blocks/BlockRenderer";
 import PageHeader from "@/components/PageHeader";
 
 import gsap from "gsap";
@@ -63,6 +63,14 @@ const StudioClient: React.FC<StudioClientProps> = ({ content: initialContent }) 
       document.documentElement.classList.remove('preview-mode');
     };
   }, [initialContent]);
+
+  useEffect(() => {
+    console.log('[StudioClient] previewContent', {
+      hasBlocks: Array.isArray(previewContent?.blocks),
+      blocksCount: previewContent?.blocks?.length,
+      heroTitle: previewContent?.hero?.title,
+    });
+  }, [previewContent]);
 
   useGSAP(() => {
     const isSafari = () => {

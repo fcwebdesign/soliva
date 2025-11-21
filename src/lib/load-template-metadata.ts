@@ -56,6 +56,7 @@ export async function loadTemplateMetadata(): Promise<any> {
   
   // Vérifier si un template spécifique doit être utilisé
   const currentTemplate = (content as any)._template;
+  const templateName = currentTemplate && currentTemplate !== 'soliva' ? currentTemplate : 'soliva';
   if (currentTemplate && currentTemplate !== 'soliva') {
     const templateContentPath = join(process.cwd(), 'data', 'templates', currentTemplate, 'content.json');
     if (existsSync(templateContentPath)) {
@@ -131,6 +132,14 @@ export async function loadTemplateMetadata(): Promise<any> {
     },
     pages: content.pages
   };
+
+  // 🔍 Logs légers pour diagnostiquer le contenu réellement chargé
+  console.log('[loadTemplateMetadata]', {
+    template: templateName,
+    source: activeFilePath,
+    studioBlocks: Array.isArray(metadata.studio?.blocks) ? metadata.studio.blocks.length : 0,
+    pagesCount: metadata.pages?.pages?.length || 0,
+  });
   
   // ✅ OPTIMISATION : Mettre en cache le résultat avec le timestamp du fichier
   try {
@@ -153,4 +162,3 @@ export function invalidateMetadataCache(): void {
   cacheTimestamp = 0;
   cacheFilePath = null;
 }
-

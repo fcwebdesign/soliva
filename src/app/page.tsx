@@ -1,7 +1,7 @@
 import React from "react";
 import { loadTemplateMetadata } from '@/lib/load-template-metadata';
 import HomeClient from './home-client';
-import BlockRenderer from '@/components/BlockRenderer';
+import BlockRenderer from '@/blocks/BlockRenderer';
 import PageHeader from '@/components/PageHeader';
 
 export default async function Home() {

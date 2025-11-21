@@ -7,6 +7,7 @@ import type { Content } from '@/types/content';
 import { cleanContentLinks } from '@/utils/cleanLinks';
 import { logger } from '@/utils/logger';
 import { cleanTypographyRecursive, isValidTypography } from '@/utils/clean-typography';
+import { contentSchema, type ContentFromSchema } from './content-schema';
 
 const DATA_FILE_PATH = join(process.cwd(), 'data', 'content.json');
 
@@ -220,6 +221,17 @@ export const SEED_DATA: Content = {
   }
 };
 
+function validateContentSchema(raw: unknown): ContentFromSchema {
+  const parsed = contentSchema.safeParse(raw);
+  if (!parsed.success) {
+    const issues = parsed.error.issues
+      .map((i) => `${i.path.join('.') || '(root)'}: ${i.message}`)
+      .join('; ');
+    throw new Error(`Content validation failed: ${issues}`);
+  }
+  return parsed.data;
+}
+
 /**
  * Crée le dossier /data et content.json avec le seed si absent
  * Ne remplace pas le fichier s'il existe déjà
@@ -318,8 +330,10 @@ async function _readContentInternal(): Promise<Content> {
     
     logger.debug('✅ nav.items valide:', JSON.stringify(cleanedContentWithTypography.nav.items, null, 2));
     
+    const validated = validateContentSchema(cleanedContentWithTypography);
+    
     logger.debug('✅ Validation réussie, retour du contenu');
-    return cleanedContentWithTypography;
+    return validated as Content;
   } catch (error) {
     logger.error('❌ Erreur dans readContent:', error);
     

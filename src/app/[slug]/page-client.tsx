@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useGSAP } from "@gsap/react";
-import BlockRenderer from '../../components/BlockRenderer';
+import BlockRenderer from '@/blocks/BlockRenderer';
 import PageHeader from '../../components/PageHeader';
 import gsap from "gsap";
 import SplitText from "gsap/SplitText";
