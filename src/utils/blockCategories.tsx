@@ -1,119 +1,130 @@
-import { Type, Heading2, AlignLeft, Image, Grid3x3, Grid3x2, Columns, Phone, GripHorizontal, List, Quote } from 'lucide-react';
+import React from 'react';
+import {
+  Type,
+  Heading2,
+  AlignLeft,
+  Image,
+  Grid3x3,
+  Grid3x2,
+  Columns,
+  Phone,
+  GripHorizontal,
+  List,
+  Quote,
+  FileText,
+  LayoutPanelTop
+} from 'lucide-react';
+import { getBlockMetadata } from '@/blocks/auto-declared/registry';
+import '@/blocks/auto-declared'; // side-effect to populate registry
 
-// Fonction pour obtenir le label personnalisé d'un bloc
-export const getBlockLabel = (blockType: string) => {
-  const customLabels: Record<string, string> = {
-    'contact': 'Contact',
-    'content': 'Éditeur de texte',
-    'four-columns': 'Quatre colonnes',
-    'gallery-grid': 'Galerie Grid',
-    'h2': 'Titre H2',
-    'h3': 'Titre H3',
-    'image': 'Image',
-    'logos': 'Logos',
-    'projects': 'Projets',
-    'quote': 'Citation',
-    'services': 'Liste titre/texte',
-    'three-columns': 'Trois colonnes',
-    'two-columns': 'Deux colonnes',
-  };
-  return customLabels[blockType] || blockType;
+type LucideIcon = React.ComponentType<{ className?: string }>;
+
+// Mapping type -> icône Lucide (fallback AlignLeft)
+const iconMap: Record<string, LucideIcon> = {
+  contact: Phone,
+  content: AlignLeft,
+  'four-columns': Grid3x3,
+  'three-columns': Grid3x2,
+  'two-columns': Columns,
+  'gallery-grid': Grid3x3,
+  h2: Type,
+  h3: Heading2,
+  image: Image,
+  logos: GripHorizontal,
+  projects: Grid3x3,
+  quote: Quote,
+  services: List,
+  testimonial: Quote,
+  faq: List,
+  'expandable-card': List,
 };
 
-// Fonction pour créer une vignette avec icônes Lucide
-export const renderBlockPreview = (blockType: string) => {
-  const iconClass = "h-7 w-7 text-gray-600";
-  
-  switch (blockType) {
-    case 'contact':
-      return <Phone className={iconClass} />;
-    case 'content':
-      return <AlignLeft className={iconClass} />;
-    case 'four-columns':
-      return <Grid3x3 className={iconClass} />;
-    case 'gallery-grid':
-      return <Grid3x3 className={iconClass} />;
-    case 'h2':
-      return <Type className={iconClass} />;
-    case 'h3':
-      return <Heading2 className={iconClass} />;
-    case 'image':
-      return <Image className={iconClass} />;
-    case 'logos':
-      return <GripHorizontal className={iconClass} />;
-    case 'projects':
-      return <Grid3x3 className={iconClass} />;
-    case 'quote':
-      return <Quote className={iconClass} />;
-    case 'services':
-      return <List className={iconClass} />;
-    case 'three-columns':
-      return <Grid3x2 className={iconClass} />;
-    case 'two-columns':
-      return <Columns className={iconClass} />;
-    default:
-      return <AlignLeft className={iconClass} />;
+const iconClass = "h-7 w-7 text-gray-600";
+
+const renderLucideIcon = (blockType: string) => {
+  const Icon = iconMap[blockType] || AlignLeft;
+  return <Icon className={iconClass} />;
+};
+
+// Catégorie lisible depuis le registre -> libellé palette
+const categoryLabels: Record<string, string> = {
+  text: '📝 Textes',
+  layout: '🎨 Layout',
+  media: '🖼️ Media',
+  content: '📚 Contenu',
+  interactive: '⚡ Interactive',
+  data: '🗂️ Data',
+};
+
+// Fallback si pas de catégorie
+const defaultCategory = '🔧 Autres';
+
+// Récupérer les blocs depuis le registre, sinon fallback statique
+const getBlocksFromRegistry = () => {
+  try {
+    const meta = getBlockMetadata();
+    if (!meta || meta.length === 0) return null;
+    return meta.map(m => ({
+      type: m.type,
+      label: m.label || m.type,
+      description: m.description,
+      category: m.category,
+      // On force l’icône Lucide, sans utiliser l’emoji du registre
+      preview: renderLucideIcon(m.type),
+    }));
+  } catch (e) {
+    return null;
   }
 };
 
-// Catégories de base (utilisées par l'éditeur global)
-export const getBaseCategories = () => ({
-  '📞 Contact': ['contact'],
-  '📝 Textes': ['content', 'h2', 'h3', 'quote'],
-  '🎨 Layout': ['four-columns', 'three-columns', 'two-columns'],
-  '🖼️ Images': ['gallery-grid', 'image'],
-  '🏢 Logos': ['logos'],
-  '💼 Projets': ['projects'],
-  '🛠️ Services': ['services'],
-});
+// Fallback statique (ancien comportement)
+const staticBlocks = [
+  { type: 'contact', label: 'Contact', category: 'content', preview: renderLucideIcon('contact') },
+  { type: 'content', label: 'Éditeur de texte', category: 'text', preview: renderLucideIcon('content') },
+  { type: 'four-columns', label: 'Quatre colonnes', category: 'layout', preview: renderLucideIcon('four-columns') },
+  { type: 'gallery-grid', label: 'Galerie Grid', category: 'media', preview: renderLucideIcon('gallery-grid') },
+  { type: 'h2', label: 'Titre H2', category: 'text', preview: renderLucideIcon('h2') },
+  { type: 'h3', label: 'Titre H3', category: 'text', preview: renderLucideIcon('h3') },
+  { type: 'image', label: 'Image', category: 'media', preview: renderLucideIcon('image') },
+  { type: 'logos', label: 'Logos', category: 'media', preview: renderLucideIcon('logos') },
+  { type: 'projects', label: 'Projets', category: 'content', preview: renderLucideIcon('projects') },
+  { type: 'quote', label: 'Citation', category: 'text', preview: renderLucideIcon('quote') },
+  { type: 'services', label: 'Liste titre/texte', category: 'content', preview: renderLucideIcon('services') },
+  { type: 'three-columns', label: 'Trois colonnes', category: 'layout', preview: renderLucideIcon('three-columns') },
+  { type: 'two-columns', label: 'Deux colonnes', category: 'layout', preview: renderLucideIcon('two-columns') },
+];
 
-// Catégories pour les colonnes (exclut les blocs de layout)
-export const getColumnCategories = () => {
-  const baseCategories = getBaseCategories();
-  const { '🎨 Layout': layout, ...columnCategories } = baseCategories;
-  return columnCategories;
-};
+const getEffectiveBlocks = () => getBlocksFromRegistry() || staticBlocks;
 
 // Fonction pour grouper les blocs par catégorie (éditeur global)
 export const getCategorizedBlocks = (filteredBlocks: any[]) => {
-  const categories = getBaseCategories();
+  const allBlocks = getEffectiveBlocks().filter(b => filteredBlocks.some((f: any) => f.type === b.type));
+
   const categorized: { [key: string]: any[] } = {};
-  
-  Object.entries(categories).forEach(([categoryName, blockTypes]) => {
-    const categoryBlocks = filteredBlocks.filter(block => 
-      blockTypes.includes(block.type)
-    );
-    if (categoryBlocks.length > 0) {
-      categorized[categoryName] = categoryBlocks;
-    }
+  allBlocks.forEach(block => {
+    const catLabel = block.category && categoryLabels[block.category] ? categoryLabels[block.category] : defaultCategory;
+    if (!categorized[catLabel]) categorized[catLabel] = [];
+    categorized[catLabel].push(block);
   });
-
-  // Ajouter les blocs non catégorisés
-  const uncategorizedBlocks = filteredBlocks.filter(block => 
-    !Object.values(categories).flat().includes(block.type)
-  );
-  if (uncategorizedBlocks.length > 0) {
-    categorized['🔧 Autres'] = uncategorizedBlocks;
-  }
-
   return categorized;
 };
 
 // Fonction pour grouper les blocs par catégorie (colonnes)
 export const getCategorizedBlocksForColumns = () => {
-  const categories = getColumnCategories();
+  const allBlocks = getEffectiveBlocks().filter(b => b.category !== 'layout'); // on exclut les layouts dans les colonnes
   const categorized: { [key: string]: any[] } = {};
-  
-  Object.entries(categories).forEach(([categoryName, blockTypes]) => {
-    const categoryBlocks = blockTypes.map(type => ({
-      type,
-      label: getBlockLabel(type),
-      preview: renderBlockPreview(type)
-    }));
-    if (categoryBlocks.length > 0) {
-      categorized[categoryName] = categoryBlocks;
-    }
+  allBlocks.forEach(block => {
+    const catLabel = block.category && categoryLabels[block.category] ? categoryLabels[block.category] : defaultCategory;
+    if (!categorized[catLabel]) categorized[catLabel] = [];
+    categorized[catLabel].push(block);
   });
-
   return categorized;
 };
+
+// Exposé pour compatibilité (labels individuels)
+export const getBlockLabel = (blockType: string) => {
+  const block = getEffectiveBlocks().find(b => b.type === blockType);
+  return block?.label || blockType;
+};
+
+export const renderBlockPreview = (blockType: string) => renderLucideIcon(blockType);
