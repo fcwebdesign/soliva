@@ -6,6 +6,10 @@ registerAutoBlock({
   type: 'four-columns',
   component: FourColumnsBlock,
   editor: FourColumnsBlockEditor,
+  label: 'Quatre colonnes',
+  icon: '↔️',
+  category: 'layout',
+  description: 'Disposition 4 colonnes',
   defaultData: {
     title: '',
     column1: [],

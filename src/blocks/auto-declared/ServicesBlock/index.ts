@@ -7,6 +7,10 @@ registerAutoBlock({
   type: 'services',
   component: ServicesBlock,
   editor: ServicesBlockEditor,
+  label: 'Services',
+  icon: '🛠️',
+  category: 'content',
+  description: 'Liste de services avec titre/texte',
   defaultData: {
     title: 'OUR CORE OFFERINGS',
     theme: 'auto',

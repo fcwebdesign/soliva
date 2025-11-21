@@ -6,6 +6,10 @@ registerAutoBlock({
   type: 'three-columns',
   component: ThreeColumnsBlock,
   editor: ThreeColumnsBlockEditor,
+  label: 'Trois colonnes',
+  icon: '↔️',
+  category: 'layout',
+  description: 'Disposition 3 colonnes',
   defaultData: {
     title: '',
     leftColumn: [],

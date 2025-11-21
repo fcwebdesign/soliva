@@ -6,10 +6,13 @@ registerAutoBlock({
   type: 'faq',
   component: FAQBlock,
   editor: FAQBlockEditor,
+  label: 'FAQ',
+  icon: '❓',
+  category: 'content',
+  description: 'Questions/réponses accordéon',
   defaultData: {
     title: '',
     items: [],
     theme: 'auto'
   }
 });
-

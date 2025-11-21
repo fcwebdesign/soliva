@@ -19,6 +19,11 @@ export interface BlockModule<TData = unknown> {
   defaultData: TData; // Pas d'id/type ici
   label?: string;
   icon?: string;
+  description?: string;
+  category?: 'text' | 'layout' | 'media' | 'content' | 'interactive' | 'data';
+  // Champs descriptifs pour génération d'UI (optionnels pour l'instant)
+  fields?: Record<string, any>;
+  presets?: Array<{ label: string; data: TData; description?: string }>;
 }
 
 // Registre global HMR-safe
@@ -79,11 +84,13 @@ export function getAvailableBlockTypes(): string[] {
 }
 
 // Fonction pour obtenir les métadonnées des blocs
-export function getBlockMetadata(): Array<{type: string, label: string, icon: string}> {
+export function getBlockMetadata(): Array<{type: string, label: string, icon: string, description?: string, category?: string}> {
   return Array.from(REGISTRY.values()).map(block => ({
     type: block.type,
     label: block.label || block.type,
-    icon: block.icon || '📦'
+    icon: block.icon || '📦',
+    description: block.description,
+    category: block.category
   }));
 }
 

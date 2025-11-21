@@ -6,6 +6,10 @@ registerAutoBlock({
   type: 'projects',
   component: ProjectsBlock,
   editor: ProjectsBlockEditor,
+  label: 'Projets',
+  icon: '📁',
+  category: 'content',
+  description: 'Liste de projets (grid)',
   defaultData: {
     title: 'NOS RÉALISATIONS',
     maxProjects: 6,

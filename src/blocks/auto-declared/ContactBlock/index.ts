@@ -6,6 +6,10 @@ registerAutoBlock({
   type: 'contact',
   component: ContactBlock,
   editor: ContactBlockEditor,
+  label: 'Contact',
+  icon: '✉️',
+  category: 'content',
+  description: 'Bloc CTA contact',
   defaultData: {
     title: '',
     ctaText: '',

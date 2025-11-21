@@ -10,6 +10,10 @@ registerAutoBlock({
   type: 'expandable-card',
   component: ExpandableCard,
   editor: ExpandableCardEditor,
+  label: 'Cartes extensibles',
+  icon: '🗂️',
+  category: 'content',
+  description: 'Cartes avec expansion/FAQ lite',
   defaultData: { 
     title: '',
     cards: [] 

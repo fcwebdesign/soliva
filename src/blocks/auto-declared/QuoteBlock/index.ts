@@ -8,6 +8,8 @@ registerAutoBlock({
   editor: QuoteBlockEditor,
   label: 'Citation',
   icon: '💬',
+  category: 'text',
+  description: 'Citation avec auteur',
   defaultData: {
     quote: 'Une citation inspirante pour votre contenu...',
     author: 'Nom de l\'auteur',

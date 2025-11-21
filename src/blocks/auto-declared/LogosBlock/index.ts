@@ -6,6 +6,10 @@ registerAutoBlock({
   type: 'logos',
   component: LogosBlock,
   editor: LogosBlockEditor,
+  label: 'Logos / clients',
+  icon: '🏢',
+  category: 'media',
+  description: 'Grille de logos',
   defaultData: {
     title: 'NOS CLIENTS',
     theme: 'auto',

@@ -6,6 +6,10 @@ registerAutoBlock({
   type: 'gallery-grid',
   component: GalleryGridBlock,
   editor: GalleryGridBlockEditor,
+  label: 'Galerie',
+  icon: '🖼️',
+  category: 'media',
+  description: 'Grille d’images avec options filters/lightbox',
   defaultData: {
     images: [],
     layout: 'grid-3',

@@ -8,6 +8,8 @@ registerAutoBlock({
   editor: TestimonialBlockEditor,
   label: 'Témoignage',
   icon: '⭐',
+  category: 'content',
+  description: 'Liste de témoignages multi-colonnes',
   defaultData: {
     title: '',
     items: [],
@@ -15,4 +17,3 @@ registerAutoBlock({
     columns: 3
   }
 });
-
