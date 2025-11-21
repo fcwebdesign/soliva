@@ -253,13 +253,6 @@ export default function AdminPreviewPage() {
                   <div className="site">
                     <BlockRenderer blocks={visibleBlocks as any} content={previewData} />
                   </div>
-                  <div className="mt-4 rounded bg-gray-50 border border-gray-200 p-3 text-xs text-gray-600">
-                    <div className="font-semibold mb-1">Debug preview</div>
-                    <div>Page: {pageKey}</div>
-                    <div>Template: {forcedTemplate || (initialPageData?._template || 'soliva')}</div>
-                    <div>Blocs: {visibleBlocks.length} / {blocks.length}</div>
-                    <div>Types: {visibleBlocks.map(b => b.type).join(', ')}</div>
-                  </div>
                 </>
               ) : (
                 <div className="text-sm text-gray-500 text-center py-16 space-y-2">
