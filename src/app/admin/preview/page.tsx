@@ -7,6 +7,7 @@ import BlockRenderer from '@/blocks/BlockRenderer';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, RefreshCw, Eye, EyeOff } from 'lucide-react';
 import { TemplateProvider } from '@/templates/context';
+import SommairePanel from '@/components/admin/SommairePanel';
 
 export const runtime = "nodejs";
 
@@ -32,6 +33,7 @@ export default function AdminPreviewPage() {
   const [error, setError] = useState<string | null>(null);
   const [pageOptions, setPageOptions] = useState<Array<{ value: string; label: string }>>([]);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
+  const [hoverBlockId, setHoverBlockId] = useState<string | null>(null);
   const [hiddenBlockIds, setHiddenBlockIds] = useState<Set<string>>(new Set());
   const [dragId, setDragId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
@@ -213,71 +215,65 @@ export default function AdminPreviewPage() {
 
       {/* Split view */}
       <div className="flex flex-1 overflow-hidden">
-        <div className="w-[420px] min-w-[360px] max-w-[520px] border-r border-gray-200 overflow-y-auto bg-white" ref={editorPaneRef}>
+        <div
+          className="w-[420px] min-w-[360px] max-w-[520px] border-r border-gray-200 bg-white flex flex-col"
+          ref={editorPaneRef}
+        >
           {error ? (
             <div className="p-6 text-sm text-red-600">Erreur: {error}</div>
           ) : loading ? (
             <div className="p-6 text-sm text-gray-500">Chargement...</div>
           ) : (
             <>
-              <div className="p-4 text-xs text-gray-500">
-                Page: <strong>{pageKey}</strong> · Template: <strong>{forcedTemplate || (initialPageData?._template || 'soliva')}</strong>
-              </div>
-
-              {/* Outline simple des blocs */}
-              <div className="px-4 pb-4">
-                <div className="text-xs font-semibold text-gray-700 mb-2">Plan</div>
-                <div className="space-y-2">
-                  {blocks.length === 0 && (
-                    <div className="text-xs text-gray-500">Aucun bloc pour l’instant.</div>
-                  )}
-                  {blocks.map((b, idx) => (
-                    <button
-                      key={b.id || idx}
-                      onClick={() => scrollToBlock(b.id)}
-                      draggable
-                  onDragStart={(e) => { 
-                    setDragId(b.id); 
-                    setDragOverId(null); 
-                    // Drag image vide pour éviter le ghost semi-transparent
-                    const img = document.createElement('div');
-                        e.dataTransfer?.setDragImage(img, 0, 0);
-                        e.dataTransfer?.setData('text/plain', b.id);
-                    e.dataTransfer!.effectAllowed = 'move';
-                  }}
-                  onDragOver={(e) => { e.preventDefault(); setDragOverId(b.id); }}
-                  onDragLeave={() => setDragOverId(null)}
-                  onDrop={(e) => { e.preventDefault(); if (dragId) reorderBlocks(dragId, b.id); setDragId(null); setDragOverId(null); }}
-                  onDragEnd={() => { setDragId(null); setDragOverId(null); }}
-                  className={`w-full text-left text-xs border rounded px-3 py-2 transition-colors cursor-grab active:cursor-grabbing ${
-                    selectedBlockId === b.id
-                      ? 'border-blue-300 bg-blue-50 text-blue-700 shadow-sm'
-                      : 'border-gray-200 hover:border-gray-300'
-                  } ${dragOverId === b.id ? 'ring-1 ring-blue-200 translate-x-[1px]' : ''} ${dragId === b.id ? 'ring-1 ring-blue-300 shadow-sm' : ''}`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">{b.type}</span>
-                    <div className="flex items-center gap-2 text-[10px] text-gray-500">
-                      <span className="cursor-grab">⋮⋮ #{idx + 1}</span>
-                      <span
-                        onClick={(e) => { e.stopPropagation(); toggleVisibility(b.id); }}
-                        className="ml-1 text-gray-500 hover:text-gray-700"
-                        title={hiddenBlockIds.has(b.id) ? 'Afficher' : 'Masquer'}
-                      >
-                        {hiddenBlockIds.has(b.id) ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </span>
-                    </div>
-                  </div>
-                </button>
-                  ))}
+              {/* Sidebar header */}
+              <div className="px-4 py-3 border-b border-gray-200">
+                <div className="text-xs uppercase tracking-wide text-gray-500">Plan</div>
+                <div className="text-sm text-gray-800 font-semibold">
+                  Page: <span className="text-gray-600">{pageKey}</span>
+                </div>
+                <div className="text-xs text-gray-500">
+                  Template: <strong>{forcedTemplate || (initialPageData?._template || 'soliva')}</strong>
                 </div>
               </div>
 
-            <BlockEditor
-              pageData={initialPageData}
-              pageKey={pageKey}
-              onUpdate={handleUpdate}
-            />
+              {/* Outline stylé façon sidebar */}
+              <div className="flex-1 overflow-y-auto px-3 py-4 space-y-4">
+                <div className="rounded-lg border border-gray-200 bg-gray-50/60">
+                  <div className="px-3 py-2 border-b border-gray-200 text-[12px] font-semibold text-gray-700 flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-blue-500"></span>
+                    Sections ({blocks.length})
+                  </div>
+                  <div className="p-2">
+                    <SommairePanel
+                      className="border-0 bg-transparent"
+                      blocks={blocks}
+                      selectedBlockId={selectedBlockId || undefined}
+                      onSelectBlock={(id) => scrollToBlock(id)}
+                      onDeleteBlock={() => {}}
+                      onDuplicateBlock={() => {}}
+                      onReorderBlocks={(newBlocks) => {
+                        setBlocks(newBlocks);
+                        setPreviewData((prev) => prev ? { ...prev, blocks: newBlocks } : prev);
+                      }}
+                      isPreviewMode
+                    />
+                  </div>
+                </div>
+
+                {/* Éditeur des blocs (visuel) */}
+                <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
+                  <div className="px-3 py-2 border-b border-gray-200 text-[12px] font-semibold text-gray-700">
+                    Éditeur de contenu
+                  </div>
+                  <div className="p-3">
+                    <BlockEditor
+                      pageData={initialPageData}
+                      pageKey={pageKey}
+                      onUpdate={handleUpdate}
+                    />
+                  </div>
+                </div>
+              </div>
             </>
           )}
         </div>
@@ -291,13 +287,13 @@ export default function AdminPreviewPage() {
             <div className="bg-white border border-gray-200 rounded-lg shadow-sm min-h-[240px] overflow-hidden">
               {visibleBlocks.length > 0 && previewData ? (
                 <div className="site p-4">
-                  <BlockRenderer
-                    blocks={visibleBlocks as any}
-                    content={previewData}
-                    withDebugIds
-                    highlightBlockId={selectedBlockId || undefined}
-                  />
-                </div>
+                    <BlockRenderer
+                      blocks={visibleBlocks as any}
+                      content={previewData}
+                      withDebugIds
+                      highlightBlockId={(hoverBlockId || selectedBlockId) || undefined}
+                    />
+                  </div>
               ) : (
                 <div className="p-4">
                   <div className="text-sm text-gray-500 text-center py-16 space-y-2">
