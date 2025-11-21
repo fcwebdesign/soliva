@@ -17,15 +17,17 @@ interface FourColumnsData {
 
 export default function FourColumnsBlock({ data }: { data: FourColumnsData }) {
   const { mounted } = useTheme();
-  
-  const column1 = data.column1 || [];
-  const column2 = data.column2 || [];
-  const column3 = data.column3 || [];
-  const column4 = data.column4 || [];
-  const layout = data.layout || 'four-columns';
-  const gap = data.gap || 'medium';
-  const alignment = data.alignment || 'top';
-  const blockTheme = data.theme || 'auto';
+  // Supporte à la fois { data: {...} } et des props à plat
+  const blockData = (data as any).data || data;
+
+  const column1 = blockData.column1 || [];
+  const column2 = blockData.column2 || [];
+  const column3 = blockData.column3 || [];
+  const column4 = blockData.column4 || [];
+  const layout = blockData.layout || 'four-columns';
+  const gap = blockData.gap || 'medium';
+  const alignment = blockData.alignment || 'top';
+  const blockTheme = blockData.theme || 'auto';
 
   const gapClasses = {
     small: 'gap-3',
@@ -44,10 +46,10 @@ export default function FourColumnsBlock({ data }: { data: FourColumnsData }) {
     'stacked-mobile': 'grid-cols-1 lg:grid-cols-4',
     'stacked-tablet': 'grid-cols-1 md:grid-cols-2 xl:grid-cols-4'
   };
-
   const layoutClass = layoutClasses[layout] || 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4';
   const gapClass = gapClasses[gap] || 'gap-4';
   const alignmentClass = alignmentClasses[alignment] || 'items-start';
+  const gapValue = gap === 'small' ? 'var(--gap-sm)' : gap === 'large' ? 'var(--gap-lg)' : 'var(--gap)';
   
   // Ne rien rendre tant que le composant n'est pas monté
   if (!mounted) {
@@ -134,20 +136,18 @@ export default function FourColumnsBlock({ data }: { data: FourColumnsData }) {
   
   return (
     <section className="four-columns-section" data-block-type="four-columns" data-block-theme={blockTheme}>
-      <div className="container mx-auto">
-        <div className={`grid ${layoutClass} ${gapClass} ${alignmentClass}`}>
-          <div className="space-y-4">
-            {column1.map(renderSubBlock)}
-          </div>
-          <div className="space-y-4">
-            {column2.map(renderSubBlock)}
-          </div>
-          <div className="space-y-4">
-            {column3.map(renderSubBlock)}
-          </div>
-          <div className="space-y-4">
-            {column4.map(renderSubBlock)}
-          </div>
+      <div className={`grid ${layoutClass} ${gapClass} ${alignmentClass}`} style={{ gap: gapValue }}>
+        <div className="flex flex-col" style={{ gap: gapValue }}>
+          {column1.map(renderSubBlock)}
+        </div>
+        <div className="flex flex-col" style={{ gap: gapValue }}>
+          {column2.map(renderSubBlock)}
+        </div>
+        <div className="flex flex-col" style={{ gap: gapValue }}>
+          {column3.map(renderSubBlock)}
+        </div>
+        <div className="flex flex-col" style={{ gap: gapValue }}>
+          {column4.map(renderSubBlock)}
         </div>
       </div>
     </section>

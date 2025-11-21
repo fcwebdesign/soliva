@@ -24,7 +24,7 @@ const HeroComplet: React.FC<HeroCompletProps> = ({ content }) => {
   return (
     <>
       {/* Section Hero */}
-      <section id="home" className="py-[calc(var(--section)*1.2)]">
+      <section id="home" className="pt-[calc(var(--section)*1.2)] pb-0">
         <div className="container">
           {/* Titre */}
           {content?.title && (

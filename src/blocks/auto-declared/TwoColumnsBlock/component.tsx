@@ -19,13 +19,16 @@ export default function TwoColumnsBlock({ data }: { data: TwoColumnsData }) {
   const { mounted } = useTheme();
   const { key } = useTemplate();
   const templateRegistry = registries[key] ?? defaultRegistry;
+
+  // Supporte à la fois { data: {...} } et des props à plat
+  const blockData = (data as any).data || data;
   
-  const leftColumn = data.leftColumn || [];
-  const rightColumn = data.rightColumn || [];
-  const layout = data.layout || 'left-right';
-  const gap = data.gap || 'medium';
-  const alignment = data.alignment || 'top';
-  const blockTheme = data.theme || 'auto';
+  const leftColumn = blockData.leftColumn || [];
+  const rightColumn = blockData.rightColumn || [];
+  const layout = blockData.layout || 'left-right';
+  const gap = blockData.gap || 'medium';
+  const alignment = blockData.alignment || 'top';
+  const blockTheme = blockData.theme || 'auto';
 
   const gapClasses = {
     small: 'gap-4',
@@ -44,10 +47,10 @@ export default function TwoColumnsBlock({ data }: { data: TwoColumnsData }) {
     'right-left': 'grid-cols-1 md:grid-cols-2',
     'stacked-mobile': 'grid-cols-1 lg:grid-cols-2'
   };
-
   const layoutClass = layoutClasses[layout] || 'grid-cols-1 md:grid-cols-2';
   const gapClass = gapClasses[gap] || 'gap-8';
   const alignmentClass = alignmentClasses[alignment] || 'items-start';
+  const gapValue = gap === 'small' ? 'var(--gap-sm)' : gap === 'large' ? 'var(--gap-lg)' : 'var(--gap)';
   
   // Ne rien rendre tant que le composant n'est pas monté
   if (!mounted) {
@@ -121,14 +124,12 @@ export default function TwoColumnsBlock({ data }: { data: TwoColumnsData }) {
   
   return (
     <section className="two-columns-section" data-block-type="two-columns" data-block-theme={blockTheme}>
-      <div className="container mx-auto">
-        <div className={`grid ${layoutClass} ${gapClass} ${alignmentClass}`}>
-          <div className="space-y-4">
-            {leftColumn.map(renderSubBlock)}
-          </div>
-          <div className="space-y-4">
-            {rightColumn.map(renderSubBlock)}
-          </div>
+      <div className={`grid ${layoutClass} ${gapClass} ${alignmentClass}`} style={{ gap: gapValue }}>
+        <div className="flex flex-col" style={{ gap: gapValue }}>
+          {leftColumn.map(renderSubBlock)}
+        </div>
+        <div className="flex flex-col" style={{ gap: gapValue }}>
+          {rightColumn.map(renderSubBlock)}
         </div>
       </div>
     </section>

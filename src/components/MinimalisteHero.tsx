@@ -13,7 +13,7 @@ const MinimalisteHero: React.FC<MinimalisteHeroProps> = ({ content }) => {
   console.log('🎯 MinimalisteHero: Données reçues', content);
 
   return (
-    <section id="home" className="py-[calc(var(--section)*1.2)]">
+    <section id="home" className="pt-[calc(var(--section)*1.2)] pb-0">
       <div className="container">
         <motion.h1 
           initial={{ y: 20, opacity: 0 }} 

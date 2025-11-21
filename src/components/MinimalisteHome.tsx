@@ -85,7 +85,7 @@ interface HeroProps {
 
 function Hero({ title, subtitle, button1Text, button1Link, button2Text, button2Link }: HeroProps) {
   return (
-    <section id="home" className="py-[calc(var(--section)*1.2)]">
+    <section id="home" className="pt-[calc(var(--section)*1.2)] pb-0">
       <div className="container">
         <motion.h1 
           initial={{ y: 20, opacity: 0 }} 
@@ -162,7 +162,7 @@ function WorkGrid({ items, title, subtitle }: WorkGridProps) {
   if (!items || items.length === 0) return null;
   
   return (
-    <section id="work" className="py-[var(--section)]">
+    <section id="work" className="pt-[var(--section)] pb-0">
       <div className="container">
         <div className="mb-12">
           <h2 className="title text-3xl md:text-5xl font-semibold tracking-tight">{title}</h2>
@@ -203,7 +203,7 @@ function TextBlock({ title, text }: TextBlockProps) {
   if (!title && !text) return null;
   
   return (
-    <section id="about" className="py-[var(--section)] border-t border-black/5">
+    <section id="about" className="pt-[var(--section)] pb-[var(--section)] border-t border-black/5">
       <div className="container grid md:grid-cols-12 gap-12 items-start">
         {title && (
           <div className="md:col-span-4">

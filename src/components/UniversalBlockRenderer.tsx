@@ -119,7 +119,7 @@ const UniversalBlockRenderer: React.FC<UniversalBlockRendererProps> = ({ blocks 
       
       case 'work-grid-minimaliste':
         return (
-          <section key={block.id} id="work" className="py-[var(--section)]">
+          <section key={block.id} id="work" className="pt-[var(--section)] pb-0">
             <div className="container">
               <div className="mb-12">
                 <h2 className="title text-3xl md:text-5xl font-semibold tracking-tight">
@@ -152,7 +152,7 @@ const UniversalBlockRenderer: React.FC<UniversalBlockRendererProps> = ({ blocks 
       
       case 'text-block-minimaliste':
         return (
-          <section key={block.id} id="about" className="py-[var(--section)] border-t border-black/5">
+          <section key={block.id} id="about" className="pt-[var(--section)] pb-[var(--section)] border-t border-black/5">
             <div className="container grid md:grid-cols-12 gap-12 items-start">
               <div className="md:col-span-4">
                 <h2 className="title text-2xl md:text-4xl font-semibold tracking-tight">
