@@ -32,6 +32,8 @@ export default function AdminPreviewPage() {
   const [pageOptions, setPageOptions] = useState<Array<{ value: string; label: string }>>([]);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [hiddenBlockIds, setHiddenBlockIds] = useState<Set<string>>(new Set());
+  const [dragId, setDragId] = useState<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
 
   // Callback depuis BlockEditor
   const handleUpdate = (data: any) => {
@@ -142,6 +144,20 @@ export default function AdminPreviewPage() {
 
   const visibleBlocks = blocks.filter((b) => !hiddenBlockIds.has(b.id));
 
+  // Drag & drop outline uniquement (réorganisation locale)
+  const reorderBlocks = (fromId: string, toId: string) => {
+    if (fromId === toId) return;
+    const current = [...blocks];
+    const fromIndex = current.findIndex((b) => b.id === fromId);
+    const toIndex = current.findIndex((b) => b.id === toId);
+    if (fromIndex === -1 || toIndex === -1) return;
+    const [moved] = current.splice(fromIndex, 1);
+    current.splice(toIndex, 0, moved);
+    setBlocks(current);
+    setPreviewData((prev) => prev ? { ...prev, blocks: current } : prev);
+    setSelectedBlockId(fromId);
+  };
+
   return (
     <TemplateProvider value={{ key: forcedTemplate || (initialPageData?._template || 'soliva') }}>
     <div className="flex flex-col h-screen w-full bg-gray-50" data-template={forcedTemplate || initialPageData?._template || 'soliva'}>
@@ -208,26 +224,40 @@ export default function AdminPreviewPage() {
                     <button
                       key={b.id || idx}
                       onClick={() => scrollToBlock(b.id)}
-                      className={`w-full text-left text-xs border rounded px-3 py-2 transition-colors ${
-                        selectedBlockId === b.id
-                          ? 'border-blue-300 bg-blue-50 text-blue-700'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium">{b.type}</span>
-                        <div className="flex items-center gap-2 text-[10px] text-gray-500">
-                          <span>#{idx + 1}</span>
-                          <span
-                            onClick={(e) => { e.stopPropagation(); toggleVisibility(b.id); }}
-                            className="ml-1 text-gray-500 hover:text-gray-700"
-                            title={hiddenBlockIds.has(b.id) ? 'Afficher' : 'Masquer'}
-                          >
-                            {hiddenBlockIds.has(b.id) ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                          </span>
-                        </div>
-                      </div>
-                    </button>
+                      draggable
+                  onDragStart={(e) => { 
+                    setDragId(b.id); 
+                    setDragOverId(null); 
+                    // Drag image vide pour éviter le ghost semi-transparent
+                    const img = document.createElement('div');
+                        e.dataTransfer?.setDragImage(img, 0, 0);
+                        e.dataTransfer?.setData('text/plain', b.id);
+                    e.dataTransfer!.effectAllowed = 'move';
+                  }}
+                  onDragOver={(e) => { e.preventDefault(); setDragOverId(b.id); }}
+                  onDragLeave={() => setDragOverId(null)}
+                  onDrop={(e) => { e.preventDefault(); if (dragId) reorderBlocks(dragId, b.id); setDragId(null); setDragOverId(null); }}
+                  onDragEnd={() => { setDragId(null); setDragOverId(null); }}
+                  className={`w-full text-left text-xs border rounded px-3 py-2 transition-colors cursor-grab active:cursor-grabbing ${
+                    selectedBlockId === b.id
+                      ? 'border-blue-300 bg-blue-50 text-blue-700 shadow-sm'
+                      : 'border-gray-200 hover:border-gray-300'
+                  } ${dragOverId === b.id ? 'ring-1 ring-blue-200 translate-x-[1px]' : ''} ${dragId === b.id ? 'ring-1 ring-blue-300 shadow-sm' : ''}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">{b.type}</span>
+                    <div className="flex items-center gap-2 text-[10px] text-gray-500">
+                      <span className="cursor-grab">⋮⋮ #{idx + 1}</span>
+                      <span
+                        onClick={(e) => { e.stopPropagation(); toggleVisibility(b.id); }}
+                        className="ml-1 text-gray-500 hover:text-gray-700"
+                        title={hiddenBlockIds.has(b.id) ? 'Afficher' : 'Masquer'}
+                      >
+                        {hiddenBlockIds.has(b.id) ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </span>
+                    </div>
+                  </div>
+                </button>
                   ))}
                 </div>
               </div>
