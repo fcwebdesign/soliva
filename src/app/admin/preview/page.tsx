@@ -20,8 +20,9 @@ export default function AdminPreviewPage() {
   const [adminContent, setAdminContent] = useState<any>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<string>(forcedTemplate || '');
 
-  // Ref pour scroller vers un bloc dans l’éditeur
+  // Refs pour scroller vers un bloc dans l’éditeur et la preview
   const editorPaneRef = useRef<HTMLDivElement>(null);
+  const previewPaneRef = useRef<HTMLDivElement>(null);
 
   // État local pour la preview (sera alimenté via les callbacks de BlockEditor)
   const [previewData, setPreviewData] = useState<any>(null);
@@ -120,14 +121,24 @@ export default function AdminPreviewPage() {
 
   const scrollToBlock = (blockId: string) => {
     setSelectedBlockId(blockId);
-    const pane = editorPaneRef.current;
-    if (!pane) return;
-    const el = pane.querySelector<HTMLElement>(`[data-block-id="${blockId}"]`);
-    if (!el) return;
-    const y = el.offsetTop - 60;
-    pane.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
-    el.classList.add('ring', 'ring-blue-200');
-    setTimeout(() => el.classList.remove('ring', 'ring-blue-200'), 800);
+
+    const highlight = (container: HTMLElement | null) => {
+      if (!container) return;
+      const el = container.querySelector<HTMLElement>(`[data-block-id="${blockId}"]`);
+      if (!el) return;
+      // Scroll doux vers l’élément
+      if (typeof el.scrollIntoView === 'function') {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        const y = el.offsetTop - 80;
+        container.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+      }
+      el.classList.add('ring', 'ring-blue-200');
+      setTimeout(() => el.classList.remove('ring', 'ring-blue-200'), 900);
+    };
+
+    highlight(editorPaneRef.current);
+    highlight(previewPaneRef.current);
   };
 
   const toggleVisibility = (blockId: string) => {
@@ -271,24 +282,29 @@ export default function AdminPreviewPage() {
           )}
         </div>
 
-        <div className="flex-1 bg-slate-100 overflow-y-auto px-6 py-6">
+        <div className="flex-1 bg-slate-100 overflow-y-auto px-6 py-6" ref={previewPaneRef}>
           <div className="max-w-6xl mx-auto space-y-3">
             <div className="text-sm text-gray-600 flex items-center justify-between">
               <span>Preview</span>
               <span className="text-xs text-gray-500">{blocks.length} bloc{blocks.length > 1 ? 's' : ''}</span>
             </div>
-            <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 min-h-[240px]">
+            <div className="bg-white border border-gray-200 rounded-lg shadow-sm min-h-[240px] overflow-hidden">
               {visibleBlocks.length > 0 && previewData ? (
-                <>
-                  <div className="site">
-                    <BlockRenderer blocks={visibleBlocks as any} content={previewData} />
-                  </div>
-                </>
+                <div className="site p-4">
+                  <BlockRenderer
+                    blocks={visibleBlocks as any}
+                    content={previewData}
+                    withDebugIds
+                    highlightBlockId={selectedBlockId || undefined}
+                  />
+                </div>
               ) : (
-                <div className="text-sm text-gray-500 text-center py-16 space-y-2">
-                  <div>{loading ? 'Chargement...' : error ? `Erreur: ${error}` : 'Ajoute un bloc dans la colonne de gauche pour prévisualiser.'}</div>
-                  <div className="text-xs">Page: {pageKey} · Template: {forcedTemplate || (initialPageData?._template || 'soliva')}</div>
-                  <div className="text-xs">Blocs visibles: {visibleBlocks.length} / {blocks.length}</div>
+                <div className="p-4">
+                  <div className="text-sm text-gray-500 text-center py-16 space-y-2">
+                    <div>{loading ? 'Chargement...' : error ? `Erreur: ${error}` : 'Ajoute un bloc dans la colonne de gauche pour prévisualiser.'}</div>
+                    <div className="text-xs">Page: {pageKey} · Template: {forcedTemplate || (initialPageData?._template || 'soliva')}</div>
+                    <div className="text-xs">Blocs visibles: {visibleBlocks.length} / {blocks.length}</div>
+                  </div>
                 </div>
               )}
             </div>

@@ -10,7 +10,16 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './auto-declared';
 import { getAutoDeclaredBlock } from './auto-declared/registry';
 
-export default function BlockRenderer({ blocks, content: contentProp }: { blocks: AnyBlock[]; content?: any }) {
+type BlockRendererProps = {
+  blocks: AnyBlock[];
+  content?: any;
+  /** Ajoute data-block-id sur chaque bloc, utile pour l’admin preview (scroll/selection). */
+  withDebugIds?: boolean;
+  /** Facultatif: force une surbrillance visuelle d’un bloc précis (admin preview). */
+  highlightBlockId?: string;
+};
+
+export default function BlockRenderer({ blocks, content: contentProp, withDebugIds = false, highlightBlockId }: BlockRendererProps) {
   const { key } = useTemplate();
   const registry = registries[key] ?? defaultRegistry;
   const [fullContent, setFullContent] = useState<any>(contentProp || null);
@@ -255,7 +264,29 @@ export default function BlockRenderer({ blocks, content: contentProp }: { blocks
           }
           const props = { ...block, 'data-block-type': block.type, 'data-block-theme': block.theme || 'auto' } as any;
           const blockElement = <TemplateComponent key={block.id} {...props} />;
-          return wrapWithAnimation(blockElement, block.type);
+          const wrapped = wrapWithAnimation(blockElement, block.type);
+          if (withDebugIds) {
+            return (
+              <div
+                key={block.id}
+                data-block-id={block.id}
+                data-block-type={block.type}
+                className="relative"
+                style={{ scrollMarginTop: '96px' }}
+              >
+                {highlightBlockId === block.id && (
+                  <>
+                    <div className="pointer-events-none absolute -inset-4 border-2 border-blue-500 shadow-sm bg-blue-50/10"></div>
+                    <div className="pointer-events-none absolute -top-6 -left-4 bg-blue-600 text-white text-[12px] px-3 py-1 shadow font-semibold z-10">
+                      {block.type}
+                    </div>
+                  </>
+                )}
+                {wrapped}
+              </div>
+            );
+          }
+          return wrapped;
         }
 
         // 2) Fallback sur les blocs auto-déclarés (scalable)
@@ -267,7 +298,29 @@ export default function BlockRenderer({ blocks, content: contentProp }: { blocks
           const BlockComponent = scalable.component as any;
           const data = { ...block, title: (block as any).title || '', content: (block as any).content || '', theme: (block as any).theme || 'auto' };
           const blockElement = <BlockComponent key={block.id} data={data} />;
-          return wrapWithAnimation(blockElement, block.type);
+          const wrapped = wrapWithAnimation(blockElement, block.type);
+          if (withDebugIds) {
+            return (
+              <div
+                key={block.id}
+                data-block-id={block.id}
+                data-block-type={block.type}
+                className="relative"
+                style={{ scrollMarginTop: '96px' }}
+              >
+                {highlightBlockId === block.id && (
+                  <>
+                    <div className="pointer-events-none absolute -inset-4 border-2 border-blue-500 shadow-sm bg-blue-50/10"></div>
+                    <div className="pointer-events-none absolute -top-6 -left-4 bg-blue-600 text-white text-[12px] px-3 py-1 shadow font-semibold z-10">
+                      {block.type}
+                    </div>
+                  </>
+                )}
+                {wrapped}
+              </div>
+            );
+          }
+          return wrapped;
         }
 
         if (process.env.NODE_ENV !== 'production') {
