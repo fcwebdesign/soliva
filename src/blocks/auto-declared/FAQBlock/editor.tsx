@@ -45,11 +45,7 @@ function SortableFAQItem({
   isOpen,
   onToggle,
   onUpdate,
-  onRemove,
-  isFirst,
-  isLast,
-  onMoveUp,
-  onMoveDown
+  onRemove
 }: {
   item: FAQItem;
   index: number;
@@ -57,10 +53,6 @@ function SortableFAQItem({
   onToggle: () => void;
   onUpdate: (field: 'question' | 'answer', value: string) => void;
   onRemove: () => void;
-  isFirst: boolean;
-  isLast: boolean;
-  onMoveUp: () => void;
-  onMoveDown: () => void;
 }) {
   const {
     attributes,
@@ -83,10 +75,12 @@ function SortableFAQItem({
       style={style}
       className="border border-gray-200 rounded overflow-hidden"
     >
-      {/* Header collapsible - style SommairePanel */}
+      {/* Header collapsible - clic rapide = toggle, clic maintenu = drag */}
       <div
         className="flex items-center gap-1 py-1 px-2 group hover:bg-gray-50 transition-colors cursor-pointer"
         onClick={onToggle}
+        {...attributes}
+        {...listeners}
       >
         <div className="w-3 h-3 flex items-center justify-center flex-shrink-0">
           {isOpen ? (
@@ -95,14 +89,7 @@ function SortableFAQItem({
             <ChevronRight className="w-3 h-3 text-gray-400" />
           )}
         </div>
-        <div 
-          className="cursor-grab active:cursor-grabbing flex-shrink-0"
-          {...attributes}
-          {...listeners}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <GripVertical className="w-3 h-3 text-gray-400" />
-        </div>
+        <GripVertical className="w-3 h-3 text-gray-400 flex-shrink-0" />
         <HelpCircle className="w-3 h-3 text-gray-400 flex-shrink-0" />
         <span className="text-xs text-gray-500 flex-shrink-0">
           {index + 1}.
@@ -146,24 +133,6 @@ function SortableFAQItem({
               className="w-full px-2 py-1 text-sm border border-gray-200 rounded focus:border-blue-400 focus:outline-none resize-none transition-colors"
             />
           </div>
-          <div className="flex items-center gap-2 pt-1">
-            <button
-              type="button"
-              onClick={onMoveUp}
-              disabled={isFirst}
-              className="px-2 py-0.5 text-[10px] text-gray-500 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              ↑
-            </button>
-            <button
-              type="button"
-              onClick={onMoveDown}
-              disabled={isLast}
-              className="px-2 py-0.5 text-[10px] text-gray-500 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              ↓
-            </button>
-          </div>
         </div>
       )}
     </div>
@@ -187,11 +156,11 @@ export default function FAQBlockEditor({ data, onChange, compact = false }: FAQB
   const theme = data.theme || 'auto';
 
   // Configuration des capteurs pour dnd-kit
-  // delay: clic long (250ms) pour activer le drag, sinon = clic normal
+  // Delay pour différencier clic (toggle) vs clic maintenu (drag)
   const mouseSensor = useSensor(PointerSensor, {
     activationConstraint: { 
-      delay: 250, // Maintenir 250ms avant de drag
-      tolerance: 5, // Tolérance de 5px de mouvement pendant le délai
+      delay: 150, // 150ms pour activer le drag
+      tolerance: 5, // Tolérance de mouvement pendant le délai
     },
   });
   const keyboardSensor = useSensor(KeyboardSensor, {
@@ -244,20 +213,6 @@ export default function FAQBlockEditor({ data, onChange, compact = false }: FAQB
     });
   };
 
-  const moveItem = (index: number, direction: 'up' | 'down') => {
-    const newItems = [...items];
-    const newIndex = direction === 'up' ? index - 1 : index + 1;
-    
-    if (newIndex < 0 || newIndex >= newItems.length) return;
-    
-    [newItems[index], newItems[newIndex]] = [newItems[newIndex], newItems[index]];
-    
-    onChange({
-      ...data,
-      items: newItems
-    });
-  };
-
   // Version compacte pour l'éditeur visuel
   if (compact) {
     return (
@@ -303,10 +258,6 @@ export default function FAQBlockEditor({ data, onChange, compact = false }: FAQB
                       onToggle={() => toggleItem(item.id)}
                       onUpdate={(field, value) => updateItem(item.id, field, value)}
                       onRemove={() => removeItem(item.id)}
-                      isFirst={index === 0}
-                      isLast={index === items.length - 1}
-                      onMoveUp={() => moveItem(index, 'up')}
-                      onMoveDown={() => moveItem(index, 'down')}
                     />
                   ))}
                 </SortableContext>
@@ -383,26 +334,6 @@ export default function FAQBlockEditor({ data, onChange, compact = false }: FAQB
                       Question {index + 1}
                     </span>
                     <div className="flex items-center gap-2">
-                      {/* Boutons de réorganisation */}
-                      <button
-                        type="button"
-                        onClick={() => moveItem(index, 'up')}
-                        disabled={index === 0}
-                        className="px-2 py-1 text-xs text-gray-500 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                        title="Monter"
-                      >
-                        ↑
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => moveItem(index, 'down')}
-                        disabled={index === items.length - 1}
-                        className="px-2 py-1 text-xs text-gray-500 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                        title="Descendre"
-                      >
-                        ↓
-                      </button>
-                      
                       {/* Bouton supprimer */}
                       <button
                         type="button"
