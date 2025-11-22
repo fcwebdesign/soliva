@@ -1,9 +1,10 @@
 import React, { useState, useRef } from 'react';
 import { LogoUploader } from '../../../app/admin/components/MediaUploader';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, Eye, EyeOff, Trash2 } from 'lucide-react';
+import { GripVertical, Eye, EyeOff, Trash2, ImageIcon } from 'lucide-react';
 
 interface LogosData {
   title?: string;
@@ -75,8 +76,20 @@ function SortableLogoItem({ logo, index, onUpdate, onRemove }: {
     }
   };
 
+  const handleImageClick = () => {
+    if (!logo.src && !logo.image) {
+      // Pas d'image : ouvrir directement le sélecteur
+      fileInputRef.current?.click();
+    }
+    // Si image : le DropdownMenu s'ouvrira
+  };
+
   const handleReplace = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleRemove = () => {
+    onUpdate('src', '');
   };
 
   return (
@@ -89,42 +102,54 @@ function SortableLogoItem({ logo, index, onUpdate, onRemove }: {
     >
       <GripVertical className="w-3 h-3 text-gray-400 flex-shrink-0" />
       
-      {/* Miniature du logo */}
-      <div className="w-12 h-12 border border-gray-200 rounded flex items-center justify-center bg-gray-50 flex-shrink-0 relative overflow-hidden">
-        {logo.src || logo.image ? (
-          <img 
-            src={logo.src || logo.image} 
-            alt={logo.alt || logo.name || 'Logo'} 
-            className="w-full h-full object-contain p-1"
-          />
-        ) : (
-          <span className="text-[10px] text-gray-400">+</span>
-        )}
-      </div>
-      
-      {/* Input nom du client + bouton remplacer */}
-      <div className="flex-1 flex items-center gap-1 min-w-0">
-        <input
-          type="text"
-          value={logo.alt || logo.name || ''}
-          onChange={(e) => onUpdate('alt', e.target.value)}
-          onClick={(e) => e.stopPropagation()}
-          onPointerDown={(e) => e.stopPropagation()}
-          placeholder="Client name"
-          className="flex-1 min-w-0 px-2 py-1 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors"
-        />
-        <button
+      {/* Miniature du logo - clic direct si vide, dropdown si image */}
+      {logo.src || logo.image ? (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <div 
+              className="w-12 h-12 border border-gray-200 rounded flex items-center justify-center bg-gray-50 flex-shrink-0 relative overflow-hidden cursor-pointer hover:border-blue-400 transition-colors"
+              onClick={(e) => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              <img 
+                src={logo.src || logo.image} 
+                alt={logo.alt || logo.name || 'Logo'} 
+                className="w-full h-full object-contain p-1"
+              />
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-48">
+            <DropdownMenuItem onClick={(e) => {
+              e.stopPropagation();
+              handleReplace();
+            }} className="text-[13px]">
+              <ImageIcon className="w-3 h-3 mr-2" />
+              Remplacer
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRemove();
+              }}
+              className="text-[13px] text-red-600 focus:text-red-600"
+            >
+              <Trash2 className="w-3 h-3 mr-2" />
+              Supprimer
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ) : (
+        <div 
+          className="w-12 h-12 border border-gray-200 rounded flex items-center justify-center bg-gray-50 flex-shrink-0 relative overflow-hidden cursor-pointer hover:border-blue-400 transition-colors"
           onClick={(e) => {
             e.stopPropagation();
-            handleReplace();
+            handleImageClick();
           }}
           onPointerDown={(e) => e.stopPropagation()}
-          disabled={isUploading}
-          className="px-1.5 py-1 text-[11px] text-gray-700 hover:text-gray-900 transition-colors whitespace-nowrap disabled:opacity-50 flex-shrink-0"
         >
-          {isUploading ? '...' : 'Remplacer'}
-        </button>
-      </div>
+          <span className="text-[10px] text-gray-400">+</span>
+        </div>
+      )}
       
       {/* Input file invisible */}
       <input
@@ -135,6 +160,17 @@ function SortableLogoItem({ logo, index, onUpdate, onRemove }: {
         onClick={(e) => e.stopPropagation()}
         onPointerDown={(e) => e.stopPropagation()}
         className="hidden"
+      />
+      
+      {/* Input nom du client */}
+      <input
+        type="text"
+        value={logo.alt || logo.name || ''}
+        onChange={(e) => onUpdate('alt', e.target.value)}
+        onClick={(e) => e.stopPropagation()}
+        onPointerDown={(e) => e.stopPropagation()}
+        placeholder="Client name"
+        className="flex-1 min-w-0 px-2 py-1 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors"
       />
       
       {/* Icônes au hover : œil et poubelle */}
