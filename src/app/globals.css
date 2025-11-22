@@ -1076,6 +1076,14 @@ body.admin-page,
   margin-bottom: 0 !important;
 }
 
+/* Neutraliser .site img dans l'éditeur visuel */
+.visual-editor-inspector img {
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+  border-radius: 4px !important; /* Comme les inputs */
+}
+
 .block-editor input,
 .block-editor textarea {
   cursor: text;
