@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { HelpCircle, GripVertical, Trash2, ChevronDown, ChevronRight, Eye, EyeOff } from 'lucide-react';
+import WysiwygEditorWrapper from '../../../components/WysiwygEditorWrapper';
 import {
   DndContext,
   closestCenter,
@@ -136,17 +137,16 @@ function SortableFAQItem({
               value={item.question}
               onChange={(e) => onUpdate('question', e.target.value)}
               placeholder="Votre question..."
-              className="w-full px-2 py-1 text-sm border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors"
+              className="w-full px-2 py-2 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors"
             />
           </div>
           <div>
             <label className="block text-[10px] text-gray-400 mb-1">Réponse</label>
-            <textarea
-              value={item.answer.replace(/<[^>]*>/g, '')}
-              onChange={(e) => onUpdate('answer', `<p>${e.target.value}</p>`)}
+            <WysiwygEditorWrapper
+              value={item.answer || ''}
+              onChange={(value: string) => onUpdate('answer', value)}
               placeholder="Réponse..."
-              rows={2}
-              className="w-full px-2 py-1 text-sm border border-gray-200 rounded focus:border-blue-400 focus:outline-none resize-none transition-colors"
+              compact={true}
             />
           </div>
         </div>
@@ -204,8 +204,8 @@ export default function FAQBlockEditor({ data, onChange, compact = false }: FAQB
   const addItem = () => {
     const newItem: FAQItem = {
       id: `faq-${Date.now()}`,
-      question: 'Nouvelle question ?',
-      answer: '<p>Réponse à la question...</p>'
+      question: 'Question Heading',
+      answer: '<p>Detailed answer explaining the question with proper formatting support.</p>'
     };
     
     onChange({
@@ -385,16 +385,11 @@ export default function FAQBlockEditor({ data, onChange, compact = false }: FAQB
 
                   {/* Réponse */}
                   <div>
-                    <textarea
-                      value={item.answer.replace(/<[^>]*>/g, '')}
-                      onChange={(e) => updateItem(item.id, 'answer', `<p>${e.target.value}</p>`)}
+                    <WysiwygEditorWrapper
+                      value={item.answer || ''}
+                      onChange={(value: string) => updateItem(item.id, 'answer', value)}
                       placeholder="Réponse à la question..."
-                      rows={4}
-                      className="block-input"
                     />
-                    <p className="text-xs text-gray-500 mt-1">
-                      HTML supporté. Le texte sera automatiquement enveloppé dans un paragraphe.
-                    </p>
                   </div>
                 </div>
               ))
