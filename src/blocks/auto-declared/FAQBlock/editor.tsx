@@ -159,13 +159,14 @@ export default function FAQBlockEditor({ data, onChange, compact = false }: FAQB
   const [openItems, setOpenItems] = useState<Set<string>>(new Set());
   
   const toggleItem = (id: string) => {
-    const newOpen = new Set(openItems);
-    if (newOpen.has(id)) {
-      newOpen.delete(id);
+    // Accordéon : ouvrir l'item cliqué et fermer les autres
+    if (openItems.has(id)) {
+      // Si déjà ouvert, on ferme tout
+      setOpenItems(new Set());
     } else {
-      newOpen.add(id);
+      // Sinon on ouvre seulement celui-ci
+      setOpenItems(new Set([id]));
     }
-    setOpenItems(newOpen);
   };
   const title = data.title || '';
   const items = data.items || [];

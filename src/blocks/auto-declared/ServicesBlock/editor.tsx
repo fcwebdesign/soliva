@@ -186,13 +186,14 @@ export default function ServicesBlockEditor({ data, onChange, compact = false }:
   const sensors = useSensors(mouseSensor, keyboardSensor);
 
   const toggleItem = (id: string) => {
-    const newOpen = new Set(openItems);
-    if (newOpen.has(id)) {
-      newOpen.delete(id);
+    // Accordéon : ouvrir l'item cliqué et fermer les autres
+    if (openItems.has(id)) {
+      // Si déjà ouvert, on ferme tout
+      setOpenItems(new Set());
     } else {
-      newOpen.add(id);
+      // Sinon on ouvre seulement celui-ci
+      setOpenItems(new Set([id]));
     }
-    setOpenItems(newOpen);
   };
 
   // Fonction de gestion du drag & drop
