@@ -117,7 +117,7 @@ export default function LogosBlock({ data }: { data: LogosData | any }) {
         
         {/* Grille des logos clients */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 justify-items-center">
-          {logos.filter((logo: any) => !logo.hidden).map((logo, index) => (
+          {logos.filter((logo: any) => !logo.hidden && (logo.src || logo.image)).map((logo, index) => (
             <div 
               key={index} 
               className="logo-item rounded-lg p-4"
