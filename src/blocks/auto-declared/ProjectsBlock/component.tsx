@@ -206,10 +206,12 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
   
   const hoverClasses = useMemo(() => getHoverAnimationClasses(currentPaletteId), [currentPaletteId]);
   
-  // Filtrer les projets selon la sélection
+  // Filtrer les projets selon la sélection (en maintenant l'ordre de selectedProjects)
   let displayedProjects: Project[];
   if (selectedProjects && selectedProjects.length > 0) {
-    displayedProjects = allProjects.filter(project => selectedProjects.includes(project.id));
+    displayedProjects = selectedProjects
+      .map(id => allProjects.find(p => p.id === id))
+      .filter(Boolean) as Project[];
   } else {
     displayedProjects = allProjects.slice(0, maxProjects);
   }
