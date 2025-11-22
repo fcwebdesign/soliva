@@ -12,6 +12,7 @@ interface ProjectsData {
   selectedProjects?: string[];
   theme?: 'light' | 'dark' | 'auto';
   columns?: number;
+  displayMode?: 'grid' | 'carousel';
 }
 
 interface Project {
@@ -30,7 +31,7 @@ interface Project {
 export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
   // Extraire les données (peut être dans data directement ou dans data.data)
   const blockData = (data as any).data || data;
-  const { title = "NOS RÉALISATIONS", maxProjects = 6, selectedProjects = [], columns = 3 } = blockData;
+  const { title = "NOS RÉALISATIONS", maxProjects = 6, selectedProjects = [], columns = 3, displayMode = 'grid' } = blockData;
   
   // Générer un ID unique pour le carousel
   const carouselId = blockData.id || `projects-${Math.random().toString(36).substr(2, 9)}`;
@@ -211,7 +212,8 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
   if (selectedProjects && selectedProjects.length > 0) {
     displayedProjects = selectedProjects
       .map(id => allProjects.find(p => p.id === id))
-      .filter(Boolean) as Project[];
+      .filter(Boolean)
+      .slice(0, maxProjects) as Project[]; // Limiter au nombre max
   } else {
     displayedProjects = allProjects.slice(0, maxProjects);
   }
@@ -258,8 +260,15 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
     }
   }
   
-  // Le carousel est nécessaire si on a plus de projets que ce qui peut être affiché sur une page
-  const needsNavigation = actualCount > projectsPerPage;
+  // Logique d'affichage :
+  // - displayMode 'carousel' : toujours carousel
+  // - displayMode 'grid' : toujours grille (pas de navigation)
+  // - pas défini ou autre : auto (carousel si trop de projets)
+  const needsNavigation = displayMode === 'carousel' 
+    ? true 
+    : displayMode === 'grid' 
+      ? false 
+      : actualCount > projectsPerPage;
   
   const maxPages = Math.ceil(displayedProjects.length / projectsPerPage);
   const isFirstPage = currentPage === 0;
