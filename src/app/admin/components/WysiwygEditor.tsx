@@ -293,7 +293,7 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ value, onChange, placehol
               </button>
             )}
           </div>
-          <EditorContent editor={editor} className="[&_.ProseMirror]:p-2 [&_.ProseMirror]:text-[13px] [&_.ProseMirror]:leading-normal [&_.ProseMirror_p]:!text-[13px] [&_.ProseMirror_p]:!leading-normal [&_.ProseMirror_p]:!font-normal" />
+          <EditorContent editor={editor} className="[&_.ProseMirror]:p-2 [&_.ProseMirror]:text-[13px] [&_.ProseMirror]:leading-normal [&_.ProseMirror_p]:text-[13px] [&_.ProseMirror_p]:leading-normal [&_.ProseMirror_p]:font-normal" />
         </div>
         <LinkDialog
           open={linkDialogOpen}

@@ -12,6 +12,7 @@ interface ProjectsData {
   selectedProjects?: string[];
   theme?: 'light' | 'dark' | 'auto';
   columns?: number;
+  displayMode?: 'grid' | 'carousel';
 }
 
 interface Project {
@@ -201,31 +202,57 @@ export default function ProjectsBlockEditor({ data, onChange, compact = false }:
             />
           </div>
           
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <label className="block text-[10px] text-gray-400 mb-1">Max projets</label>
-              <input
-                type="number"
-                value={data.maxProjects || 6}
-                onChange={(e) => updateField('maxProjects', parseInt(e.target.value) || 6)}
-                min="1"
-                max="12"
-                className="w-full px-2 py-1.5 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors"
-              />
+          <div className="space-y-2">
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="block text-[10px] text-gray-400 mb-1">Max projets</label>
+                <Select 
+                  value={String(data.maxProjects || 6)} 
+                  onValueChange={(value) => updateField('maxProjects', parseInt(value, 10))}
+                >
+                  <SelectTrigger className="w-full h-auto px-2 py-1.5 text-[13px] leading-normal font-normal shadow-none rounded">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="shadow-none border rounded">
+                    <SelectItem value="3">3</SelectItem>
+                    <SelectItem value="4">4</SelectItem>
+                    <SelectItem value="6">6</SelectItem>
+                    <SelectItem value="8">8</SelectItem>
+                    <SelectItem value="9">9</SelectItem>
+                    <SelectItem value="12">12</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="block text-[10px] text-gray-400 mb-1">Colonnes</label>
+                <Select 
+                  value={String(data.columns || 3)} 
+                  onValueChange={(value) => updateField('columns', parseInt(value, 10))}
+                >
+                  <SelectTrigger className="w-full h-auto px-2 py-1.5 text-[13px] leading-normal font-normal shadow-none rounded">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="shadow-none border rounded">
+                    <SelectItem value="2">2</SelectItem>
+                    <SelectItem value="3">3</SelectItem>
+                    <SelectItem value="4">4</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
+            
             <div>
-              <label className="block text-[10px] text-gray-400 mb-1">Colonnes</label>
+              <label className="block text-[10px] text-gray-400 mb-1">Affichage</label>
               <Select 
-                value={String(data.columns || 3)} 
-                onValueChange={(value) => updateField('columns', parseInt(value, 10))}
+                value={data.displayMode || 'grid'} 
+                onValueChange={(value) => updateField('displayMode', value)}
               >
                 <SelectTrigger className="w-full h-auto px-2 py-1.5 text-[13px] leading-normal font-normal shadow-none rounded">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="shadow-none border rounded">
-                  <SelectItem value="2">2</SelectItem>
-                  <SelectItem value="3">3</SelectItem>
-                  <SelectItem value="4">4</SelectItem>
+                  <SelectItem value="grid">Grille (tout afficher)</SelectItem>
+                  <SelectItem value="carousel">Carousel (avec navigation)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -296,8 +323,8 @@ export default function ProjectsBlockEditor({ data, onChange, compact = false }:
                 </div>
               )}
             </div>
-            <p className="text-[10px] text-gray-400 mt-1">
-              Vide = tous les projets
+            <p className="text-[13px] text-gray-400 mt-3">
+              Si vide, tous les projets publiés seront affichés
             </p>
           </div>
         </div>
@@ -350,6 +377,22 @@ export default function ProjectsBlockEditor({ data, onChange, compact = false }:
           </select>
           <p className="text-xs text-gray-500 mt-1">
             Choisissez le nombre de colonnes pour l'affichage de la grille de projets.
+          </p>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Mode d'affichage
+          </label>
+          <select
+            value={data.displayMode || 'grid'}
+            onChange={(e) => updateField('displayMode', e.target.value)}
+            className="block-input"
+          >
+            <option value="grid">Grille (tout afficher)</option>
+            <option value="carousel">Carousel (avec navigation)</option>
+          </select>
+          <p className="text-xs text-gray-500 mt-1">
+            En mode grille, tous les projets sont affichés. En mode carousel, vous pouvez naviguer entre les pages.
           </p>
         </div>
         <div>
