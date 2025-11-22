@@ -147,6 +147,7 @@ interface SommairePanelProps {
   onDeleteBlock?: (blockId: string) => void;
   onDuplicateBlock?: (blockId: string) => void;
   onReorderBlocks?: (newBlocks: any[]) => void;
+  renderAction?: (section: Section) => React.ReactNode;
 }
 
 // Composant pour les éléments sortables - garde le design original
@@ -185,7 +186,7 @@ function SortableItem({
   );
 }
 
-export default function SommairePanel({ className = "", blocks = [], onSelectBlock, selectedBlockId, onDeleteBlock, onDuplicateBlock, onReorderBlocks }: SommairePanelProps) {
+export default function SommairePanel({ className = "", blocks = [], onSelectBlock, selectedBlockId, onDeleteBlock, onDuplicateBlock, onReorderBlocks, renderAction }: SommairePanelProps) {
   
   // Fonction pour gérer les actions sur les sections
   const handleSectionAction = (action: string, section: Section) => {
@@ -416,68 +417,72 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
             {section.label}
           </span>
           
-          {/* Menu d'actions */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button 
-                className="opacity-0 group-hover:opacity-100 p-1 rounded"
+          {/* Actions */}
+          {renderAction ? (
+            renderAction(section)
+          ) : (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button 
+                  className="opacity-0 group-hover:opacity-100 p-1 rounded"
+                  style={{ 
+                    backgroundColor: 'transparent',
+                    transition: 'background-color 0.2s'
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--admin-bg-active)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  <MoreVertical className="w-3 h-3" style={{ color: 'var(--admin-text-muted)' }} />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                align="end" 
                 style={{ 
-                  backgroundColor: 'transparent',
-                  transition: 'background-color 0.2s'
+                  backgroundColor: 'var(--admin-bg)',
+                  borderColor: 'var(--admin-border)'
                 }}
-                onClick={(e) => e.stopPropagation()}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--admin-bg-active)'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
               >
-                <MoreVertical className="w-3 h-3" style={{ color: 'var(--admin-text-muted)' }} />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent 
-              align="end" 
-              style={{ 
-                backgroundColor: 'var(--admin-bg)',
-                borderColor: 'var(--admin-border)'
-              }}
-            >
-              <DropdownMenuItem 
-                onClick={() => handleSectionAction("edit", section)}
-                style={{ 
-                  color: 'var(--admin-text-secondary)',
-                  backgroundColor: 'transparent',
-                  transition: 'background-color 0.2s'
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-              >
-                Éditer
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={() => handleSectionAction("duplicate", section)}
-                style={{ 
-                  color: 'var(--admin-text-secondary)',
-                  backgroundColor: 'transparent',
-                  transition: 'background-color 0.2s'
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-              >
-                Dupliquer
-              </DropdownMenuItem>
-              <DropdownMenuSeparator style={{ backgroundColor: 'var(--admin-border)' }} />
-              <DropdownMenuItem 
-                onClick={() => handleSectionAction("delete", section)}
-                style={{ 
-                  color: 'var(--admin-error)',
-                  backgroundColor: 'transparent',
-                  transition: 'background-color 0.2s'
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-              >
-                Supprimer
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                <DropdownMenuItem 
+                  onClick={() => handleSectionAction("edit", section)}
+                  style={{ 
+                    color: 'var(--admin-text-secondary)',
+                    backgroundColor: 'transparent',
+                    transition: 'background-color 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  Éditer
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => handleSectionAction("duplicate", section)}
+                  style={{ 
+                    color: 'var(--admin-text-secondary)',
+                    backgroundColor: 'transparent',
+                    transition: 'background-color 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  Dupliquer
+                </DropdownMenuItem>
+                <DropdownMenuSeparator style={{ backgroundColor: 'var(--admin-border)' }} />
+                <DropdownMenuItem 
+                  onClick={() => handleSectionAction("delete", section)}
+                  style={{ 
+                    color: 'var(--admin-error)',
+                    backgroundColor: 'transparent',
+                    transition: 'background-color 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  Supprimer
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
         
         {/* Enfants */}

@@ -255,7 +255,19 @@ export default function AdminPreviewPage() {
                         setBlocks(newBlocks);
                         setPreviewData((prev) => prev ? { ...prev, blocks: newBlocks } : prev);
                       }}
-                      isPreviewMode
+                      renderAction={(section) => {
+                        const isHidden = hiddenBlockIds.has(section.id);
+                        return (
+                          <button
+                            type="button"
+                            aria-label={isHidden ? 'Afficher' : 'Masquer'}
+                            onClick={(e) => { e.stopPropagation(); toggleVisibility(section.id); }}
+                            className="p-1 rounded hover:bg-gray-100"
+                          >
+                            {isHidden ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </button>
+                        );
+                      }}
                     />
                   </div>
                 </div>
