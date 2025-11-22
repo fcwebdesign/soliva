@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { HelpCircle, GripVertical, Trash2, ChevronDown, ChevronRight } from 'lucide-react';
+import { HelpCircle, GripVertical, Trash2, ChevronDown, ChevronRight, Eye, EyeOff } from 'lucide-react';
 import {
   DndContext,
   closestCenter,
@@ -24,6 +24,7 @@ interface FAQItem {
   id: string;
   question: string;
   answer: string;
+  hidden?: boolean;
 }
 
 interface FAQBlockData {
@@ -45,7 +46,8 @@ function SortableFAQItem({
   isOpen,
   onToggle,
   onUpdate,
-  onRemove
+  onRemove,
+  onToggleVisibility
 }: {
   item: FAQItem;
   index: number;
@@ -53,6 +55,7 @@ function SortableFAQItem({
   onToggle: () => void;
   onUpdate: (field: 'question' | 'answer', value: string) => void;
   onRemove: () => void;
+  onToggleVisibility: () => void;
 }) {
   const {
     attributes,
@@ -69,11 +72,13 @@ function SortableFAQItem({
     opacity: isDragging ? 0.6 : 1,
   };
 
+  const isHidden = item.hidden || false;
+
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className="border border-gray-200 rounded overflow-hidden"
+      className={`border border-gray-200 rounded overflow-hidden ${isHidden ? 'opacity-50' : ''}`}
     >
       {/* Header collapsible - clic rapide = toggle, clic maintenu = drag */}
       <div
@@ -94,9 +99,20 @@ function SortableFAQItem({
         <span className="text-xs text-gray-500 flex-shrink-0">
           {index + 1}.
         </span>
-        <span className="text-sm text-gray-700 truncate flex-1">
+        <span className={`text-sm truncate flex-1 ${isHidden ? 'text-gray-400 line-through' : 'text-gray-700'}`}>
           {item.question || 'Question sans titre'}
         </span>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleVisibility();
+          }}
+          className="opacity-0 group-hover:opacity-100 p-0.5 rounded text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-all flex-shrink-0"
+          title={isHidden ? "Afficher" : "Masquer"}
+        >
+          {isHidden ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+        </button>
         <button
           type="button"
           onClick={(e) => {
@@ -213,6 +229,15 @@ export default function FAQBlockEditor({ data, onChange, compact = false }: FAQB
     });
   };
 
+  const toggleItemVisibility = (id: string) => {
+    onChange({
+      ...data,
+      items: items.map(item => 
+        item.id === id ? { ...item, hidden: !item.hidden } : item
+      )
+    });
+  };
+
   // Version compacte pour l'éditeur visuel
   if (compact) {
     return (
@@ -258,6 +283,7 @@ export default function FAQBlockEditor({ data, onChange, compact = false }: FAQB
                       onToggle={() => toggleItem(item.id)}
                       onUpdate={(field, value) => updateItem(item.id, field, value)}
                       onRemove={() => removeItem(item.id)}
+                      onToggleVisibility={() => toggleItemVisibility(item.id)}
                     />
                   ))}
                 </SortableContext>

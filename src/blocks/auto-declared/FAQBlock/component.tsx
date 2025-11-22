@@ -9,6 +9,7 @@ interface FAQItem {
   id: string;
   question: string;
   answer: string;
+  hidden?: boolean;
 }
 
 interface FAQBlockData {
@@ -122,7 +123,10 @@ export default function FAQBlock({ data }: { data: FAQBlockData | any }) {
     });
   };
 
-  if (items.length === 0) {
+  // Filtrer les items masqués
+  const visibleItems = items.filter(item => !item.hidden);
+
+  if (visibleItems.length === 0) {
     return (
       <div className="py-12 px-4 text-center opacity-50">
         <p>Aucune question pour le moment.</p>
@@ -150,7 +154,7 @@ export default function FAQBlock({ data }: { data: FAQBlockData | any }) {
           </div>
         )}
         
-        {items.map((item) => {
+        {visibleItems.map((item) => {
           const isOpen = openItems.has(item.id);
           
           return (
