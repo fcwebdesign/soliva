@@ -372,7 +372,7 @@ export default function AdminPreviewPage() {
                       );
                       setBlocks(newBlocks);
                       setPreviewData((prev) => prev ? { ...prev, blocks: newBlocks } : prev);
-                    })}
+                    }, { compact: true })}
                   </div>
                 );
               })()}
