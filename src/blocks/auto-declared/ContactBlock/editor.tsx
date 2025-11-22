@@ -11,6 +11,7 @@ interface ContactData {
 export default function ContactBlockEditor({ data, onChange, compact = false }: { data: ContactData; onChange: (data: ContactData) => void; compact?: boolean }) {
   const [availablePages, setAvailablePages] = useState<Array<{ key: string; label: string; path: string }>>([]);
   const [linkType, setLinkType] = useState<'page' | 'email'>('page');
+  const [openSelect, setOpenSelect] = useState<'type' | 'page' | null>(null);
 
   useEffect(() => {
     // Charger les pages disponibles
@@ -91,7 +92,12 @@ export default function ContactBlockEditor({ data, onChange, compact = false }: 
           
           <div>
             <label className="block text-[10px] text-gray-400 mb-1">Type de lien</label>
-            <Select value={linkType} onValueChange={(value) => handleLinkTypeChange(value as 'page' | 'email')}>
+            <Select 
+              value={linkType} 
+              onValueChange={(value) => handleLinkTypeChange(value as 'page' | 'email')}
+              open={openSelect === 'type'}
+              onOpenChange={(open) => setOpenSelect(open ? 'type' : null)}
+            >
               <SelectTrigger className="w-full h-auto px-2 py-1.5 text-[13px] leading-normal font-normal shadow-none rounded">
                 <SelectValue />
               </SelectTrigger>
@@ -116,7 +122,12 @@ export default function ContactBlockEditor({ data, onChange, compact = false }: 
           ) : (
             <div>
               <label className="block text-[10px] text-gray-400 mb-1">Page de destination</label>
-              <Select value={data.ctaLink || '/contact'} onValueChange={(value) => updateField('ctaLink', value)}>
+              <Select 
+                value={data.ctaLink || '/contact'} 
+                onValueChange={(value) => updateField('ctaLink', value)}
+                open={openSelect === 'page'}
+                onOpenChange={(open) => setOpenSelect(open ? 'page' : null)}
+              >
                 <SelectTrigger className="w-full h-auto px-2 py-1.5 text-[13px] leading-normal font-normal shadow-none rounded">
                   <SelectValue />
                 </SelectTrigger>
