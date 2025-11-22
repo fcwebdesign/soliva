@@ -85,24 +85,24 @@ function SortableFAQItem({
     >
       {/* Header collapsible - style SommairePanel */}
       <div
-        className="flex items-center gap-1 py-1 px-2 group hover:bg-gray-50 transition-colors cursor-grab active:cursor-grabbing"
-        {...attributes}
-        {...listeners}
+        className="flex items-center gap-1 py-1 px-2 group hover:bg-gray-50 transition-colors cursor-pointer"
+        onClick={onToggle}
       >
-        <div 
-          className="w-3 h-3 flex items-center justify-center flex-shrink-0"
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggle();
-          }}
-        >
+        <div className="w-3 h-3 flex items-center justify-center flex-shrink-0">
           {isOpen ? (
-            <ChevronDown className="w-3 h-3 text-gray-400 cursor-pointer" />
+            <ChevronDown className="w-3 h-3 text-gray-400" />
           ) : (
-            <ChevronRight className="w-3 h-3 text-gray-400 cursor-pointer" />
+            <ChevronRight className="w-3 h-3 text-gray-400" />
           )}
         </div>
-        <GripVertical className="w-3 h-3 text-gray-400 flex-shrink-0" />
+        <div 
+          className="cursor-grab active:cursor-grabbing flex-shrink-0"
+          {...attributes}
+          {...listeners}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <GripVertical className="w-3 h-3 text-gray-400" />
+        </div>
         <HelpCircle className="w-3 h-3 text-gray-400 flex-shrink-0" />
         <span className="text-xs text-gray-500 flex-shrink-0">
           {index + 1}.
@@ -187,8 +187,12 @@ export default function FAQBlockEditor({ data, onChange, compact = false }: FAQB
   const theme = data.theme || 'auto';
 
   // Configuration des capteurs pour dnd-kit
+  // delay: clic long (250ms) pour activer le drag, sinon = clic normal
   const mouseSensor = useSensor(PointerSensor, {
-    activationConstraint: { distance: 6 },
+    activationConstraint: { 
+      delay: 250, // Maintenir 250ms avant de drag
+      tolerance: 5, // Tolérance de 5px de mouvement pendant le délai
+    },
   });
   const keyboardSensor = useSensor(KeyboardSensor, {
     coordinateGetter: sortableKeyboardCoordinates,
