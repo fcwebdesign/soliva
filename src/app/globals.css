@@ -1063,6 +1063,11 @@ body.admin-page,
   cursor: text;
 }
 
+/* Éditeur visuel compact : padding vertical uniquement */
+.visual-editor-inspector .block-editor {
+  padding: 1rem 0;
+}
+
 .block-editor input,
 .block-editor textarea {
   cursor: text;

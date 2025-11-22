@@ -317,7 +317,7 @@ export default function AdminPreviewPage() {
 
           {/* Panneau d'édition qui passe au-dessus du plan */}
           <div
-            className={`absolute inset-0 z-20 bg-white border-l border-gray-200 flex flex-col shadow-xl transform transition-transform duration-300 ease-in-out ${
+            className={`visual-editor-inspector absolute inset-0 z-20 bg-white border-l border-gray-200 flex flex-col shadow-xl transform transition-transform duration-300 ease-in-out ${
               inspectorMode && inspectorBlockId ? 'translate-x-0' : '-translate-x-full'
             }`}
             style={{ pointerEvents: inspectorMode && inspectorBlockId ? 'auto' : 'none' }}
