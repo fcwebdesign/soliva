@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { LogoUploader } from '../../../app/admin/components/MediaUploader';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { GripVertical } from 'lucide-react';
 
 interface LogosData {
   title?: string;
   theme?: 'light' | 'dark' | 'auto';
   logos: Array<{
+    id?: string;
     src?: string;
     image?: string;
     alt?: string;
@@ -12,9 +17,106 @@ interface LogosData {
   }>;
 }
 
-export default function LogosBlockEditor({ data, onChange }: { data: LogosData; onChange: (data: LogosData) => void }) {
+// Composant pour un logo draggable en mode compact
+function SortableLogoItem({ logo, index, onUpdate, onRemove, showUploader, onToggleUploader }: { 
+  logo: any; 
+  index: number; 
+  onUpdate: (field: string, value: any) => void;
+  onRemove: () => void;
+  showUploader: boolean;
+  onToggleUploader: () => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id: logo.id || `logo-${index}` });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="flex items-center gap-2 py-1 px-2 bg-white border border-gray-200 rounded group cursor-grab active:cursor-grabbing"
+    >
+      <GripVertical className="w-3 h-3 text-gray-400 flex-shrink-0" />
+      
+      {/* Miniature du logo - cliquable pour changer */}
+      <div 
+        className="w-12 h-12 border border-gray-200 rounded flex items-center justify-center bg-gray-50 flex-shrink-0 cursor-pointer hover:border-blue-400 transition-colors relative overflow-hidden"
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggleUploader();
+        }}
+        onPointerDown={(e) => e.stopPropagation()}
+      >
+        {logo.src || logo.image ? (
+          <img 
+            src={logo.src || logo.image} 
+            alt={logo.alt || logo.name || 'Logo'} 
+            className="w-full h-full object-contain p-1"
+          />
+        ) : (
+          <span className="text-[10px] text-gray-400">+</span>
+        )}
+      </div>
+
+      {/* Uploader en popup si ouvert */}
+      {showUploader && (
+        <div 
+          className="absolute z-50 bg-white border border-gray-200 rounded shadow-lg p-2"
+          style={{ marginTop: '-60px', marginLeft: '50px' }}
+          onClick={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
+        >
+          <LogoUploader
+            currentUrl={logo.src || logo.image || ''}
+            onUpload={(src) => {
+              onUpdate('src', src);
+              onToggleUploader();
+            }}
+          />
+        </div>
+      )}
+      
+      {/* Input nom du client */}
+      <input
+        type="text"
+        value={logo.alt || logo.name || ''}
+        onChange={(e) => onUpdate('alt', e.target.value)}
+        onClick={(e) => e.stopPropagation()}
+        onPointerDown={(e) => e.stopPropagation()}
+        placeholder="Client name"
+        className="flex-1 px-2 py-1 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors"
+      />
+      
+      <button
+        onClick={onRemove}
+        onPointerDown={(e) => e.stopPropagation()}
+        className="text-gray-400 hover:text-red-500 text-[11px] opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer flex-shrink-0"
+      >
+        ✕
+      </button>
+    </div>
+  );
+}
+
+export default function LogosBlockEditor({ data, onChange, compact = false }: { data: LogosData; onChange: (data: LogosData) => void; compact?: boolean }) {
   const [draggedLogoIndex, setDraggedLogoIndex] = useState<number | null>(null);
   const [dragOverLogoIndex, setDragOverLogoIndex] = useState<number | null>(null);
+  const [editingLogoIndex, setEditingLogoIndex] = useState<number | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const updateField = (field: string, value: any) => {
     onChange({
@@ -32,17 +134,45 @@ export default function LogosBlockEditor({ data, onChange }: { data: LogosData; 
     updateField('logos', logos);
   };
 
-  const addLogo = () => {
-    const newLogos = [...(data.logos || []), { src: '', alt: '' }];
-    updateField('logos', newLogos);
-    
-    // Ajouter une animation d'apparition au nouveau logo
-    setTimeout(() => {
-      const newLogoElement = document.querySelector(`[data-logo-index="${newLogos.length - 1}"]`);
-      if (newLogoElement) {
-        newLogoElement.classList.add('logo-item-enter');
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de l\'upload');
       }
-    }, 100);
+
+      const uploadData = await response.json();
+      
+      // Ajouter le logo avec l'image uploadée
+      const newLogos = [...(data.logos || []), { id: `logo-${Date.now()}`, src: uploadData.url, alt: '' }];
+      updateField('logos', newLogos);
+    } catch (err) {
+      console.error('Erreur upload:', err);
+      alert('Erreur lors de l\'upload du logo');
+    } finally {
+      setIsUploading(false);
+      // Reset l'input pour pouvoir uploader le même fichier à nouveau
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const addLogo = () => {
+    // Ouvrir directement le sélecteur de fichier
+    fileInputRef.current?.click();
   };
 
   const removeLogo = (index: number) => {
@@ -97,6 +227,103 @@ export default function LogosBlockEditor({ data, onChange }: { data: LogosData; 
     document.body.classList.remove('dragging');
   };
 
+  // S'assurer que tous les logos ont un ID
+  const logosWithIds = (data.logos || []).map((logo, index) => ({
+    ...logo,
+    id: logo.id || `logo-${index}`
+  }));
+
+  // Sensors pour drag & drop (mode compact)
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        delay: 150,
+        tolerance: 5
+      }
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates
+    })
+  );
+
+  const handleDragEndCompact = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = logosWithIds.findIndex(l => l.id === active.id);
+      const newIndex = logosWithIds.findIndex(l => l.id === over.id);
+      const newOrder = arrayMove(logosWithIds, oldIndex, newIndex);
+      updateField('logos', newOrder);
+    }
+  };
+
+  // Version compacte pour l'éditeur visuel
+  if (compact) {
+    return (
+      <div className="block-editor">
+        <div className="space-y-2">
+          <div>
+            <label className="block text-[10px] text-gray-400 mb-1">Titre</label>
+            <input
+              type="text"
+              value={data.title || ''}
+              onChange={(e) => updateField('title', e.target.value)}
+              placeholder="Our Clients"
+              className="w-full px-2 py-1.5 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[10px] text-gray-400 mb-1">
+              Logos ({logosWithIds.length})
+            </label>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEndCompact}
+            >
+              <SortableContext
+                items={logosWithIds.map(l => l.id!)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="space-y-1">
+                  {logosWithIds.map((logo, index) => (
+                    <SortableLogoItem
+                      key={logo.id}
+                      logo={logo}
+                      index={index}
+                      onUpdate={(field, value) => updateLogo(index, field, value)}
+                      onRemove={() => removeLogo(index)}
+                      showUploader={editingLogoIndex === index}
+                      onToggleUploader={() => setEditingLogoIndex(editingLogoIndex === index ? null : index)}
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
+            
+            <button
+              onClick={addLogo}
+              disabled={isUploading}
+              className="w-full mt-2 py-1.5 px-2 border border-gray-300 border-dashed rounded text-[13px] text-gray-500 hover:text-gray-700 hover:border-gray-400 transition-colors hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isUploading ? 'Upload en cours...' : '+ Ajouter un logo'}
+            </button>
+            
+            {/* Input file invisible pour l'upload direct */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Version normale pour le BO classique
   return (
     <div className="block-editor">
       <div className="space-y-4">
