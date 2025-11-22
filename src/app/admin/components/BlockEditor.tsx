@@ -147,6 +147,11 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
     return () => window.removeEventListener('close-sheet', handleCloseSheet);
   }, []);
 
+  // Éviter les reconversions inutiles - États déplacés ici pour être disponibles dans les useEffects
+  const [hasInitialized, setHasInitialized] = useState(false);
+  const [isUpdatingContent, setIsUpdatingContent] = useState(false);
+  const [initialContent, setInitialContent] = useState<string>('');
+  
   const [blockSearchTerm, setBlockSearchTerm] = useState('');
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     'Basique': true,
@@ -229,11 +234,6 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
     setInitialContent('');
     setBlocks([]);
   }, [pageKey]);
-
-  // Éviter les reconversions inutiles
-  const [hasInitialized, setHasInitialized] = useState(false);
-  const [isUpdatingContent, setIsUpdatingContent] = useState(false);
-  const [initialContent, setInitialContent] = useState<string>('');
   
   // États pour les onglets des pages Work, Blog et Contact
   const [workActiveTab, setWorkActiveTab] = useState('content');

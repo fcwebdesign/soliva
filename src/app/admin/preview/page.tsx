@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, RefreshCw, Eye, EyeOff } from 'lucide-react';
 import { TemplateProvider } from '@/templates/context';
 import SommairePanel from '@/components/admin/SommairePanel';
+import { renderAutoBlockEditor } from '../components/AutoBlockIntegration';
 
 export const runtime = "nodejs";
 
@@ -37,6 +38,8 @@ export default function AdminPreviewPage() {
   const [hiddenBlockIds, setHiddenBlockIds] = useState<Set<string>>(new Set());
   const [dragId, setDragId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
+  const [inspectorMode, setInspectorMode] = useState<boolean>(false);
+  const [inspectorBlockId, setInspectorBlockId] = useState<string | null>(null);
 
   // Callback depuis BlockEditor
   const handleUpdate = (data: any) => {
@@ -67,18 +70,29 @@ export default function AdminPreviewPage() {
         if (['home', 'contact', 'studio', 'work', 'blog'].includes(pageKey)) {
           pageData = (data as any)[pageKey];
         } else if (data.pages?.pages) {
-          pageData = data.pages.pages.find((p: any) => p.slug === pageKey || p.id === pageKey);
+          // Chercher dans les pages custom par slug, id ou titre
+          pageData = data.pages.pages.find((p: any) => 
+            p.slug === pageKey || 
+            p.id === pageKey || 
+            p.title?.toLowerCase() === pageKey.toLowerCase()
+          );
         }
 
         if (!pageData) {
+          console.warn('[Preview] Pages disponibles:', data.pages?.pages?.map((p: any) => ({ id: p.id, slug: p.slug, title: p.title })));
           throw new Error(`Page "${pageKey}" introuvable`);
         }
 
         const nextTemplate = forcedTemplate || (data as any)._template || 'soliva';
-        setInitialPageData({ ...pageData, _template: nextTemplate });
-        setPreviewData({ ...pageData, _template: nextTemplate });
-        setBlocks(Array.isArray(pageData.blocks) ? pageData.blocks : []);
-        console.log('[Preview] Page chargée', pageKey, { template: nextTemplate, blocks: pageData.blocks?.length || 0 });
+        const pageBlocks = Array.isArray(pageData.blocks) ? pageData.blocks : [];
+        setInitialPageData({ ...pageData, _template: nextTemplate, blocks: pageBlocks });
+        setPreviewData({ ...pageData, _template: nextTemplate, blocks: pageBlocks });
+        setBlocks(pageBlocks);
+        console.log('[Preview] Page chargée', pageKey, { 
+          template: nextTemplate, 
+          blocks: pageBlocks.length,
+          pageData: { id: pageData.id, slug: pageData.slug, title: pageData.title }
+        });
 
         // Options de pages pour le sélecteur
         const opts: Array<{ value: string; label: string }> = [
@@ -88,11 +102,17 @@ export default function AdminPreviewPage() {
           { value: 'work', label: 'Work' },
           { value: 'blog', label: 'Blog' },
         ];
-        if (data?.pages?.pages) {
+        if (data?.pages?.pages && Array.isArray(data.pages.pages)) {
           data.pages.pages.forEach((p: any) => {
-            if (p?.id) opts.push({ value: p.slug || p.id, label: p.title || p.id });
+            if (p?.id || p?.slug) {
+              // Utiliser le slug en priorité, sinon l'id
+              const value = p.slug || p.id;
+              const label = p.title || p.slug || p.id;
+              opts.push({ value, label });
+            }
           });
         }
+        console.log('[Preview] Pages disponibles dans le sélecteur:', opts);
         setPageOptions(opts);
       } catch (e: any) {
         setError(e.message || 'Erreur chargement');
@@ -216,7 +236,7 @@ export default function AdminPreviewPage() {
       {/* Split view */}
       <div className="flex flex-1 overflow-hidden">
         <div
-          className="w-[420px] min-w-[360px] max-w-[520px] border-r border-gray-200 bg-white flex flex-col"
+          className="w-[420px] min-w-[360px] max-w-[520px] border-r border-gray-200 bg-white flex flex-col relative"
           ref={editorPaneRef}
         >
           {error ? (
@@ -248,7 +268,11 @@ export default function AdminPreviewPage() {
                       className="border-0 bg-transparent"
                       blocks={blocks}
                       selectedBlockId={selectedBlockId || undefined}
-                      onSelectBlock={(id) => scrollToBlock(id)}
+                      onSelectBlock={(id) => {
+                        scrollToBlock(id);
+                        setInspectorMode(true);
+                        setInspectorBlockId(id);
+                      }}
                       onDeleteBlock={() => {}}
                       onDuplicateBlock={() => {}}
                       onReorderBlocks={(newBlocks) => {
@@ -273,21 +297,87 @@ export default function AdminPreviewPage() {
                 </div>
 
                 {/* Éditeur des blocs (visuel) */}
-                <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
-                  <div className="px-3 py-2 border-b border-gray-200 text-[12px] font-semibold text-gray-700">
-                    Éditeur de contenu
+                {!inspectorMode && (
+                  <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
+                    <div className="px-3 py-2 border-b border-gray-200 text-[12px] font-semibold text-gray-700">
+                      Éditeur de contenu
+                    </div>
+                    <div className="p-3">
+                      <BlockEditor
+                        pageData={initialPageData}
+                        pageKey={pageKey}
+                        onUpdate={handleUpdate}
+                      />
+                    </div>
                   </div>
-                  <div className="p-3">
-                    <BlockEditor
-                      pageData={initialPageData}
-                      pageKey={pageKey}
-                      onUpdate={handleUpdate}
-                    />
-                  </div>
-                </div>
+                )}
               </div>
             </>
           )}
+
+          {/* Panneau d'édition qui passe au-dessus du plan */}
+          <div
+            className={`absolute inset-0 z-20 bg-white border-l border-gray-200 flex flex-col shadow-xl transform transition-transform duration-300 ease-in-out ${
+              inspectorMode && inspectorBlockId ? 'translate-x-0' : '-translate-x-full'
+            }`}
+            style={{ pointerEvents: inspectorMode && inspectorBlockId ? 'auto' : 'none' }}
+            onTransitionEnd={() => {
+              if (!inspectorMode) {
+                // Libérer l'ID après l'anim de sortie pour éviter le flash
+                setInspectorBlockId(null);
+              }
+            }}
+          >
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+              <div>
+                <button
+                  className="text-sm text-gray-700 hover:text-gray-900 mr-3"
+                  onClick={() => { setInspectorMode(false); setInspectorBlockId(null); }}
+                  aria-label="Retour au plan"
+                >
+                  ← Retour
+                </button>
+                <span className="text-sm font-semibold text-gray-900">
+                  {inspectorBlockId ? `Édition : ${inspectorBlockId}` : 'Édition'}
+                </span>
+              </div>
+              <button
+                className="text-sm text-gray-500 hover:text-gray-800"
+                onClick={() => { setInspectorMode(false); setInspectorBlockId(null); }}
+                aria-label="Fermer"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4">
+              {inspectorBlockId && (() => {
+                const block = blocks.find(b => b.id === inspectorBlockId);
+                if (!block) {
+                  return (
+                    <div className="text-sm text-gray-500">
+                      Bloc introuvable
+                    </div>
+                  );
+                }
+                
+                return (
+                  <div className="space-y-4">
+                    <div className="text-xs text-gray-500 mb-2">
+                      Type: <span className="font-mono">{block.type}</span>
+                    </div>
+                    {renderAutoBlockEditor(block, (updatedBlock) => {
+                      // Mettre à jour le bloc dans la liste
+                      const newBlocks = blocks.map(b => 
+                        b.id === inspectorBlockId ? updatedBlock : b
+                      );
+                      setBlocks(newBlocks);
+                      setPreviewData((prev) => prev ? { ...prev, blocks: newBlocks } : prev);
+                    })}
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
         </div>
 
         <div className="flex-1 bg-slate-100 overflow-y-auto px-6 py-6" ref={previewPaneRef}>
