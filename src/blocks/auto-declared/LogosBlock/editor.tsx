@@ -3,7 +3,7 @@ import { LogoUploader } from '../../../app/admin/components/MediaUploader';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical } from 'lucide-react';
+import { GripVertical, Eye, EyeOff, Trash2 } from 'lucide-react';
 
 interface LogosData {
   title?: string;
@@ -14,18 +14,20 @@ interface LogosData {
     image?: string;
     alt?: string;
     name?: string;
+    hidden?: boolean;
   }>;
 }
 
 // Composant pour un logo draggable en mode compact
-function SortableLogoItem({ logo, index, onUpdate, onRemove, showUploader, onToggleUploader }: { 
+function SortableLogoItem({ logo, index, onUpdate, onRemove }: { 
   logo: any; 
   index: number; 
   onUpdate: (field: string, value: any) => void;
   onRemove: () => void;
-  showUploader: boolean;
-  onToggleUploader: () => void;
 }) {
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
   const {
     attributes,
     listeners,
@@ -41,6 +43,42 @@ function SortableLogoItem({ logo, index, onUpdate, onRemove, showUploader, onTog
     opacity: isDragging ? 0.5 : 1
   };
 
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de l\'upload');
+      }
+
+      const uploadData = await response.json();
+      onUpdate('src', uploadData.url);
+    } catch (err) {
+      console.error('Erreur upload:', err);
+      alert('Erreur lors de l\'upload du logo');
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleReplace = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <div
       ref={setNodeRef}
@@ -51,15 +89,8 @@ function SortableLogoItem({ logo, index, onUpdate, onRemove, showUploader, onTog
     >
       <GripVertical className="w-3 h-3 text-gray-400 flex-shrink-0" />
       
-      {/* Miniature du logo - cliquable pour changer */}
-      <div 
-        className="w-12 h-12 border border-gray-200 rounded flex items-center justify-center bg-gray-50 flex-shrink-0 cursor-pointer hover:border-blue-400 transition-colors relative overflow-hidden"
-        onClick={(e) => {
-          e.stopPropagation();
-          onToggleUploader();
-        }}
-        onPointerDown={(e) => e.stopPropagation()}
-      >
+      {/* Miniature du logo */}
+      <div className="w-12 h-12 border border-gray-200 rounded flex items-center justify-center bg-gray-50 flex-shrink-0 relative overflow-hidden">
         {logo.src || logo.image ? (
           <img 
             src={logo.src || logo.image} 
@@ -70,42 +101,69 @@ function SortableLogoItem({ logo, index, onUpdate, onRemove, showUploader, onTog
           <span className="text-[10px] text-gray-400">+</span>
         )}
       </div>
-
-      {/* Uploader en popup si ouvert */}
-      {showUploader && (
-        <div 
-          className="absolute z-50 bg-white border border-gray-200 rounded shadow-lg p-2"
-          style={{ marginTop: '-60px', marginLeft: '50px' }}
+      
+      {/* Input nom du client + bouton remplacer */}
+      <div className="flex-1 flex items-center gap-1 min-w-0">
+        <input
+          type="text"
+          value={logo.alt || logo.name || ''}
+          onChange={(e) => onUpdate('alt', e.target.value)}
           onClick={(e) => e.stopPropagation()}
           onPointerDown={(e) => e.stopPropagation()}
+          placeholder="Client name"
+          className="flex-1 min-w-0 px-2 py-1 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors"
+        />
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleReplace();
+          }}
+          onPointerDown={(e) => e.stopPropagation()}
+          disabled={isUploading}
+          className="px-1.5 py-1 text-[11px] text-gray-700 hover:text-gray-900 transition-colors whitespace-nowrap disabled:opacity-50 flex-shrink-0"
         >
-          <LogoUploader
-            currentUrl={logo.src || logo.image || ''}
-            onUpload={(src) => {
-              onUpdate('src', src);
-              onToggleUploader();
-            }}
-          />
-        </div>
-      )}
+          {isUploading ? '...' : 'Remplacer'}
+        </button>
+      </div>
       
-      {/* Input nom du client */}
+      {/* Input file invisible */}
       <input
-        type="text"
-        value={logo.alt || logo.name || ''}
-        onChange={(e) => onUpdate('alt', e.target.value)}
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileUpload}
         onClick={(e) => e.stopPropagation()}
         onPointerDown={(e) => e.stopPropagation()}
-        placeholder="Client name"
-        className="flex-1 px-2 py-1 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors"
+        className="hidden"
       />
       
+      {/* Icônes au hover : œil et poubelle */}
       <button
-        onClick={onRemove}
+        onClick={(e) => {
+          e.stopPropagation();
+          onUpdate('hidden', !logo.hidden);
+        }}
         onPointerDown={(e) => e.stopPropagation()}
-        className="text-gray-400 hover:text-red-500 text-[11px] opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer flex-shrink-0"
+        className="opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer flex-shrink-0 p-0.5"
+        title={logo.hidden ? 'Afficher' : 'Masquer'}
       >
-        ✕
+        {logo.hidden ? (
+          <EyeOff className="w-3 h-3 text-gray-400 hover:text-blue-500" />
+        ) : (
+          <Eye className="w-3 h-3 text-gray-400 hover:text-blue-500" />
+        )}
+      </button>
+      
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onRemove();
+        }}
+        onPointerDown={(e) => e.stopPropagation()}
+        className="opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer flex-shrink-0 p-0.5"
+        title="Supprimer"
+      >
+        <Trash2 className="w-3 h-3 text-gray-400 hover:text-red-500" />
       </button>
     </div>
   );
@@ -114,7 +172,6 @@ function SortableLogoItem({ logo, index, onUpdate, onRemove, showUploader, onTog
 export default function LogosBlockEditor({ data, onChange, compact = false }: { data: LogosData; onChange: (data: LogosData) => void; compact?: boolean }) {
   const [draggedLogoIndex, setDraggedLogoIndex] = useState<number | null>(null);
   const [dragOverLogoIndex, setDragOverLogoIndex] = useState<number | null>(null);
-  const [editingLogoIndex, setEditingLogoIndex] = useState<number | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -293,8 +350,6 @@ export default function LogosBlockEditor({ data, onChange, compact = false }: { 
                       index={index}
                       onUpdate={(field, value) => updateLogo(index, field, value)}
                       onRemove={() => removeLogo(index)}
-                      showUploader={editingLogoIndex === index}
-                      onToggleUploader={() => setEditingLogoIndex(editingLogoIndex === index ? null : index)}
                     />
                   ))}
                 </div>
