@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface ContactData {
   title?: string;
@@ -90,14 +91,15 @@ export default function ContactBlockEditor({ data, onChange, compact = false }: 
           
           <div>
             <label className="block text-[10px] text-gray-400 mb-1">Type de lien</label>
-            <select
-              value={linkType}
-              onChange={(e) => handleLinkTypeChange(e.target.value as 'page' | 'email')}
-              className="w-full px-2 py-1.5 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors"
-            >
-              <option value="page">Page du site</option>
-              <option value="email">Email</option>
-            </select>
+            <Select value={linkType} onValueChange={(value) => handleLinkTypeChange(value as 'page' | 'email')}>
+              <SelectTrigger className="w-full h-auto px-2 py-1.5 text-[13px] leading-normal font-normal shadow-none rounded">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="shadow-none border rounded">
+                <SelectItem value="page">Page du site</SelectItem>
+                <SelectItem value="email">Email</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {linkType === 'email' ? (
@@ -114,17 +116,18 @@ export default function ContactBlockEditor({ data, onChange, compact = false }: 
           ) : (
             <div>
               <label className="block text-[10px] text-gray-400 mb-1">Page de destination</label>
-              <select
-                value={data.ctaLink || '/contact'}
-                onChange={(e) => updateField('ctaLink', e.target.value)}
-                className="w-full px-2 py-1.5 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors"
-              >
-                {availablePages.map(page => (
-                  <option key={page.key} value={page.path}>
-                    {page.label}
-                  </option>
-                ))}
-              </select>
+              <Select value={data.ctaLink || '/contact'} onValueChange={(value) => updateField('ctaLink', value)}>
+                <SelectTrigger className="w-full h-auto px-2 py-1.5 text-[13px] leading-normal font-normal shadow-none rounded">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="shadow-none border rounded">
+                  {availablePages.map(page => (
+                    <SelectItem key={page.key} value={page.path}>
+                      {page.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           )}
         </div>
