@@ -13,9 +13,10 @@ interface WysiwygEditorProps {
   placeholder?: string;
   onAISuggestion?: ((params: any) => Promise<void>) | null;
   isLoadingAI?: boolean;
+  compact?: boolean;
 }
 
-const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ value, onChange, placeholder, onAISuggestion, isLoadingAI }) => {
+const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ value, onChange, placeholder, onAISuggestion, isLoadingAI, compact = false }) => {
   const didFirstUpdateRef = useRef(false);
 
   const editor = useEditor({
@@ -219,6 +220,92 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ value, onChange, placehol
     return null;
   }
 
+  // Version compacte de la toolbar
+  if (compact) {
+    return (
+      <>
+        <div className="border border-gray-200 rounded [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[80px] [&_.ProseMirror_p]:mb-1 [&_.ProseMirror_p:last-child]:mb-0">
+          {/* Toolbar compacte */}
+          <div className="border-b border-gray-200 p-1.5 flex flex-wrap gap-1 items-center">
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleBold().run()}
+              className={`px-2 py-1 text-sm rounded transition-colors ${ui.bold ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 hover:bg-gray-200'}`}
+              title="Gras"
+            >
+              <strong>B</strong>
+            </button>
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleItalic().run()}
+              className={`px-2 py-1 text-sm rounded transition-colors ${ui.italic ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 hover:bg-gray-200'}`}
+              title="Italique"
+            >
+              <em>I</em>
+            </button>
+            <button
+              type="button"
+              onClick={addLink}
+              className={`px-2 py-1 text-sm rounded transition-colors ${ui.link ? 'bg-green-100 text-green-700' : 'bg-gray-100 hover:bg-gray-200'}`}
+              title="Lien"
+            >
+              🔗
+            </button>
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleBulletList().run()}
+              className={`px-2 py-1 text-sm rounded transition-colors ${ui.bulletList ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 hover:bg-gray-200'}`}
+              title="Liste"
+            >
+              ⚬
+            </button>
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleOrderedList().run()}
+              className={`px-2 py-1 text-sm rounded transition-colors ${ui.orderedList ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 hover:bg-gray-200'}`}
+              title="Numérotée"
+            >
+              ⒈
+            </button>
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleBlockquote().run()}
+              className={`px-2 py-1 text-sm rounded transition-colors ${ui.blockquote ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 hover:bg-gray-200'}`}
+              title="Citation"
+            >
+              ❝
+            </button>
+            
+            {/* Bouton IA intégré */}
+            {onAISuggestion && (
+              <button
+                type="button"
+                onClick={() => onAISuggestion({})}
+                disabled={isLoadingAI}
+                className={`ml-auto px-2 py-1 text-[10px] font-medium rounded transition-colors ${
+                  isLoadingAI
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600'
+                }`}
+                title="Suggérer avec IA"
+              >
+                {isLoadingAI ? '🤖...' : '✨ IA'}
+              </button>
+            )}
+          </div>
+          <EditorContent editor={editor} className="[&_.ProseMirror]:p-2 [&_.ProseMirror]:text-[13px] [&_.ProseMirror]:leading-normal [&_.ProseMirror_p]:!text-[13px] [&_.ProseMirror_p]:!leading-normal [&_.ProseMirror_p]:!font-normal" />
+        </div>
+        <LinkDialog
+          open={linkDialogOpen}
+          onClose={() => setLinkDialogOpen(false)}
+          onSave={handleLinkSave}
+          initialHref={editor.getAttributes('link').href || ''}
+        />
+      </>
+    );
+  }
+
+  // Version normale
   return (
     <>
       <div className="border border-gray-300 rounded-lg [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[200px] [&_.ProseMirror_p]:mb-2 [&_.ProseMirror_p:last-child]:mb-0">

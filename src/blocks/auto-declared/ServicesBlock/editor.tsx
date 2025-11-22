@@ -132,25 +132,14 @@ function SortableServiceItem({
             />
           </div>
           <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="block text-[10px] text-gray-400">Description</label>
-              <button
-                onClick={onGenerateDescription}
-                disabled={isLoadingAI || !offering.title?.trim()}
-                className={`px-2 py-0.5 text-[10px] font-medium rounded transition-colors ${
-                  isLoadingAI || !offering.title?.trim()
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                    : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600'
-                }`}
-                title={!offering.title?.trim() ? "Saisissez d'abord un titre" : "Générer la description"}
-              >
-                {isLoadingAI ? '🤖...' : '✨ IA'}
-              </button>
-            </div>
+            <label className="block text-[10px] text-gray-400 mb-1">Description</label>
             <WysiwygEditorWrapper
               value={offering.description || ''}
               onChange={(description: string) => onUpdate('description', description)}
               placeholder="Description du service"
+              compact={true}
+              onAISuggestion={onGenerateDescription}
+              isLoadingAI={isLoadingAI}
             />
           </div>
           <div>

@@ -11,6 +11,7 @@ interface ServicesData {
     title: string;
     description: string;
     icon?: string;
+    hidden?: boolean;
   }>;
   theme?: 'light' | 'dark' | 'auto';
 }
@@ -18,7 +19,10 @@ interface ServicesData {
 export default function ServicesBlock({ data }: { data: ServicesData | any }) {
   // Extraire les données (peut être dans data directement ou dans data.data)
   const blockData = (data as any).data || data;
-  const { title = "OUR CORE OFFERINGS", offerings = [] } = blockData;
+  const { title = "OUR CORE OFFERINGS", offerings: allOfferings = [] } = blockData;
+  
+  // Filtrer les services masqués
+  const offerings = allOfferings.filter((o: any) => !o.hidden);
   
   const [fullContent, setFullContent] = useState<any>(null);
   

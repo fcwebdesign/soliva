@@ -11,6 +11,7 @@ interface WysiwygEditorWrapperProps {
   placeholder?: string;
   onAISuggestion?: ((params: any) => Promise<void>) | null;
   isLoadingAI?: boolean;
+  compact?: boolean;
 }
 
 export default function WysiwygEditorWrapper({
@@ -18,7 +19,8 @@ export default function WysiwygEditorWrapper({
   onChange,
   placeholder = '',
   onAISuggestion = null,
-  isLoadingAI = false
+  isLoadingAI = false,
+  compact = false
 }: WysiwygEditorWrapperProps) {
   return (
     <WysiwygEditor
@@ -27,6 +29,7 @@ export default function WysiwygEditorWrapper({
       placeholder={placeholder}
       onAISuggestion={onAISuggestion}
       isLoadingAI={isLoadingAI}
+      compact={compact}
     />
   );
 }
