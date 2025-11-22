@@ -8,7 +8,7 @@ interface ContentData {
   theme?: 'light' | 'dark' | 'auto';
 }
 
-export default function ContentBlockEditor({ data, onChange, context }: { data: ContentData; onChange: (data: ContentData) => void; context?: any }) {
+export default function ContentBlockEditor({ data, onChange, context, compact = false }: { data: ContentData; onChange: (data: ContentData) => void; context?: any; compact?: boolean }) {
   const [isLoadingBlockAI, setIsLoadingBlockAI] = useState<string | null>(null);
 
   const handleContentChange = (content: string) => {
@@ -125,6 +125,7 @@ export default function ContentBlockEditor({ data, onChange, context }: { data: 
         placeholder="Saisissez votre contenu ici..."
         onAISuggestion={() => getBlockContentSuggestion('content-block', 'content')}
         isLoadingAI={isLoadingBlockAI === 'content-block'}
+        compact={compact}
       />
     </div>
   );
