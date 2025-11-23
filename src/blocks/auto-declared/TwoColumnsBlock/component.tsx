@@ -141,10 +141,10 @@ export default function TwoColumnsBlock({ data }: { data: TwoColumnsData }) {
       })()}
       <div className={`grid ${layoutClass} ${gapClass} ${alignmentClass}`} style={{ gap: gapValue }}>
         <div className="flex flex-col" style={{ gap: gapValue }}>
-          {leftColumn.map(renderSubBlock)}
+          {leftColumn.filter((block: any) => !block.hidden).map(renderSubBlock)}
         </div>
         <div className="flex flex-col" style={{ gap: gapValue }}>
-          {rightColumn.map(renderSubBlock)}
+          {rightColumn.filter((block: any) => !block.hidden).map(renderSubBlock)}
         </div>
       </div>
     </section>

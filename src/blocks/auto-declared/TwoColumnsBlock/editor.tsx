@@ -1,14 +1,18 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import WysiwygEditor from '../../../components/WysiwygEditorWrapper';
 import MediaUploader from '../../../app/admin/components/MediaUploader';
 import { getAutoDeclaredBlock } from '../registry';
 import { getCategorizedBlocksForColumns } from '../../../utils/blockCategories';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '../../../components/ui/sheet';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter } from '../../../components/ui/drawer';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from '../../../components/ui/button';
-import { Plus, ChevronDown } from 'lucide-react';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { Plus, ChevronDown, GripVertical, Trash2, ChevronUp, Eye, EyeOff } from 'lucide-react';
 
 interface TwoColumnsData {
   title?: string;
@@ -20,8 +24,103 @@ interface TwoColumnsData {
   theme?: 'light' | 'dark' | 'auto';
 }
 
+// Composant pour un bloc draggable dans une colonne
+function SortableBlockItem({ 
+  block, 
+  index, 
+  column, 
+  isOpen, 
+  onToggle, 
+  onUpdate, 
+  onRemove,
+  onToggleVisibility,
+  renderEditor
+}: { 
+  block: any; 
+  index: number;
+  column: 'leftColumn' | 'rightColumn';
+  isOpen: boolean;
+  onToggle: () => void;
+  onUpdate: (updates: any) => void;
+  onRemove: () => void;
+  onToggleVisibility: () => void;
+  renderEditor: (block: any, onUpdate: (updates: any) => void) => React.ReactNode;
+}) {
+  // S'assurer que le bloc a un ID unique (devrait déjà être fourni par le parent)
+  const blockId = (block.id && block.id.trim() !== '') ? block.id : `block-${column}-${index}`;
+  
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id: blockId });
 
-export default function TwoColumnsBlockEditor({ data, onChange }: { data: TwoColumnsData; onChange: (data: TwoColumnsData) => void }) {
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="border border-gray-200 rounded bg-white">
+      {/* Header cliquable */}
+      <div
+        {...attributes}
+        {...listeners}
+        onClick={(e) => {
+          if ((e.target as HTMLElement).closest('button')) return;
+          onToggle();
+        }}
+        className="flex items-center gap-2 py-1 px-2 cursor-grab active:cursor-grabbing hover:bg-gray-50 transition-colors group"
+      >
+        <GripVertical className="w-3 h-3 text-gray-400" />
+        <span className="flex-1 text-[13px]">{block.type}</span>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleVisibility();
+          }}
+          onPointerDown={(e) => e.stopPropagation()}
+          className="text-gray-400 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"
+          title={block.hidden ? "Afficher" : "Masquer"}
+        >
+          {block.hidden ? (
+            <EyeOff className="w-3 h-3" />
+          ) : (
+            <Eye className="w-3 h-3" />
+          )}
+        </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove();
+          }}
+          onPointerDown={(e) => e.stopPropagation()}
+          className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          <Trash2 className="w-3 h-3" />
+        </button>
+        {isOpen ? (
+          <ChevronUp className="w-3 h-3 text-gray-400" />
+        ) : (
+          <ChevronDown className="w-3 h-3 text-gray-400" />
+        )}
+      </div>
+      {/* Contenu éditeur */}
+      {isOpen && (
+        <div className="px-2 pb-2 border-t border-gray-200 bg-gray-50" onClick={(e) => e.stopPropagation()}>
+          {renderEditor(block, onUpdate)}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+export default function TwoColumnsBlockEditor({ data, onChange, compact = false }: { data: TwoColumnsData; onChange: (data: TwoColumnsData) => void; compact?: boolean }) {
   const [isLoadingBlockAI, setIsLoadingBlockAI] = React.useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = React.useState<number | null>(null);
@@ -308,17 +407,20 @@ export default function TwoColumnsBlockEditor({ data, onChange }: { data: TwoCol
     );
   };
 
-  const renderBlockEditor = (block: any, onUpdate: (updates: any) => void) => {
+  const renderBlockEditor = (block: any, onUpdate: (updates: any) => void, isCompact = false) => {
     // Essayer d'abord le système scalable
     const scalableBlock = getAutoDeclaredBlock(block.type);
     if (scalableBlock && scalableBlock.editor) {
       const BlockEditor = scalableBlock.editor;
-      return (
-        <BlockEditor
-          data={block}
-          onChange={onUpdate}
-        />
-      );
+      // Passer compact seulement si l'éditeur le supporte
+      const editorProps: any = {
+        data: block,
+        onChange: onUpdate
+      };
+      if (isCompact) {
+        editorProps.compact = true;
+      }
+      return <BlockEditor {...editorProps} />;
     }
 
     // Fallback pour les blocs non scalables
@@ -396,6 +498,291 @@ export default function TwoColumnsBlockEditor({ data, onChange }: { data: TwoCol
     }
   };
 
+  // Version compacte pour l'éditeur visuel
+  if (compact) {
+    const [openColumn, setOpenColumn] = useState<'left' | 'right' | null>(null);
+    const [sheetOpen, setSheetOpen] = useState(false);
+    const [targetColumn, setTargetColumn] = useState<'leftColumn' | 'rightColumn' | null>(null);
+    const [openBlockId, setOpenBlockId] = useState<string | null>(null);
+
+    // Sensors pour drag & drop
+    const sensors = useSensors(
+      useSensor(PointerSensor, {
+        activationConstraint: {
+          delay: 150,
+          tolerance: 5
+        }
+      }),
+      useSensor(KeyboardSensor, {
+        coordinateGetter: sortableKeyboardCoordinates
+      })
+    );
+
+    // Normaliser les IDs des blocs et les sauvegarder si nécessaire
+    useEffect(() => {
+      let needsUpdate = false;
+      const updatedData = { ...data };
+      
+      ['leftColumn', 'rightColumn'].forEach((col) => {
+        const column = col as 'leftColumn' | 'rightColumn';
+        const blocks = updatedData[column] || [];
+        const normalizedBlocks = blocks.map((block) => {
+          if (!block.id || block.id.trim() === '') {
+            needsUpdate = true;
+            return { ...block, id: `${block.type || 'block'}-${column}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}` };
+          }
+          return block;
+        });
+        if (needsUpdate) {
+          updatedData[column] = normalizedBlocks;
+        }
+      });
+      
+      if (needsUpdate) {
+        onChange(updatedData);
+      }
+    }, [data.leftColumn?.length, data.rightColumn?.length]); // Quand le nombre de blocs change
+
+    // Normaliser les blocs avec des IDs stables pour le rendu
+    const normalizedColumns = useMemo(() => {
+      return {
+        leftColumn: data.leftColumn || [],
+        rightColumn: data.rightColumn || []
+      };
+    }, [data.leftColumn, data.rightColumn]);
+
+    const handleAddBlock = (column: 'leftColumn' | 'rightColumn') => {
+      setTargetColumn(column);
+      setSheetOpen(true);
+    };
+
+    const handleSelectBlock = (blockType: string) => {
+      if (targetColumn) {
+        addBlockToColumn(targetColumn, blockType);
+        setSheetOpen(false);
+        setTargetColumn(null);
+      }
+    };
+
+    const toggleBlock = (blockId: string) => {
+      setOpenBlockId(openBlockId === blockId ? null : blockId);
+    };
+
+    const handleUpdateBlock = (column: 'leftColumn' | 'rightColumn', index: number, updates: any) => {
+      updateBlockInColumn(column, index, updates);
+    };
+
+    const handleToggleVisibility = (column: 'leftColumn' | 'rightColumn', index: number) => {
+      const blocks = data[column] || [];
+      const block = blocks[index];
+      if (block) {
+        const updatedBlock = { ...block, hidden: !block.hidden };
+        updateBlockInColumn(column, index, updatedBlock);
+      }
+    };
+
+    const handleDragEnd = (event: DragEndEvent, column: 'leftColumn' | 'rightColumn') => {
+      const { active, over } = event;
+      if (over && active.id !== over.id) {
+        const blocks = normalizedColumns[column];
+        
+        // Utiliser directement les IDs des blocs pour trouver les indices
+        const oldIndex = blocks.findIndex(b => b.id === active.id);
+        const newIndex = blocks.findIndex(b => b.id === over.id);
+        
+        if (oldIndex !== -1 && newIndex !== -1) {
+          const newOrder = arrayMove(blocks, oldIndex, newIndex);
+          // Sauvegarder avec les IDs normalisés
+          updateColumn(column, newOrder);
+        }
+      }
+    };
+
+    return (
+      <div className="block-editor">
+        <div className="space-y-2">
+          <div>
+            <label className="block text-[10px] text-gray-400 mb-1">Titre</label>
+            <input
+              type="text"
+              value={data.title || ''}
+              onChange={(e) => updateField('title', e.target.value)}
+              placeholder="Section Title"
+              className="w-full px-2 py-1.5 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[10px] text-gray-400 mb-1">Layout</label>
+            <Select 
+              value={data.layout || 'left-right'} 
+              onValueChange={(value) => updateField('layout', value)}
+            >
+              <SelectTrigger className="w-full h-auto px-2 py-1.5 text-[13px] leading-normal font-normal shadow-none rounded">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="shadow-none border rounded">
+                <SelectItem value="left-right">Gauche → Droite</SelectItem>
+                <SelectItem value="right-left">Droite → Gauche</SelectItem>
+                <SelectItem value="stacked-mobile">Empilé mobile</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Colonnes en accordéon */}
+          <div className="space-y-1">
+            {/* Colonne gauche */}
+            <div className="border border-gray-200 rounded">
+              <button
+                onClick={() => setOpenColumn(openColumn === 'left' ? null : 'left')}
+                className="w-full flex items-center justify-between py-2 px-2 hover:bg-gray-50 transition-colors"
+              >
+                <span className="text-[13px] font-medium text-gray-900">
+                  Colonne gauche ({(data.leftColumn || []).length})
+                </span>
+                {openColumn === 'left' ? (
+                  <ChevronUp className="w-3 h-3 text-gray-400" />
+                ) : (
+                  <ChevronDown className="w-3 h-3 text-gray-400" />
+                )}
+              </button>
+              {openColumn === 'left' && (
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={(e) => handleDragEnd(e, 'leftColumn')}
+                >
+                  <SortableContext
+                    items={normalizedColumns.leftColumn.map(b => b.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <div className="px-2 pb-2 space-y-1">
+                      {normalizedColumns.leftColumn.map((block, index) => {
+                        return (
+                          <SortableBlockItem
+                            key={block.id}
+                            block={block}
+                            index={index}
+                            column="leftColumn"
+                            isOpen={openBlockId === block.id}
+                            onToggle={() => toggleBlock(block.id)}
+                            onUpdate={(updates) => handleUpdateBlock('leftColumn', index, updates)}
+                            onRemove={() => removeBlockFromColumn('leftColumn', index)}
+                            onToggleVisibility={() => handleToggleVisibility('leftColumn', index)}
+                            renderEditor={(block, onUpdate) => renderBlockEditor(block, onUpdate, true)}
+                          />
+                        );
+                      })}
+                      <button
+                        onClick={() => handleAddBlock('leftColumn')}
+                        className="w-full py-1.5 px-2 border border-gray-300 border-dashed rounded text-[13px] text-gray-500 hover:text-gray-700 hover:border-gray-400 transition-colors"
+                      >
+                        + Ajouter un bloc
+                      </button>
+                    </div>
+                  </SortableContext>
+                </DndContext>
+              )}
+            </div>
+
+            {/* Colonne droite */}
+            <div className="border border-gray-200 rounded">
+              <button
+                onClick={() => setOpenColumn(openColumn === 'right' ? null : 'right')}
+                className="w-full flex items-center justify-between py-2 px-2 hover:bg-gray-50 transition-colors"
+              >
+                <span className="text-[13px] font-medium text-gray-900">
+                  Colonne droite ({(data.rightColumn || []).length})
+                </span>
+                {openColumn === 'right' ? (
+                  <ChevronUp className="w-3 h-3 text-gray-400" />
+                ) : (
+                  <ChevronDown className="w-3 h-3 text-gray-400" />
+                )}
+              </button>
+              {openColumn === 'right' && (
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={(e) => handleDragEnd(e, 'rightColumn')}
+                >
+                  <SortableContext
+                    items={normalizedColumns.rightColumn.map(b => b.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <div className="px-2 pb-2 space-y-1">
+                      {normalizedColumns.rightColumn.map((block, index) => {
+                        return (
+                          <SortableBlockItem
+                            key={block.id}
+                            block={block}
+                            index={index}
+                            column="rightColumn"
+                            isOpen={openBlockId === block.id}
+                            onToggle={() => toggleBlock(block.id)}
+                            onUpdate={(updates) => handleUpdateBlock('rightColumn', index, updates)}
+                            onRemove={() => removeBlockFromColumn('rightColumn', index)}
+                            onToggleVisibility={() => handleToggleVisibility('rightColumn', index)}
+                            renderEditor={(block, onUpdate) => renderBlockEditor(block, onUpdate, true)}
+                          />
+                        );
+                      })}
+                      <button
+                        onClick={() => handleAddBlock('rightColumn')}
+                        className="w-full py-1.5 px-2 border border-gray-300 border-dashed rounded text-[13px] text-gray-500 hover:text-gray-700 hover:border-gray-400 transition-colors"
+                      >
+                        + Ajouter un bloc
+                      </button>
+                    </div>
+                  </SortableContext>
+                </DndContext>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Sheet pour choisir le type de bloc */}
+        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+          <SheetContent className="w-[90vw] sm:w-[400px]">
+            <SheetHeader>
+              <SheetTitle className="text-[13px]">Choisir un type de bloc</SheetTitle>
+            </SheetHeader>
+            
+            <div className="space-y-4 max-h-[calc(100vh-150px)] overflow-y-auto mt-4">
+              {Object.entries(getCategorizedBlocksForColumns()).map(([categoryName, categoryBlocks]) => (
+                <div key={categoryName}>
+                  <button
+                    onClick={() => setOpenGroups(prev => ({ ...prev, [categoryName]: !prev[categoryName] }))}
+                    className="flex w-full items-center justify-between rounded-lg bg-gray-100 px-2 py-1.5 text-[13px] font-medium mb-2"
+                  >
+                    <span>{categoryName}</span>
+                    <ChevronDown className={`h-3 w-3 transition-transform ${openGroups[categoryName] ? "rotate-180" : "rotate-0"}`} />
+                  </button>
+                  
+                  {openGroups[categoryName] && (
+                    <div className="grid grid-cols-2 gap-2 p-2">
+                      {categoryBlocks.map((block) => (
+                        <button
+                          key={block.type}
+                          onClick={() => handleSelectBlock(block.type)}
+                          className="flex flex-col items-center justify-center gap-1 rounded-lg border border-gray-200 bg-white p-2 text-center transition-colors hover:border-blue-400 hover:bg-blue-50"
+                        >
+                          {block.preview}
+                          <span className="text-[11px] leading-tight">{block.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
+    );
+  }
+
+  // Version normale pour le BO classique
   return (
     <div className="block-editor">
       <div className="space-y-4">
