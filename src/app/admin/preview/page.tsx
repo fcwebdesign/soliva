@@ -89,13 +89,7 @@ export default function AdminPreviewPage() {
         const nextTemplate = forcedTemplate || (data as any)._template || 'soliva';
         const pageBlocks = Array.isArray(pageData.blocks) ? pageData.blocks : [];
         
-        // Normaliser les IDs des blocs s'ils n'en ont pas
-        const normalizedBlocks = pageBlocks.map((b: any) => {
-          if (!b.id || b.id.trim() === '') {
-            return { ...b, id: `${b.type || 'block'}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}` };
-          }
-          return b;
-        });
+        const normalizedBlocks = normalizeBlocks(pageBlocks);
         
         setInitialPageData({ ...pageData, _template: nextTemplate, blocks: normalizedBlocks });
         setPreviewData({ ...pageData, _template: nextTemplate, blocks: normalizedBlocks });
@@ -187,42 +181,56 @@ export default function AdminPreviewPage() {
     });
   };
 
-  const visibleBlocks = blocks.filter((b) => !hiddenBlockIds.has(b.id));
+  // Appliquer la visibilité sur les blocs racine et leurs colonnes
+  const applyVisibility = (inputBlocks: any[], hidden: Set<string>) =>
+    inputBlocks
+      .filter((b) => !hidden.has(String(b.id)))
+      .map((b) => {
+        if (b.type !== 'two-columns') return b;
+        const data = b.data || b;
+        const filterColumn = (colKey: 'leftColumn' | 'rightColumn') => {
+          const items = data[colKey] || [];
+          return items.filter((item: any) => !hidden.has(String(item?.id)));
+        };
+        return {
+          ...b,
+          data: {
+            ...data,
+            leftColumn: filterColumn('leftColumn'),
+            rightColumn: filterColumn('rightColumn'),
+          },
+        };
+      });
+
+  const visibleBlocks = applyVisibility(blocks, hiddenBlockIds);
 
   // Gérer les clics sur les blocs dans la preview pour ouvrir l'inspecteur
   useEffect(() => {
     const handleBlockClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      // Chercher l'élément parent avec data-block-id
       const blockElement = target.closest('[data-block-id]') as HTMLElement;
       if (!blockElement) return;
-      
+
       const blockId = blockElement.getAttribute('data-block-id');
       if (!blockId) return;
-      
-      // Empêcher le comportement par défaut si on clique sur un lien ou un bouton
+
       if (target.tagName === 'A' || target.tagName === 'BUTTON' || target.closest('a, button')) {
         return;
       }
-      
-      // Ouvrir l'inspecteur avec ce bloc
+
       setSelectedBlockId(blockId);
       setInspectorMode(true);
       setInspectorBlockId(blockId);
-      setInspectorColumn(null);
-      
-      // Scroll vers le bloc dans la preview
       blockElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
-    
+
     const previewContainer = previewPaneRef.current;
-    if (previewContainer) {
-      previewContainer.addEventListener('click', handleBlockClick);
-      return () => {
-        previewContainer.removeEventListener('click', handleBlockClick);
-      };
-    }
-  }, [blocks]);
+    if (!previewContainer) return;
+    previewContainer.addEventListener('click', handleBlockClick);
+    return () => {
+      previewContainer.removeEventListener('click', handleBlockClick);
+    };
+  }, []);
 
   // Drag & drop outline uniquement (réorganisation locale)
   const reorderBlocks = (fromId: string, toId: string) => {
@@ -251,9 +259,11 @@ export default function AdminPreviewPage() {
       // Créer une copie du contenu admin
       const newContent = { ...adminContent };
       
+      const persistedBlocks = applyVisibility(blocks, hiddenBlockIds);
+
       // Générer le HTML à partir des blocs basiques uniquement (pour compatibilité)
       // Les blocs auto-déclarés n'ont pas besoin de HTML car ils sont rendus directement
-      const htmlContent = blocks.map(block => {
+      const htmlContent = persistedBlocks.map(block => {
         // Seulement pour les blocs basiques qui nécessitent du HTML
         switch (block.type) {
           case 'h2':
@@ -279,22 +289,22 @@ export default function AdminPreviewPage() {
         }
       }).filter(html => html && typeof html === 'string' && html.trim() !== '').join('\n');
       
-      // Mettre à jour la page dans le contenu
-      if (['home', 'contact', 'studio', 'work', 'blog'].includes(pageKey)) {
-        newContent[pageKey] = {
-          ...newContent[pageKey],
-          blocks: blocks,
-          content: htmlContent || newContent[pageKey].content, // Garder l'ancien content si pas de HTML généré
-        };
-      } else if (newContent.pages?.pages) {
-        // Pour les pages custom
-        const pageIndex = newContent.pages.pages.findIndex((p: any) => 
+        // Mettre à jour la page dans le contenu
+        if (['home', 'contact', 'studio', 'work', 'blog'].includes(pageKey)) {
+          newContent[pageKey] = {
+            ...newContent[pageKey],
+            blocks: persistedBlocks,
+            content: htmlContent || newContent[pageKey].content, // Garder l'ancien content si pas de HTML généré
+          };
+        } else if (newContent.pages?.pages) {
+          // Pour les pages custom
+          const pageIndex = newContent.pages.pages.findIndex((p: any) => 
           p.slug === pageKey || p.id === pageKey || p.title?.toLowerCase() === pageKey.toLowerCase()
         );
         if (pageIndex !== -1) {
           newContent.pages.pages[pageIndex] = {
             ...newContent.pages.pages[pageIndex],
-            blocks: blocks,
+            blocks: persistedBlocks,
             content: htmlContent || newContent.pages.pages[pageIndex].content, // Garder l'ancien content si pas de HTML généré
           };
         }
@@ -426,27 +436,28 @@ export default function AdminPreviewPage() {
                       blocks={blocks}
                       selectedBlockId={selectedBlockId || undefined}
                       onSelectBlock={(id) => {
-                        // Détecter si c'est une colonne (format: blockId:columnKey)
-                        if (id.includes(':') && id.split(':').length === 2) {
-                          const [blockId, columnKey] = id.split(':');
-                          scrollToBlock(blockId);
-                          setInspectorMode(true);
-                          setInspectorBlockId(blockId);
-                          setInspectorColumn(columnKey as 'leftColumn' | 'rightColumn');
-                        } else {
-                          scrollToBlock(id);
-                          setInspectorMode(true);
-                          setInspectorBlockId(id);
-                          setInspectorColumn(null);
+                        let targetId = id;
+                        let targetColumn: 'leftColumn' | 'rightColumn' | null = null;
+                        if (id.includes(':')) {
+                          const [base, colKey] = id.split(':');
+                          targetId = base;
+                          if (colKey === 'leftColumn' || colKey === 'rightColumn') {
+                            targetColumn = colKey;
+                          }
                         }
+                        scrollToBlock(targetId);
+                        setInspectorMode(true);
+                        setInspectorBlockId(targetId);
+                        setInspectorColumn(targetColumn);
                       }}
                       onDeleteBlock={() => {}}
                       onDuplicateBlock={() => {}}
                       onReorderBlocks={(newBlocks) => {
-                        setBlocks(newBlocks);
-                        setPreviewData((prev) => prev ? { ...prev, blocks: newBlocks } : prev);
+                        setBlocks(normalizeBlocks(newBlocks));
+                        setPreviewData((prev) => prev ? { ...prev, blocks: normalizeBlocks(newBlocks) } : prev);
                       }}
                       renderAction={(section) => {
+                        if (section.type === 'column') return null;
                         const isHidden = hiddenBlockIds.has(section.id);
                         return (
                           <button
@@ -634,12 +645,11 @@ export default function AdminPreviewPage() {
                 }
                 
                 // Déterminer quelle colonne ouvrir pour two-columns
-                let initialOpenColumn: 'leftColumn' | 'rightColumn' | null = null;
-                if (blockParent?.type === 'two-columns' && blockColumn) {
-                  initialOpenColumn = blockColumn;
-                } else if (block.type === 'two-columns' && inspectorColumn) {
-                  initialOpenColumn = inspectorColumn;
-                }
+                const initialOpenColumn: 'leftColumn' | 'rightColumn' | null = blockParent?.type === 'two-columns' && blockColumn
+                  ? blockColumn
+                  : block.type === 'two-columns' && inspectorColumn
+                    ? inspectorColumn
+                    : null;
                 
                 // Extraire les données du bloc (peut être dans block.data ou directement dans block)
                 const blockData = block.data && typeof block.data === 'object' && Object.keys(block.data).length > 0
@@ -749,3 +759,39 @@ export default function AdminPreviewPage() {
     </TemplateProvider>
   );
 }
+  // Normaliser les IDs (blocs racine et enfants de two-columns)
+  const normalizeBlocks = (inputBlocks: any[]): any[] => {
+    return inputBlocks.map((blk, idx) => {
+      const baseId =
+        blk.id && String(blk.id).trim() !== ''
+          ? String(blk.id)
+          : `${blk.type || 'block'}-${idx}`;
+
+      if (blk.type === 'two-columns') {
+        const data = blk.data || blk;
+        const normalizeColumn = (items: any[], colKey: 'leftColumn' | 'rightColumn') =>
+          (items || []).map((item: any, itemIdx: number) => {
+            const itemId =
+              item?.id && String(item.id).trim() !== ''
+                ? String(item.id)
+                : `${baseId}-${colKey}-${itemIdx}-${item?.type || 'item'}`;
+            return { ...item, id: itemId };
+          });
+
+        const leftColumn = normalizeColumn(data.leftColumn || blk.leftColumn || [], 'leftColumn');
+        const rightColumn = normalizeColumn(data.rightColumn || blk.rightColumn || [], 'rightColumn');
+
+        return {
+          ...blk,
+          id: baseId,
+          data: {
+            ...data,
+            leftColumn,
+            rightColumn,
+          },
+        };
+      }
+
+      return { ...blk, id: baseId };
+    });
+  };
