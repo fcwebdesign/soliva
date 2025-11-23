@@ -277,7 +277,7 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
                 {highlightBlockId === block.id && (
                   <>
                     <div className="pointer-events-none absolute -inset-4 border-2 border-blue-500 shadow-sm bg-blue-50/10"></div>
-                    <div className="pointer-events-none absolute -top-6 -left-4 bg-blue-600 text-white text-[12px] px-3 py-1 shadow font-semibold z-10">
+                    <div className="block-highlight-label pointer-events-none absolute -top-6 -left-4 bg-blue-600 text-[12px] px-3 py-1 shadow font-semibold z-10" style={{ color: 'white' }}>
                       {block.type}
                     </div>
                   </>
@@ -311,7 +311,7 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
                 {highlightBlockId === block.id && (
                   <>
                     <div className="pointer-events-none absolute -inset-4 border-2 border-blue-500 shadow-sm bg-blue-50/10"></div>
-                    <div className="pointer-events-none absolute -top-6 -left-4 bg-blue-600 text-white text-[12px] px-3 py-1 shadow font-semibold z-10">
+                    <div className="block-highlight-label pointer-events-none absolute -top-6 -left-4 bg-blue-600 text-[12px] px-3 py-1 shadow font-semibold z-10" style={{ color: 'white' }}>
                       {block.type}
                     </div>
                   </>

@@ -1775,13 +1775,23 @@ html[data-theme="dark"] .logos-section .logo-item img,
   color: var(--foreground) !important;
 }
 
-[data-block-type="quote"] div,
+/* Exclure le label du highlight de la règle quote - doit être après la règle quote */
+[data-block-type="quote"] .block-highlight-label {
+  color: white !important;
+}
+
+[data-block-type="quote"] div:not(.block-highlight-label),
 [data-block-type="quote"] cite {
   color: var(--foreground) !important;
 }
 
 [data-block-type="quote"] footer span {
   color: var(--muted-foreground) !important;
+}
+
+/* Force le texte blanc pour le highlight label (même sur les blocs quote) */
+.block-highlight-label {
+  color: white !important;
 }
 
 /* Styles pour la bordure du footer copyright - identique aux logos clients */
