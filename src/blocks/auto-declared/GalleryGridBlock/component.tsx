@@ -21,6 +21,7 @@ interface GalleryImage {
   category?: string;
   width?: number;
   height?: number;
+  hidden?: boolean;
 }
 
 interface GalleryGridData {
@@ -40,27 +41,16 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData | any
   const { mounted } = useTheme();
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>('all');
-  const [blockData, setBlockData] = useState<any>((data as any).data || data);
   
   // Extraire les données (peut être dans data directement ou dans data.data)
-  const currentBlockData = (data as any).data || data;
-  
-  // Forcer la mise à jour des données quand le contenu change
-  useEffect(() => {
-    const newBlockData = (data as any).data || data;
-    // Comparer les images pour détecter les changements
-    const currentImages = JSON.stringify(blockData.images || []);
-    const newImages = JSON.stringify(newBlockData.images || []);
-    if (currentImages !== newImages) {
-      setBlockData(newBlockData);
-    }
-  }, [data, blockData.images]);
+  // Utiliser useMemo pour recalculer à chaque changement de data
+  const blockData = useMemo(() => {
+    return (data as any).data || data;
+  }, [data]);
   
   // Écouter les mises à jour de contenu pour forcer le rechargement
   useContentUpdate(() => {
-    // Forcer la mise à jour en réextrayant les données
-    const newBlockData = (data as any).data || data;
-    setBlockData(newBlockData);
+    // Le useMemo se mettra à jour automatiquement
   });
   
   const images = blockData.images || [];
@@ -116,13 +106,16 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData | any
   }, [typoConfig]);
   const h2Color = useMemo(() => getCustomColor('h2', typoConfig) || 'var(--foreground)', [typoConfig]);
 
-  // Obtenir les catégories uniques
-  const categories = ['all', ...Array.from(new Set(images.map(img => img.category).filter(Boolean) as string[]))];
+  // Filtrer les images masquées
+  const visibleImages = images.filter((img: GalleryImage) => !img.hidden);
   
-  // Filtrer les images
+  // Obtenir les catégories uniques (seulement pour les images visibles)
+  const categories = ['all', ...Array.from(new Set(visibleImages.map(img => img.category).filter(Boolean) as string[]))];
+  
+  // Filtrer les images par catégorie
   const filteredImages = activeFilter === 'all' 
-    ? images 
-    : images.filter(img => img.category === activeFilter);
+    ? visibleImages 
+    : visibleImages.filter(img => img.category === activeFilter);
 
   // Utiliser les images dans l'ordre défini dans l'admin
   const displayImages = filteredImages;
@@ -210,11 +203,13 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData | any
                         >
                           {/* Image */}
                           <div className={`relative overflow-hidden`}>
-                            <img
-                              src={image.src}
-                              alt={image.alt}
-                              className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
-                            />
+                            {image.src ? (
+                              <img
+                                src={image.src}
+                                alt={image.alt}
+                                className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+                              />
+                            ) : null}
                             
                             {/* Overlay avec actions */}
                             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
@@ -269,21 +264,23 @@ export default function GalleryGridBlock({ data }: { data: GalleryGridData | any
               <div key={image.id} className={`group relative overflow-hidden rounded-lg ${isMasonry ? 'break-inside-avoid mb-4' : ''}`} style={{ backgroundColor: 'var(--muted)' }}>
                 {/* Image */}
                 <div className={`${isMasonry ? 'relative' : 'aspect-square relative'} overflow-hidden`}>
-                  {isMasonry ? (
-                    <img
-                      src={image.src}
-                      alt={image.alt}
-                      className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  ) : (
-                    <Image
-                      src={image.src}
-                      alt={image.alt}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-                    />
-                  )}
+                  {image.src ? (
+                    isMasonry ? (
+                      <img
+                        src={image.src}
+                        alt={image.alt}
+                        className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    ) : (
+                      <Image
+                        src={image.src}
+                        alt={image.alt}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                      />
+                    )
+                  ) : null}
                   
                   {/* Overlay avec actions */}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">

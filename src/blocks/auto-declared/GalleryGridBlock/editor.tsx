@@ -10,7 +10,7 @@ import { Switch } from '../../../components/ui/switch';
 import { Dialog, DialogContent, DialogTitle, DialogHeader } from '../../../components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../../components/ui/dropdown-menu';
 import MediaUploader from '../../../app/admin/components/MediaUploader';
-import { Plus, Trash2, Edit3, Image as ImageIcon, Upload, X, GripVertical, Eye, EyeOff, ImagePlus } from 'lucide-react';
+import { Plus, Trash2, Edit3, Image as ImageIcon, Upload, X, GripVertical, Eye, EyeOff, ImagePlus, ChevronDown, ChevronRight } from 'lucide-react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -49,6 +49,8 @@ function SortableImageItem({
   onRemove,
   onToggleVisibility,
   onUpdate,
+  isOpen = false,
+  onToggle,
   compact = false
 }: { 
   image: GalleryImage; 
@@ -58,6 +60,8 @@ function SortableImageItem({
   onRemove: () => void;
   onToggleVisibility: () => void;
   onUpdate?: (field: string, value: any) => void;
+  isOpen?: boolean;
+  onToggle?: () => void;
   compact?: boolean;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -110,116 +114,217 @@ function SortableImageItem({
       <div
         ref={setNodeRef}
         style={style}
-        {...attributes}
-        {...listeners}
-        className="flex items-center gap-2 py-1 px-2 bg-white border border-gray-200 rounded group cursor-grab active:cursor-grabbing"
+        className="border border-gray-200 rounded overflow-hidden"
       >
-        <GripVertical className="w-3 h-3 text-gray-400 flex-shrink-0" />
-        
-        {/* Miniature de l'image - dropdown si image existe, clic direct si vide */}
-        {image.src ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <div 
-                className="w-12 h-12 border border-gray-200 rounded flex items-center justify-center bg-gray-50 flex-shrink-0 relative overflow-hidden cursor-pointer hover:border-blue-400 transition-colors"
-                onClick={(e) => e.stopPropagation()}
-                onPointerDown={(e) => e.stopPropagation()}
-              >
-                <img 
-                  src={image.src} 
-                  alt={image.alt || 'Image'} 
-                  className="w-full h-full object-contain p-1"
-                />
-              </div>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48 shadow-none border rounded">
-              <DropdownMenuItem 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  // Remplacer : ouvrir directement le sélecteur de fichiers
-                  fileInputRef.current?.click();
-                }} 
-                className="text-[13px] text-gray-700 hover:text-gray-900"
-              >
-                <ImagePlus className="w-3 h-3 mr-2" />
-                Remplacer
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  // Modifier : ouvrir le modal d'édition pour Alt, Titre, Catégorie
-                  onEdit();
-                }} 
-                className="text-[13px] text-gray-700 hover:text-gray-900"
-              >
-                <Edit3 className="w-3 h-3 mr-2" />
-                Modifier
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onRemove();
-                }}
-                className="text-[13px] text-red-600 focus:text-red-600"
-              >
-                <Trash2 className="w-3 h-3 mr-2" />
-                Supprimer
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : (
-          <div 
-            className="w-12 h-12 border border-gray-200 rounded flex items-center justify-center bg-gray-50 flex-shrink-0 relative overflow-hidden cursor-pointer hover:border-blue-400 transition-colors"
-            onClick={(e) => {
-              e.stopPropagation();
-              // Si pas d'image, ouvrir directement le sélecteur de fichiers
-              fileInputRef.current?.click();
-            }}
-            onPointerDown={(e) => e.stopPropagation()}
-          >
-            <span className="text-[10px] text-gray-400">+</span>
+        {/* Header - cliquable pour ouvrir/fermer */}
+        <div
+          className="flex items-center gap-1 py-1 px-2 group hover:bg-gray-50 transition-colors cursor-pointer"
+          onClick={onToggle}
+          {...attributes}
+          {...listeners}
+        >
+          <div className="w-3 h-3 flex items-center justify-center flex-shrink-0">
+            {isOpen ? (
+              <ChevronDown className="w-3 h-3 text-gray-400" />
+            ) : (
+              <ChevronRight className="w-3 h-3 text-gray-400" />
+            )}
           </div>
-        )}
-        
-        {/* Input file caché */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleFileSelect}
-          onClick={(e) => e.stopPropagation()}
-          onPointerDown={(e) => e.stopPropagation()}
-          className="hidden"
-        />
-        
-        {/* Affichage titre/catégorie (lecture seule) */}
-        <div className="flex-1 min-w-0">
-          <div className="text-[13px] text-gray-900 truncate">
-            {image.title || image.alt || 'Sans titre'}
-          </div>
-          {image.category && (
-            <div className="text-[10px] text-blue-600 mt-0.5">
-              {image.category}
+          <GripVertical className="w-3 h-3 text-gray-400 flex-shrink-0" />
+          
+          {/* Miniature de l'image - dropdown si image existe, clic direct si vide */}
+          {image.src ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div 
+                  className="w-8 h-8 border border-gray-200 rounded flex items-center justify-center bg-gray-50 flex-shrink-0 relative overflow-hidden cursor-pointer hover:border-blue-400 transition-colors"
+                  onClick={(e) => e.stopPropagation()}
+                  onPointerDown={(e) => e.stopPropagation()}
+                >
+                  <img 
+                    src={image.src} 
+                    alt={image.alt || 'Image'} 
+                    className="w-full h-full object-contain p-0.5"
+                  />
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48 shadow-none border rounded">
+                <DropdownMenuItem 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    fileInputRef.current?.click();
+                  }} 
+                  className="text-[13px] text-gray-700 hover:text-gray-900"
+                >
+                  <ImagePlus className="w-3 h-3 mr-2" />
+                  Remplacer
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggle?.();
+                  }} 
+                  className="text-[13px] text-gray-700 hover:text-gray-900"
+                >
+                  <Edit3 className="w-3 h-3 mr-2" />
+                  Modifier
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRemove();
+                  }}
+                  className="text-[13px] text-red-600 focus:text-red-600"
+                >
+                  <Trash2 className="w-3 h-3 mr-2" />
+                  Supprimer
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <div 
+              className="w-8 h-8 border border-gray-200 rounded flex items-center justify-center bg-gray-50 flex-shrink-0 relative overflow-hidden cursor-pointer hover:border-blue-400 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                fileInputRef.current?.click();
+              }}
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              <span className="text-[10px] text-gray-400">+</span>
             </div>
           )}
+          
+          {/* Input file caché */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileSelect}
+            onClick={(e) => e.stopPropagation()}
+            onPointerDown={(e) => e.stopPropagation()}
+            className="hidden"
+          />
+          
+          {/* Affichage titre/catégorie */}
+          <div className="flex-1 min-w-0">
+            <div className="text-[11px] text-gray-900 truncate">
+              {image.title || image.alt || 'Sans titre'}
+            </div>
+            {image.category && (
+              <div className="text-[9px] text-blue-600 mt-0.5">
+                {image.category}
+              </div>
+            )}
+          </div>
+          
+          {/* Icônes : œil et poubelle */}
+          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleVisibility();
+              }}
+              onPointerDown={(e) => e.stopPropagation()}
+              className="cursor-pointer flex-shrink-0 p-0.5"
+              title={image.hidden ? 'Afficher' : 'Masquer'}
+            >
+              {image.hidden ? (
+                <EyeOff className="w-3 h-3 text-gray-400 hover:text-blue-500" />
+              ) : (
+                <Eye className="w-3 h-3 text-gray-400 hover:text-blue-500" />
+              )}
+            </button>
+            
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onRemove();
+              }}
+              onPointerDown={(e) => e.stopPropagation()}
+              className="cursor-pointer flex-shrink-0 p-0.5"
+              title="Supprimer"
+            >
+              <Trash2 className="w-3 h-3 text-gray-400 hover:text-red-500" />
+            </button>
+          </div>
         </div>
         
-        {/* Icône œil au hover */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleVisibility();
-          }}
-          onPointerDown={(e) => e.stopPropagation()}
-          className="opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer flex-shrink-0 p-0.5"
-          title={image.hidden ? 'Afficher' : 'Masquer'}
-        >
-          {image.hidden ? (
-            <EyeOff className="w-3 h-3 text-gray-400 hover:text-blue-500" />
-          ) : (
-            <Eye className="w-3 h-3 text-gray-400 hover:text-blue-500" />
-          )}
-        </button>
+        {/* Contenu accordion - champs d'édition */}
+        {isOpen && (
+          <div className="px-2 pb-2 pt-1 space-y-2 bg-gray-50 border-t border-gray-200">
+            <div>
+              <label className="block text-[10px] text-gray-400 mb-0.5">Alt *</label>
+              <input
+                type="text"
+                value={image.alt || ''}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  if (onUpdate) {
+                    onUpdate('alt', e.target.value);
+                  }
+                }}
+                onClick={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+                placeholder="Description"
+                className="w-full px-2 py-1.5 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-[10px] text-gray-400 mb-0.5">Titre</label>
+              <input
+                type="text"
+                value={image.title || ''}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  if (onUpdate) {
+                    onUpdate('title', e.target.value);
+                  }
+                }}
+                onClick={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+                placeholder="Titre"
+                className="w-full px-2 py-1.5 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-[10px] text-gray-400 mb-0.5">Description</label>
+              <textarea
+                value={image.description || ''}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  if (onUpdate) {
+                    onUpdate('description', e.target.value);
+                  }
+                }}
+                onClick={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+                placeholder="Description de l'image"
+                rows={2}
+                className="w-full px-2 py-1.5 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors resize-none"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-[10px] text-gray-400 mb-0.5">Catégorie</label>
+              <input
+                type="text"
+                value={image.category || ''}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  if (onUpdate) {
+                    onUpdate('category', e.target.value);
+                  }
+                }}
+                onClick={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+                placeholder="nature, portrait..."
+                className="w-full px-2 py-1.5 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors"
+              />
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -307,6 +412,8 @@ export default function GalleryGridBlockEditor({ data, onChange, compact = false
   const [editMode, setEditMode] = useState<'replace' | 'edit'>('edit');
   const [isUploading, setIsUploading] = useState(false);
   const [openSelect, setOpenSelect] = useState<string | null>(null);
+  const [openImageId, setOpenImageId] = useState<string | null>(null);
+  const singleFileInputRef = useRef<HTMLInputElement>(null);
 
   const updateField = (field: string, value: any) => {
     onChange({
@@ -341,6 +448,47 @@ export default function GalleryGridBlockEditor({ data, onChange, compact = false
     
     const currentImages = data.images || [];
     updateField('images', [...currentImages, ...newImages]);
+  };
+
+  const handleSingleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+      
+      const result = await response.json();
+      const newImage: GalleryImage = {
+        id: `image-${Date.now()}`,
+        src: result.url,
+        alt: '',
+        title: '',
+        description: '',
+        category: ''
+      };
+      
+      const currentImages = data.images || [];
+      updateField('images', [...currentImages, newImage]);
+    } catch (error) {
+      console.error('Erreur upload:', error);
+      alert('Erreur lors de l\'upload de l\'image');
+    } finally {
+      setIsUploading(false);
+      if (singleFileInputRef.current) {
+        singleFileInputRef.current.value = '';
+      }
+    }
   };
 
   const handleMultipleUpload = async (files: FileList) => {
@@ -487,54 +635,54 @@ export default function GalleryGridBlockEditor({ data, onChange, compact = false
           <div className="space-y-1">
             <label className="block text-[10px] text-gray-400 mb-1">Options d'affichage</label>
             <div className="grid grid-cols-2 gap-1">
-              <div className="flex items-center space-x-1.5">
+              <div className="flex items-center space-x-2">
                 <Switch
                   id="showFilters"
                   checked={data.showFilters !== false}
                   onCheckedChange={(checked) => updateField('showFilters', checked)}
-                  className="h-3 w-5"
+                  className="h-4 w-7 [&>span]:h-3 [&>span]:w-3 [&>span]:data-[state=checked]:translate-x-3"
                 />
-                <label htmlFor="showFilters" className="text-[11px]">Filtres</label>
+                <label htmlFor="showFilters" className="text-[10px] font-medium">Filtres</label>
               </div>
               
-              <div className="flex items-center space-x-1.5">
+              <div className="flex items-center space-x-2">
                 <Switch
                   id="showTitles"
                   checked={data.showTitles !== false}
                   onCheckedChange={(checked) => updateField('showTitles', checked)}
-                  className="h-3 w-5"
+                  className="h-4 w-7 [&>span]:h-3 [&>span]:w-3 [&>span]:data-[state=checked]:translate-x-3"
                 />
-                <label htmlFor="showTitles" className="text-[11px]">Titres</label>
+                <label htmlFor="showTitles" className="text-[10px] font-medium">Titres</label>
               </div>
               
-              <div className="flex items-center space-x-1.5">
+              <div className="flex items-center space-x-2">
                 <Switch
                   id="showDescriptions"
                   checked={data.showDescriptions !== false}
                   onCheckedChange={(checked) => updateField('showDescriptions', checked)}
-                  className="h-3 w-5"
+                  className="h-4 w-7 [&>span]:h-3 [&>span]:w-3 [&>span]:data-[state=checked]:translate-x-3"
                 />
-                <label htmlFor="showDescriptions" className="text-[11px]">Descriptions</label>
+                <label htmlFor="showDescriptions" className="text-[10px] font-medium">Descriptions</label>
               </div>
               
-              <div className="flex items-center space-x-1.5">
+              <div className="flex items-center space-x-2">
                 <Switch
                   id="enableLightbox"
                   checked={data.enableLightbox !== false}
                   onCheckedChange={(checked) => updateField('enableLightbox', checked)}
-                  className="h-3 w-5"
+                  className="h-4 w-7 [&>span]:h-3 [&>span]:w-3 [&>span]:data-[state=checked]:translate-x-3"
                 />
-                <label htmlFor="enableLightbox" className="text-[11px]">Lightbox</label>
+                <label htmlFor="enableLightbox" className="text-[10px] font-medium">Lightbox</label>
               </div>
               
-              <div className="flex items-center space-x-1.5">
+              <div className="flex items-center space-x-2">
                 <Switch
                   id="enableDownload"
                   checked={data.enableDownload !== false}
                   onCheckedChange={(checked) => updateField('enableDownload', checked)}
-                  className="h-3 w-5"
+                  className="h-4 w-7 [&>span]:h-3 [&>span]:w-3 [&>span]:data-[state=checked]:translate-x-3"
                 />
-                <label htmlFor="enableDownload" className="text-[11px]">Téléchargement</label>
+                <label htmlFor="enableDownload" className="text-[10px] font-medium">Téléchargement</label>
               </div>
             </div>
           </div>
@@ -571,12 +719,24 @@ export default function GalleryGridBlockEditor({ data, onChange, compact = false
                   <Upload className="h-3 w-3" />
                   {isUploading ? '...' : 'Multiple'}
                 </button>
+                <input
+                  ref={singleFileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleSingleUpload}
+                  className="hidden"
+                  id="single-upload-compact"
+                />
                 <button
-                  onClick={addImage}
-                  className="px-2 py-1 text-[11px] bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors flex items-center gap-1"
+                  type="button"
+                  onClick={() => {
+                    singleFileInputRef.current?.click();
+                  }}
+                  disabled={isUploading}
+                  className="px-2 py-1 text-[11px] bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors flex items-center gap-1 disabled:opacity-50"
                 >
                   <Plus className="h-3 w-3" />
-                  Ajouter
+                  {isUploading ? '...' : 'Ajouter'}
                 </button>
               </div>
             </div>
@@ -624,6 +784,10 @@ export default function GalleryGridBlockEditor({ data, onChange, compact = false
                         onRemove={() => removeImage(index)}
                         onToggleVisibility={() => toggleImageVisibility(index)}
                         onUpdate={(field, value) => updateImage(index, { [field]: value })}
+                        isOpen={openImageId === image.id}
+                        onToggle={() => {
+                          setOpenImageId(openImageId === image.id ? null : image.id);
+                        }}
                         compact={true}
                       />
                     ))
@@ -634,8 +798,9 @@ export default function GalleryGridBlockEditor({ data, onChange, compact = false
           </div>
         </div>
 
-        {/* Modal d'édition d'image */}
-        <Dialog open={Boolean(editingImage)} onOpenChange={(open) => !open && setEditingImage(null)}>
+        {/* Modal d'édition d'image - seulement en mode non-compact */}
+        {!compact && (
+          <Dialog open={Boolean(editingImage)} onOpenChange={(open) => !open && setEditingImage(null)}>
           <DialogContent className="!max-w-[425px]">
             <DialogHeader className="pb-2">
               <DialogTitle className="text-base font-semibold">Éditer l'image</DialogTitle>
@@ -714,6 +879,23 @@ export default function GalleryGridBlockEditor({ data, onChange, compact = false
                   </div>
                   
                   <div>
+                    <Label className="text-xs font-medium text-gray-700">Description</Label>
+                    <textarea
+                      value={editingImage.description || ''}
+                      onChange={(e) => {
+                        const index = (data.images || []).findIndex(img => img.id === editingImage.id);
+                        if (index !== -1) {
+                          updateImage(index, { description: e.target.value });
+                          setEditingImage({ ...editingImage, description: e.target.value });
+                        }
+                      }}
+                      placeholder="Description de l'image"
+                      rows={3}
+                      className="w-full px-2 py-1.5 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors resize-none"
+                    />
+                  </div>
+                  
+                  <div>
                     <Label className="text-xs font-medium text-gray-700">Catégorie</Label>
                     <input
                       type="text"
@@ -745,6 +927,7 @@ export default function GalleryGridBlockEditor({ data, onChange, compact = false
             })()}
           </DialogContent>
         </Dialog>
+        )}
       </div>
     );
   }
@@ -898,6 +1081,14 @@ export default function GalleryGridBlockEditor({ data, onChange, compact = false
                   }
                 }}
               />
+              <input
+                ref={singleFileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleSingleUpload}
+                className="hidden"
+                id="single-upload"
+              />
               <Button 
                 type="button" 
                 size="sm" 
@@ -914,9 +1105,16 @@ export default function GalleryGridBlockEditor({ data, onChange, compact = false
                 <Upload className="h-4 w-4" />
                 {isUploading ? 'Upload...' : 'Upload multiple'}
               </Button>
-              <Button onClick={addImage} size="sm" className="flex items-center gap-2">
+              <Button 
+                onClick={() => {
+                  singleFileInputRef.current?.click();
+                }}
+                disabled={isUploading}
+                size="sm" 
+                className="flex items-center gap-2 disabled:opacity-50"
+              >
                 <Plus className="h-4 w-4" />
-                Ajouter une image
+                {isUploading ? 'Upload...' : 'Ajouter une image'}
               </Button>
             </div>
           </div>
@@ -1047,6 +1245,23 @@ export default function GalleryGridBlockEditor({ data, onChange, compact = false
                     }}
                     placeholder="Titre"
                     className="text-xs h-8"
+                  />
+                </div>
+                
+                <div>
+                  <Label className="text-xs font-medium text-gray-700">Description</Label>
+                  <Textarea
+                    value={editingImage.description || ''}
+                    onChange={(e) => {
+                      const index = (data.images || []).findIndex(img => img.id === editingImage.id);
+                      if (index !== -1) {
+                        updateImage(index, { description: e.target.value });
+                        setEditingImage({ ...editingImage, description: e.target.value });
+                      }
+                    }}
+                    placeholder="Description de l'image"
+                    rows={3}
+                    className="text-xs"
                   />
                 </div>
                 
