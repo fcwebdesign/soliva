@@ -120,7 +120,7 @@ function SortableBlockItem({
 }
 
 
-export default function TwoColumnsBlockEditor({ data, onChange, compact = false }: { data: TwoColumnsData; onChange: (data: TwoColumnsData) => void; compact?: boolean }) {
+export default function TwoColumnsBlockEditor({ data, onChange, compact = false, initialOpenColumn = null, initialOpenBlockId = null }: { data: TwoColumnsData; onChange: (data: TwoColumnsData) => void; compact?: boolean; initialOpenColumn?: 'left' | 'right' | null; initialOpenBlockId?: string | null }) {
   const [isLoadingBlockAI, setIsLoadingBlockAI] = React.useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = React.useState<number | null>(null);
@@ -500,10 +500,23 @@ export default function TwoColumnsBlockEditor({ data, onChange, compact = false 
 
   // Version compacte pour l'éditeur visuel
   if (compact) {
-    const [openColumn, setOpenColumn] = useState<'left' | 'right' | null>(null);
+    // Si initialOpenBlockId est fourni, ouvrir automatiquement la colonne correspondante
+    const getInitialColumn = (): 'left' | 'right' | null => {
+      if (initialOpenColumn) return initialOpenColumn;
+      if (initialOpenBlockId) {
+        // Vérifier dans quelle colonne se trouve le bloc
+        const leftColumn = data.leftColumn || [];
+        const rightColumn = data.rightColumn || [];
+        if (leftColumn.some((b: any) => b.id === initialOpenBlockId)) return 'left';
+        if (rightColumn.some((b: any) => b.id === initialOpenBlockId)) return 'right';
+      }
+      return null;
+    };
+    
+    const [openColumn, setOpenColumn] = useState<'left' | 'right' | null>(getInitialColumn());
     const [sheetOpen, setSheetOpen] = useState(false);
     const [targetColumn, setTargetColumn] = useState<'leftColumn' | 'rightColumn' | null>(null);
-    const [openBlockId, setOpenBlockId] = useState<string | null>(null);
+    const [openBlockId, setOpenBlockId] = useState<string | null>(initialOpenBlockId);
 
     // Sensors pour drag & drop
     const sensors = useSensors(

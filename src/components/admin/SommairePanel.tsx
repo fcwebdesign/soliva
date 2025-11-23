@@ -243,9 +243,12 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
           level: level + 1,
           expanded: false, // Replié par défaut
           children: columnBlocks.length > 0 
-            ? columnBlocks.map((subBlock: any, subIndex: number) => 
-                analyzeBlockStructure(subBlock, level + 2)
-              )
+            ? columnBlocks.map((subBlock: any, subIndex: number) => {
+                // S'assurer que le bloc a un ID stable basé sur sa position si pas d'ID
+                const stableId = subBlock.id || `${section.id}-${columnKey}-${subIndex}`;
+                const blockWithId = { ...subBlock, id: stableId };
+                return analyzeBlockStructure(blockWithId, level + 2);
+              })
             : []
         };
         children.push(columnSection);
@@ -365,8 +368,25 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
             paddingLeft: `${section.level === 0 ? 8 : section.level === 1 ? 25 : 25}px`
           }}
           onClick={() => {
-            if (onSelectBlock && section.type !== 'column') {
-              onSelectBlock(section.id);
+            if (onSelectBlock) {
+              // Pour les colonnes, passer un format spécial : blockId:columnKey
+              if (section.type === 'column') {
+                // L'ID de la colonne est au format: blockId-columnKey
+                // On cherche le dernier segment qui correspond à leftColumn ou rightColumn
+                const id = section.id;
+                if (id.endsWith('-leftColumn')) {
+                  const blockId = id.slice(0, -11); // Enlever '-leftColumn'
+                  onSelectBlock(`${blockId}:leftColumn`);
+                } else if (id.endsWith('-rightColumn')) {
+                  const blockId = id.slice(0, -12); // Enlever '-rightColumn'
+                  onSelectBlock(`${blockId}:rightColumn`);
+                } else {
+                  // Fallback : utiliser l'ID tel quel
+                  onSelectBlock(section.id);
+                }
+              } else {
+                onSelectBlock(section.id);
+              }
             }
           }}
           onMouseEnter={(e) => {
@@ -388,7 +408,10 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
                 type="button"
                 aria-label="Basculer l'expansion"
                 onPointerDownCapture={(e) => e.stopPropagation()}
-                onClick={() => toggleExpanded(section.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleExpanded(section.id);
+                }}
                 className="p-0.5 rounded"
                 style={{ 
                   backgroundColor: 'transparent',

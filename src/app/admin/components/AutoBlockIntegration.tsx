@@ -83,6 +83,8 @@ export function renderAutoBlockEditor(block: any, onUpdate?: (updates: any) => v
 
   // Passer le mode compact via context
   const compact = context?.compact || false;
+  const initialOpenColumn = context?.initialOpenColumn || null;
+  const initialOpenBlockId = context?.initialOpenBlockId || null;
 
   return (
     <div className="block-editor">
@@ -90,6 +92,8 @@ export function renderAutoBlockEditor(block: any, onUpdate?: (updates: any) => v
         <autoBlock.editor
           data={blockData}
           compact={compact}
+          initialOpenColumn={initialOpenColumn}
+          initialOpenBlockId={initialOpenBlockId}
           onChange={(updates: any) => {
             // Mettre à jour le bloc avec les nouvelles données
             // Si le bloc a déjà une structure avec data, fusionner dans data

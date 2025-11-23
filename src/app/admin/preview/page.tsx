@@ -40,6 +40,7 @@ export default function AdminPreviewPage() {
   const [dragOverId, setDragOverId] = useState<string | null>(null);
   const [inspectorMode, setInspectorMode] = useState<boolean>(false);
   const [inspectorBlockId, setInspectorBlockId] = useState<string | null>(null);
+  const [inspectorColumn, setInspectorColumn] = useState<'leftColumn' | 'rightColumn' | null>(null);
 
   // Callback depuis BlockEditor
   const handleUpdate = (data: any) => {
@@ -269,9 +270,19 @@ export default function AdminPreviewPage() {
                       blocks={blocks}
                       selectedBlockId={selectedBlockId || undefined}
                       onSelectBlock={(id) => {
-                        scrollToBlock(id);
-                        setInspectorMode(true);
-                        setInspectorBlockId(id);
+                        // Détecter si c'est une colonne (format: blockId:columnKey)
+                        if (id.includes(':') && id.split(':').length === 2) {
+                          const [blockId, columnKey] = id.split(':');
+                          scrollToBlock(blockId);
+                          setInspectorMode(true);
+                          setInspectorBlockId(blockId);
+                          setInspectorColumn(columnKey as 'leftColumn' | 'rightColumn');
+                        } else {
+                          scrollToBlock(id);
+                          setInspectorMode(true);
+                          setInspectorBlockId(id);
+                          setInspectorColumn(null);
+                        }
                       }}
                       onDeleteBlock={() => {}}
                       onDuplicateBlock={() => {}}
@@ -332,7 +343,7 @@ export default function AdminPreviewPage() {
               <div>
                 <button
                   className="text-sm text-gray-700 hover:text-gray-900 mr-3"
-                  onClick={() => { setInspectorMode(false); setInspectorBlockId(null); }}
+                  onClick={() => { setInspectorMode(false); setInspectorBlockId(null); setInspectorColumn(null); }}
                   aria-label="Retour au plan"
                 >
                   ← Retour
@@ -351,28 +362,189 @@ export default function AdminPreviewPage() {
             </div>
             <div className="flex-1 overflow-y-auto p-4">
               {inspectorBlockId && (() => {
-                const block = blocks.find(b => b.id === inspectorBlockId);
+                console.log('🔍 Recherche du bloc:', inspectorBlockId);
+                console.log('📦 Blocs disponibles (racine):', blocks.map(b => ({ id: b.id, type: b.type })));
+                
+                // Chercher d'abord dans les blocs racine
+                let block = blocks.find(b => b.id === inspectorBlockId);
+                let blockParent: any = null;
+                let blockColumn: 'leftColumn' | 'rightColumn' | null = null;
+                let blockIndex: number = -1;
+                
+                // Si pas trouvé, chercher dans les colonnes des blocs two-columns
                 if (!block) {
+                  console.log('🔍 Bloc non trouvé dans racine, recherche dans colonnes...');
+                  for (const parentBlock of blocks) {
+                    if (parentBlock.type === 'two-columns') {
+                      // Essayer différents formats de données
+                      const blockData = parentBlock.data || parentBlock;
+                      const leftColumn = blockData.leftColumn || parentBlock.leftColumn || [];
+                      const rightColumn = blockData.rightColumn || parentBlock.rightColumn || [];
+                      
+                      console.log(`📋 Bloc two-columns ${parentBlock.id}:`, {
+                        leftColumn: leftColumn.map((b: any, idx: number) => {
+                          const blockId = b?.id || b?.data?.id || `no-id-${idx}`;
+                          console.log(`  📦 Colonne gauche [${idx}]:`, { 
+                            id: blockId, 
+                            type: b?.type,
+                            fullBlock: b 
+                          });
+                          return { id: blockId, type: b?.type };
+                        }),
+                        rightColumn: rightColumn.map((b: any, idx: number) => {
+                          const blockId = b?.id || b?.data?.id || `no-id-${idx}`;
+                          console.log(`  📦 Colonne droite [${idx}]:`, { 
+                            id: blockId, 
+                            type: b?.type,
+                            fullBlock: b 
+                          });
+                          return { id: blockId, type: b?.type };
+                        })
+                      });
+                      
+                      // Rechercher dans la colonne gauche
+                      const leftIndex = leftColumn.findIndex((b: any, idx: number) => {
+                        if (!b) return false;
+                        // Essayer différents formats d'ID
+                        const blockId = b.id || b.data?.id || (typeof b === 'string' ? b : null);
+                        // ID stable basé sur la position (même format que dans analyzeBlockStructure)
+                        const stableId = `${parentBlock.id}-leftColumn-${idx}`;
+                        const matches = blockId === inspectorBlockId || 
+                                       String(blockId) === String(inspectorBlockId) ||
+                                       stableId === inspectorBlockId ||
+                                       String(stableId) === String(inspectorBlockId);
+                        if (matches) {
+                          console.log('✅ Trouvé dans colonne gauche:', { blockId, stableId, index: idx, block: b });
+                        }
+                        return matches;
+                      });
+                      
+                      // Rechercher dans la colonne droite
+                      const rightIndex = rightColumn.findIndex((b: any, idx: number) => {
+                        if (!b) return false;
+                        // Essayer différents formats d'ID
+                        const blockId = b.id || b.data?.id || (typeof b === 'string' ? b : null);
+                        // ID stable basé sur la position (même format que dans analyzeBlockStructure)
+                        const stableId = `${parentBlock.id}-rightColumn-${idx}`;
+                        const matches = blockId === inspectorBlockId || 
+                                       String(blockId) === String(inspectorBlockId) ||
+                                       stableId === inspectorBlockId ||
+                                       String(stableId) === String(inspectorBlockId);
+                        if (matches) {
+                          console.log('✅ Trouvé dans colonne droite:', { blockId, stableId, index: idx, block: b });
+                        }
+                        return matches;
+                      });
+                      
+                      if (leftIndex !== -1) {
+                        block = leftColumn[leftIndex];
+                        blockParent = parentBlock;
+                        blockColumn = 'leftColumn';
+                        blockIndex = leftIndex;
+                        console.log('✅ Bloc trouvé dans colonne gauche à l\'index', leftIndex);
+                        break;
+                      } else if (rightIndex !== -1) {
+                        block = rightColumn[rightIndex];
+                        blockParent = parentBlock;
+                        blockColumn = 'rightColumn';
+                        blockIndex = rightIndex;
+                        console.log('✅ Bloc trouvé dans colonne droite à l\'index', rightIndex);
+                        break;
+                      }
+                    }
+                  }
+                }
+                
+                if (!block) {
+                  // Debug: afficher les IDs disponibles
+                  console.log('🔍 Bloc introuvable:', inspectorBlockId);
+                  console.log('📦 Blocs racine:', blocks.map(b => b.id));
+                  console.log('📋 Blocs dans colonnes:', blocks
+                    .filter(b => b.type === 'two-columns')
+                    .map(b => {
+                      const data = b.data || b;
+                      return {
+                        parentId: b.id,
+                        leftColumn: (data.leftColumn || []).map((bl: any) => bl?.id || bl?.data?.id),
+                        rightColumn: (data.rightColumn || []).map((bl: any) => bl?.id || bl?.data?.id)
+                      };
+                    }));
+                  
                   return (
                     <div className="text-sm text-gray-500">
-                      Bloc introuvable
+                      Bloc introuvable: {inspectorBlockId}
                     </div>
                   );
                 }
+                
+                // Déterminer quelle colonne ouvrir pour two-columns
+                let initialOpenColumn: 'leftColumn' | 'rightColumn' | null = null;
+                if (blockParent?.type === 'two-columns' && blockColumn) {
+                  initialOpenColumn = blockColumn;
+                } else if (block.type === 'two-columns' && inspectorColumn) {
+                  initialOpenColumn = inspectorColumn;
+                }
+                
+                // Extraire les données du bloc (peut être dans block.data ou directement dans block)
+                const blockData = block.data && typeof block.data === 'object' && Object.keys(block.data).length > 0
+                  ? block.data
+                  : (() => {
+                      // Structure plate : extraire toutes les propriétés sauf id, type
+                      const { id, type, ...rest } = block;
+                      return rest;
+                    })();
+                
+                // Créer un bloc complet avec id et type pour renderAutoBlockEditor
+                const fullBlock = {
+                  id: block.id || inspectorBlockId,
+                  type: block.type,
+                  ...blockData
+                };
                 
                 return (
                   <div className="space-y-4">
                     <div className="text-xs text-gray-500 mb-2">
                       Type: <span className="font-mono">{block.type}</span>
+                      {blockParent && (
+                        <span className="ml-2 text-gray-400">
+                          (dans {blockColumn === 'leftColumn' ? 'colonne gauche' : 'colonne droite'})
+                        </span>
+                      )}
                     </div>
-                    {renderAutoBlockEditor(block, (updatedBlock) => {
-                      // Mettre à jour le bloc dans la liste
-                      const newBlocks = blocks.map(b => 
-                        b.id === inspectorBlockId ? updatedBlock : b
-                      );
-                      setBlocks(newBlocks);
-                      setPreviewData((prev) => prev ? { ...prev, blocks: newBlocks } : prev);
-                    }, { compact: true })}
+                    {renderAutoBlockEditor(fullBlock, (updatedBlock) => {
+                      if (blockParent && blockColumn !== null && blockIndex !== -1) {
+                        // Mettre à jour le bloc dans la colonne du parent
+                        const newBlocks = blocks.map(b => {
+                          if (b.id === blockParent.id) {
+                            const updatedParent = { ...b };
+                            const columnData = updatedParent[blockColumn!] || updatedParent.data?.[blockColumn!] || [];
+                            const newColumnData = [...columnData];
+                            newColumnData[blockIndex] = updatedBlock;
+                            
+                            if (updatedParent.data) {
+                              updatedParent.data[blockColumn!] = newColumnData;
+                            } else {
+                              updatedParent[blockColumn!] = newColumnData;
+                            }
+                            return updatedParent;
+                          }
+                          return b;
+                        });
+                        setBlocks(newBlocks);
+                        setPreviewData((prev) => prev ? { ...prev, blocks: newBlocks } : prev);
+                      } else {
+                        // Mettre à jour le bloc dans la liste racine
+                        const newBlocks = blocks.map(b => 
+                          b.id === inspectorBlockId ? updatedBlock : b
+                        );
+                        setBlocks(newBlocks);
+                        setPreviewData((prev) => prev ? { ...prev, blocks: newBlocks } : prev);
+                      }
+                    }, { 
+                      compact: true,
+                      initialOpenColumn: initialOpenColumn ? (initialOpenColumn === 'leftColumn' ? 'left' : 'right') : null,
+                      initialOpenBlockId: blockParent && blockColumn ? inspectorBlockId : null
+                    })}
                   </div>
                 );
               })()}
