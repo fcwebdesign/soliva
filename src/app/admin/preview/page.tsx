@@ -178,6 +178,41 @@ export default function AdminPreviewPage() {
 
   const visibleBlocks = blocks.filter((b) => !hiddenBlockIds.has(b.id));
 
+  // Gérer les clics sur les blocs dans la preview pour ouvrir l'inspecteur
+  useEffect(() => {
+    const handleBlockClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // Chercher l'élément parent avec data-block-id
+      const blockElement = target.closest('[data-block-id]') as HTMLElement;
+      if (!blockElement) return;
+      
+      const blockId = blockElement.getAttribute('data-block-id');
+      if (!blockId) return;
+      
+      // Empêcher le comportement par défaut si on clique sur un lien ou un bouton
+      if (target.tagName === 'A' || target.tagName === 'BUTTON' || target.closest('a, button')) {
+        return;
+      }
+      
+      // Ouvrir l'inspecteur avec ce bloc
+      setSelectedBlockId(blockId);
+      setInspectorMode(true);
+      setInspectorBlockId(blockId);
+      setInspectorColumn(null);
+      
+      // Scroll vers le bloc dans la preview
+      blockElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+    
+    const previewContainer = previewPaneRef.current;
+    if (previewContainer) {
+      previewContainer.addEventListener('click', handleBlockClick);
+      return () => {
+        previewContainer.removeEventListener('click', handleBlockClick);
+      };
+    }
+  }, [blocks]);
+
   // Drag & drop outline uniquement (réorganisation locale)
   const reorderBlocks = (fromId: string, toId: string) => {
     if (fromId === toId) return;
