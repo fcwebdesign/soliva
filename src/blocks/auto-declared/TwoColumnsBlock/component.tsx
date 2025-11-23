@@ -140,12 +140,25 @@ export default function TwoColumnsBlock({ data }: { data: TwoColumnsData }) {
         );
       })()}
       <div className={`grid ${layoutClass} ${gapClass} ${alignmentClass}`} style={{ gap: gapValue }}>
-        <div className="flex flex-col" style={{ gap: gapValue }}>
-          {leftColumn.filter((block: any) => !block.hidden).map(renderSubBlock)}
-        </div>
-        <div className="flex flex-col" style={{ gap: gapValue }}>
-          {rightColumn.filter((block: any) => !block.hidden).map(renderSubBlock)}
-        </div>
+        {layout === 'right-left' ? (
+          <>
+            <div className="flex flex-col" style={{ gap: gapValue }}>
+              {rightColumn.filter((block: any) => !block.hidden).map(renderSubBlock)}
+            </div>
+            <div className="flex flex-col" style={{ gap: gapValue }}>
+              {leftColumn.filter((block: any) => !block.hidden).map(renderSubBlock)}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex flex-col" style={{ gap: gapValue }}>
+              {leftColumn.filter((block: any) => !block.hidden).map(renderSubBlock)}
+            </div>
+            <div className="flex flex-col" style={{ gap: gapValue }}>
+              {rightColumn.filter((block: any) => !block.hidden).map(renderSubBlock)}
+            </div>
+          </>
+        )}
       </div>
     </section>
   );
