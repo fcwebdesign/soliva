@@ -32,7 +32,7 @@ export default function TestimonialBlock({ data }: { data: TestimonialData | any
   // Extraire les données (peut être dans data directement ou dans data.data)
   const blockData = (data as any).data || data;
   const title = blockData.title;
-  const items = blockData.items || [];
+  const items = (blockData.items || []).filter((item: any) => !item.hidden);
   const theme = blockData.theme || 'auto';
   const columns = blockData.columns || 3;
   

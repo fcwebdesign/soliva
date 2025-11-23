@@ -5,10 +5,11 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import BlockEditor from '../components/BlockEditor';
 import BlockRenderer from '@/blocks/BlockRenderer';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, RefreshCw, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Eye, EyeOff, Save } from 'lucide-react';
 import { TemplateProvider } from '@/templates/context';
 import SommairePanel from '@/components/admin/SommairePanel';
 import { renderAutoBlockEditor } from '../components/AutoBlockIntegration';
+import { toast } from 'sonner';
 
 export const runtime = "nodejs";
 
@@ -41,6 +42,7 @@ export default function AdminPreviewPage() {
   const [inspectorMode, setInspectorMode] = useState<boolean>(false);
   const [inspectorBlockId, setInspectorBlockId] = useState<string | null>(null);
   const [inspectorColumn, setInspectorColumn] = useState<'leftColumn' | 'rightColumn' | null>(null);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
 
   // Callback depuis BlockEditor
   const handleUpdate = (data: any) => {
@@ -86,9 +88,18 @@ export default function AdminPreviewPage() {
 
         const nextTemplate = forcedTemplate || (data as any)._template || 'soliva';
         const pageBlocks = Array.isArray(pageData.blocks) ? pageData.blocks : [];
-        setInitialPageData({ ...pageData, _template: nextTemplate, blocks: pageBlocks });
-        setPreviewData({ ...pageData, _template: nextTemplate, blocks: pageBlocks });
-        setBlocks(pageBlocks);
+        
+        // Normaliser les IDs des blocs s'ils n'en ont pas
+        const normalizedBlocks = pageBlocks.map((b: any) => {
+          if (!b.id || b.id.trim() === '') {
+            return { ...b, id: `${b.type || 'block'}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}` };
+          }
+          return b;
+        });
+        
+        setInitialPageData({ ...pageData, _template: nextTemplate, blocks: normalizedBlocks });
+        setPreviewData({ ...pageData, _template: nextTemplate, blocks: normalizedBlocks });
+        setBlocks(normalizedBlocks);
         console.log('[Preview] Page chargée', pageKey, { 
           template: nextTemplate, 
           blocks: pageBlocks.length,
@@ -227,6 +238,104 @@ export default function AdminPreviewPage() {
     setSelectedBlockId(fromId);
   };
 
+  // Fonction de sauvegarde
+  const handleSave = async () => {
+    if (!adminContent || !previewData) {
+      toast.error('Données non disponibles pour la sauvegarde');
+      return;
+    }
+
+    try {
+      setSaveStatus('saving');
+      
+      // Créer une copie du contenu admin
+      const newContent = { ...adminContent };
+      
+      // Générer le HTML à partir des blocs basiques uniquement (pour compatibilité)
+      // Les blocs auto-déclarés n'ont pas besoin de HTML car ils sont rendus directement
+      const htmlContent = blocks.map(block => {
+        // Seulement pour les blocs basiques qui nécessitent du HTML
+        switch (block.type) {
+          case 'h2':
+            return block.content ? `<h2>${block.content}</h2>` : '';
+          case 'h3':
+            return block.content ? `<h3>${block.content}</h3>` : '';
+          case 'content':
+            return block.content || '';
+          case 'image':
+            // Gérer l'ancien format (image) et le nouveau (images)
+            if (block.images && Array.isArray(block.images)) {
+              return block.images.map((img: any) => 
+                img.src ? `<img src="${img.src}" alt="${img.alt || ''}" />` : ''
+              ).filter((html: string) => html).join('\n');
+            }
+            return block.image?.src ? `<img src="${block.image.src}" alt="${block.image.alt || ''}" />` : '';
+          case 'cta':
+            return (block.ctaText || block.ctaLink) ? 
+              `<div class="cta-block"><p>${block.ctaText || ''}</p><a href="${block.ctaLink || ''}" class="cta-button">En savoir plus</a></div>` : '';
+          default:
+            // Pour les blocs auto-déclarés, on ne génère pas de HTML
+            return '';
+        }
+      }).filter(html => html && typeof html === 'string' && html.trim() !== '').join('\n');
+      
+      // Mettre à jour la page dans le contenu
+      if (['home', 'contact', 'studio', 'work', 'blog'].includes(pageKey)) {
+        newContent[pageKey] = {
+          ...newContent[pageKey],
+          blocks: blocks,
+          content: htmlContent || newContent[pageKey].content, // Garder l'ancien content si pas de HTML généré
+        };
+      } else if (newContent.pages?.pages) {
+        // Pour les pages custom
+        const pageIndex = newContent.pages.pages.findIndex((p: any) => 
+          p.slug === pageKey || p.id === pageKey || p.title?.toLowerCase() === pageKey.toLowerCase()
+        );
+        if (pageIndex !== -1) {
+          newContent.pages.pages[pageIndex] = {
+            ...newContent.pages.pages[pageIndex],
+            blocks: blocks,
+            content: htmlContent || newContent.pages.pages[pageIndex].content, // Garder l'ancien content si pas de HTML généré
+          };
+        }
+      }
+      
+      // Sauvegarder via l'API
+      const response = await fetch('/api/admin/content', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ content: newContent }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`Erreur ${response.status}: ${errorData.error || response.statusText}`);
+      }
+
+      setSaveStatus('success');
+      
+      // Mettre à jour le contenu local
+      setAdminContent(newContent);
+      
+      toast.success('Page sauvegardée avec succès', {
+        description: `Les modifications de "${pageKey}" ont été enregistrées`
+      });
+      
+      // Réinitialiser le statut après 2 secondes
+      setTimeout(() => setSaveStatus('idle'), 2000);
+      
+    } catch (err) {
+      console.error('Erreur lors de la sauvegarde:', err);
+      setSaveStatus('error');
+      toast.error('Erreur lors de la sauvegarde', {
+        description: err instanceof Error ? err.message : 'Une erreur inconnue est survenue'
+      });
+      setTimeout(() => setSaveStatus('idle'), 3000);
+    }
+  };
+
   return (
     <TemplateProvider value={{ key: forcedTemplate || (initialPageData?._template || 'soliva') }}>
     <div className="flex flex-col h-screen w-full bg-gray-50" data-template={forcedTemplate || initialPageData?._template || 'soliva'}>
@@ -264,8 +373,20 @@ export default function AdminPreviewPage() {
             </select>
           </div>
           <div className="flex items-center gap-2">
-            <RefreshCw className="h-4 w-4" /> Auto-live depuis l’éditeur
+            <RefreshCw className="h-4 w-4" /> Auto-live depuis l'éditeur
           </div>
+          <Button
+            onClick={handleSave}
+            disabled={saveStatus === 'saving' || !previewData || !adminContent}
+            className={`text-sm px-4 py-2 rounded-md transition-colors flex items-center gap-2 ${
+              saveStatus === 'saving' || !previewData || !adminContent
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-blue-600 text-white hover:bg-blue-700'
+            }`}
+          >
+            <Save className="h-4 w-4" />
+            {saveStatus === 'saving' ? 'Sauvegarde...' : 'Sauvegarder'}
+          </Button>
         </div>
       </div>
 
@@ -547,6 +668,14 @@ export default function AdminPreviewPage() {
                       )}
                     </div>
                     {renderAutoBlockEditor(fullBlock, (updatedBlock) => {
+                      // S'assurer que l'ID est toujours préservé
+                      const blockIdToPreserve = block.id || inspectorBlockId;
+                      const updatedBlockWithId = {
+                        ...updatedBlock,
+                        id: updatedBlock.id || blockIdToPreserve,
+                        type: updatedBlock.type || block.type
+                      };
+                      
                       if (blockParent && blockColumn !== null && blockIndex !== -1) {
                         // Mettre à jour le bloc dans la colonne du parent
                         const newBlocks = blocks.map(b => {
@@ -554,7 +683,7 @@ export default function AdminPreviewPage() {
                             const updatedParent = { ...b };
                             const columnData = updatedParent[blockColumn!] || updatedParent.data?.[blockColumn!] || [];
                             const newColumnData = [...columnData];
-                            newColumnData[blockIndex] = updatedBlock;
+                            newColumnData[blockIndex] = updatedBlockWithId;
                             
                             if (updatedParent.data) {
                               updatedParent.data[blockColumn!] = newColumnData;
@@ -570,7 +699,7 @@ export default function AdminPreviewPage() {
                       } else {
                         // Mettre à jour le bloc dans la liste racine
                         const newBlocks = blocks.map(b => 
-                          b.id === inspectorBlockId ? updatedBlock : b
+                          b.id === blockIdToPreserve ? updatedBlockWithId : b
                         );
                         setBlocks(newBlocks);
                         setPreviewData((prev) => prev ? { ...prev, blocks: newBlocks } : prev);

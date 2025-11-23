@@ -210,11 +210,11 @@ export default function ServicesBlockEditor({ data, onChange, compact = false }:
     const offerings = [...(data.offerings || [])];
     const index = offerings.findIndex((o: any) => o.id === id);
     if (index !== -1) {
-      offerings[index] = {
-        ...offerings[index],
-        [field]: value
-      };
-      updateField('offerings', offerings);
+    offerings[index] = {
+      ...offerings[index],
+      [field]: value
+    };
+    updateField('offerings', offerings);
     }
   };
 

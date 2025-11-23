@@ -1073,7 +1073,7 @@
       {
         "id": "showcase",
         "title": "Showcase",
-        "content": "<p>editeur de texte</p>",
+        "content": "<p>editeur de texte</p>\n<img src=\"/uploads/1763913778767-4bf631e1.webp\" alt=\"\" />\n<img src=\"/uploads/1763097705460-3cad9ed7.webp\" alt=\"\" />\n<img src=\"/uploads/1763913125009-b2d36b4e.webp\" alt=\"\" />",
         "slug": "showcase",
         "status": "published",
         "description": "<p>Découvrez notre showcase, un véritable écrin de créativité !</p><p></p><p></p>",
@@ -1114,109 +1114,65 @@
           {
             "id": "gallery-grid-1762854922710",
             "type": "gallery-grid",
-            "data": {
-              "images": [
-                {
-                  "id": "image-1762943847970-0",
-                  "src": "/uploads/1762943847695-58b3bdee.webp",
-                  "alt": "",
-                  "title": "",
-                  "description": "",
-                  "category": ""
-                },
-                {
-                  "id": "image-1762943847970-1",
-                  "src": "/uploads/1762943847693-56af1277.webp",
-                  "alt": "",
-                  "title": "",
-                  "description": "",
-                  "category": ""
-                },
-                {
-                  "id": "image-1762943847970-2",
-                  "src": "/uploads/1762943847690-621fdaa2.webp",
-                  "alt": "",
-                  "title": "",
-                  "description": "",
-                  "category": ""
-                },
-                {
-                  "id": "image-1762969618383-0",
-                  "src": "/uploads/1762969617990-ca6d8543.webp",
-                  "alt": "",
-                  "title": "",
-                  "description": "",
-                  "category": ""
-                },
-                {
-                  "id": "image-1762969618383-1",
-                  "src": "/uploads/1762969617987-9c324eb9.webp",
-                  "alt": "",
-                  "title": "",
-                  "description": "",
-                  "category": ""
-                },
-                {
-                  "id": "image-1762969618383-2",
-                  "src": "/uploads/1762969617989-75fafcdf.webp",
-                  "alt": "",
-                  "title": "",
-                  "description": "",
-                  "category": ""
-                }
-              ],
-              "layout": "masonry-3",
-              "gap": "large",
-              "showFilters": true,
-              "showTitles": true,
-              "showDescriptions": true,
-              "enableLightbox": false,
-              "enableDownload": false,
-              "theme": "auto",
-              "sectionTitle": "Gallerie d'images"
-            },
             "images": [
               {
-                "id": "image-1762854931310-0",
-                "src": "/uploads/1762854930855-8b181792.webp",
+                "id": "image-1762943847970-0",
+                "src": "/uploads/1762943847695-58b3bdee.webp",
+                "alt": "",
+                "title": "Test titre",
+                "description": "Test description",
+                "category": ""
+              },
+              {
+                "id": "image-1762943847970-1",
+                "src": "/uploads/1762943847693-56af1277.webp",
                 "alt": "",
                 "title": "",
                 "description": "",
                 "category": ""
               },
               {
-                "id": "image-1762854931310-1",
-                "src": "/uploads/1762854930854-c61ab217.webp",
+                "id": "image-1762943847970-2",
+                "src": "/uploads/1762943847690-621fdaa2.webp",
                 "alt": "",
                 "title": "",
                 "description": "",
                 "category": ""
               },
               {
-                "id": "image-1762854931310-2",
-                "src": "/uploads/1762854930853-e2cd8f51.webp",
+                "id": "image-1762969618383-0",
+                "src": "/uploads/1762969617990-ca6d8543.webp",
                 "alt": "",
                 "title": "",
                 "description": "",
                 "category": ""
               },
               {
-                "id": "image-1762854931310-3",
-                "src": "/uploads/1762854930852-98caa277.webp",
+                "id": "image-1762969618383-1",
+                "src": "/uploads/1762969617987-9c324eb9.webp",
                 "alt": "",
                 "title": "",
                 "description": "",
                 "category": ""
               },
               {
-                "id": "image-1762854931310-4",
-                "src": "/uploads/1762854930856-8b984539.webp",
+                "id": "image-1762969618383-2",
+                "src": "/uploads/1762969617989-75fafcdf.webp",
                 "alt": "",
                 "title": "",
                 "description": "",
                 "category": ""
               }
-            ]
+            ],
+            "layout": "masonry-3",
+            "gap": "large",
+            "showFilters": true,
+            "showTitles": true,
+            "showDescriptions": true,
+            "enableLightbox": false,
+            "enableDownload": false,
+            "theme": "auto",
+            "sectionTitle": "Gallerie d'images"
           },
           {
             "id": "logos-1762854978502",
@@ -1273,60 +1229,41 @@
           {
             "id": "services-1762855053694",
             "type": "services",
-            "data": {
-              "title": "Nos services",
-              "theme": "auto",
-              "offerings": [
-                {
-                  "id": "service-1762947177907",
-                  "title": "Integration de 3D",
-                  "description": "<p>Faites vivre vos projets web grâce à notre service d'intégration de 3D. Transformez vos idées en réalités immersives, augmentez l'engagement de vos utilisateurs et distinguez-vous de la concurrence. Notre approche se base sur une analyse précise de vos besoins pour une intégration 3D hautement performante et visuellement impressionnante.</p>",
-                  "icon": ""
-                }
-              ]
-            },
             "title": "Nos services",
+            "theme": "auto",
             "offerings": [
               {
-                "id": "service-1762855063380",
-                "title": "Accompagnement digital",
-                "description": "<p>Boostez votre présence en ligne avec notre Accompagnement digital : une stratégie claire et une action rapide pour un impact maximum. Nous décortiquons votre marque, ciblons vos clients et optimisons votre contenu pour un retour sur investissement tangible et mesurable.</p>",
+                "id": "service-1762947177907",
+                "title": "Integration de 3D",
+                "description": "<p>Faites vivre vos projets web grâce à notre service d'intégration de 3D. Transformez vos idées en réalités immersives, augmentez l'engagement de vos utilisateurs et distinguez-vous de la concurrence. Notre approche se base sur une analyse précise de vos besoins pour une intégration 3D hautement performante et visuellement impressionnante.</p>",
                 "icon": ""
               },
               {
-                "id": "service-1762855095429",
-                "title": "Réseaux sociaux",
-                "description": "<p>Boostez votre visibilité en ligne grâce à notre service \"Réseaux sociaux\". Nous créons un contenu attrayant et engageant qui favorise les interactions et augmente votre audience. Notre méthode est basée sur une analyse approfondie de votre marque et de votre public cible pour obtenir des résultats tangibles et mesurables.</p>",
-                "icon": ""
+                "id": "service-1763913480756",
+                "title": "Hébergement et noms de domaine",
+                "description": "<p>Bénéficiez d'un hébergement web fiable et rapide, garantissant des performances optimales pour votre site. Nous vous offrons également un choix exhaustif de noms de domaine, assurant une visibilité maximale de votre marque en ligne. Un processus simplifié, sans tracas techniques.</p>",
+                "icon": "",
+                "hidden": false
               }
             ]
           },
           {
             "id": "faq-1762855140604",
             "type": "faq",
-            "data": {
-              "items": [
-                {
-                  "id": "faq-1762949368808",
-                  "question": "Nouvelle question ?",
-                  "answer": "<p>Réponse à la question...</p>"
-                }
-              ],
-              "theme": "auto",
-              "title": "Questions féquentes"
-            },
             "items": [
               {
-                "id": "faq-1762855144681",
+                "id": "faq-1762949368808",
                 "question": "Nouvelle question ?",
                 "answer": "<p>Réponse à la question...</p>"
               },
               {
-                "id": "faq-1762855147298",
-                "question": "Nouvelle question ? 2",
-                "answer": "<p>Réponse à la question... 2</p>"
+                "id": "faq-1763913443737",
+                "question": "Question Heading",
+                "answer": "<p>Detailed answer explaining the question with proper formatting support.</p>"
               }
-            ]
+            ],
+            "theme": "auto",
+            "title": "Questions féquentes"
           },
           {
             "id": "testimonial-1762855180740",
@@ -1419,7 +1356,8 @@
                     "alt": ""
                   },
                   "theme": "automation",
-                  "isExpanded": false
+                  "isExpanded": false,
+                  "id": "card-1763913112285-0"
                 },
                 {
                   "title": "Automatisation",
@@ -1431,7 +1369,8 @@
                     "alt": ""
                   },
                   "theme": "automation",
-                  "isExpanded": false
+                  "isExpanded": false,
+                  "id": "card-1763913112285-1"
                 },
                 {
                   "title": "Nouveau service",
@@ -1443,23 +1382,33 @@
                     "alt": ""
                   },
                   "theme": "automation",
-                  "isExpanded": false
+                  "isExpanded": false,
+                  "id": "card-1763913112285-2"
                 }
               ],
               "title": "Notre stack"
             }
           },
           {
-            "id": "image-1763096797102",
+            "id": "image-1763913771679-x50nmredr",
             "type": "image",
-            "data": {
-              "id": "",
-              "type": "image",
-              "image": {
+            "images": [
+              {
+                "id": "image-1763913778912",
+                "src": "/uploads/1763913778767-4bf631e1.webp",
+                "alt": ""
+              },
+              {
+                "id": "image-1763913112139",
                 "src": "/uploads/1763097705460-3cad9ed7.webp",
                 "alt": ""
+              },
+              {
+                "id": "image-1763913121530",
+                "src": "/uploads/1763913125009-b2d36b4e.webp",
+                "alt": ""
               }
-            }
+            ]
           },
           {
             "id": "two-columns-1763700830594",

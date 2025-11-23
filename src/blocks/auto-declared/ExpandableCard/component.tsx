@@ -17,6 +17,7 @@ interface CardItem {
   };
   theme?: 'automation' | 'research' | 'marketing' | 'go-to-market';
   isExpanded?: boolean;
+  hidden?: boolean;
 }
 
 interface ExpandableCardData {
@@ -178,7 +179,7 @@ export default function ExpandableCard({ data }: { data: ExpandableCardData | an
         </div>
       ) : (
         <section className="kodza-expandable">
-        {cards.map((card, index) => (
+        {cards.filter((card) => !card.hidden).map((card, index) => (
         <article
           key={index}
           className="kodza-expandable-card"

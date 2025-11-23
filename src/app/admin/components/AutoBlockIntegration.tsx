@@ -98,13 +98,24 @@ export function renderAutoBlockEditor(block: any, onUpdate?: (updates: any) => v
             // Mettre à jour le bloc avec les nouvelles données
             // Si le bloc a déjà une structure avec data, fusionner dans data
             // Sinon, fusionner directement (structure plate)
+            // IMPORTANT: Toujours préserver l'ID et le type du bloc original
             let updatedBlock: any;
             if (block.data && typeof block.data === 'object') {
               // Structure avec data : fusionner les updates dans data
-              updatedBlock = { ...block, data: { ...block.data, ...updates } };
+              updatedBlock = { 
+                ...block, 
+                id: block.id, // Préserver l'ID
+                type: block.type, // Préserver le type
+                data: { ...block.data, ...updates } 
+              };
             } else {
               // Structure plate : fusionner directement
-              updatedBlock = { ...block, ...updates };
+              updatedBlock = { 
+                ...block, 
+                id: block.id, // Préserver l'ID
+                type: block.type, // Préserver le type
+                ...updates 
+              };
             }
             if (onUpdate) onUpdate(updatedBlock);
             // Cette fonction sera appelée par le parent
