@@ -1073,7 +1073,7 @@
       {
         "id": "showcase",
         "title": "Showcase",
-        "content": "<p>editeur de texte</p>\n<img src=\"/uploads/1763913778767-4bf631e1.webp\" alt=\"\" />\n<img src=\"/uploads/1763097705460-3cad9ed7.webp\" alt=\"\" />\n<img src=\"/uploads/1763913125009-b2d36b4e.webp\" alt=\"\" />",
+        "content": "<p>editeur de texte</p>\n<img src=\"/uploads/1763913862565-f80c099b.webp\" alt=\"\" />\n<img src=\"/uploads/1763097705460-3cad9ed7.webp\" alt=\"\" />",
         "slug": "showcase",
         "status": "published",
         "description": "<p>Découvrez notre showcase, un véritable écrin de créativité !</p><p></p><p></p>",
@@ -1143,8 +1143,8 @@
                 "id": "image-1762969618383-0",
                 "src": "/uploads/1762969617990-ca6d8543.webp",
                 "alt": "",
-                "title": "",
-                "description": "",
+                "title": "hello",
+                "description": "test",
                 "category": ""
               },
               {
@@ -1167,8 +1167,8 @@
             "layout": "masonry-3",
             "gap": "large",
             "showFilters": true,
-            "showTitles": true,
-            "showDescriptions": true,
+            "showTitles": false,
+            "showDescriptions": false,
             "enableLightbox": false,
             "enableDownload": false,
             "theme": "auto",
@@ -1207,24 +1207,17 @@
           {
             "id": "projects-1762855023277",
             "type": "projects",
-            "data": {
-              "title": "Nos réalisations",
-              "maxProjects": 6,
-              "selectedProjects": [
-                "velin",
-                "projet-test",
-                "oko",
-                "projet-2"
-              ],
-              "theme": "auto",
-              "columns": 3
-            },
+            "title": "Nos réalisations",
+            "maxProjects": 6,
             "selectedProjects": [
-              "projet-2",
+              "velin",
               "projet-test",
               "oko",
-              "velin"
-            ]
+              "projet-2"
+            ],
+            "theme": "auto",
+            "columns": 3,
+            "displayMode": "carousel"
           },
           {
             "id": "services-1762855053694",
@@ -1395,51 +1388,54 @@
             "images": [
               {
                 "id": "image-1763913778912",
-                "src": "/uploads/1763913778767-4bf631e1.webp",
-                "alt": ""
+                "src": "/uploads/1763913862565-f80c099b.webp",
+                "alt": "",
+                "aspectRatio": "16:9"
               },
               {
                 "id": "image-1763913112139",
                 "src": "/uploads/1763097705460-3cad9ed7.webp",
-                "alt": ""
-              },
-              {
-                "id": "image-1763913121530",
-                "src": "/uploads/1763913125009-b2d36b4e.webp",
-                "alt": ""
+                "alt": "",
+                "aspectRatio": "16:9"
               }
             ]
           },
           {
             "id": "two-columns-1763700830594",
             "type": "two-columns",
-            "data": {
-              "leftColumn": [
-                {
-                  "id": "",
-                  "type": "image",
-                  "image": {
+            "leftColumn": [
+              {
+                "id": "image-leftColumn-1763914825017-xkqlf7zud",
+                "type": "image",
+                "images": [
+                  {
+                    "id": "image-1763914827122",
                     "src": "/uploads/1763700845701-dd914ef0.webp",
-                    "alt": ""
+                    "alt": "",
+                    "aspectRatio": "1:1"
                   }
-                }
-              ],
-              "rightColumn": [
-                {
-                  "id": "",
-                  "type": "image",
-                  "image": {
+                ]
+              }
+            ],
+            "rightColumn": [
+              {
+                "id": "image-rightColumn-1763914825017-kpibsjnzj",
+                "type": "image",
+                "images": [
+                  {
+                    "id": "image-1763914836279",
                     "src": "/uploads/1763700857196-edab0984.webp",
-                    "alt": ""
+                    "alt": "",
+                    "aspectRatio": "1:1"
                   }
-                }
-              ],
-              "layout": "left-right",
-              "gap": "medium",
-              "alignment": "top",
-              "theme": "auto",
-              "title": "Deux colonnes"
-            }
+                ]
+              }
+            ],
+            "layout": "right-left",
+            "gap": "medium",
+            "alignment": "top",
+            "theme": "auto",
+            "title": "Deux colonnes"
           },
           {
             "id": "content-1763705179307",

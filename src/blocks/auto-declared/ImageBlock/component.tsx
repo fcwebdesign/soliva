@@ -8,6 +8,7 @@ interface ImageItem {
   src: string;
   alt: string;
   hidden?: boolean;
+  aspectRatio?: string; // 'auto' | '1:1' | '1:2' | '2:3' | '3:4' | '4:5' | '9:16' | '3:2' | '4:3' | '5:4' | '16:9' | '2:1' | '4:1' | '8:1' | 'stretch'
 }
 
 interface ImageData {
@@ -61,20 +62,38 @@ export default function ImageBlock({ data }: { data: ImageData | any }) {
       data-block-theme={(data as any).theme || 'auto'}
     >
       <div className="w-full space-y-4">
-        {images.map((image: ImageItem, index: number) => (
-          <div key={image.id || `image-${index}`} className="w-full flex items-center justify-center">
-            {image.src ? (
-              <img 
-                src={image.src} 
-                alt={image.alt || ''} 
-                className="w-full h-auto max-h-[90vh] object-cover"
-                loading="eager"
-                decoding="async"
-                fetchPriority="high"
-              />
-            ) : null}
-          </div>
-        ))}
+        {images.map((image: ImageItem, index: number) => {
+          // Calculer le style selon le ratio d'aspect
+          const getImageStyle = () => {
+            if (!image.aspectRatio || image.aspectRatio === 'auto') {
+              return { className: 'w-full h-auto max-h-[90vh] object-contain' };
+            }
+            // Convertir le ratio en valeur CSS (ex: '16:9' -> '16/9')
+            const ratio = image.aspectRatio.replace(':', '/');
+            return {
+              className: 'w-full object-cover',
+              style: { aspectRatio: ratio }
+            };
+          };
+          
+          const imageStyle = getImageStyle();
+          
+          return (
+            <div key={image.id || `image-${index}`} className="w-full flex items-center justify-center">
+              {image.src ? (
+                <img 
+                  src={image.src} 
+                  alt={image.alt || ''} 
+                  className={imageStyle.className}
+                  style={imageStyle.style}
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
+                />
+              ) : null}
+            </div>
+          );
+        })}
       </div>
     </section>
   );

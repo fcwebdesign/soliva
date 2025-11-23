@@ -2,6 +2,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import MediaUploader from '@/app/admin/components/MediaUploader';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ImageIcon, Trash2, Eye, EyeOff, ImagePlus, Plus, GripVertical } from 'lucide-react';
 import {
   DndContext,
@@ -26,6 +27,7 @@ interface ImageItem {
   src: string;
   alt: string;
   hidden?: boolean;
+  aspectRatio?: string; // 'auto' | '1:1' | '1:2' | '2:3' | '3:4' | '4:5' | '9:16' | '3:2' | '4:3' | '5:4' | '16:9' | '2:1' | '4:1' | '8:1' | 'stretch'
 }
 
 interface ImageBlockEditorProps {
@@ -49,7 +51,9 @@ function SortableImageItem({
   onUpdate,
   onRemove,
   onToggleVisibility,
-  compact = false
+  compact = false,
+  openSelect,
+  onOpenSelectChange
 }: {
   image: ImageItem;
   index: number;
@@ -57,6 +61,8 @@ function SortableImageItem({
   onRemove: () => void;
   onToggleVisibility: () => void;
   compact?: boolean;
+  openSelect?: string | null;
+  onOpenSelectChange?: (value: string | null) => void;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const {
@@ -189,6 +195,54 @@ function SortableImageItem({
           className="flex-1 min-w-0 px-2 py-1.5 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors"
         />
         
+        {/* Select ratio d'aspect */}
+        <Select
+          value={image.aspectRatio || 'auto'}
+          onValueChange={(value) => {
+            onUpdate('aspectRatio', value);
+          }}
+          open={openSelect === `aspect-${index}`}
+          onOpenChange={(open) => {
+            if (onOpenSelectChange) {
+              onOpenSelectChange(open ? `aspect-${index}` : null);
+            }
+          }}
+        >
+          <SelectTrigger 
+            className="w-[75px] h-[32px] px-1.5 py-1 text-[12px] border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors shadow-none"
+            onClick={(e) => e.stopPropagation()}
+            onPointerDown={(e) => e.stopPropagation()}
+          >
+            <SelectValue placeholder="Ratio" />
+          </SelectTrigger>
+          <SelectContent 
+            className="shadow-none border rounded w-[200px]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <SelectItem value="auto" className="text-[13px] py-1.5">Auto</SelectItem>
+            <div className="px-2 py-1 text-[10px] font-semibold text-gray-500 uppercase">Square</div>
+            <SelectItem value="1:1" className="text-[13px] py-1.5">1:1</SelectItem>
+            <div className="px-2 py-1 text-[10px] font-semibold text-gray-500 uppercase">Portrait</div>
+            <div className="grid grid-cols-2 gap-0 px-1">
+              <SelectItem value="1:2" className="text-[13px] py-1.5">1:2</SelectItem>
+              <SelectItem value="2:3" className="text-[13px] py-1.5">2:3</SelectItem>
+              <SelectItem value="3:4" className="text-[13px] py-1.5">3:4</SelectItem>
+              <SelectItem value="4:5" className="text-[13px] py-1.5">4:5</SelectItem>
+              <SelectItem value="9:16" className="text-[13px] py-1.5">9:16</SelectItem>
+            </div>
+            <div className="px-2 py-1 text-[10px] font-semibold text-gray-500 uppercase">Landscape</div>
+            <div className="grid grid-cols-2 gap-0 px-1">
+              <SelectItem value="3:2" className="text-[13px] py-1.5">3:2</SelectItem>
+              <SelectItem value="4:3" className="text-[13px] py-1.5">4:3</SelectItem>
+              <SelectItem value="5:4" className="text-[13px] py-1.5">5:4</SelectItem>
+              <SelectItem value="16:9" className="text-[13px] py-1.5">16:9</SelectItem>
+              <SelectItem value="2:1" className="text-[13px] py-1.5">2:1</SelectItem>
+              <SelectItem value="4:1" className="text-[13px] py-1.5">4:1</SelectItem>
+              <SelectItem value="8:1" className="text-[13px] py-1.5">8:1</SelectItem>
+            </div>
+          </SelectContent>
+        </Select>
+        
         {/* Icônes au hover : œil et poubelle */}
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
@@ -248,6 +302,7 @@ function SortableImageItem({
 export default function ImageBlockEditor({ data, onChange, compact = false }: ImageBlockEditorProps) {
   const [isUploading, setIsUploading] = useState(false);
   const singleFileInputRef = useRef<HTMLInputElement>(null);
+  const [openSelect, setOpenSelect] = useState<string | null>(null);
   
   // Migrer l'ancienne structure (une seule image) vers la nouvelle (tableau d'images)
   useEffect(() => {
@@ -399,6 +454,8 @@ export default function ImageBlockEditor({ data, onChange, compact = false }: Im
                         onRemove={() => removeImage(index)}
                         onToggleVisibility={() => toggleImageVisibility(index)}
                         compact={true}
+                        openSelect={openSelect}
+                        onOpenSelectChange={setOpenSelect}
                       />
                     ))}
                   </SortableContext>
