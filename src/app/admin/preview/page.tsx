@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { resolvePaletteFromContent } from '@/utils/palette-resolver';
 import { resolvePalette } from '@/utils/palette';
 import { varsFromPalette } from '@/utils/palette-css';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 export const runtime = "nodejs";
 
@@ -22,9 +23,7 @@ export default function AdminPreviewPage() {
   const searchParams = useSearchParams();
   // Par défaut on cible studio (contient des blocs) pour éviter une preview vide
   const pageKey = searchParams.get('page') || 'studio';
-  const forcedTemplate = searchParams.get('template') || null;
   const [adminContent, setAdminContent] = useState<any>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState<string>(forcedTemplate || '');
 
   // Refs pour scroller vers un bloc dans l’éditeur et la preview
   const editorPaneRef = useRef<HTMLDivElement>(null);
@@ -46,7 +45,7 @@ export default function AdminPreviewPage() {
   const [inspectorBlockId, setInspectorBlockId] = useState<string | null>(null);
   const [inspectorColumn, setInspectorColumn] = useState<'leftColumn' | 'rightColumn' | null>(null);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
-  const templateKey = forcedTemplate || selectedTemplate || initialPageData?._template || 'soliva';
+  const templateKey = previewData?._template || initialPageData?._template || adminContent?._template || 'soliva';
 
   // Palette dynamique uniquement pour la preview (isole les couleurs du template actif)
   const paletteCss = useMemo(() => {
@@ -69,9 +68,28 @@ export default function AdminPreviewPage() {
       .join(' ');
   }, [previewData, initialPageData, adminContent]);
 
+  // Configurer ScrollTrigger pour utiliser le panneau de preview comme scroller
+  useEffect(() => {
+    const scroller = previewPaneRef.current;
+    if (!scroller) return;
+    try {
+      const previousDefaults = ScrollTrigger.defaults();
+      ScrollTrigger.defaults({ scroller });
+      ScrollTrigger.refresh();
+      return () => {
+        ScrollTrigger.defaults(previousDefaults || {});
+        ScrollTrigger.refresh();
+      };
+    } catch (e) {
+      // Silent fallback
+      return;
+    }
+  }, [previewPaneRef.current, blocks.length]);
+
   // Callback depuis BlockEditor
   const handleUpdate = (data: any) => {
-    setPreviewData(data);
+    const merged = adminContent?.metadata ? { ...data, metadata: adminContent.metadata } : data;
+    setPreviewData(merged);
     if (Array.isArray((data as any)?.blocks)) {
       setBlocks((data as any).blocks);
       if (!selectedBlockId && (data as any).blocks.length > 0) {
@@ -111,15 +129,15 @@ export default function AdminPreviewPage() {
           throw new Error(`Page "${pageKey}" introuvable`);
         }
 
-        const nextTemplate = forcedTemplate || (data as any)._template || 'soliva';
+        const nextTemplate = (data as any)._template || 'soliva';
         const pageBlocks = Array.isArray(pageData.blocks) ? pageData.blocks : [];
         
         const normalizedBlocks = normalizeBlocks(pageBlocks);
         
-        setInitialPageData({ ...pageData, _template: nextTemplate, blocks: normalizedBlocks });
-        setPreviewData({ ...pageData, _template: nextTemplate, blocks: normalizedBlocks });
+        const pageWithMeta = { ...pageData, _template: nextTemplate, blocks: normalizedBlocks, metadata: data.metadata };
+        setInitialPageData(pageWithMeta);
+        setPreviewData(pageWithMeta);
         setBlocks(normalizedBlocks);
-        setSelectedTemplate(nextTemplate);
         console.log('[Preview] Page chargée', pageKey, { 
           template: nextTemplate, 
           blocks: pageBlocks.length,
@@ -154,23 +172,10 @@ export default function AdminPreviewPage() {
       }
     };
     load();
-  }, [pageKey, forcedTemplate]);
-
-  const templateOptions = [
-    { value: '', label: 'Default (soliva)' },
-    { value: 'pearl', label: 'Pearl' },
-  ];
+  }, [pageKey]);
 
   const handlePageChange = (nextPage: string) => {
-    const tpl = forcedTemplate || selectedTemplate;
-    const query = tpl ? `?page=${nextPage}&template=${tpl}` : `?page=${nextPage}`;
-    router.push(`/admin/preview${query}`);
-  };
-
-  const handleTemplateChange = (nextTpl: string) => {
-    setSelectedTemplate(nextTpl);
-    const query = nextTpl ? `?page=${pageKey}&template=${nextTpl}` : `?page=${pageKey}`;
-    router.push(`/admin/preview${query}`);
+    router.push(`/admin/preview?page=${nextPage}`);
   };
 
   const scrollToBlock = (blockId: string) => {
@@ -397,17 +402,9 @@ export default function AdminPreviewPage() {
               ))}
             </select>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-gray-600">Template</span>
-            <select
-              className="border border-gray-200 rounded px-2 py-1 text-sm text-gray-700 bg-white"
-              value={forcedTemplate || selectedTemplate || initialPageData?._template || ''}
-              onChange={(e) => handleTemplateChange(e.target.value)}
-            >
-              {templateOptions.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
-              ))}
-            </select>
+          <div className="flex items-center gap-2 text-gray-600">
+            <span>Template</span>
+            <span className="px-2 py-1 text-sm rounded border border-gray-200 bg-gray-50">{templateKey || 'soliva'}</span>
           </div>
           <div className="flex items-center gap-2">
             <RefreshCw className="h-4 w-4" /> Auto-live depuis l'éditeur
