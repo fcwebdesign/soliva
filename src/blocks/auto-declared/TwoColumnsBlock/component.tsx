@@ -61,6 +61,22 @@ export default function TwoColumnsBlock({ data }: { data: TwoColumnsData }) {
 
   // Fonction optimisée pour rendre les sous-blocs
   const renderSubBlock = (subBlock: any) => {
+    // Wrapper pour ajouter data-block-id (nécessaire pour le scroll dans l'admin preview)
+    const wrapWithBlockId = (element: React.ReactElement) => {
+      if (!subBlock.id) return element;
+      return (
+        <div
+          key={subBlock.id}
+          data-block-id={subBlock.id}
+          data-block-type={subBlock.type}
+          className="relative"
+          style={{ scrollMarginTop: '96px' }}
+        >
+          {React.cloneElement(element, { key: undefined })}
+        </div>
+      );
+    };
+
     // 1) Tenter un override de template si disponible
     const TemplateComponent: any = templateRegistry[subBlock.type];
     if (TemplateComponent) {
@@ -69,7 +85,7 @@ export default function TwoColumnsBlock({ data }: { data: TwoColumnsData }) {
         'data-block-type': subBlock.type,
         'data-block-theme': blockTheme || subBlock.theme || 'auto',
       };
-      return <TemplateComponent key={subBlock.id} {...props} />;
+      return wrapWithBlockId(<TemplateComponent {...props} />);
     }
 
     // 2) Sinon, utiliser le bloc scalable auto-déclaré
@@ -83,34 +99,34 @@ export default function TwoColumnsBlock({ data }: { data: TwoColumnsData }) {
       } else if (subBlock.type === 'h2' || subBlock.type === 'h3') {
         adaptedData = { content: subBlock.content, theme: blockTheme };
       }
-      return <BlockComponent key={subBlock.id} data={adaptedData} />;
+      return wrapWithBlockId(<BlockComponent data={adaptedData} />);
     }
 
     // Fallback pour les blocs non scalables (si nécessaire)
     switch (subBlock.type) {
       case 'content':
-        return (
-          <div key={subBlock.id} className="text-black/70 leading-relaxed max-w-[68ch] mb-6" 
+        return wrapWithBlockId(
+          <div className="text-black/70 leading-relaxed max-w-[68ch] mb-6" 
                dangerouslySetInnerHTML={{ __html: subBlock.content }} />
         );
       
       case 'h2':
-        return (
-          <h2 key={subBlock.id} className="text-3xl font-bold text-gray-900 mb-6">
+        return wrapWithBlockId(
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">
             {subBlock.content}
           </h2>
         );
       
       case 'h3':
-        return (
-          <h3 key={subBlock.id} className="text-xl font-semibold text-gray-900 mb-4">
+        return wrapWithBlockId(
+          <h3 className="text-xl font-semibold text-gray-900 mb-4">
             {subBlock.content}
           </h3>
         );
       
       case 'image':
-        return (
-          <div key={subBlock.id} className="block-image">
+        return wrapWithBlockId(
+          <div className="block-image">
             <img 
               src={subBlock.image?.src} 
               alt={subBlock.image?.alt || ''} 
@@ -120,7 +136,9 @@ export default function TwoColumnsBlock({ data }: { data: TwoColumnsData }) {
         );
       
       default:
-        return <div key={subBlock.id} className="text-gray-500">Type de bloc non supporté: {subBlock.type}</div>;
+        return wrapWithBlockId(
+          <div className="text-gray-500">Type de bloc non supporté: {subBlock.type}</div>
+        );
     }
   };
   

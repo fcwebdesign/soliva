@@ -367,7 +367,13 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
             transition: 'background-color 0.2s, border-left-color 0.2s',
             paddingLeft: `${section.level === 0 ? 8 : section.level === 1 ? 25 : 25}px`
           }}
-          onClick={() => {
+          onClick={(e) => {
+            // Empêcher la propagation si on clique sur un bouton ou un élément interactif
+            const target = e.target as HTMLElement;
+            if (target.tagName === 'BUTTON' || target.closest('button')) {
+              return;
+            }
+            
             if (onSelectBlock) {
               // Pour les colonnes, passer un format spécial : blockId:columnKey
               if (section.type === 'column') {
@@ -399,7 +405,15 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
               e.currentTarget.style.backgroundColor = 'transparent';
             }
           }}
-          {...(dragListeners && section.level === 0 ? dragListeners : {})}
+          {...(dragListeners && section.level === 0 ? {
+            ...dragListeners,
+            onPointerDown: (e: React.PointerEvent) => {
+              // Ne pas activer le drag si on clique directement (sans déplacement)
+              if (dragListeners?.onPointerDown) {
+                dragListeners.onPointerDown(e as any);
+              }
+            }
+          } : {})}
         >
           {/* Flèche d'expansion - largeur fixe pour alignement */}
           <div className="w-4 h-4 flex items-center justify-center flex-shrink-0">

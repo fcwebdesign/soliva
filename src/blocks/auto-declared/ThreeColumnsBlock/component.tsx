@@ -58,9 +58,15 @@ export default function ThreeColumnsBlock({ data }: { data: ThreeColumnsData }) 
 
   // Fonction optimisée pour rendre les sous-blocs en utilisant les blocs scalables
   const renderSubBlock = (subBlock: any) => {
-    // Wrapper div pour contrôler la largeur du contenu
+    // Wrapper div pour contrôler la largeur du contenu et ajouter data-block-id (nécessaire pour le scroll dans l'admin preview)
     const blockWrapper = (content: React.ReactNode) => (
-      <div key={subBlock.id} className="w-full">
+      <div 
+        key={subBlock.id} 
+        className="w-full relative"
+        data-block-id={subBlock.id}
+        data-block-type={subBlock.type}
+        style={{ scrollMarginTop: '96px' }}
+      >
         {content}
       </div>
     );
