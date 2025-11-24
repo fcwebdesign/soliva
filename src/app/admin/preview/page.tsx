@@ -2,13 +2,14 @@
 
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import BlockEditor from '../components/BlockEditor';
 import BlockRenderer from '@/blocks/BlockRenderer';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, RefreshCw, Eye, EyeOff, Save } from 'lucide-react';
 import { TemplateProvider } from '@/templates/context';
 import SommairePanel from '@/components/admin/SommairePanel';
 import { renderAutoBlockEditor } from '../components/AutoBlockIntegration';
+import { createAutoBlockInstance } from '@/blocks/auto-declared/registry';
+import BlockSelectorSheet from '@/components/admin/BlockSelectorSheet';
 import { toast } from 'sonner';
 import { resolvePaletteFromContent } from '@/utils/palette-resolver';
 import { resolvePalette } from '@/utils/palette';
@@ -29,7 +30,7 @@ export default function AdminPreviewPage() {
   const editorPaneRef = useRef<HTMLDivElement>(null);
   const previewPaneRef = useRef<HTMLDivElement>(null);
 
-  // État local pour la preview (sera alimenté via les callbacks de BlockEditor)
+  // État local pour la preview
   const [previewData, setPreviewData] = useState<any>(null);
   const [blocks, setBlocks] = useState<any[]>([]);
   const [initialPageData, setInitialPageData] = useState<any>(null);
@@ -45,6 +46,7 @@ export default function AdminPreviewPage() {
   const [inspectorBlockId, setInspectorBlockId] = useState<string | null>(null);
   const [inspectorColumn, setInspectorColumn] = useState<'leftColumn' | 'rightColumn' | null>(null);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
+  const [isBlockSheetOpen, setIsBlockSheetOpen] = useState(false);
   const templateKey = previewData?._template || initialPageData?._template || adminContent?._template || 'soliva';
 
   // Réinitialiser la sélection/inspecteur quand on change de page
@@ -55,6 +57,21 @@ export default function AdminPreviewPage() {
     setInspectorColumn(null);
     setHoverBlockId(null);
   }, [pageKey]);
+
+  // Écouter l'événement pour ouvrir le Sheet de sélection de blocs
+  useEffect(() => {
+    const handleOpenSheet = () => {
+      console.log('📥 Événement reçu: open-inspector-add-block');
+      setIsBlockSheetOpen(true);
+      console.log('✅ Sheet de sélection de blocs ouvert');
+    };
+    
+    console.log('👂 Écouteur d\'événement installé');
+    window.addEventListener('open-inspector-add-block', handleOpenSheet);
+    return () => {
+      window.removeEventListener('open-inspector-add-block', handleOpenSheet);
+    };
+  }, []);
 
   // Palette dynamique uniquement pour la preview (isole les couleurs du template actif)
   const paletteCss = useMemo(() => {
@@ -95,7 +112,7 @@ export default function AdminPreviewPage() {
     }
   }, [previewPaneRef.current, blocks.length]);
 
-  // Callback depuis BlockEditor
+  // Callback pour mettre à jour la preview
   const handleUpdate = (data: any) => {
     const merged = adminContent?.metadata ? { ...data, metadata: adminContent.metadata } : data;
     setPreviewData(merged);
@@ -104,6 +121,42 @@ export default function AdminPreviewPage() {
       if (!selectedBlockId && (data as any).blocks.length > 0) {
         setSelectedBlockId((data as any).blocks[0].id);
       }
+    }
+  };
+
+  // Fonction pour ajouter un nouveau bloc
+  const handleAddBlock = (blockType: string) => {
+    try {
+      const newBlock = createAutoBlockInstance(blockType);
+      const newBlocks = [...blocks, newBlock];
+      const normalizedNewBlocks = normalizeBlocks(newBlocks);
+      
+      // Récupérer l'ID du dernier bloc normalisé (peut être différent après normalisation)
+      const lastBlock = normalizedNewBlocks[normalizedNewBlocks.length - 1];
+      const finalBlockId = lastBlock?.id || newBlock.id;
+      
+      setBlocks(normalizedNewBlocks);
+      setPreviewData((prev) => prev ? { ...prev, blocks: normalizedNewBlocks } : prev);
+      
+      // Sélectionner et ouvrir l'inspecteur pour le nouveau bloc (utiliser l'ID normalisé)
+      setSelectedBlockId(finalBlockId);
+      setInspectorMode(true);
+      setInspectorBlockId(finalBlockId);
+      setInspectorColumn(null);
+      
+      // Scroller vers le nouveau bloc après un court délai
+      setTimeout(() => {
+        scrollToBlock(finalBlockId);
+      }, 100);
+      
+      toast.success('Bloc ajouté', {
+        description: `Le bloc "${blockType}" a été ajouté à la page`
+      });
+    } catch (error) {
+      console.error('Erreur lors de la création du bloc:', error);
+      toast.error('Erreur', {
+        description: 'Impossible de créer le bloc. Veuillez réessayer.'
+      });
     }
   };
 
@@ -527,6 +580,7 @@ export default function AdminPreviewPage() {
                       className="border-0 bg-transparent"
                       blocks={blocks}
                       selectedBlockId={selectedBlockId || undefined}
+                      onAddBlock={handleAddBlock}
                       onSelectBlock={(id) => {
                         let targetId = id;
                         let targetColumn: 'leftColumn' | 'rightColumn' | null = null;
@@ -571,22 +625,6 @@ export default function AdminPreviewPage() {
                     />
                   </div>
                 </div>
-
-                {/* Éditeur des blocs (visuel) */}
-                {!inspectorMode && (
-                  <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
-                    <div className="px-3 py-2 border-b border-gray-200 text-[12px] font-semibold text-gray-700">
-                      Éditeur de contenu
-                    </div>
-                    <div className="p-3">
-                      <BlockEditor
-                        pageData={initialPageData}
-                        pageKey={pageKey}
-                        onUpdate={handleUpdate}
-                      />
-                    </div>
-                  </div>
-                )}
               </div>
             </>
           )}
@@ -594,9 +632,9 @@ export default function AdminPreviewPage() {
           {/* Panneau d'édition qui passe au-dessus du plan */}
           <div
             className={`visual-editor-inspector absolute inset-0 z-20 bg-white border-l border-gray-200 flex flex-col shadow-xl transform transition-transform duration-300 ease-in-out ${
-              inspectorMode && inspectorBlockId ? 'translate-x-0' : '-translate-x-full'
+              inspectorMode ? 'translate-x-0' : '-translate-x-full'
             }`}
-            style={{ pointerEvents: inspectorMode && inspectorBlockId ? 'auto' : 'none' }}
+            style={{ pointerEvents: inspectorMode ? 'auto' : 'none' }}
             onTransitionEnd={() => {
               if (!inspectorMode) {
                 // Libérer l'ID après l'anim de sortie pour éviter le flash
@@ -614,7 +652,7 @@ export default function AdminPreviewPage() {
                   ← Retour
                 </button>
                 <span className="text-sm font-semibold text-gray-900">
-                  {inspectorBlockId ? `Édition : ${inspectorBlockId}` : 'Édition'}
+                  {inspectorBlockId ? `Édition : ${inspectorBlockId}` : 'Ajouter un bloc'}
                 </span>
               </div>
               <button
@@ -626,7 +664,16 @@ export default function AdminPreviewPage() {
               </button>
             </div>
             <div className="flex-1 overflow-y-auto p-4">
-              {inspectorBlockId && (() => {
+              {!inspectorBlockId ? (
+                <div className="flex flex-col items-center justify-center h-full text-center p-8">
+                  <p className="text-sm text-gray-500 mb-4">
+                    Sélectionnez un bloc dans le plan pour l'éditer
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    Ou cliquez sur le bouton "+" pour ajouter un nouveau bloc
+                  </p>
+                </div>
+              ) : (() => {
                 console.log('🔍 Recherche du bloc:', inspectorBlockId);
                 console.log('📦 Blocs disponibles (racine):', blocks.map(b => ({ id: b.id, type: b.type })));
                 
@@ -823,6 +870,13 @@ export default function AdminPreviewPage() {
             </div>
           </div>
         </div>
+
+        {/* Sheet de sélection de blocs (composant réutilisable) */}
+        <BlockSelectorSheet
+          open={isBlockSheetOpen}
+          onOpenChange={setIsBlockSheetOpen}
+          onSelectBlock={handleAddBlock}
+        />
 
         <div
           className="flex-1 overflow-y-auto px-6 py-6 preview-pane"

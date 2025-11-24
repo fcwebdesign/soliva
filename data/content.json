@@ -520,7 +520,7 @@
       "work": "Image",
       "blog": "Coffee"
     },
-    "colorPalette": "autumn",
+    "colorPalette": "nature",
     "customPalettes": [
       {
         "id": "phare-élégant-havrais",
@@ -1071,7 +1071,7 @@
       {
         "id": "showcase",
         "title": "Showcase",
-        "content": "<p>editeur de texte</p>\n<img src=\"/uploads/1763913862565-f80c099b.webp\" alt=\"\" />\n<img src=\"/uploads/1763097705460-3cad9ed7.webp\" alt=\"\" />",
+        "content": "<p>editeur de texte</p>\n<img src=\"/uploads/1763913862565-f80c099b.webp\" alt=\"\" />\n<img src=\"/uploads/1763980744747-ee935e8f.webp\" alt=\"\" />",
         "slug": "showcase",
         "status": "published",
         "description": "<p>Découvrez notre showcase, un véritable écrin de créativité !</p><p></p><p></p>",
@@ -1396,12 +1396,6 @@
                 "src": "/uploads/1763913862565-f80c099b.webp",
                 "alt": "",
                 "aspectRatio": "16:9"
-              },
-              {
-                "id": "image-1763913112139",
-                "src": "/uploads/1763097705460-3cad9ed7.webp",
-                "alt": "",
-                "aspectRatio": "16:9"
               }
             ]
           },
@@ -1478,6 +1472,35 @@
               "theme": "auto",
               "title": "Deux colonnes"
             }
+          },
+          {
+            "id": "hero-1763967780846",
+            "type": "hero",
+            "data": {
+              "eyebrow": "test",
+              "title": "Titre principal",
+              "subtitle": "Sous-titre ou description du hero.",
+              "ctaLabel": "Découvrir",
+              "ctaHref": "#",
+              "align": "left",
+              "theme": "auto",
+              "backgroundImage": {
+                "src": "",
+                "alt": ""
+              }
+            }
+          },
+          {
+            "id": "image-1763980730945",
+            "type": "image",
+            "images": [
+              {
+                "id": "image-1763980730973",
+                "src": "/uploads/1763980744747-ee935e8f.webp",
+                "alt": "",
+                "aspectRatio": "16:9"
+              }
+            ]
           }
         ],
         "hero": {

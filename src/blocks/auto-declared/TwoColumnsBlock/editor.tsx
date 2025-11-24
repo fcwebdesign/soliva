@@ -4,8 +4,8 @@ import React, { useState, useMemo, useEffect } from 'react';
 import WysiwygEditor from '../../../components/WysiwygEditorWrapper';
 import MediaUploader from '../../../app/admin/components/MediaUploader';
 import { getAutoDeclaredBlock } from '../registry';
-import { getCategorizedBlocksForColumns } from '../../../utils/blockCategories';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '../../../components/ui/sheet';
+import BlockSelectorSheet from '../../../components/admin/BlockSelectorSheet';
+import { SheetTrigger } from '../../../components/ui/sheet';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter } from '../../../components/ui/drawer';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from '../../../components/ui/button';
@@ -126,8 +126,9 @@ export default function TwoColumnsBlockEditor({ data, onChange, compact = false,
   const [dragOverIndex, setDragOverIndex] = React.useState<number | null>(null);
   const [draggedColumn, setDraggedColumn] = React.useState<'leftColumn' | 'rightColumn' | null>(null);
   
-  // État pour le Sheet de sélection de blocs
-  const [openGroups, setOpenGroups] = React.useState<{ [key: string]: boolean }>({});
+  // État pour le Sheet de sélection de blocs (version normale)
+  const [sheetOpenNormal, setSheetOpenNormal] = React.useState(false);
+  const [selectedColumnForSheet, setSelectedColumnForSheet] = React.useState<'leftColumn' | 'rightColumn' | null>(null);
   
   // État pour le Drawer
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
@@ -306,48 +307,32 @@ export default function TwoColumnsBlockEditor({ data, onChange, compact = false,
       <div className="border border-gray-200 rounded-lg p-4">
         <div className="flex items-center justify-between mb-4">
           <h4 className="text-sm font-medium text-gray-700">{title}</h4>
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" size="sm">
-                + Ajouter un bloc
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="w-[400px] sm:w-[540px]">
-              <SheetHeader>
-                <SheetTitle>Choisir un type de bloc</SheetTitle>
-              </SheetHeader>
-              
-              <div className="space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto mt-6">
-                {Object.entries(getCategorizedBlocksForColumns()).map(([categoryName, categoryBlocks]) => (
-                  <div key={categoryName} className="mb-6">
-                    <button
-                      onClick={() => setOpenGroups(prev => ({ ...prev, [categoryName]: !prev[categoryName] }))}
-                      className="flex w-full items-center justify-between rounded-lg bg-neutral-100/70 px-3 py-2 text-sm font-semibold mb-3"
-                    >
-                      <span>{categoryName}</span>
-                      <ChevronDown className={`h-4 w-4 transition-transform ${openGroups[categoryName] ? "rotate-180" : "rotate-0"}`} />
-                    </button>
-                    
-                    {openGroups[categoryName] && (
-                      <div className="grid grid-cols-2 gap-3 p-3">
-                        {categoryBlocks.map((block) => (
-                          <SheetTrigger asChild key={block.type}>
-                            <button
-                              onClick={() => addBlockToColumn(column, block.type)}
-                              className="relative flex h-28 flex-col items-center justify-center gap-2 rounded-xl border bg-white p-3 text-center transition-shadow outline-none hover:shadow-sm focus-visible:ring"
-                            >
-                              {block.preview}
-                              <span className="text-[13px] leading-tight">{block.label}</span>
-                            </button>
-                          </SheetTrigger>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </SheetContent>
-          </Sheet>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => {
+              setSelectedColumnForSheet(column);
+              setSheetOpenNormal(true);
+            }}
+          >
+            + Ajouter un bloc
+          </Button>
+          
+          {/* Sheet de sélection de blocs (composant réutilisable) */}
+          {selectedColumnForSheet === column && (
+            <BlockSelectorSheet
+              open={sheetOpenNormal}
+              onOpenChange={(open) => {
+                setSheetOpenNormal(open);
+                if (!open) setSelectedColumnForSheet(null);
+              }}
+              onSelectBlock={(blockType) => {
+                addBlockToColumn(column, blockType);
+                setSheetOpenNormal(false);
+                setSelectedColumnForSheet(null);
+              }}
+            />
+          )}
         </div>
         
         <div className="space-y-3">
@@ -788,43 +773,12 @@ export default function TwoColumnsBlockEditor({ data, onChange, compact = false,
           </div>
         </div>
 
-        {/* Sheet pour choisir le type de bloc */}
-        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-          <SheetContent className="w-[90vw] sm:w-[400px]">
-            <SheetHeader>
-              <SheetTitle className="text-[13px]">Choisir un type de bloc</SheetTitle>
-            </SheetHeader>
-            
-            <div className="space-y-4 max-h-[calc(100vh-150px)] overflow-y-auto mt-4">
-              {Object.entries(getCategorizedBlocksForColumns()).map(([categoryName, categoryBlocks]) => (
-                <div key={categoryName}>
-                  <button
-                    onClick={() => setOpenGroups(prev => ({ ...prev, [categoryName]: !prev[categoryName] }))}
-                    className="flex w-full items-center justify-between rounded-lg bg-gray-100 px-2 py-1.5 text-[13px] font-medium mb-2"
-                  >
-                    <span>{categoryName}</span>
-                    <ChevronDown className={`h-3 w-3 transition-transform ${openGroups[categoryName] ? "rotate-180" : "rotate-0"}`} />
-                  </button>
-                  
-                  {openGroups[categoryName] && (
-                    <div className="grid grid-cols-2 gap-2 p-2">
-                      {categoryBlocks.map((block) => (
-                        <button
-                          key={block.type}
-                          onClick={() => handleSelectBlock(block.type)}
-                          className="flex flex-col items-center justify-center gap-1 rounded-lg border border-gray-200 bg-white p-2 text-center transition-colors hover:border-blue-400 hover:bg-blue-50"
-                        >
-                          {block.preview}
-                          <span className="text-[11px] leading-tight">{block.label}</span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </SheetContent>
-        </Sheet>
+        {/* Sheet pour choisir le type de bloc (composant réutilisable) */}
+        <BlockSelectorSheet
+          open={sheetOpen}
+          onOpenChange={setSheetOpen}
+          onSelectBlock={handleSelectBlock}
+        />
       </div>
     );
   }
@@ -938,6 +892,24 @@ export default function TwoColumnsBlockEditor({ data, onChange, compact = false,
           </div>
         </DrawerContent>
       </Drawer>
+      
+      {/* Sheet de sélection de blocs pour la version normale (composant réutilisable) */}
+      {selectedColumnForSheet && (
+        <BlockSelectorSheet
+          open={sheetOpenNormal}
+          onOpenChange={(open) => {
+            setSheetOpenNormal(open);
+            if (!open) setSelectedColumnForSheet(null);
+          }}
+          onSelectBlock={(blockType) => {
+            if (selectedColumnForSheet) {
+              addBlockToColumn(selectedColumnForSheet, blockType);
+              setSheetOpenNormal(false);
+              setSelectedColumnForSheet(null);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }

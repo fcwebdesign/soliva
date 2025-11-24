@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -41,15 +41,18 @@ import {
   Container,
   Square,
   X,
-  Info
+  Info,
+  Plus
 } from 'lucide-react';
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
   DropdownMenuItem, 
   DropdownMenuTrigger,
-  DropdownMenuSeparator 
+  DropdownMenuSeparator,
+  DropdownMenuLabel
 } from "@/components/ui/dropdown-menu";
+import { getCategorizedBlocks } from '@/utils/blockCategories';
 import { 
   HoverCard, 
   HoverCardContent, 
@@ -147,6 +150,7 @@ interface SommairePanelProps {
   onDeleteBlock?: (blockId: string) => void;
   onDuplicateBlock?: (blockId: string) => void;
   onReorderBlocks?: (newBlocks: any[]) => void;
+  onAddBlock?: (blockType: string) => void;
   renderAction?: (section: Section) => React.ReactNode;
 }
 
@@ -186,7 +190,7 @@ function SortableItem({
   );
 }
 
-export default function SommairePanel({ className = "", blocks = [], onSelectBlock, selectedBlockId, onDeleteBlock, onDuplicateBlock, onReorderBlocks, renderAction }: SommairePanelProps) {
+export default function SommairePanel({ className = "", blocks = [], onSelectBlock, selectedBlockId, onDeleteBlock, onDuplicateBlock, onReorderBlocks, onAddBlock, renderAction }: SommairePanelProps) {
   
   // Fonction pour gérer les actions sur les sections
   const handleSectionAction = (action: string, section: Section) => {
@@ -290,6 +294,14 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
   const [sectionsState, setSectionsState] = useState<Section[]>(sections);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   
+  // Mettre à jour sectionsState quand blocks change
+  useEffect(() => {
+    const newSections = blocks.length > 0 ? blocks.map((block, index) => 
+      analyzeBlockStructure(block, 0)
+    ) : mockSections;
+    setSectionsState(newSections);
+  }, [blocks]);
+  
   // Configuration des capteurs pour dnd-kit avec contraintes d'activation
   const mouseSensor = useSensor(PointerSensor, {
     activationConstraint: { distance: 6 }, // drag uniquement si on bouge la souris
@@ -311,11 +323,17 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
   const toggleExpanded = (sectionId: string) => {
     setExpandedSections(prev => {
       const newSet = new Set(prev);
-      if (newSet.has(sectionId)) {
+      const isCurrentlyOpen = newSet.has(sectionId);
+      
+      if (isCurrentlyOpen) {
+        // Fermer cette section
         newSet.delete(sectionId);
       } else {
+        // Ouvrir cette section et fermer toutes les autres (accordéon)
+        newSet.clear();
         newSet.add(sectionId);
       }
+      
       return newSet;
     });
   };
@@ -546,22 +564,49 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
         style={{ borderColor: 'var(--admin-border)' }}
       >
         <h2 className="text-sm font-medium ml-2" style={{ color: 'var(--admin-text)' }}>Structure</h2>
-        <button 
-          onClick={() => {
-            // Fermer le Sheet parent
-            const closeEvent = new CustomEvent('close-sheet');
-            window.dispatchEvent(closeEvent);
-          }}
-          className="p-1 rounded transition-colors"
-          style={{ 
-            backgroundColor: 'transparent',
-            transition: 'background-color 0.2s'
-          }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-        >
-          <X className="w-4 h-4" style={{ color: 'var(--admin-text)' }} />
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Bouton Ajouter un bloc */}
+          {onAddBlock && (
+            <button
+              type="button"
+              className="p-1.5 rounded transition-colors flex items-center gap-1.5"
+              style={{ 
+                backgroundColor: 'var(--admin-bg-hover)',
+                transition: 'background-color 0.2s',
+                color: 'var(--admin-text)'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--admin-bg-active)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'}
+              title="Ajouter un bloc"
+              onClick={(e) => {
+                e.stopPropagation();
+                console.log('🔘 Bouton + cliqué dans SommairePanel');
+                // Déclencher un événement personnalisé pour ouvrir l'inspecteur
+                const event = new CustomEvent('open-inspector-add-block');
+                window.dispatchEvent(event);
+                console.log('📤 Événement dispatché:', event.type);
+              }}
+            >
+              <Plus className="w-3.5 h-3.5" />
+            </button>
+          )}
+          <button 
+            onClick={() => {
+              // Fermer le Sheet parent
+              const closeEvent = new CustomEvent('close-sheet');
+              window.dispatchEvent(closeEvent);
+            }}
+            className="p-1 rounded transition-colors"
+            style={{ 
+              backgroundColor: 'transparent',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+          >
+            <X className="w-4 h-4" style={{ color: 'var(--admin-text)' }} />
+          </button>
+        </div>
       </div>
 
       {/* Liste des sections avec dnd-kit */}
