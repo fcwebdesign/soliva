@@ -37,6 +37,7 @@ const iconMap: Record<string, LucideIcon> = {
   testimonial: Quote,
   faq: List,
   'expandable-card': List,
+  'page-intro': FileText,
 };
 
 const iconClass = "h-7 w-7 text-gray-600";

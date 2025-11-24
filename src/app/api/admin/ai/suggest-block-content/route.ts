@@ -142,6 +142,13 @@ export async function POST(request: NextRequest) {
           IMPORTANT: Retourne uniquement le JSON valide, sans explications.`;
         }
         break;
+      case 'page-intro':
+        blockInstructions = `Génère UNIQUEMENT la description de la page (2-3 phrases).
+        CRITIQUE: Ne répète JAMAIS le titre dans la description. Commence directement par la description.
+        La description doit être cohérente avec le titre fourni dans le contexte, mais ne doit pas le répéter.
+        Style: professionnel, direct, informatif.
+        IMPORTANT: Retourne uniquement la description, sans le titre ni aucune mention du titre.`;
+        break;
       default:
         blockInstructions = `Génère du contenu clair et approprié pour ce type de bloc.`;
     }

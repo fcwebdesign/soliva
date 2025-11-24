@@ -85,6 +85,7 @@ export function renderAutoBlockEditor(block: any, onUpdate?: (updates: any) => v
   const compact = context?.compact || false;
   const initialOpenColumn = context?.initialOpenColumn || null;
   const initialOpenBlockId = context?.initialOpenBlockId || null;
+  const editorContext = context?.context || context; // Passer le contexte pour l'IA
 
   return (
     <div className="block-editor">
@@ -92,6 +93,7 @@ export function renderAutoBlockEditor(block: any, onUpdate?: (updates: any) => v
         <autoBlock.editor
           data={blockData}
           compact={compact}
+          context={editorContext}
           initialOpenColumn={initialOpenColumn}
           initialOpenBlockId={initialOpenBlockId}
           onChange={(updates: any) => {

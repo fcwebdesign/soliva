@@ -8,7 +8,7 @@ registerAutoBlock({
   editor: PageIntroBlockEditor,
   label: 'Intro Page',
   icon: '📄',
-  category: 'layout',
+  category: 'content',
   description: 'Titre et description de la page (lit automatiquement les métadonnées)',
   defaultData: {
     title: '',

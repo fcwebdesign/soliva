@@ -1,4 +1,7 @@
+"use client";
 import React, { useState } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import WysiwygEditor from '../../../components/WysiwygEditorWrapper';
 
 interface PageIntroData {
   title?: string;
@@ -6,19 +9,50 @@ interface PageIntroData {
   layout?: 'default' | 'two-columns';
 }
 
-export default function PageIntroBlockEditor({ data, onChange }: { data: PageIntroData; onChange: (data: PageIntroData) => void }) {
+export default function PageIntroBlockEditor({ data, onChange, compact = false, context }: { data: PageIntroData; onChange: (data: PageIntroData) => void; compact?: boolean; context?: any }) {
   const [isLoadingBlockAI, setIsLoadingBlockAI] = useState<string | null>(null);
+  const [openSelect, setOpenSelect] = useState(false);
 
-  const getBlockContentSuggestion = async (field: 'title' | 'description') => {
-    setIsLoadingBlockAI(field);
+  const getBlockContentSuggestion = async () => {
+    setIsLoadingBlockAI('description');
     try {
+      // Construire le contexte à partir des données disponibles
+      let contextText = 'Description de page';
+      
+      // PRIORITÉ 1 : Utiliser le titre saisi dans le bloc (le plus récent)
+      if (data.title && data.title.trim()) {
+        contextText += `. Titre de la page: "${data.title.trim()}". Génère une description cohérente et pertinente pour cette page.`;
+      }
+      
+      if (context) {
+        // Ajouter le contexte du site/domaine si disponible
+        if (context.metadata?.title) {
+          contextText += `. Site: ${context.metadata.title}`;
+        }
+        
+        // Ajouter la description du site si disponible
+        if (context.metadata?.description) {
+          contextText += `. Description du site: "${context.metadata.description}"`;
+        }
+        
+        // Ajouter le titre de la page si disponible (fallback si pas de titre dans le bloc)
+        if (!data.title && (context.title || context.hero?.title)) {
+          contextText += `. Titre de la page actuelle: "${context.title || context.hero?.title}"`;
+        }
+        
+        // Ajouter la description si disponible
+        if (context.description || context.hero?.description) {
+          contextText += `. Description de la page actuelle: "${context.description || context.hero?.description}"`;
+        }
+      }
+
       const response = await fetch('/api/admin/ai/suggest-block-content', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           blockType: 'page-intro',
-          pageKey: field,
-          context: field === 'title' ? 'Titre de page' : 'Description de page'
+          pageKey: 'description',
+          context: contextText
         })
       });
 
@@ -30,17 +64,68 @@ export default function PageIntroBlockEditor({ data, onChange }: { data: PageInt
 
       onChange({ 
         ...data, 
-        [field]: responseData.suggestedContent 
+        description: responseData.suggestedContent 
       });
       
     } catch (error: any) {
-      console.error(`Erreur suggestion ${field} IA:`, error);
+      console.error('Erreur suggestion description IA:', error);
       alert(`❌ Erreur: ${error.message}`);
     } finally {
       setIsLoadingBlockAI(null);
     }
   };
 
+  // Version compacte pour l'éditeur visuel
+  if (compact) {
+    return (
+      <div className="block-editor">
+        <div className="space-y-2">
+          <div>
+            <label className="block text-[10px] text-gray-400 mb-1">Titre</label>
+            <input
+              type="text"
+              value={data.title || ''}
+              onChange={(e) => onChange({ ...data, title: e.target.value })}
+              placeholder="Laisser vide pour utiliser le titre de la page"
+              className="w-full px-2 py-1.5 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[10px] text-gray-400 mb-1">Description</label>
+            <WysiwygEditor
+              value={data.description || ''}
+              onChange={(content: string) => onChange({ ...data, description: content })}
+              placeholder="Laisser vide pour utiliser la description de la page"
+              onAISuggestion={getBlockContentSuggestion}
+              isLoadingAI={isLoadingBlockAI === 'description'}
+              compact={true}
+            />
+          </div>
+
+          <div>
+            <label className="block text-[10px] text-gray-400 mb-1">Layout</label>
+            <Select 
+              value={data.layout || 'default'} 
+              onValueChange={(value) => onChange({ ...data, layout: value as 'default' | 'two-columns' })}
+              open={openSelect}
+              onOpenChange={setOpenSelect}
+            >
+              <SelectTrigger className="w-full h-auto px-2 py-1.5 text-[13px] leading-normal font-normal shadow-none rounded">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="shadow-none border rounded">
+                <SelectItem value="default">Par défaut (adaptatif)</SelectItem>
+                <SelectItem value="two-columns">2 colonnes</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Version normale pour le BO classique
   return (
     <div className="block-editor space-y-4">
       <div className="text-sm text-gray-600 mb-3">
@@ -50,20 +135,7 @@ export default function PageIntroBlockEditor({ data, onChange }: { data: PageInt
       
       {/* Titre */}
       <div>
-        <div className="flex items-center gap-2 mb-2">
-          <label className="text-sm font-medium text-gray-700">Titre</label>
-          <button
-            onClick={() => getBlockContentSuggestion('title')}
-            disabled={isLoadingBlockAI === 'title'}
-            className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
-              isLoadingBlockAI === 'title' 
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600'
-            }`}
-          >
-            {isLoadingBlockAI === 'title' ? '🤖...' : '🤖 IA'}
-          </button>
-        </div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Titre</label>
         <input
           type="text"
           value={data.title || ''}
@@ -76,41 +148,32 @@ export default function PageIntroBlockEditor({ data, onChange }: { data: PageInt
 
       {/* Description */}
       <div>
-        <div className="flex items-center gap-2 mb-2">
-          <label className="text-sm font-medium text-gray-700">Description</label>
-          <button
-            onClick={() => getBlockContentSuggestion('description')}
-            disabled={isLoadingBlockAI === 'description'}
-            className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
-              isLoadingBlockAI === 'description' 
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600'
-            }`}
-          >
-            {isLoadingBlockAI === 'description' ? '🤖...' : '🤖 IA'}
-          </button>
-        </div>
-        <textarea
+        <WysiwygEditor
           value={data.description || ''}
-          onChange={(e) => onChange({ ...data, description: e.target.value })}
+          onChange={(content: string) => onChange({ ...data, description: content })}
           placeholder="Laisser vide pour utiliser la description de la page"
-          rows={3}
-          className="block-input w-full"
+          onAISuggestion={getBlockContentSuggestion}
+          isLoadingAI={isLoadingBlockAI === 'description'}
+          compact={false}
         />
         <p className="text-xs text-gray-500 mt-1">Laisser vide pour utiliser automatiquement la description de la page</p>
       </div>
 
       {/* Layout */}
       <div>
-        <label className="text-sm font-medium text-gray-700 mb-2 block">Layout</label>
-        <select
-          value={data.layout || 'default'}
-          onChange={(e) => onChange({ ...data, layout: e.target.value as 'default' | 'two-columns' })}
-          className="block-input w-full"
+        <label className="block text-sm font-medium text-gray-700 mb-2">Layout</label>
+        <Select 
+          value={data.layout || 'default'} 
+          onValueChange={(value) => onChange({ ...data, layout: value as 'default' | 'two-columns' })}
         >
-          <option value="default">Par défaut (adaptatif selon template)</option>
-          <option value="two-columns">2 colonnes (titre gauche, description droite)</option>
-        </select>
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="default">Par défaut (adaptatif selon template)</SelectItem>
+            <SelectItem value="two-columns">2 colonnes (titre gauche, description droite)</SelectItem>
+          </SelectContent>
+        </Select>
         <p className="text-xs text-gray-500 mt-1">
           "Par défaut" : layout adaptatif selon le template (Pearl = 2 colonnes, autres = centré)
         </p>

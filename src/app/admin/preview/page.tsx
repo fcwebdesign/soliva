@@ -861,6 +861,7 @@ export default function AdminPreviewPage() {
                       }
                     }, { 
                       compact: true,
+                      context: previewData, // Passer le contexte pour l'IA
                       initialOpenColumn: initialOpenColumn ? (initialOpenColumn === 'leftColumn' ? 'left' : 'right') : null,
                       initialOpenBlockId: blockParent && blockColumn ? inspectorBlockId : null
                     })}
@@ -892,13 +893,13 @@ export default function AdminPreviewPage() {
             >
               {visibleBlocks.length > 0 && previewData ? (
                 <div className={`${templateKey === 'pearl' ? '' : 'site'} p-4`}>
-                    <BlockRenderer
-                      blocks={visibleBlocks as any}
-                      content={previewData}
-                      withDebugIds
-                      highlightBlockId={(hoverBlockId || selectedBlockId) || undefined}
-                    />
-                  </div>
+                  <BlockRenderer
+                    blocks={visibleBlocks as any}
+                    content={previewData}
+                    withDebugIds
+                    highlightBlockId={(hoverBlockId || selectedBlockId) || undefined}
+                  />
+                </div>
               ) : (
                 <div className="p-4">
                   <div className="text-sm text-gray-500 text-center py-16 space-y-2">

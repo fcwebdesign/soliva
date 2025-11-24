@@ -477,42 +477,14 @@ export default function PearlClient() {
               <BlogPearl content={content?.blog} fullContent={content} />
             ) : (
               <>
-                {/* Hero - toujours affiché si présent */}
-                {(pageData?.hero?.title || pageData?.title || pageData?.hero?.subtitle || pageData?.description) && (
-                  <div className="py-10">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
-                      {/* Titre à gauche */}
-                      <div className="text-left">
-                    <h1 
-                          className={h1Classes}
-                      style={h1CustomColor ? { color: h1CustomColor } : undefined}
-                    >
-                      {pageData?.hero?.title || pageData?.title || 'Page'}
-                    </h1>
-                      </div>
-                      
-                      {/* Description à droite, alignée à droite et en bas */}
-                    {pageData?.hero?.subtitle || pageData?.description ? (
-                        <div className="text-left md:text-right">
-                      <div
-                            className={`max-w-2xl md:ml-auto ${pClasses}`}
-                            style={pCustomColor ? { color: pCustomColor } : { color: 'var(--foreground)' }}
-                        dangerouslySetInnerHTML={{ __html: pageData?.hero?.subtitle || pageData?.description }}
-                      />
-                        </div>
-                    ) : null}
-                    </div>
-                  </div>
-                )}
-                
                 {/* Blocs - affichés s'ils existent */}
                 {Array.isArray(pageData?.blocks) && pageData.blocks.length > 0 ? (
                   <BlockRenderer blocks={pageData.blocks} content={fullContent || metadata} />
-                ) : !(pageData?.hero?.title || pageData?.title || pageData?.hero?.subtitle || pageData?.description) ? (
+                ) : (
                   <div className="bg-muted rounded-lg p-8">
                     <p className="text-muted-foreground">Ajoute des blocs depuis l'admin pour cette page.</p>
                   </div>
-                ) : null}
+                )}
               </>
             )}
           </main>

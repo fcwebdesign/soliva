@@ -1077,6 +1077,13 @@
         "description": "<p>Découvrez notre showcase, un véritable écrin de créativité !</p><p></p><p></p>",
         "blocks": [
           {
+            "id": "page-intro-1763985269843",
+            "type": "page-intro",
+            "title": "réalisation 3D",
+            "description": "<p>Parcourez une sélection de scènes 3D conçues pour sublimer des univers mode, luxe et culture. Chaque rendu est optimisé en Next.js, animé avec GSAP, et pensé pour la performance mesurée (Core Web Vitals) et le SEO. Nous intégrons de l’IA utile au workflow pour accélérer la production sans sacrifier l’exigence visuelle.</p>",
+            "layout": "default"
+          },
+          {
             "id": "contact-1762854772936",
             "type": "contact",
             "data": {

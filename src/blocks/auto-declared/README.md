@@ -52,25 +52,116 @@ export default function MonBlocComponent({ titre, couleur }: Props) {
 
 ### editor.tsx (optionnel - sinon interface générique)
 ```typescript
-export default function MonBlocEditor({ data, onChange }) {
+"use client";
+import React, { useState } from 'react';
+import WysiwygEditor from '../../../components/WysiwygEditorWrapper';
+
+export default function MonBlocEditor({ 
+  data, 
+  onChange, 
+  compact = false,  // ⚠️ TOUJOURS ajouter le support compact
+  context 
+}: { 
+  data: MonBlocData; 
+  onChange: (data: MonBlocData) => void; 
+  compact?: boolean;  // ⚠️ Mode compact pour l'éditeur visuel
+  context?: any;      // Contexte pour l'IA
+}) {
+  const [isLoadingBlockAI, setIsLoadingBlockAI] = useState<string | null>(null);
+
+  // Fonction pour l'IA (si besoin de contenu riche)
+  const getBlockContentSuggestion = async (field: string) => {
+    setIsLoadingBlockAI(field);
+    try {
+      const response = await fetch('/api/admin/ai/suggest-block-content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          blockType: 'mon-bloc',
+          pageKey: field,
+          context: `Contexte pour ${field}`
+        })
+      });
+      const responseData = await response.json();
+      if (!response.ok) throw new Error(responseData.error || 'Erreur API');
+      onChange({ ...data, [field]: responseData.suggestedContent });
+    } catch (error: any) {
+      alert(`❌ Erreur: ${error.message}`);
+    } finally {
+      setIsLoadingBlockAI(null);
+    }
+  };
+
   return (
-    <div className="space-y-4">
+    <div className="block-editor space-y-4">
+      {/* Pour les champs texte simples */}
       <input
         value={data.titre}
         onChange={(e) => onChange({ ...data, titre: e.target.value })}
         placeholder="Titre"
-        className="w-full p-2 border rounded"
+        className="block-input w-full"
       />
-      <input
-        type="color"
-        value={data.couleur}
-        onChange={(e) => onChange({ ...data, couleur: e.target.value })}
-        className="w-16 h-10"
+      
+      {/* Pour les champs texte riche : TOUJOURS utiliser WysiwygEditor avec compact */}
+      <WysiwygEditor
+        value={data.description || ''}
+        onChange={(content: string) => onChange({ ...data, description: content })}
+        placeholder="Description..."
+        onAISuggestion={() => getBlockContentSuggestion('description')}
+        isLoadingAI={isLoadingBlockAI === 'description'}
+        compact={compact}  // ⚠️ TOUJOURS passer compact
       />
     </div>
   );
 }
 ```
+
+## 🎯 Conventions importantes pour les nouveaux blocs
+
+### ⚠️ Mode Compact (OBLIGATOIRE)
+**Tous les nouveaux blocs DOIVENT supporter le mode compact** pour être cohérents dans l'éditeur visuel :
+
+```typescript
+export default function MonBlocEditor({ 
+  data, 
+  onChange, 
+  compact = false,  // ⚠️ TOUJOURS ajouter
+  context 
+}: { 
+  data: MonBlocData; 
+  onChange: (data: MonBlocData) => void; 
+  compact?: boolean;  // ⚠️ Mode compact pour l'éditeur visuel
+  context?: any;      // Contexte pour l'IA
+}) {
+  // ...
+}
+```
+
+### 📝 Tiptap avec IA (pour contenu riche)
+**Pour tous les champs de texte riche, utiliser `WysiwygEditor` avec IA** :
+
+```typescript
+import WysiwygEditor from '../../../components/WysiwygEditorWrapper';
+
+<WysiwygEditor
+  value={data.description || ''}
+  onChange={(content: string) => onChange({ ...data, description: content })}
+  placeholder="Description..."
+  onAISuggestion={() => getBlockContentSuggestion('description')}
+  isLoadingAI={isLoadingBlockAI === 'description'}
+  compact={compact}  // ⚠️ TOUJOURS passer compact
+/>
+```
+
+### ✅ Checklist pour un nouveau bloc
+
+- [ ] Support du paramètre `compact = false` dans l'éditeur
+- [ ] Utilisation de `WysiwygEditor` pour les champs texte riche
+- [ ] Intégration de l'IA avec `onAISuggestion` et `isLoadingAI`
+- [ ] Passage de `compact={compact}` à tous les composants enfants
+- [ ] Support du paramètre `context` pour enrichir les suggestions IA
+- [ ] Catégorie appropriée (`text`, `layout`, `media`, `content`, `interactive`, `data`)
+- [ ] Icône dans `blockCategories.tsx` si nécessaire
 
 ## Avantages
 
@@ -79,3 +170,5 @@ export default function MonBlocEditor({ data, onChange }) {
 - ✅ **Compatible** avec votre admin existant
 - ✅ **Interface d'édition** personnalisable
 - ✅ **Type-safe** avec TypeScript
+- ✅ **Mode compact** pour cohérence visuelle
+- ✅ **IA intégrée** pour génération de contenu
