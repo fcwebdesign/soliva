@@ -59,16 +59,22 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   const content = await loadTemplateMetadata();
   const { isEnabled: isDraftMode } = await draftMode();
   const activeTemplate = await getActiveTemplate();
+  const headersList = await headers();
+  const pathname = headersList.get('x-pathname') || '';
+  const searchParams = headersList.get('x-search-params') || '';
+  const urlParams = new URLSearchParams(searchParams);
+  const forcedTemplate = urlParams.get('template');
+
   const palette = resolvePaletteFromContent(content);
-  const { themeClass } = generatePaletteStyles(palette);
+  const { css: paletteCss, themeClass } = generatePaletteStyles(palette);
   const spacingConfig = getSpacingConfig(content);
   
   // Vérifier si on est sur une route d'admin
-  const headersList = await headers();
-  const pathname = headersList.get('x-pathname') || '';
   const isAdminRoute = pathname.startsWith('/admin') || 
                       pathname.startsWith('/debug-template') || 
                       pathname.startsWith('/apply-template');
+  const isPreviewRoute = pathname.startsWith('/admin/preview');
+  const adminTemplateKey = isPreviewRoute ? (forcedTemplate || content._template || 'soliva') : 'soliva';
   
   // Ne pas utiliser de template autonome sur les routes d'admin
   const isAutonomous = !!activeTemplate?.autonomous && !isAdminRoute;
@@ -78,20 +84,24 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   if (isAdminRoute) {
     return (
       <ViewTransitions>
-        <html lang="fr" className={`${isDraftMode ? 'preview-mode' : ''}`} data-template="soliva">
+        <html 
+          lang="fr" 
+          className={`${isDraftMode ? 'preview-mode' : ''} ${isPreviewRoute ? (themeClass || '') : ''}`} 
+          data-template={adminTemplateKey}
+        >
           <head>
-            <meta name="cache-control" content="no-cache, no-store, must-revalidate" />
-            <meta name="pragma" content="no-cache" />
-            <meta name="expires" content="0" />
+          <meta name="cache-control" content="no-cache, no-store, must-revalidate" />
+          <meta name="pragma" content="no-cache" />
+          <meta name="expires" content="0" />
           {/* Pas de palette pour l'admin, mais on injecte tout de même les variables d'espacement */}
           <style id="spacing-vars">{spacingVarsCSS(spacingConfig)}</style>
           </head>
-          <body className={`site layout-${content.metadata?.layout || 'standard'} ${isDraftMode ? 'preview-mode' : ''}`}>
+          <body className={`${isPreviewRoute && adminTemplateKey === 'pearl' ? '' : 'site'} layout-${content.metadata?.layout || 'standard'} ${isDraftMode ? 'preview-mode' : ''}`}>
             <Preloader />
             <TransitionGuard />
             <ScrollRestoration />
             <ScrollTriggerCleanup />
-            <TemplateProvider value={{ key: 'soliva' }}>
+            <TemplateProvider value={{ key: adminTemplateKey }}>
               {/* Per-template page transitions (no-op for admin since key=soliva) */}
               <ThemeTransitions />
               <NavWrapper initialContent={{...content.nav, hiddenSystem: (content as any)?.pages?.hiddenSystem || []}} />

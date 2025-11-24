@@ -520,7 +520,7 @@
       "work": "Image",
       "blog": "Coffee"
     },
-    "colorPalette": "winter",
+    "colorPalette": "autumn",
     "customPalettes": [
       {
         "id": "phare-élégant-havrais",
@@ -687,29 +687,27 @@
     "hero": {
       "title": "About us."
     },
-    "content": "",
+    "content": "<img src=\"/uploads/1763705071367-c45d1097.webp\" alt=\"\" />",
     "blocks": [
       {
         "id": "image-1763705064111",
         "type": "image",
-        "data": {
-          "id": "",
-          "type": "image",
-          "image": {
+        "images": [
+          {
+            "id": "image-1763915414807",
             "src": "/uploads/1763705071367-c45d1097.webp",
-            "alt": ""
+            "alt": "",
+            "aspectRatio": "16:9"
           }
-        }
+        ]
       },
       {
         "id": "contact-1763705096762",
         "type": "contact",
-        "data": {
-          "title": "xcwxwxxcw",
-          "ctaText": "yes",
-          "ctaLink": "/contact",
-          "theme": "auto"
-        }
+        "title": "You want a demo ?",
+        "ctaText": "yes",
+        "ctaLink": "/contact",
+        "theme": "auto"
       }
     ],
     "title": "Studio pearl",
@@ -1040,7 +1038,7 @@
       {
         "id": "test-page",
         "title": "Test page",
-        "content": "",
+        "content": "<img src=\"/uploads/1763705268949-a6bd497f.webp\" alt=\"\" />",
         "slug": "test-page",
         "status": "published",
         "description": "<p>Description de la page de test </p>",
@@ -1048,14 +1046,14 @@
           {
             "id": "image-1763705263025",
             "type": "image",
-            "data": {
-              "id": "",
-              "type": "image",
-              "image": {
+            "images": [
+              {
+                "id": "image-1763915474910",
                 "src": "/uploads/1763705268949-a6bd497f.webp",
-                "alt": ""
+                "alt": "",
+                "aspectRatio": "16:9"
               }
-            }
+            ]
           },
           {
             "id": "content-1763706598572",
@@ -1216,7 +1214,7 @@
               "projet-2"
             ],
             "theme": "auto",
-            "columns": 3,
+            "columns": 2,
             "displayMode": "carousel"
           },
           {
@@ -1252,7 +1250,14 @@
               {
                 "id": "faq-1763913443737",
                 "question": "Question Heading",
-                "answer": "<p>Detailed answer explaining the question with proper formatting support.</p>"
+                "answer": "<p>Detailed answer explaining the question with proper formatting support.</p>",
+                "hidden": false
+              },
+              {
+                "id": "faq-1763915803249",
+                "question": "Question Heading",
+                "answer": "<p>Detailed answer explaining the question with proper formatting support.</p>",
+                "hidden": false
               }
             ],
             "theme": "auto",
@@ -1405,12 +1410,12 @@
             "type": "two-columns",
             "leftColumn": [
               {
-                "id": "image-leftColumn-1763914825017-xkqlf7zud",
+                "id": "image-leftColumn-1763928193452-i445gvzmh",
                 "type": "image",
                 "images": [
                   {
-                    "id": "image-1763914827122",
-                    "src": "/uploads/1763700845701-dd914ef0.webp",
+                    "id": "image-1763928195461",
+                    "src": "/uploads/1763928205212-24b2d760.webp",
                     "alt": "",
                     "aspectRatio": "1:1"
                   }
@@ -1433,15 +1438,45 @@
             ],
             "layout": "right-left",
             "gap": "medium",
-            "alignment": "top",
+            "alignment": "center",
             "theme": "auto",
-            "title": "Deux colonnes"
-          },
-          {
-            "id": "content-1763705179307",
-            "type": "content",
+            "title": "Deux colonnes",
             "data": {
-              "content": "<p>Nous concevons des sites Next.js rapides, stables et simples à gérer. Core Web Vitals maîtrisés, SEO mesurable, animations GSAP fluides sans sacrifier la performance. IA utile intégrée au CMS pour accélérer la rédaction, la traduction et la mise à jour des fiches produits.</p>"
+              "id": "two-columns-1763700830594",
+              "type": "two-columns",
+              "leftColumn": [
+                {
+                  "id": "image-leftColumn-1763928193452-i445gvzmh",
+                  "type": "image",
+                  "images": [
+                    {
+                      "id": "image-1763928195461",
+                      "src": "/uploads/1763928205212-24b2d760.webp",
+                      "alt": "",
+                      "aspectRatio": "1:1"
+                    }
+                  ]
+                }
+              ],
+              "rightColumn": [
+                {
+                  "id": "image-rightColumn-1763914825017-kpibsjnzj",
+                  "type": "image",
+                  "images": [
+                    {
+                      "id": "image-1763914836279",
+                      "src": "/uploads/1763700857196-edab0984.webp",
+                      "alt": "",
+                      "aspectRatio": "1:1"
+                    }
+                  ]
+                }
+              ],
+              "layout": "right-left",
+              "gap": "medium",
+              "alignment": "center",
+              "theme": "auto",
+              "title": "Deux colonnes"
             }
           }
         ],

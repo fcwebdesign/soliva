@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import BlockEditor from '../components/BlockEditor';
 import BlockRenderer from '@/blocks/BlockRenderer';
@@ -10,6 +10,9 @@ import { TemplateProvider } from '@/templates/context';
 import SommairePanel from '@/components/admin/SommairePanel';
 import { renderAutoBlockEditor } from '../components/AutoBlockIntegration';
 import { toast } from 'sonner';
+import { resolvePaletteFromContent } from '@/utils/palette-resolver';
+import { resolvePalette } from '@/utils/palette';
+import { varsFromPalette } from '@/utils/palette-css';
 
 export const runtime = "nodejs";
 
@@ -43,6 +46,28 @@ export default function AdminPreviewPage() {
   const [inspectorBlockId, setInspectorBlockId] = useState<string | null>(null);
   const [inspectorColumn, setInspectorColumn] = useState<'leftColumn' | 'rightColumn' | null>(null);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
+  const templateKey = forcedTemplate || selectedTemplate || initialPageData?._template || 'soliva';
+
+  // Palette dynamique uniquement pour la preview (isole les couleurs du template actif)
+  const paletteCss = useMemo(() => {
+    // Utiliser les métadonnées complètes si disponibles pour récupérer la palette
+    const paletteSource = (() => {
+      if (previewData && (previewData as any).metadata) return previewData;
+      if (adminContent && (adminContent as any).metadata) {
+        // Fusionner la page preview avec les métadonnées complètes pour les variables de palette
+        return { ...(previewData || {}), ...(initialPageData || {}), metadata: adminContent.metadata };
+      }
+      if (initialPageData && (initialPageData as any).metadata) return initialPageData;
+      return adminContent || {};
+    })();
+
+    const palette = resolvePaletteFromContent(paletteSource || {});
+    const resolved = resolvePalette(palette);
+    const vars = varsFromPalette(resolved);
+    return Object.entries(vars)
+      .map(([k, v]) => `${k}: ${v};`)
+      .join(' ');
+  }, [previewData, initialPageData, adminContent]);
 
   // Callback depuis BlockEditor
   const handleUpdate = (data: any) => {
@@ -94,6 +119,7 @@ export default function AdminPreviewPage() {
         setInitialPageData({ ...pageData, _template: nextTemplate, blocks: normalizedBlocks });
         setPreviewData({ ...pageData, _template: nextTemplate, blocks: normalizedBlocks });
         setBlocks(normalizedBlocks);
+        setSelectedTemplate(nextTemplate);
         console.log('[Preview] Page chargée', pageKey, { 
           template: nextTemplate, 
           blocks: pageBlocks.length,
@@ -347,8 +373,9 @@ export default function AdminPreviewPage() {
   };
 
   return (
-    <TemplateProvider value={{ key: forcedTemplate || (initialPageData?._template || 'soliva') }}>
-    <div className="flex flex-col h-screen w-full bg-gray-50" data-template={forcedTemplate || initialPageData?._template || 'soliva'}>
+    <TemplateProvider value={{ key: templateKey }}>
+    <div className="flex flex-col h-screen w-full bg-gray-50" data-template={templateKey}>
+      <style>{`.preview-pane { ${paletteCss} }`}</style>
       {/* Toolbar simple */}
       <div className="px-4 py-2 border-b border-gray-200 bg-white flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
@@ -374,7 +401,7 @@ export default function AdminPreviewPage() {
             <span className="text-gray-600">Template</span>
             <select
               className="border border-gray-200 rounded px-2 py-1 text-sm text-gray-700 bg-white"
-              value={forcedTemplate || selectedTemplate}
+              value={forcedTemplate || selectedTemplate || initialPageData?._template || ''}
               onChange={(e) => handleTemplateChange(e.target.value)}
             >
               {templateOptions.map((o) => (
@@ -419,7 +446,7 @@ export default function AdminPreviewPage() {
                   Page: <span className="text-gray-600">{pageKey}</span>
                 </div>
                 <div className="text-xs text-gray-500">
-                  Template: <strong>{forcedTemplate || (initialPageData?._template || 'soliva')}</strong>
+                  Template: <strong>{templateKey}</strong>
                 </div>
               </div>
 
@@ -726,15 +753,20 @@ export default function AdminPreviewPage() {
           </div>
         </div>
 
-        <div className="flex-1 bg-slate-100 overflow-y-auto px-6 py-6" ref={previewPaneRef}>
+        <div
+          className="flex-1 overflow-y-auto px-6 py-6 preview-pane"
+          ref={previewPaneRef}
+        >
           <div className="max-w-6xl mx-auto space-y-3">
             <div className="text-sm text-gray-600 flex items-center justify-between">
               <span>Preview</span>
               <span className="text-xs text-gray-500">{blocks.length} bloc{blocks.length > 1 ? 's' : ''}</span>
             </div>
-            <div className="bg-white border border-gray-200 rounded-lg shadow-sm min-h-[240px] overflow-hidden">
+            <div
+              className="rounded-lg shadow-sm min-h-[240px] overflow-hidden border bg-[color:var(--card,var(--bg,#fff))] border-[color:var(--border,#e5e7eb)]"
+            >
               {visibleBlocks.length > 0 && previewData ? (
-                <div className="site p-4">
+                <div className={`${templateKey === 'pearl' ? '' : 'site'} p-4`}>
                     <BlockRenderer
                       blocks={visibleBlocks as any}
                       content={previewData}
@@ -746,7 +778,7 @@ export default function AdminPreviewPage() {
                 <div className="p-4">
                   <div className="text-sm text-gray-500 text-center py-16 space-y-2">
                     <div>{loading ? 'Chargement...' : error ? `Erreur: ${error}` : 'Ajoute un bloc dans la colonne de gauche pour prévisualiser.'}</div>
-                    <div className="text-xs">Page: {pageKey} · Template: {forcedTemplate || (initialPageData?._template || 'soliva')}</div>
+                    <div className="text-xs">Page: {pageKey} · Template: {templateKey}</div>
                     <div className="text-xs">Blocs visibles: {visibleBlocks.length} / {blocks.length}</div>
                   </div>
                 </div>
