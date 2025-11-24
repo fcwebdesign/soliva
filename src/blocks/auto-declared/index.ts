@@ -14,6 +14,7 @@ import './ImageBlock';
 import './LogosBlock';
 import './ProjectsBlock';
 import './QuoteBlock';
+import './HeroBlock';
 import './ServicesBlock';
 import './TestimonialBlock';
 import './ThreeColumnsBlock';
@@ -24,4 +25,4 @@ import './TwoColumnsBlock';
 // 2. Exécuter: npm run generate-blocks
 // 3. C'est tout !
 
-// 16 blocs auto-déclarés disponibles
+// 17 blocs auto-déclarés disponibles

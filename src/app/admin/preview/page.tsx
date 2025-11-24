@@ -47,6 +47,15 @@ export default function AdminPreviewPage() {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   const templateKey = previewData?._template || initialPageData?._template || adminContent?._template || 'soliva';
 
+  // Réinitialiser la sélection/inspecteur quand on change de page
+  useEffect(() => {
+    setSelectedBlockId(null);
+    setInspectorMode(false);
+    setInspectorBlockId(null);
+    setInspectorColumn(null);
+    setHoverBlockId(null);
+  }, [pageKey]);
+
   // Palette dynamique uniquement pour la preview (isole les couleurs du template actif)
   const paletteCss = useMemo(() => {
     // Utiliser les métadonnées complètes si disponibles pour récupérer la palette
@@ -175,6 +184,12 @@ export default function AdminPreviewPage() {
   }, [pageKey]);
 
   const handlePageChange = (nextPage: string) => {
+    // Fermer l'inspecteur et nettoyer la sélection avant navigation
+    setInspectorMode(false);
+    setInspectorBlockId(null);
+    setInspectorColumn(null);
+    setSelectedBlockId(null);
+    setHoverBlockId(null);
     router.push(`/admin/preview?page=${nextPage}`);
   };
 
