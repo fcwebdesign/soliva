@@ -139,6 +139,7 @@ export default function FAQBlock({ data }: { data: FAQBlockData | any }) {
       className="faq-block"
       data-block-type="faq"
       data-block-theme={theme || 'auto'}
+      style={{ color: 'var(--foreground)' }}
     >
       <div className="space-y-4">
         {/* Titre de la section */}
@@ -192,6 +193,7 @@ export default function FAQBlock({ data }: { data: FAQBlockData | any }) {
               >
                 <div 
                   className="pb-6 prose prose-lg max-w-none"
+                  style={{ color: 'var(--foreground)' }}
                   dangerouslySetInnerHTML={{ __html: item.answer }}
                 />
               </div>
@@ -202,4 +204,3 @@ export default function FAQBlock({ data }: { data: FAQBlockData | any }) {
     </section>
   );
 }
-
