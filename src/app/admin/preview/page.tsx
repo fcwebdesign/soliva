@@ -196,36 +196,6 @@ export default function AdminPreviewPage() {
   const scrollToBlock = (blockId: string, alignToTop: boolean = false) => {
     setSelectedBlockId(blockId);
 
-    const scrollWithin = (container: HTMLElement, el: HTMLElement) => {
-      const containerRect = container.getBoundingClientRect();
-      const elRect = el.getBoundingClientRect();
-      
-      // Calculer la position relative de l'élément par rapport au container
-      const elementTopRelativeToContainer = elRect.top - containerRect.top + container.scrollTop;
-      const elementCenter = elementTopRelativeToContainer + (elRect.height / 2);
-      const containerCenter = container.scrollTop + (container.clientHeight / 2);
-      
-      // Calculer l'offset pour centrer l'élément
-      const offset = elementCenter - containerCenter;
-      const targetScrollTop = container.scrollTop + offset;
-      
-      console.log('📏 [scrollToBlock] Calcul offset:', { 
-        elementTopRelativeToContainer,
-        elementCenter,
-        containerCenter,
-        offset,
-        currentScrollTop: container.scrollTop,
-        targetScrollTop,
-        containerHeight: container.clientHeight,
-        elementHeight: elRect.height
-      });
-      
-      container.scrollTo({ 
-        top: Math.max(0, Math.min(targetScrollTop, container.scrollHeight - container.clientHeight)), 
-        behavior: 'smooth' 
-      });
-    };
-
     const highlight = (container: HTMLElement | null, containerName: string) => {
       if (!container) return;
       
@@ -242,56 +212,48 @@ export default function AdminPreviewPage() {
       const el = searchContainer.querySelector<HTMLElement>(selector);
       if (!el) return;
       
-      // Scroll doux vers l'élément dans le container scrollable
-      try {
-        // Pour previewPane, utiliser le container parent qui a overflow-y-auto
-        const scrollContainer = containerName === 'previewPane' ? container : container;
+      // Pour previewPane, utiliser le container parent qui a overflow-y-auto
+      const scrollContainer = containerName === 'previewPane' ? container : container;
+      
+      if (alignToTop && containerName === 'previewPane') {
+        // Pour alignToTop (clic direct), utiliser un scroll manuel direct
+        const containerRect = scrollContainer.getBoundingClientRect();
+        const elRect = el.getBoundingClientRect();
+        const elementTopInContainer = elRect.top - containerRect.top + scrollContainer.scrollTop;
+        const targetScrollTop = elementTopInContainer - 20; // 20px d'offset depuis le haut
+        scrollContainer.scrollTo({ 
+          top: Math.max(0, Math.min(targetScrollTop, scrollContainer.scrollHeight - scrollContainer.clientHeight)), 
+          behavior: 'smooth' 
+        });
+      } else {
+        // Pour le scroll centré (sommaire), utiliser scrollIntoView
+        el.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center', 
+          inline: 'nearest',
+          // @ts-ignore - scrollMode est une option expérimentale mais utile
+          scrollMode: 'if-needed'
+        });
         
-        if (alignToTop && containerName === 'previewPane') {
-          // Pour alignToTop, utiliser un scroll manuel direct pour éviter les conflits avec ScrollTrigger
+        // Vérifier après un délai si le scroll a fonctionné et corriger si nécessaire
+        setTimeout(() => {
           const containerRect = scrollContainer.getBoundingClientRect();
           const elRect = el.getBoundingClientRect();
-          const elementTopInContainer = elRect.top - containerRect.top + scrollContainer.scrollTop;
-          // Scroller pour mettre l'élément en haut avec un petit offset
-          const targetScrollTop = elementTopInContainer - 20; // 20px d'offset depuis le haut
-          scrollContainer.scrollTo({ 
-            top: Math.max(0, Math.min(targetScrollTop, scrollContainer.scrollHeight - scrollContainer.clientHeight)), 
-            behavior: 'smooth' 
-          });
-        } else {
-          // Pour le scroll centré, utiliser scrollIntoView
-          el.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center', 
-            inline: 'nearest',
-            // @ts-ignore - scrollMode est une option expérimentale mais utile
-            scrollMode: 'if-needed'
-          });
+          const isVisible = elRect.top >= containerRect.top && elRect.bottom <= containerRect.bottom;
           
-          // Vérifier après un délai si le scroll a fonctionné et corriger si nécessaire
-          setTimeout(() => {
-            const containerRect = scrollContainer.getBoundingClientRect();
-            const elRect = el.getBoundingClientRect();
-            const isVisible = elRect.top >= containerRect.top && elRect.bottom <= containerRect.bottom;
-            
-            // Si l'élément n'est pas visible, essayer un scroll manuel
-            if (!isVisible && containerName === 'previewPane') {
-              const elementTopInContainer = elRect.top - containerRect.top + scrollContainer.scrollTop;
-              const elementCenter = elementTopInContainer + (elRect.height / 2);
-              const viewportCenter = scrollContainer.scrollTop + (scrollContainer.clientHeight / 2);
-              const scrollDelta = elementCenter - viewportCenter;
-              const targetScrollTop = scrollContainer.scrollTop + scrollDelta;
-              scrollContainer.scrollTo({ 
-                top: Math.max(0, Math.min(targetScrollTop, scrollContainer.scrollHeight - scrollContainer.clientHeight)), 
-                behavior: 'smooth' 
-              });
-            }
-          }, 400);
-        }
-        
-      } catch (error) {
-        // Fallback : scrollIntoView global
-        el.scrollIntoView({ behavior: 'smooth', block: alignToTop ? 'start' : 'center', inline: 'nearest' });
+          // Si l'élément n'est pas visible, essayer un scroll manuel
+          if (!isVisible && containerName === 'previewPane') {
+            const elementTopInContainer = elRect.top - containerRect.top + scrollContainer.scrollTop;
+            const elementCenter = elementTopInContainer + (elRect.height / 2);
+            const viewportCenter = scrollContainer.scrollTop + (scrollContainer.clientHeight / 2);
+            const scrollDelta = elementCenter - viewportCenter;
+            const targetScrollTop = scrollContainer.scrollTop + scrollDelta;
+            scrollContainer.scrollTo({ 
+              top: Math.max(0, Math.min(targetScrollTop, scrollContainer.scrollHeight - scrollContainer.clientHeight)), 
+              behavior: 'smooth' 
+            });
+          }
+        }, 400);
       }
       el.classList.add('ring', 'ring-blue-200');
       setTimeout(() => el.classList.remove('ring', 'ring-blue-200'), 900);
