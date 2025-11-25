@@ -610,55 +610,57 @@ export default function TwoColumnsBlockEditor({ data, onChange, compact = false,
             />
           </div>
 
-          <div>
-            <label className="block text-[10px] text-gray-400 mb-1">Layout</label>
-            <Select 
-              value={data.layout || 'left-right'} 
-              onValueChange={(value) => updateField('layout', value)}
-            >
-              <SelectTrigger className="w-full h-auto px-2 py-1.5 text-[13px] leading-normal font-normal shadow-none rounded">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="shadow-none border rounded">
-                <SelectItem value="left-right">Gauche → Droite</SelectItem>
-                <SelectItem value="right-left">Droite → Gauche</SelectItem>
-                <SelectItem value="stacked-mobile">Empilé mobile</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <div className="grid grid-cols-3 gap-2">
+            <div>
+              <label className="block text-[10px] text-gray-400 mb-1">Layout</label>
+              <Select 
+                value={data.layout || 'left-right'} 
+                onValueChange={(value) => updateField('layout', value)}
+              >
+                <SelectTrigger className="w-full h-auto px-2 py-1.5 text-[13px] leading-normal font-normal shadow-none rounded">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="shadow-none border rounded">
+                  <SelectItem value="left-right">Gauche → Droite</SelectItem>
+                  <SelectItem value="right-left">Droite → Gauche</SelectItem>
+                  <SelectItem value="stacked-mobile">Empilé mobile</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-          <div>
-            <label className="block text-[10px] text-gray-400 mb-1">Espacement</label>
-            <Select 
-              value={data.gap || 'medium'} 
-              onValueChange={(value) => updateField('gap', value)}
-            >
-              <SelectTrigger className="w-full h-auto px-2 py-1.5 text-[13px] leading-normal font-normal shadow-none rounded">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="shadow-none border rounded">
-                <SelectItem value="small">Petit</SelectItem>
-                <SelectItem value="medium">Moyen</SelectItem>
-                <SelectItem value="large">Grand</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+            <div>
+              <label className="block text-[10px] text-gray-400 mb-1">Espacement</label>
+              <Select 
+                value={data.gap || 'medium'} 
+                onValueChange={(value) => updateField('gap', value)}
+              >
+                <SelectTrigger className="w-full h-auto px-2 py-1.5 text-[13px] leading-normal font-normal shadow-none rounded">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="shadow-none border rounded">
+                  <SelectItem value="small">Petit</SelectItem>
+                  <SelectItem value="medium">Moyen</SelectItem>
+                  <SelectItem value="large">Grand</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-          <div>
-            <label className="block text-[10px] text-gray-400 mb-1">Alignement</label>
-            <Select 
-              value={data.alignment || 'top'} 
-              onValueChange={(value) => updateField('alignment', value)}
-            >
-              <SelectTrigger className="w-full h-auto px-2 py-1.5 text-[13px] leading-normal font-normal shadow-none rounded">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="shadow-none border rounded">
-                <SelectItem value="top">Haut</SelectItem>
-                <SelectItem value="center">Centre</SelectItem>
-                <SelectItem value="bottom">Bas</SelectItem>
-              </SelectContent>
-            </Select>
+            <div>
+              <label className="block text-[10px] text-gray-400 mb-1">Alignement</label>
+              <Select 
+                value={data.alignment || 'top'} 
+                onValueChange={(value) => updateField('alignment', value)}
+              >
+                <SelectTrigger className="w-full h-auto px-2 py-1.5 text-[13px] leading-normal font-normal shadow-none rounded">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="shadow-none border rounded">
+                  <SelectItem value="top">Haut</SelectItem>
+                  <SelectItem value="center">Centre</SelectItem>
+                  <SelectItem value="bottom">Bas</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           {/* Colonnes en accordéon */}

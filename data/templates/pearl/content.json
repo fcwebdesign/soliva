@@ -551,7 +551,7 @@
     "scrollAnimations": {
       "enabled": true,
       "global": {
-        "type": "blur-in",
+        "type": "fade-in-up",
         "duration": 1,
         "delay": 0,
         "stagger": 0,
@@ -560,7 +560,7 @@
       },
       "blocks": {
         "GalleryGridBlock": {
-          "type": "blur-in",
+          "type": "fade-in-up",
           "duration": 1,
           "delay": 0,
           "stagger": 0,
@@ -568,7 +568,7 @@
           "threshold": 0.3
         },
         "LogosBlock": {
-          "type": "blur-in",
+          "type": "fade-in-up",
           "duration": 1,
           "delay": 0,
           "stagger": 0,
@@ -576,7 +576,7 @@
           "threshold": 0.3
         },
         "ImageBlock": {
-          "type": "blur-in",
+          "type": "fade-in-up",
           "duration": 1,
           "delay": 0,
           "stagger": 0,
@@ -584,7 +584,7 @@
           "threshold": 0.3
         },
         "FaqBlock": {
-          "type": "blur-in",
+          "type": "fade-in-up",
           "duration": 1,
           "delay": 0,
           "stagger": 0,
@@ -592,7 +592,7 @@
           "threshold": 0.3
         },
         "TestimonialBlock": {
-          "type": "blur-in",
+          "type": "fade-in-up",
           "duration": 1,
           "delay": 0,
           "stagger": 0,
@@ -600,7 +600,7 @@
           "threshold": 0.3
         },
         "ContactBlock": {
-          "type": "blur-in",
+          "type": "fade-in-up",
           "duration": 1,
           "delay": 0,
           "stagger": 0,
@@ -608,7 +608,7 @@
           "threshold": 0.3
         },
         "ExpandableCardBlock": {
-          "type": "blur-in",
+          "type": "fade-in-up",
           "duration": 1,
           "delay": 0,
           "stagger": 0,
@@ -616,7 +616,7 @@
           "threshold": 0.3
         },
         "H2Block": {
-          "type": "blur-in",
+          "type": "fade-in-up",
           "duration": 1,
           "delay": 0,
           "stagger": 0,
@@ -624,7 +624,7 @@
           "threshold": 0.3
         },
         "ServicesBlock": {
-          "type": "blur-in",
+          "type": "fade-in-up",
           "duration": 1,
           "delay": 0,
           "stagger": 0,
@@ -632,6 +632,14 @@
           "threshold": 0.3
         },
         "ContentBlock": {
+          "type": "fade-in-up",
+          "duration": 1,
+          "delay": 0,
+          "stagger": 0,
+          "easing": "power4.out",
+          "threshold": 0.3
+        },
+        "PageIntroBlock": {
           "type": "blur-in",
           "duration": 1,
           "delay": 0,
@@ -1371,7 +1379,7 @@
           {
             "id": "three-columns-1764073677045",
             "type": "three-columns",
-            "title": "",
+            "title": "Trois colonnes",
             "leftColumn": [
               {
                 "id": "image-leftColumn-1764073706819-pq37sso85",
@@ -1416,7 +1424,7 @@
           {
             "id": "four-columns-1764073920374",
             "type": "four-columns",
-            "title": "",
+            "title": "Quatre colonnes",
             "column1": [
               {
                 "id": "image-column1-1764073943150-cksl2i57f",
