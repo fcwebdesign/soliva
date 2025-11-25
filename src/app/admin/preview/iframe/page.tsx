@@ -219,7 +219,7 @@ export default function PreviewIframePage() {
     loadInitialData();
   }, [searchParams]);
 
-  // Gérer les clics sur les blocs pour sélection
+  // Gérer les clics sur les blocs pour sélection et scroll
   useEffect(() => {
     const handleBlockClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -238,6 +238,29 @@ export default function PreviewIframePage() {
           // Highlight visuel local
           setHighlightBlockId(blockId);
           setTimeout(() => setHighlightBlockId(null), 900);
+          
+          // Scroller vers le haut du bloc
+          requestAnimationFrame(() => {
+            setTimeout(() => {
+              const element = document.querySelector(`[data-block-id="${blockId}"]`) as HTMLElement;
+              if (element) {
+                const scrollMarginTop = parseInt(window.getComputedStyle(element).scrollMarginTop) || 96;
+                const elementRect = element.getBoundingClientRect();
+                const viewportTop = window.pageYOffset || document.documentElement.scrollTop;
+                const elementTop = elementRect.top + viewportTop;
+                const target = Math.max(0, elementTop - scrollMarginTop);
+                
+                try {
+                  window.scrollTo({ 
+                    top: target, 
+                    behavior: 'smooth' 
+                  });
+                } catch (e) {
+                  window.scrollTo(0, target);
+                }
+              }
+            }, 50);
+          });
         }
       }
     };
