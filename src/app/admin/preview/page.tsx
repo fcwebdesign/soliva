@@ -952,8 +952,8 @@ export default function AdminPreviewPage() {
           {/* Header de la preview */}
           <div className="px-6 py-3 border-b border-gray-200 bg-white flex items-center justify-between">
             <span className="text-sm text-gray-600">Preview</span>
-            <span className="text-xs text-gray-500">{blocks.length} bloc{blocks.length > 1 ? 's' : ''}</span>
-          </div>
+              <span className="text-xs text-gray-500">{blocks.length} bloc{blocks.length > 1 ? 's' : ''}</span>
+            </div>
           
           {/* Iframe pour la preview isolée (responsive correct) */}
           <iframe
@@ -973,13 +973,13 @@ export default function AdminPreviewPage() {
             <div className="max-w-6xl mx-auto space-y-3">
               {visibleBlocks.length > 0 && previewData ? (
                 <div className={`${templateKey === 'pearl' ? '' : 'site'} p-4`}>
-                  <BlockRenderer
-                    blocks={visibleBlocks as any}
-                    content={previewData}
-                    withDebugIds
-                    highlightBlockId={(hoverBlockId || selectedBlockId) || undefined}
-                  />
-                </div>
+                    <BlockRenderer
+                      blocks={visibleBlocks as any}
+                      content={previewData}
+                      withDebugIds
+                      highlightBlockId={(hoverBlockId || selectedBlockId) || undefined}
+                    />
+                  </div>
               ) : (
                 <div className="p-4">
                   <div className="text-sm text-gray-500 text-center py-16 space-y-2">

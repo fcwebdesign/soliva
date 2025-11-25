@@ -645,12 +645,12 @@
   "nav": {
     "logo": "Pearl",
     "items": [
-      "studio",
       "contact",
       "blog",
       "work",
       "showcase",
-      "test-page"
+      "test-page",
+      "nouvelle-page"
     ],
     "location": "paris, le havre",
     "logoImage": "",
@@ -662,9 +662,14 @@
         "url": "custom",
         "customUrl": "",
         "target": "_blank"
+      },
+      "custom-1764065869500": {
+        "title": "Nouveau lien",
+        "url": "custom",
+        "customUrl": "",
+        "target": "_blank"
       }
-    },
-    "headerVariant": "classic"
+    }
   },
   "home": {
     "hero": {
@@ -866,7 +871,15 @@
       }
     ],
     "title": "Projets pearl",
-    "blocks": [],
+    "blocks": [
+      {
+        "id": "page-intro-1764065496334",
+        "type": "page-intro",
+        "title": "Projets",
+        "description": "<p>Découvrez une sélection de réalisations conçues pour être rapides, accessibles et faciles à maintenir. Sites Next.js animés avec GSAP, optimisés pour la performance, les Core Web Vitals et le SEO, avec de l’IA utile intégrée au CMS. Mesurez l’impact, voyez la différence visuelle d’un Creative Developer senior.</p>",
+        "layout": "default"
+      }
+    ],
     "columns": 2,
     "customSlug": ""
   },
@@ -1098,6 +1111,23 @@
         "status": "published",
         "description": "<p>Découvrez notre showcase, un véritable écrin de créativité !</p><p></p><p></p>",
         "blocks": [
+          {
+            "id": "hero-1763967780846",
+            "type": "hero",
+            "data": {
+              "eyebrow": "test",
+              "title": "Titre principal",
+              "subtitle": "Sous-titre ou description du hero.",
+              "ctaLabel": "Découvrir",
+              "ctaHref": "#",
+              "align": "left",
+              "theme": "auto",
+              "backgroundImage": {
+                "src": "",
+                "alt": ""
+              }
+            }
+          },
           {
             "id": "page-intro-1763985269843",
             "type": "page-intro",
@@ -1503,23 +1533,6 @@
             }
           },
           {
-            "id": "hero-1763967780846",
-            "type": "hero",
-            "data": {
-              "eyebrow": "test",
-              "title": "Titre principal",
-              "subtitle": "Sous-titre ou description du hero.",
-              "ctaLabel": "Découvrir",
-              "ctaHref": "#",
-              "align": "left",
-              "theme": "auto",
-              "backgroundImage": {
-                "src": "",
-                "alt": ""
-              }
-            }
-          },
-          {
             "id": "image-1763980730945",
             "type": "image",
             "images": [
@@ -1536,6 +1549,23 @@
           "title": "Showcase"
         },
         "publishedAt": "2025-11-11T09:52:15.818Z"
+      },
+      {
+        "id": "nouvelle-page",
+        "title": "About us",
+        "content": "",
+        "slug": "nouvelle-page",
+        "status": "published",
+        "description": "",
+        "blocks": [
+          {
+            "id": "block-1764065818494",
+            "type": "content",
+            "content": "",
+            "title": "Description"
+          }
+        ],
+        "publishedAt": "2025-11-25T10:17:09.208Z"
       }
     ],
     "pinnedSystem": [

@@ -11,6 +11,7 @@ interface PageIntroData {
   description?: string; // Si vide, utilise pageData.description
   theme?: 'light' | 'dark' | 'auto';
   layout?: 'default' | 'two-columns'; // Layout adaptatif selon template
+  isFirstHeading?: boolean; // Si true, utilise H1, sinon H2
 }
 
 export default function PageIntroBlock({ data }: { data: PageIntroData | any }) {
@@ -92,8 +93,12 @@ export default function PageIntroBlock({ data }: { data: PageIntroData | any }) 
     return fullContent ? getTypographyConfig(fullContent) : {};
   }, [fullContent]);
   
-  // Classes typographiques pour h1
-  const h1Classes = useMemo(() => {
+  // Déterminer si on utilise H1 ou H2 (SEO: un seul H1 par page)
+  const isFirstHeading = (data as any).isFirstHeading !== false; // Par défaut true si non spécifié
+  const HeadingTag = isFirstHeading ? 'h1' : 'h2';
+  
+  // Classes typographiques pour h1 (ou h2 si pas le premier)
+  const headingClasses = useMemo(() => {
     const safeTypoConfig = typoConfig?.h1 ? { h1: typoConfig.h1 } : {};
     const classes = getTypographyClasses('h1', safeTypoConfig, defaultTypography.h1);
     return classes
@@ -153,12 +158,12 @@ export default function PageIntroBlock({ data }: { data: PageIntroData | any }) 
           {/* Titre à gauche */}
           {title && (
             <div className="text-left mb-4 lg:mb-0">
-              <h1 
-                className={h1Classes}
+              <HeadingTag 
+                className={headingClasses}
                 style={{ color: h1Color }}
               >
                 {title}
-              </h1>
+              </HeadingTag>
             </div>
           )}
           
@@ -187,12 +192,12 @@ export default function PageIntroBlock({ data }: { data: PageIntroData | any }) 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           {title && (
-            <h1 
-              className={`${h1Classes} mb-4`}
+            <HeadingTag 
+              className={`${headingClasses} mb-4`}
               style={{ color: h1Color }}
             >
               {title}
-            </h1>
+            </HeadingTag>
           )}
           {description && (
             <div

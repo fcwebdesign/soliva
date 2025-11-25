@@ -590,22 +590,22 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
               <Plus className="w-3.5 h-3.5" />
             </button>
           )}
-          <button 
-            onClick={() => {
-              // Fermer le Sheet parent
-              const closeEvent = new CustomEvent('close-sheet');
-              window.dispatchEvent(closeEvent);
-            }}
-            className="p-1 rounded transition-colors"
-            style={{ 
-              backgroundColor: 'transparent',
-              transition: 'background-color 0.2s'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-          >
-            <X className="w-4 h-4" style={{ color: 'var(--admin-text)' }} />
-          </button>
+        <button 
+          onClick={() => {
+            // Fermer le Sheet parent
+            const closeEvent = new CustomEvent('close-sheet');
+            window.dispatchEvent(closeEvent);
+          }}
+          className="p-1 rounded transition-colors"
+          style={{ 
+            backgroundColor: 'transparent',
+            transition: 'background-color 0.2s'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--admin-bg-hover)'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+        >
+          <X className="w-4 h-4" style={{ color: 'var(--admin-text)' }} />
+        </button>
         </div>
       </div>
 

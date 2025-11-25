@@ -3,9 +3,12 @@
 import { useTemplate } from '@/templates/context';
 import { registries, defaultRegistry } from './registry';
 import type { AnyBlock } from './types';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
+import { usePathname } from 'next/navigation';
 import ScrollAnimated from '@/components/ScrollAnimated';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { getTypographyConfig, getTypographyClasses, getCustomColor, defaultTypography } from '@/utils/typography';
+import { fetchContentWithNoCache } from '@/hooks/useContentUpdate';
 // Charger les blocs auto-déclarés et accéder au registre scalable
 import './auto-declared';
 import { getAutoDeclaredBlock } from './auto-declared/registry';
@@ -251,9 +254,120 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
     console.log('🎨 [BlockRenderer] Rendu de', blocks.length, 'blocs:', blocks.map(b => ({ id: b.id, type: b.type })));
   }
 
+  // Déterminer quel bloc doit avoir le H1 (le premier page-intro ou hero)
+  const headingBlocks = ['page-intro', 'hero'];
+  const firstHeadingBlockIndex = blocks.findIndex(b => headingBlocks.includes(b.type));
+  const hasHeadingBlock = firstHeadingBlockIndex !== -1;
+  
+  // Récupérer le titre de la page si aucun bloc page-intro ou hero
+  const pathname = usePathname();
+  const [pageData, setPageData] = useState<any>(null);
+  
+  useEffect(() => {
+    if (hasHeadingBlock) return; // Pas besoin si on a déjà un bloc heading
+    
+    const loadPageData = async () => {
+      try {
+        const content = fullContent || await (await fetchContentWithNoCache('/api/content/metadata')).json();
+        const slug = pathname?.split('/').filter(Boolean).pop() || '';
+        let currentPage = null;
+        
+        if (['home', 'contact', 'studio', 'work', 'blog'].includes(slug)) {
+          currentPage = content[slug];
+        } else if (content.pages?.pages) {
+          currentPage = content.pages.pages.find((p: any) => 
+            p.slug === slug || p.id === slug
+          );
+        }
+        
+        setPageData(currentPage);
+      } catch (error) {
+        // Ignorer silencieusement
+      }
+    };
+    
+    loadPageData();
+  }, [hasHeadingBlock, fullContent, pathname]);
+  
+  // Typographie pour le titre automatique (même style que PageIntroBlock)
+  const typoConfig = useMemo(() => {
+    return fullContent ? getTypographyConfig(fullContent) : {};
+  }, [fullContent]);
+  
+  const headingClasses = useMemo(() => {
+    const safeTypoConfig = typoConfig?.h1 ? { h1: typoConfig.h1 } : {};
+    const classes = getTypographyClasses('h1', safeTypoConfig, defaultTypography.h1);
+    return classes
+      .replace(/\btext-(gray|black|white|red|blue|green|yellow|purple|pink|indigo|orange)-\d+\b/g, '')
+      .replace(/\btext-(gray|black|white|red|blue|green|yellow|purple|pink|indigo|orange)\b/g, '')
+      .replace(/\btext-foreground\b/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }, [typoConfig]);
+  
+  const h1Color = useMemo(() => {
+    const customColor = getCustomColor('h1', typoConfig);
+    return customColor || 'var(--foreground)';
+  }, [typoConfig]);
+  
+  // Déterminer le layout (comme PageIntroBlock)
+  const { key: templateKey } = useTemplate();
+  const useTwoColumns = templateKey === 'pearl';
+  const pageTitle = pageData?.title || pageData?.hero?.title;
+  const pageDescription = pageData?.description || pageData?.hero?.description;
+  
   return (
     <div className="blocks-container">
-      {blocks.map((block) => {
+      {/* Afficher le titre de la page automatiquement si aucun bloc page-intro ou hero */}
+      {!hasHeadingBlock && pageTitle && (
+        <div 
+          className="page-intro-block py-10"
+          data-block-type="page-intro"
+          data-block-theme="auto"
+        >
+          {useTwoColumns ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-end">
+              <div className="text-left mb-4 lg:mb-0">
+                <h1 
+                  className={headingClasses}
+                  style={{ color: h1Color }}
+                >
+                  {pageTitle}
+                </h1>
+              </div>
+              {pageDescription && (
+                <div className="text-left lg:ml-auto lg:pl-8">
+                  <div
+                    className="max-w-2xl"
+                    dangerouslySetInnerHTML={{ __html: pageDescription }}
+                  />
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center">
+                <h1 
+                  className={`${headingClasses} mb-4`}
+                  style={{ color: h1Color }}
+                >
+                  {pageTitle}
+                </h1>
+                {pageDescription && (
+                  <div
+                    className="max-w-3xl mx-auto"
+                    dangerouslySetInnerHTML={{ __html: pageDescription }}
+                  />
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+      
+      {blocks.map((block, index) => {
+        // Le premier bloc page-intro ou hero a le H1, les autres utilisent H2
+        const isFirstHeading = headingBlocks.includes(block.type) && index === firstHeadingBlockIndex;
         // Debug pour TOUS les types de blocs en développement
         if (process.env.NODE_ENV !== 'production') {
           console.log(`🎨 [BlockRenderer] Traitement bloc ${block.type}:`, { 
@@ -303,7 +417,13 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
             console.log(`✅ [BlockRenderer] Utilisation du bloc auto-déclaré pour ${block.type}`);
           }
           const BlockComponent = scalable.component as any;
-          const data = { ...block, title: (block as any).title || '', content: (block as any).content || '', theme: (block as any).theme || 'auto' };
+          const data = { 
+            ...block, 
+            title: (block as any).title || '', 
+            content: (block as any).content || '', 
+            theme: (block as any).theme || 'auto',
+            isFirstHeading // Passer la prop pour gérer H1 vs H2
+          };
           const blockElement = <BlockComponent key={block.id} data={data} />;
           const wrapped = wrapWithAnimation(blockElement, block.type);
           if (withDebugIds) {

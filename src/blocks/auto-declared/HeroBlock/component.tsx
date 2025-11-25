@@ -16,6 +16,7 @@ type HeroBlockData = {
     src?: string;
     alt?: string;
   };
+  isFirstHeading?: boolean; // Si true, utilise H1, sinon H2
 };
 
 export default function HeroBlock({ data }: { data: HeroBlockData | any }) {
@@ -77,6 +78,10 @@ export default function HeroBlock({ data }: { data: HeroBlockData | any }) {
   const h1Color = useMemo(() => getCustomColor('h1Single', typoConfig) || 'var(--foreground)', [typoConfig]);
   const pColor = useMemo(() => getCustomColor('p', typoConfig) || 'var(--foreground)', [typoConfig]);
 
+  // Déterminer si on utilise H1 ou H2 (SEO: un seul H1 par page)
+  const isFirstHeading = (data as any).isFirstHeading !== false; // Par défaut true si non spécifié
+  const HeadingTag = isFirstHeading ? 'h1' : 'h2';
+
   if (!blockData?.title && !blockData?.subtitle) {
     return null;
   }
@@ -114,9 +119,9 @@ export default function HeroBlock({ data }: { data: HeroBlockData | any }) {
             </span>
           )}
           {blockData.title && (
-            <h1 className={h1Classes} style={{ color: h1Color }}>
+            <HeadingTag className={h1Classes} style={{ color: h1Color }}>
               {blockData.title}
-            </h1>
+            </HeadingTag>
           )}
           {blockData.subtitle && (
             <p
