@@ -5,6 +5,8 @@ import { useSearchParams } from 'next/navigation';
 import BlockRenderer from '@/blocks/BlockRenderer';
 import { TemplateProvider } from '@/templates/context';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { resolvePaletteFromContent } from '@/utils/palette-resolver';
+import { resolvePalette } from '@/utils/palette';
 
 /**
  * Route dédiée pour la preview dans une iframe
@@ -198,6 +200,16 @@ export default function PreviewIframePage() {
           
           setPreviewData(pageWithMeta);
           setBlocks(pageBlocks);
+          
+          // Détecter le thème immédiatement après le chargement
+          try {
+            const palette = resolvePaletteFromContent(pageWithMeta);
+            const resolved = resolvePalette(palette);
+            const theme = resolved.isDark ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+          } catch (e) {
+            // Ignorer les erreurs
+          }
         }
       } catch (error) {
         console.error('Erreur chargement initial:', error);
@@ -244,6 +256,57 @@ export default function PreviewIframePage() {
   const templateKey = previewData?._template || 'soliva';
   const visibleBlocks = blocks.filter(b => !b.hidden);
 
+  // Détecter si la palette est dark et appliquer data-theme sur html
+  useEffect(() => {
+    const detectTheme = () => {
+      try {
+        // Essayer d'abord avec previewData
+        if (previewData?.metadata) {
+          const palette = resolvePaletteFromContent(previewData);
+          const resolved = resolvePalette(palette);
+          const theme = resolved.isDark ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', theme);
+          
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[Iframe] Thème détecté depuis previewData:', theme, { isDark: resolved.isDark, background: palette.background });
+          }
+          return;
+        }
+        
+        // Sinon, utiliser la variable CSS --background du DOM
+        const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--background').trim();
+        if (bgColor) {
+          // Créer une palette minimale pour calculer isDark
+          const palette = {
+            background: bgColor,
+            primary: '#000000',
+            secondary: '#000000',
+            accent: '#000000',
+            text: '#000000',
+            textSecondary: '#000000',
+            border: '#000000'
+          };
+          const resolved = resolvePalette(palette);
+          const theme = resolved.isDark ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', theme);
+          
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[Iframe] Thème détecté depuis CSS:', theme, { isDark: resolved.isDark, background: bgColor });
+          }
+        }
+      } catch (e) {
+        console.warn('[Iframe] Erreur détection thème:', e);
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    };
+    
+    // Détecter immédiatement et après un court délai pour laisser le CSS se charger
+    detectTheme();
+    const timeoutId = setTimeout(detectTheme, 100);
+    
+    return () => clearTimeout(timeoutId);
+  }, [previewData, paletteCss]);
+
   // Désactiver ScrollTrigger dans l'iframe pour éviter les saccades
   useEffect(() => {
     // Désactiver ScrollTrigger par défaut dans l'iframe
@@ -275,7 +338,7 @@ export default function PreviewIframePage() {
 
   return (
     <TemplateProvider value={{ key: templateKey }}>
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style id="iframe-preview-styles" dangerouslySetInnerHTML={{ __html: `
         :root { ${paletteCss} }
         html {
           scroll-behavior: smooth;
@@ -283,13 +346,43 @@ export default function PreviewIframePage() {
         html, body {
           overflow: auto;
           -webkit-overflow-scrolling: touch;
+          background-color: var(--background, #ffffff);
         }
         body {
           margin: 0;
           padding: 0;
         }
+        /* Styles pour les logos clients - version simplifiée */
+        .logo-item {
+          aspect-ratio: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 1px solid var(--border, rgba(0, 0, 0, 0.1));
+          border-radius: 0.5rem;
+          background-color: var(--card, #ffffff);
+        }
+        .logo-item img {
+          transition: all 0.3s ease;
+          max-width: 65%;
+          height: auto;
+        }
+        /* Par défaut : logos en noir (pour fond clair) */
+        .logos-section .logo-item img {
+          filter: grayscale(100%) brightness(0) contrast(1) !important;
+        }
+        /* Si le fond est sombre, logos inversés en blanc */
+        .logos-section[data-theme="dark"] .logo-item img,
+        .logos-section[data-block-theme="dark"] .logo-item img,
+        [data-theme="dark"] .logos-section .logo-item img,
+        [data-block-theme="dark"] .logos-section .logo-item img,
+        html[data-theme="dark"] .logos-section .logo-item img,
+        .dark .logos-section .logo-item img,
+        .site [data-theme="dark"] .logos-section .logo-item img {
+          filter: grayscale(100%) brightness(0) contrast(0) invert(1) !important;
+        }
       ` }} />
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen">
         {visibleBlocks.length > 0 && previewData ? (
           <div className={`${templateKey === 'pearl' ? '' : 'site'}`}>
             <BlockRenderer
