@@ -46,40 +46,111 @@ export default function PreviewIframePage() {
           const blockId = payload.blockId;
           const alignToTop = payload.alignToTop || false;
           
-          // Un seul scroll, pas de double appel
-          const performScroll = () => {
+          // Fonction de scroll avec retry limité (max 2 tentatives)
+          const performScroll = (attempt: number = 0) => {
             const element = document.querySelector(`[data-block-id="${blockId}"]`) as HTMLElement;
-            if (!element) return;
             
-            // Récupérer le scroll-margin-top si défini
-            const scrollMarginTop = parseInt(window.getComputedStyle(element).scrollMarginTop) || 96;
-            
-            if (alignToTop) {
-              // Scroll pour aligner en haut avec offset - un seul appel
-              const elementTop = element.offsetTop;
-              window.scrollTo({ 
-                top: Math.max(0, elementTop - scrollMarginTop), 
-                behavior: 'smooth' 
-              });
-            } else {
-              // Scroll centré - un seul appel
-              element.scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'center', 
-                inline: 'nearest' 
-              });
+            if (!element) {
+              // Retry si l'élément n'est pas trouvé (max 2 tentatives)
+              if (attempt < 2) {
+                requestAnimationFrame(() => {
+                  setTimeout(() => performScroll(attempt + 1), 100);
+                });
+              } else {
+                console.warn('[Iframe] Bloc non trouvé après 2 tentatives:', blockId);
+              }
+              return;
             }
             
-            // Highlight visuel
+            // Récupérer le scroll-margin-top
+            const scrollMarginTop = parseInt(window.getComputedStyle(element).scrollMarginTop) || 96;
+            
+            // Calcul d'offset explicite avec getBoundingClientRect + pageYOffset
+            const elementRect = element.getBoundingClientRect();
+            const viewportTop = window.pageYOffset || document.documentElement.scrollTop;
+            const elementTop = elementRect.top + viewportTop;
+            
+            let target: number;
+            
+            if (alignToTop) {
+              // Mode aligné en haut : élément en haut avec scroll-margin-top
+              target = elementTop - scrollMarginTop;
+            } else {
+              // Mode centré : centrer l'élément dans le viewport, en tenant compte du scroll-margin-top
+              const elementHeight = elementRect.height;
+              const viewportHeight = window.innerHeight;
+              const elementCenter = elementTop + (elementHeight / 2);
+              const viewportCenter = viewportTop + (viewportHeight / 2);
+              
+              // Calculer la position pour centrer, en soustrayant le scroll-margin-top
+              target = elementCenter - (viewportHeight / 2) - scrollMarginTop;
+            }
+            
+            // Clamper le target dans les limites du scroll
+            const scrollHeight = document.documentElement.scrollHeight;
+            const innerHeight = window.innerHeight;
+            target = Math.max(0, Math.min(target, scrollHeight - innerHeight));
+            
+            // Un seul scroll smooth avec support du fallback
+            try {
+              window.scrollTo({ 
+                top: target, 
+                behavior: 'smooth' 
+              });
+            } catch (e) {
+              // Fallback si smooth n'est pas supporté
+              window.scrollTo(0, target);
+            }
+            
+            // Highlight visuel (immédiat, pas besoin d'attendre la fin du scroll)
             element.classList.add('ring', 'ring-blue-200');
             setTimeout(() => {
               element.classList.remove('ring', 'ring-blue-200');
             }, 900);
+            
+            // Vérification optionnelle après 150-200ms pour corriger une seule fois si nécessaire
+            setTimeout(() => {
+              // Redéfinir les variables dans le scope du setTimeout
+              const currentViewportHeight = window.innerHeight;
+              const currentScrollHeight = document.documentElement.scrollHeight;
+              const currentInnerHeight = window.innerHeight;
+              
+              const rect = element.getBoundingClientRect();
+              const isVisible = rect.top >= 0 && rect.bottom <= currentViewportHeight;
+              
+              // Si le bloc n'est pas visible, faire une correction unique
+              if (!isVisible) {
+                const currentViewportTop = window.pageYOffset || document.documentElement.scrollTop;
+                const currentElementTop = rect.top + currentViewportTop;
+                
+                let correctionTarget: number;
+                if (alignToTop) {
+                  correctionTarget = currentElementTop - scrollMarginTop;
+                } else {
+                  const elementHeight = rect.height;
+                  const elementCenter = currentElementTop + (elementHeight / 2);
+                  correctionTarget = elementCenter - (currentViewportHeight / 2) - scrollMarginTop;
+                }
+                
+                correctionTarget = Math.max(0, Math.min(correctionTarget, currentScrollHeight - currentInnerHeight));
+                
+                // Une seule correction avec animation
+                try {
+                  window.scrollTo({ 
+                    top: correctionTarget, 
+                    behavior: 'smooth' 
+                  });
+                } catch (e) {
+                  // Fallback si smooth n'est pas supporté
+                  window.scrollTo(0, correctionTarget);
+                }
+              }
+            }, 200);
           };
           
-          // Attendre que le DOM soit prêt - un seul délai
+          // Démarrer le scroll après requestAnimationFrame
           requestAnimationFrame(() => {
-            setTimeout(performScroll, 100);
+            performScroll(0);
           });
           break;
       }
@@ -206,6 +277,9 @@ export default function PreviewIframePage() {
     <TemplateProvider value={{ key: templateKey }}>
       <style dangerouslySetInnerHTML={{ __html: `
         :root { ${paletteCss} }
+        html {
+          scroll-behavior: smooth;
+        }
         html, body {
           overflow: auto;
           -webkit-overflow-scrolling: touch;
