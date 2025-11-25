@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import BlockRenderer from '@/blocks/BlockRenderer';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, RefreshCw, Eye, EyeOff, Save } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Eye, EyeOff, Save, Trash2 } from 'lucide-react';
 import { TemplateProvider } from '@/templates/context';
 import SommairePanel from '@/components/admin/SommairePanel';
 import { renderAutoBlockEditor } from '../components/AutoBlockIntegration';
@@ -437,6 +437,46 @@ export default function AdminPreviewPage() {
     });
   };
 
+  const handleDeleteBlock = (blockId: string) => {
+    // Retirer le bloc de la liste
+    const updatedBlocks = blocks.filter(b => b.id !== blockId);
+    setBlocks(updatedBlocks);
+    
+    // Retirer aussi des blocs masqués si présent
+    setHiddenBlockIds((prev) => {
+      const next = new Set(prev);
+      next.delete(blockId);
+      return next;
+    });
+    
+    // Mettre à jour previewData
+    setPreviewData((prev) => prev ? { ...prev, blocks: updatedBlocks } : prev);
+    
+    // Envoyer la mise à jour à l'iframe
+    if (previewIframeRef.current?.contentWindow && previewData) {
+      const visibleBlocksAfterDelete = applyVisibility(updatedBlocks, hiddenBlockIds);
+      previewIframeRef.current.contentWindow.postMessage({
+        type: 'UPDATE_PREVIEW',
+        payload: {
+          previewData: { ...previewData, blocks: updatedBlocks },
+          blocks: visibleBlocksAfterDelete,
+          paletteCss,
+          highlightBlockId: null,
+          hiddenBlockIds: Array.from(hiddenBlockIds)
+        }
+      }, '*');
+    }
+    
+    // Si le bloc supprimé était sélectionné, fermer l'inspecteur
+    if (selectedBlockId === blockId) {
+      setSelectedBlockId(null);
+      setInspectorMode(false);
+      setInspectorBlockId(null);
+    }
+    
+    toast.success('Bloc supprimé');
+  };
+
   // Gérer les clics sur les blocs dans la preview pour ouvrir l'inspecteur
   useEffect(() => {
     const handleBlockClick = (e: MouseEvent) => {
@@ -688,24 +728,45 @@ export default function AdminPreviewPage() {
                           scrollToBlock(targetId);
                         });
                       }}
-                      onDeleteBlock={() => {}}
+                      onDeleteBlock={handleDeleteBlock}
                       onDuplicateBlock={() => {}}
                       onReorderBlocks={(newBlocks) => {
                         setBlocks(normalizeBlocks(newBlocks));
                         setPreviewData((prev) => prev ? { ...prev, blocks: normalizeBlocks(newBlocks) } : prev);
                       }}
-                      renderAction={(section) => {
+                      hiddenBlockIds={hiddenBlockIds}
+                      renderAction={(section, isHidden = false, onDelete) => {
                         if (section.type === 'column') return null;
-                        const isHidden = hiddenBlockIds.has(section.id);
+                        const blockIsHidden = hiddenBlockIds.has(section.id);
                         return (
-                          <button
-                            type="button"
-                            aria-label={isHidden ? 'Afficher' : 'Masquer'}
-                            onClick={(e) => { e.stopPropagation(); toggleVisibility(section.id); }}
-                            className="p-1 rounded hover:bg-gray-100"
-                          >
-                            {isHidden ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                          </button>
+                          <>
+                            <button
+                              type="button"
+                              aria-label={blockIsHidden ? 'Afficher' : 'Masquer'}
+                              onClick={(e) => { 
+                                e.stopPropagation(); 
+                                toggleVisibility(section.id); 
+                              }}
+                              className="opacity-0 group-hover:opacity-100 p-0.5 rounded text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-all flex-shrink-0"
+                              title={blockIsHidden ? "Afficher" : "Masquer"}
+                            >
+                              {blockIsHidden ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                            </button>
+                            {onDelete && (
+                              <button
+                                type="button"
+                                aria-label="Supprimer"
+                                onClick={(e) => { 
+                                  e.stopPropagation(); 
+                                  onDelete(section.id); 
+                                }}
+                                className="opacity-0 group-hover:opacity-100 p-0.5 rounded text-gray-400 hover:text-red-500 hover:bg-gray-100 transition-all flex-shrink-0"
+                                title="Supprimer"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </button>
+                            )}
+                          </>
                         );
                       }}
                     />

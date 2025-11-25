@@ -42,7 +42,9 @@ import {
   Square,
   X,
   Info,
-  Plus
+  Plus,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { 
   DropdownMenu, 
@@ -190,7 +192,7 @@ function SortableItem({
   );
 }
 
-export default function SommairePanel({ className = "", blocks = [], onSelectBlock, selectedBlockId, onDeleteBlock, onDuplicateBlock, onReorderBlocks, onAddBlock, renderAction }: SommairePanelProps) {
+export default function SommairePanel({ className = "", blocks = [], onSelectBlock, selectedBlockId, onDeleteBlock, onDuplicateBlock, onReorderBlocks, onAddBlock, renderAction, hiddenBlockIds = new Set() }: SommairePanelProps) {
   
   // Fonction pour gérer les actions sur les sections
   const handleSectionAction = (action: string, section: Section) => {
@@ -368,6 +370,7 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
     const hasChildren = section.children && section.children.length > 0;
     const isExpanded = expandedSections.has(section.id);
     const isSelected = selectedBlockId === section.id;
+    const isHidden = hiddenBlockIds.has(section.id);
     
     return (
       <div key={section.id}>
@@ -378,11 +381,11 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
             section.level === 0 && index !== undefined ? 'cursor-grab active:cursor-grabbing' : ''
           } ${
             isSelected ? 'border-l-blue-500' : ''
-          }`}
+          } ${isHidden ? 'opacity-50' : ''}`}
           style={{ 
             backgroundColor: isSelected ? 'var(--admin-bg-active)' : 'transparent',
             borderLeft: '3px solid transparent',
-            transition: 'background-color 0.2s, border-left-color 0.2s',
+            transition: 'background-color 0.2s, border-left-color 0.2s, opacity 0.2s',
             paddingLeft: `${section.level === 0 ? 8 : section.level === 1 ? 25 : 25}px`
           }}
           onClick={(e) => {
@@ -468,13 +471,13 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
           </div>
           
           {/* Label */}
-          <span className="text-sm flex-1 truncate" style={{ color: 'var(--admin-text-secondary)' }}>
+          <span className={`text-sm flex-1 truncate ${isHidden ? 'text-gray-400 line-through' : ''}`} style={{ color: isHidden ? 'var(--admin-text-muted)' : 'var(--admin-text-secondary)' }}>
             {section.label}
           </span>
           
           {/* Actions */}
           {renderAction ? (
-            renderAction(section)
+            renderAction(section, isHidden, onDeleteBlock)
           ) : (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
