@@ -365,9 +365,35 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
         </div>
       )}
       
-      {blocks.map((block, index) => {
+      {(() => {
+        // Filtrer les blocs masqués
+        const visibleBlocks = blocks.filter((block) => {
+          // Filtrer les blocs masqués
+          if ((block as any).hidden) return false;
+          
+          // Pour les blocs two-columns, vérifier aussi les sous-blocs dans les colonnes
+          if (block.type === 'two-columns') {
+            const data = (block as any).data || block;
+            const hasVisibleItems = (colKey: 'leftColumn' | 'rightColumn') => {
+              const items = data[colKey] || [];
+              return items.some((item: any) => !item?.hidden);
+            };
+            // Garder le bloc seulement s'il a au moins un item visible dans une colonne
+            return hasVisibleItems('leftColumn') || hasVisibleItems('rightColumn');
+          }
+          
+          return true;
+        });
+        
+        // Recalculer firstHeadingBlockIndex après le filtre
+        const visibleHeadingBlocks = visibleBlocks.filter(b => headingBlocks.includes(b.type));
+        const newFirstHeadingBlockIndex = visibleHeadingBlocks.length > 0 
+          ? visibleBlocks.findIndex(b => b.id === visibleHeadingBlocks[0].id)
+          : -1;
+        
+        return visibleBlocks.map((block, index) => {
         // Le premier bloc page-intro ou hero a le H1, les autres utilisent H2
-        const isFirstHeading = headingBlocks.includes(block.type) && index === firstHeadingBlockIndex;
+        const isFirstHeading = headingBlocks.includes(block.type) && index === newFirstHeadingBlockIndex;
         // Debug pour TOUS les types de blocs en développement
         if (process.env.NODE_ENV !== 'production') {
           console.log(`🎨 [BlockRenderer] Traitement bloc ${block.type}:`, { 
@@ -454,7 +480,8 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
           console.warn(`❌ Bloc inconnu: ${block.type}`, { availableTypes: Object.keys(registry), block });
         }
         return null;
-      })}
+      });
+      })()}
     </div>
   );
 }

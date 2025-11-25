@@ -266,6 +266,27 @@ export default function AdminPreviewPage() {
         
         const normalizedBlocks = normalizeBlocks(pageBlocks);
         
+        // Restaurer l'état hiddenBlockIds à partir de la propriété hidden des blocs
+        const restoredHiddenIds = new Set<string>();
+        normalizedBlocks.forEach((block: any) => {
+          if (block.hidden) {
+            restoredHiddenIds.add(block.id);
+          }
+          // Pour les blocs two-columns, vérifier aussi les sous-blocs
+          if (block.type === 'two-columns') {
+            const data = block.data || block;
+            ['leftColumn', 'rightColumn'].forEach((colKey: 'leftColumn' | 'rightColumn') => {
+              const items = data[colKey] || [];
+              items.forEach((item: any) => {
+                if (item?.hidden) {
+                  restoredHiddenIds.add(item.id);
+                }
+              });
+            });
+          }
+        });
+        setHiddenBlockIds(restoredHiddenIds);
+        
         const pageWithMeta = { ...pageData, _template: nextTemplate, blocks: normalizedBlocks, metadata: data.metadata };
         setInitialPageData(pageWithMeta);
         setPreviewData(pageWithMeta);
@@ -537,11 +558,38 @@ export default function AdminPreviewPage() {
       // Créer une copie du contenu admin
       const newContent = { ...adminContent };
       
-      const persistedBlocks = applyVisibility(blocks, hiddenBlockIds);
+      // Sauvegarder TOUS les blocs avec leur état hidden (ne pas filtrer)
+      const persistedBlocks = blocks.map(block => {
+        const isHidden = hiddenBlockIds.has(block.id);
+        // Ajouter la propriété hidden au bloc
+        if (block.type === 'two-columns') {
+          // Pour les blocs two-columns, gérer aussi les sous-blocs dans les colonnes
+          const data = block.data || block;
+          const processColumn = (colKey: 'leftColumn' | 'rightColumn') => {
+            const items = data[colKey] || [];
+            return items.map((item: any) => {
+              const itemIsHidden = hiddenBlockIds.has(item?.id);
+              return { ...item, hidden: itemIsHidden };
+            });
+          };
+          return {
+            ...block,
+            hidden: isHidden,
+            data: {
+              ...data,
+              leftColumn: processColumn('leftColumn'),
+              rightColumn: processColumn('rightColumn'),
+            }
+          };
+        }
+        return { ...block, hidden: isHidden };
+      });
 
       // Générer le HTML à partir des blocs basiques uniquement (pour compatibilité)
       // Les blocs auto-déclarés n'ont pas besoin de HTML car ils sont rendus directement
-      const htmlContent = persistedBlocks.map(block => {
+      // Filtrer les blocs masqués pour le HTML (seulement pour l'affichage, pas pour la sauvegarde)
+      const visibleBlocksForHTML = persistedBlocks.filter(block => !block.hidden);
+      const htmlContent = visibleBlocksForHTML.map(block => {
         // Seulement pour les blocs basiques qui nécessitent du HTML
         switch (block.type) {
           case 'h2':

@@ -1073,130 +1073,31 @@
       {
         "id": "showcase",
         "title": "Showcase",
-        "content": "<p>editeur de texte</p>\n<img src=\"/uploads/1763913862565-f80c099b.webp\" alt=\"\" />\n<img src=\"/uploads/1763980744747-ee935e8f.webp\" alt=\"\" />",
+        "content": "<img src=\"/uploads/1763980744747-ee935e8f.webp\" alt=\"\" />",
         "slug": "showcase",
         "status": "published",
         "description": "<p>Découvrez notre showcase, un véritable écrin de créativité !</p><p></p><p></p>",
         "blocks": [
           {
-            "id": "hero-1763967780846",
-            "type": "hero",
-            "data": {
-              "eyebrow": "test",
-              "title": "Titre principal",
-              "subtitle": "Sous-titre ou description du hero.",
-              "ctaLabel": "Découvrir",
-              "ctaHref": "#",
-              "align": "left",
-              "theme": "auto",
-              "backgroundImage": {
-                "src": "",
-                "alt": ""
-              }
-            }
-          },
-          {
             "id": "page-intro-1763985269843",
             "type": "page-intro",
             "title": "Showcase",
             "description": "<p>Parcourez une sélection de projets conçus avec Next.js, animés avec GSAP, et optimisés pour la performance et les Core Web Vitals.</p>",
-            "layout": "default"
+            "layout": "default",
+            "hidden": false
           },
           {
-            "id": "contact-1762854772936",
-            "type": "contact",
-            "data": {
-              "title": "dsdsfds",
-              "ctaText": "sdfdsdfds",
-              "ctaLink": "/contact",
-              "theme": "auto"
-            },
-            "title": "Would you like to see a demo ?",
-            "ctaText": "Yes i'm ok "
-          },
-          {
-            "id": "content-1762854811118",
-            "type": "content",
-            "data": {
-              "content": "<ul class=\"list-disc list-inside\"><li class=\"mb-1\"><p>sdfsfdsfggdgf</p></li><li class=\"mb-1\"><p>ddskmfsd</p></li><li class=\"mb-1\"><p>dfpkgdpfg</p></li><li class=\"mb-1\"><p>dskgkdg</p></li><li class=\"mb-1\"><p>dflgdmfgmdflgmdlkmgd</p></li></ul><p></p>"
-            },
-            "content": "<p>editeur de texte</p>"
-          },
-          {
-            "id": "quote-1762854884761",
-            "type": "quote",
-            "data": {
-              "quote": "Une citation inspirante pour votre contenu...",
-              "author": "dfgggfdgdfg",
-              "role": "dfgdgdfggfd",
-              "theme": "auto"
-            },
-            "quote": "ma citation",
-            "author": "Florent Cleron",
-            "role": "CEO"
-          },
-          {
-            "id": "gallery-grid-1762854922710",
-            "type": "gallery-grid",
+            "id": "image-1763980730945",
+            "type": "image",
             "images": [
               {
-                "id": "image-1762943847970-0",
-                "src": "/uploads/1762943847695-58b3bdee.webp",
+                "id": "image-1763980730973",
+                "src": "/uploads/1763980744747-ee935e8f.webp",
                 "alt": "",
-                "title": "Test titre",
-                "description": "Test description",
-                "category": ""
-              },
-              {
-                "id": "image-1762943847970-1",
-                "src": "/uploads/1762943847693-56af1277.webp",
-                "alt": "",
-                "title": "",
-                "description": "",
-                "category": ""
-              },
-              {
-                "id": "image-1762943847970-2",
-                "src": "/uploads/1762943847690-621fdaa2.webp",
-                "alt": "",
-                "title": "",
-                "description": "",
-                "category": ""
-              },
-              {
-                "id": "image-1762969618383-0",
-                "src": "/uploads/1762969617990-ca6d8543.webp",
-                "alt": "",
-                "title": "hello",
-                "description": "test",
-                "category": ""
-              },
-              {
-                "id": "image-1762969618383-1",
-                "src": "/uploads/1762969617987-9c324eb9.webp",
-                "alt": "",
-                "title": "",
-                "description": "",
-                "category": ""
-              },
-              {
-                "id": "image-1762969618383-2",
-                "src": "/uploads/1762969617989-75fafcdf.webp",
-                "alt": "",
-                "title": "",
-                "description": "",
-                "category": ""
+                "aspectRatio": "16:9"
               }
             ],
-            "layout": "masonry-3",
-            "gap": "large",
-            "showFilters": true,
-            "showTitles": false,
-            "showDescriptions": false,
-            "enableLightbox": false,
-            "enableDownload": false,
-            "theme": "auto",
-            "sectionTitle": "Gallerie d'images"
+            "hidden": false
           },
           {
             "id": "logos-1762854978502",
@@ -1226,22 +1127,8 @@
                 "alt": ""
               }
             ],
-            "theme": "light"
-          },
-          {
-            "id": "projects-1762855023277",
-            "type": "projects",
-            "title": "Nos réalisations",
-            "maxProjects": 6,
-            "selectedProjects": [
-              "projet-test",
-              "velin",
-              "oko",
-              "projet-2"
-            ],
-            "theme": "auto",
-            "columns": 2,
-            "displayMode": "carousel"
+            "theme": "light",
+            "hidden": false
           },
           {
             "id": "services-1762855053694",
@@ -1262,32 +1149,8 @@
                 "icon": "",
                 "hidden": false
               }
-            ]
-          },
-          {
-            "id": "faq-1762855140604",
-            "type": "faq",
-            "items": [
-              {
-                "id": "faq-1762949368808",
-                "question": "Nouvelle question ?",
-                "answer": "<p>Réponse à la question...</p>"
-              },
-              {
-                "id": "faq-1763913443737",
-                "question": "Question Heading",
-                "answer": "<p>Detailed answer explaining the question with proper formatting support.</p>",
-                "hidden": false
-              },
-              {
-                "id": "faq-1763915803249",
-                "question": "Question Heading",
-                "answer": "<p>Detailed answer explaining the question with proper formatting support.</p>",
-                "hidden": false
-              }
             ],
-            "theme": "auto",
-            "title": "Questions féquentes"
+            "hidden": false
           },
           {
             "id": "testimonial-1762855180740",
@@ -1363,7 +1226,8 @@
               "alt": ""
             },
             "rating": 2,
-            "testimonial": "super site !"
+            "testimonial": "super site !",
+            "hidden": false
           },
           {
             "id": "expandable-card-1762950456076",
@@ -1411,7 +1275,8 @@
                 }
               ],
               "title": "Notre stack"
-            }
+            },
+            "hidden": false
           },
           {
             "id": "image-1763913771679-x50nmredr",
@@ -1423,7 +1288,8 @@
                 "alt": "",
                 "aspectRatio": "16:9"
               }
-            ]
+            ],
+            "hidden": true
           },
           {
             "id": "two-columns-1763700830594",
@@ -1475,7 +1341,8 @@
                       "alt": "",
                       "aspectRatio": "1:1"
                     }
-                  ]
+                  ],
+                  "hidden": false
                 }
               ],
               "rightColumn": [
@@ -1489,7 +1356,8 @@
                       "alt": "",
                       "aspectRatio": "1:1"
                     }
-                  ]
+                  ],
+                  "hidden": false
                 }
               ],
               "layout": "right-left",
@@ -1497,19 +1365,8 @@
               "alignment": "center",
               "theme": "auto",
               "title": "Deux colonnes"
-            }
-          },
-          {
-            "id": "image-1763980730945",
-            "type": "image",
-            "images": [
-              {
-                "id": "image-1763980730973",
-                "src": "/uploads/1763980744747-ee935e8f.webp",
-                "alt": "",
-                "aspectRatio": "16:9"
-              }
-            ]
+            },
+            "hidden": false
           }
         ],
         "hero": {
