@@ -300,11 +300,39 @@ export default function PagesAdmin() {
           return;
         }
         
+        // Trouver la page avant suppression pour récupérer son slug
+        const pageToDelete = newContent.pages?.pages?.find((page: any) => page.id === pageId);
+        const pageSlug = pageToDelete?.slug || pageId;
+        
         // Supprimer la page personnalisée
         if (newContent.pages?.pages && Array.isArray(newContent.pages.pages)) {
           newContent.pages.pages = newContent.pages.pages.filter((page: any) => 
             page.id !== pageId
           );
+        }
+        
+        // Retirer la page de la navigation si elle y est présente (par id ou slug)
+        if (newContent.nav?.items && Array.isArray(newContent.nav.items)) {
+          newContent.nav.items = newContent.nav.items.filter((item: string) => 
+            item !== pageId && item !== pageSlug
+          );
+        }
+        
+        // Retirer la page du footer si elle y est présente (par id ou slug)
+        if (newContent.footer?.bottomLinks && Array.isArray(newContent.footer.bottomLinks)) {
+          newContent.footer.bottomLinks = newContent.footer.bottomLinks.filter((link: string | any) => {
+            if (typeof link === 'string') {
+              return link !== pageId && link !== pageSlug;
+            }
+            // Si c'est un objet avec id
+            return link.id !== pageId && link.id !== pageSlug;
+          });
+        }
+        
+        // Retirer la page des labels légaux du footer si elle y est présente (par id ou slug)
+        if (newContent.footer?.legalPageLabels && typeof newContent.footer.legalPageLabels === 'object') {
+          const { [pageId]: removed1, [pageSlug]: removed2, ...restLabels } = newContent.footer.legalPageLabels;
+          newContent.footer.legalPageLabels = restLabels;
         }
         
         // Sauvegarder les modifications

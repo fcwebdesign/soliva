@@ -285,12 +285,16 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
           content: pageData.content
         }]);
       }
-      // Priorité 3: Créer un bloc vide
+      // Priorité 3: Créer un bloc page-intro par défaut (au lieu de content)
       else {
+        // Pré-remplir avec le titre de la page et une description par défaut
+        const pageTitle = pageData?.title || pageData?.hero?.title || '';
         setBlocks([{
-          id: 'block-1',
-          type: 'content',
-          content: ''
+          id: `page-intro-${Date.now()}`,
+          type: 'page-intro',
+          title: pageTitle,
+          description: 'Description of the page',
+          layout: 'default'
         }]);
       }
     }

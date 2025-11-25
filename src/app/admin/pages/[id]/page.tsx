@@ -74,10 +74,11 @@ export default function PageEdit() {
           description: '',
           blocks: [
             {
-              id: `block-${Date.now()}`,
-              type: 'content',
-              content: '',
-              title: 'Description'
+              id: `page-intro-${Date.now()}`,
+              type: 'page-intro',
+              title: 'Nouvelle page', // Pré-remplir avec le titre de la page
+              description: 'Description of the page', // Description par défaut
+              layout: 'default'
             }
           ]
         };

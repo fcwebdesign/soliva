@@ -95,6 +95,29 @@ export default function AdminPreviewPage() {
       .join(' ');
   }, [previewData, initialPageData, adminContent]);
 
+  // Appliquer la visibilité sur les blocs racine et leurs colonnes
+  const applyVisibility = (inputBlocks: any[], hidden: Set<string>) =>
+    inputBlocks
+      .filter((b) => !hidden.has(String(b.id)))
+      .map((b) => {
+        if (b.type !== 'two-columns') return b;
+        const data = b.data || b;
+        const filterColumn = (colKey: 'leftColumn' | 'rightColumn') => {
+          const items = data[colKey] || [];
+          return items.filter((item: any) => !hidden.has(String(item?.id)));
+        };
+        return {
+          ...b,
+          data: {
+            ...data,
+            leftColumn: filterColumn('leftColumn'),
+            rightColumn: filterColumn('rightColumn'),
+          },
+        };
+      });
+
+  const visibleBlocks = applyVisibility(blocks, hiddenBlockIds);
+
   // Écouter les messages de l'iframe et envoyer les données
   useEffect(() => {
     const sendDataToIframe = () => {
@@ -103,9 +126,10 @@ export default function AdminPreviewPage() {
           type: 'UPDATE_PREVIEW',
           payload: {
             previewData,
-            blocks,
+            blocks: visibleBlocks, // Envoyer les blocs visibles (déjà filtrés)
             paletteCss,
-            highlightBlockId: selectedBlockId || hoverBlockId || null
+            highlightBlockId: selectedBlockId || hoverBlockId || null,
+            hiddenBlockIds: Array.from(hiddenBlockIds) // Envoyer les IDs des blocs masqués
           }
         }, '*');
       }
@@ -138,7 +162,7 @@ export default function AdminPreviewPage() {
     sendDataToIframe();
 
     return () => window.removeEventListener('message', handleMessage);
-  }, [previewData, blocks, paletteCss, selectedBlockId, hoverBlockId]);
+  }, [previewData, visibleBlocks, paletteCss, selectedBlockId, hoverBlockId, hiddenBlockIds]);
 
   // Configurer ScrollTrigger pour utiliser le panneau de preview comme scroller
   useEffect(() => {
@@ -249,12 +273,14 @@ export default function AdminPreviewPage() {
         
         // Envoyer les données à l'iframe si elle est prête
         if (previewIframeRef.current?.contentWindow) {
+          const visibleBlocksAtInit = applyVisibility(normalizedBlocks, hiddenBlockIds);
           previewIframeRef.current.contentWindow.postMessage({
             type: 'UPDATE_PREVIEW',
             payload: {
               previewData: pageWithMeta,
-              blocks: normalizedBlocks,
-              paletteCss: paletteCss
+              blocks: visibleBlocksAtInit,
+              paletteCss: paletteCss,
+              hiddenBlockIds: Array.from(hiddenBlockIds)
             }
           }, '*');
         }
@@ -393,32 +419,23 @@ export default function AdminPreviewPage() {
       } else {
         next.add(blockId);
       }
+      // Envoyer immédiatement la mise à jour à l'iframe
+      if (previewIframeRef.current?.contentWindow && previewData) {
+        const updatedVisibleBlocks = applyVisibility(blocks, next);
+        previewIframeRef.current.contentWindow.postMessage({
+          type: 'UPDATE_PREVIEW',
+          payload: {
+            previewData,
+            blocks: updatedVisibleBlocks,
+            paletteCss,
+            highlightBlockId: selectedBlockId || hoverBlockId || null,
+            hiddenBlockIds: Array.from(next)
+          }
+        }, '*');
+      }
       return next;
     });
   };
-
-  // Appliquer la visibilité sur les blocs racine et leurs colonnes
-  const applyVisibility = (inputBlocks: any[], hidden: Set<string>) =>
-    inputBlocks
-      .filter((b) => !hidden.has(String(b.id)))
-      .map((b) => {
-        if (b.type !== 'two-columns') return b;
-        const data = b.data || b;
-        const filterColumn = (colKey: 'leftColumn' | 'rightColumn') => {
-          const items = data[colKey] || [];
-          return items.filter((item: any) => !hidden.has(String(item?.id)));
-        };
-        return {
-          ...b,
-          data: {
-            ...data,
-            leftColumn: filterColumn('leftColumn'),
-            rightColumn: filterColumn('rightColumn'),
-          },
-        };
-      });
-
-  const visibleBlocks = applyVisibility(blocks, hiddenBlockIds);
 
   // Gérer les clics sur les blocs dans la preview pour ouvrir l'inspecteur
   useEffect(() => {

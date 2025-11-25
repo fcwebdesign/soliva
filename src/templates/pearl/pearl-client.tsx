@@ -79,8 +79,14 @@ export default function PearlClient() {
   const { shouldShowReveal, isRevealComplete, completeReveal, config } = useRevealAnimation(revealConfig);
 
   // Détecter si la palette est dark et appliquer data-theme sur html (comme dans l'iframe)
+  // MAIS NE PAS APPLIQUER DANS L'ADMIN
   useEffect(() => {
     if (typeof window === 'undefined' || !content) return;
+    
+    // Ne pas appliquer le thème dans l'admin
+    if (document.body.classList.contains('admin-page') || document.documentElement.hasAttribute('data-admin')) {
+      return;
+    }
     
     const detectTheme = () => {
       try {

@@ -94,8 +94,9 @@
   --chart-5: oklch(0.769 0.188 70.08);
 }
 
-/* Thème sombre */
-[data-theme="dark"] {
+/* Thème sombre - EXCLURE L'ADMIN */
+body:not(.admin-page) [data-theme="dark"],
+html:not(.admin-page) [data-theme="dark"] {
   --bg: #181515;
   --fg: #ffffff;
   --accent: #0066CC;
@@ -104,19 +105,19 @@
   --text-secondary: #cccccc;
 }
 
-/* Styles pour les blocs avec thème automatique */
-[data-theme="auto"] h2,
-[data-theme="auto"] h3 {
+/* Styles pour les blocs avec thème automatique - EXCLURE L'ADMIN */
+body:not(.admin-page) [data-theme="auto"] h2,
+body:not(.admin-page) [data-theme="auto"] h3 {
   color: var(--text);
 }
 
-.site [data-theme="auto"] .text-gray-900 {
+body:not(.admin-page) .site [data-theme="auto"] .text-gray-900 {
   color: var(--text);
 }
 
-/* Thème sombre pour les blocs */
-.site [data-theme="dark"] h2,
-.site [data-theme="dark"] h3 {
+/* Thème sombre pour les blocs - EXCLURE L'ADMIN */
+body:not(.admin-page) .site [data-theme="dark"] h2,
+body:not(.admin-page) .site [data-theme="dark"] h3 {
   color: white;
 }
 
@@ -138,26 +139,80 @@ body:not(.admin-page) section[data-block-type] section[data-block-type] {
   padding-bottom: 0 !important;
 }
 
-.site [data-theme="dark"] .text-gray-900 {
+/* Thème dark - EXCLURE L'ADMIN */
+body:not(.admin-page) .site [data-theme="dark"] .text-gray-900 {
   color: white;
 }
 
-.site [data-theme="dark"] .bg-white {
+body:not(.admin-page) .site [data-theme="dark"] .bg-white {
   background-color: #1f2937; /* gray-800 */
 }
 
-.site [data-theme="dark"] .border-gray-200 {
+body:not(.admin-page) .site [data-theme="dark"] .border-gray-200 {
   border-color: #4b5563; /* gray-600 */
 }
 
-[data-theme="dark"] .text-gray-500 {
+body:not(.admin-page) [data-theme="dark"] .text-gray-500 {
   color: #9ca3af; /* gray-400 */
 }
 
-/* Admin neutralizers to avoid front dark overrides */
-.admin-page [data-theme="dark"] .bg-white { background-color: revert !important; }
-.admin-page [data-theme="dark"] .border-gray-200 { border-color: revert !important; }
-.admin-page [data-theme="dark"] .text-gray-900 { color: revert !important; }
+/* Admin neutralizers - Forcer les styles admin même si data-theme="dark" est présent */
+.admin-page [data-theme="dark"] .bg-white,
+.admin-page html[data-theme="dark"] .bg-white,
+.admin-page [data-theme="dark"] .bg-gray-50,
+.admin-page html[data-theme="dark"] .bg-gray-50,
+html[data-admin="true"] [data-theme="dark"] .bg-white,
+html[data-admin="true"] [data-theme="dark"] .bg-gray-50 {
+  background-color: #ffffff !important;
+}
+
+.admin-page [data-theme="dark"] .border-gray-200,
+.admin-page html[data-theme="dark"] .border-gray-200,
+html[data-admin="true"] [data-theme="dark"] .border-gray-200 {
+  border-color: #e5e7eb !important;
+}
+
+.admin-page [data-theme="dark"] .text-gray-900,
+.admin-page html[data-theme="dark"] .text-gray-900,
+.admin-page [data-theme="dark"] input,
+.admin-page html[data-theme="dark"] input,
+.admin-page [data-theme="dark"] textarea,
+.admin-page html[data-theme="dark"] textarea,
+html[data-admin="true"] [data-theme="dark"] .text-gray-900,
+html[data-admin="true"] [data-theme="dark"] input,
+html[data-admin="true"] [data-theme="dark"] textarea {
+  color: #111827 !important;
+}
+
+.admin-page [data-theme="dark"] .text-gray-500,
+.admin-page html[data-theme="dark"] .text-gray-500,
+html[data-admin="true"] [data-theme="dark"] .text-gray-500 {
+  color: #6b7280 !important;
+}
+
+/* Forcer les couleurs shadcn dans l'admin */
+.admin-page [data-theme="dark"] [data-radix-select-trigger],
+.admin-page html[data-theme="dark"] [data-radix-select-trigger],
+html[data-admin="true"] [data-theme="dark"] [data-radix-select-trigger] {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  border-color: #e5e7eb !important;
+}
+
+.admin-page [data-theme="dark"] [data-radix-select-trigger]:hover,
+.admin-page html[data-theme="dark"] [data-radix-select-trigger]:hover,
+html[data-admin="true"] [data-theme="dark"] [data-radix-select-trigger]:hover {
+  background-color: #f9fafb !important;
+}
+
+/* Empêcher data-theme="dark" d'affecter l'admin */
+html[data-admin="true"][data-theme="dark"],
+body.admin-page html[data-theme="dark"] {
+  --bg: #ffffff !important;
+  --fg: #0a0a0a !important;
+  --text: #333333 !important;
+  --text-secondary: #666666 !important;
+}
 
 /* Styles personnalisés pour les listes dans les blocs de contenu (FRONT-END UNIQUEMENT) */
 .custom-lists ul {
@@ -1778,13 +1833,13 @@ html[data-theme="dark"] .logos-section:not([data-theme="light"]):not([data-block
   filter: grayscale(100%) brightness(0) contrast(0) invert(1) !important;
 }
 
-/* Styles pour les images en dark mode (exclure les logos) */
+/* Styles pour les images en dark mode (exclure les logos et l'admin) */
 /* Cette règle doit être APRÈS les règles des logos pour éviter les conflits */
-.site [data-theme="dark"] img:not(.logos-section img) {
+body:not(.admin-page) .site [data-theme="dark"] img:not(.logos-section img) {
   filter: brightness(0.9) contrast(1.1);
 }
-html[data-theme="dark"] img:not(.logos-section img),
-[data-theme="dark"] img:not(.logos-section img) {
+body:not(.admin-page) html[data-theme="dark"] img:not(.logos-section img),
+body:not(.admin-page) [data-theme="dark"] img:not(.logos-section img) {
   filter: brightness(0.9) contrast(1.1);
 }
 

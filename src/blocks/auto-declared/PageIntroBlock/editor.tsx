@@ -12,6 +12,39 @@ interface PageIntroData {
 export default function PageIntroBlockEditor({ data, onChange, compact = false, context }: { data: PageIntroData; onChange: (data: PageIntroData) => void; compact?: boolean; context?: any }) {
   const [isLoadingBlockAI, setIsLoadingBlockAI] = useState<string | null>(null);
   const [openSelect, setOpenSelect] = useState(false);
+  
+  // Pré-remplir le titre et la description si vides (seulement au montage initial)
+  const [hasInitialized, setHasInitialized] = React.useState(false);
+  React.useEffect(() => {
+    if (hasInitialized) return;
+    
+    const hasTitle = data.title && data.title.trim();
+    const hasDescription = data.description && data.description.trim();
+    let needsUpdate = false;
+    const updates: Partial<PageIntroData> = {};
+    
+    // Si pas de titre, utiliser celui de la page
+    if (!hasTitle && context) {
+      const pageTitle = context.title || context.hero?.title || '';
+      if (pageTitle) {
+        updates.title = pageTitle;
+        needsUpdate = true;
+      }
+    }
+    
+    // Si pas de description, mettre "Description of the page" par défaut
+    if (!hasDescription) {
+      updates.description = 'Description of the page';
+      needsUpdate = true;
+    }
+    
+    if (needsUpdate) {
+      onChange({ ...data, ...updates });
+      setHasInitialized(true);
+    } else {
+      setHasInitialized(true);
+    }
+  }, []); // Seulement au montage initial
 
   const getBlockContentSuggestion = async () => {
     setIsLoadingBlockAI('description');

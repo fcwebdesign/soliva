@@ -315,8 +315,8 @@ export default function TwoColumnsBlockEditor({ data, onChange, compact = false,
               setSheetOpenNormal(true);
             }}
           >
-            + Ajouter un bloc
-          </Button>
+                + Ajouter un bloc
+              </Button>
           
           {/* Sheet de sélection de blocs (composant réutilisable) */}
           {selectedColumnForSheet === column && (

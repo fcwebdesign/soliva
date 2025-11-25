@@ -644,16 +644,16 @@
   },
   "nav": {
     "logo": "Pearl",
-    "logoImage": "",
-    "location": "paris, le havre",
     "items": [
       "contact",
       "blog",
       "work",
       "showcase",
-      "test-page",
-      "nouvelle-page"
+      "about-us",
+      "lisa"
     ],
+    "location": "paris, le havre",
+    "logoImage": "",
     "pageLabels": {
       "studio": "About",
       "blog": "Blog",
@@ -1070,39 +1070,6 @@
   },
   "pages": {
     "pages": [
-      {
-        "id": "test-page",
-        "title": "Test page",
-        "content": "<img src=\"/uploads/1763705268949-a6bd497f.webp\" alt=\"\" />",
-        "slug": "test-page",
-        "status": "published",
-        "description": "<p>Description de la page de test </p>",
-        "blocks": [
-          {
-            "id": "image-1763705263025",
-            "type": "image",
-            "images": [
-              {
-                "id": "image-1763915474910",
-                "src": "/uploads/1763705268949-a6bd497f.webp",
-                "alt": "",
-                "aspectRatio": "16:9"
-              }
-            ]
-          },
-          {
-            "id": "content-1763706598572",
-            "type": "content",
-            "data": {
-              "content": "<p>Soliva conçoit des sites sur-mesure en Next.js, rapides à charger et faciles à maintenir. Nous optimisons la performance et les Core Web Vitals, intégrons GSAP pour des animations fluides, et posons une base SEO mesurable dès le départ. IA utile incluse dans votre CMS pour gagner du temps sur les contenus et les mises à jour.</p>"
-            }
-          }
-        ],
-        "hero": {
-          "title": "Test Page"
-        },
-        "publishedAt": "2025-10-28T07:38:42.832Z"
-      },
       {
         "id": "showcase",
         "title": "Showcase",
@@ -1551,21 +1518,74 @@
         "publishedAt": "2025-11-11T09:52:15.818Z"
       },
       {
-        "id": "nouvelle-page",
+        "id": "about-us",
         "title": "About us",
         "content": "",
-        "slug": "nouvelle-page",
+        "slug": "about-us",
         "status": "published",
         "description": "",
         "blocks": [
           {
-            "id": "block-1764065818494",
-            "type": "content",
-            "content": "",
-            "title": "Description"
+            "id": "page-intro-1764067757481",
+            "type": "page-intro",
+            "title": "About us",
+            "description": "Description of the page",
+            "layout": "default"
+          },
+          {
+            "id": "faq-1764070174882",
+            "type": "faq",
+            "title": "test",
+            "items": [
+              {
+                "id": "faq-1764070182977",
+                "question": "Question Heading",
+                "answer": "<p>Detailed answer explaining the question with proper formatting support.</p>"
+              }
+            ],
+            "theme": "auto"
           }
         ],
-        "publishedAt": "2025-11-25T10:17:09.208Z"
+        "publishedAt": "2025-11-25T10:49:37.233Z"
+      },
+      {
+        "id": "lisa",
+        "title": "Lisa",
+        "content": "<img src=\"/uploads/1764068212747-ccae67d7.webp\" alt=\"\" />",
+        "slug": "lisa",
+        "status": "published",
+        "description": "",
+        "blocks": [
+          {
+            "id": "page-intro-1764068115736",
+            "type": "page-intro",
+            "title": "Olivia",
+            "description": "Description of the page",
+            "layout": "default"
+          },
+          {
+            "id": "image-1764068163072",
+            "type": "image",
+            "images": [
+              {
+                "id": "image-1764068163084",
+                "src": "/uploads/1764068212747-ccae67d7.webp",
+                "alt": "",
+                "aspectRatio": "16:9"
+              }
+            ]
+          },
+          {
+            "id": "projects-1764068260082",
+            "type": "projects",
+            "title": "Nos réalisations",
+            "maxProjects": 6,
+            "selectedProjects": [],
+            "theme": "auto",
+            "columns": 2
+          }
+        ],
+        "publishedAt": "2025-11-25T10:55:21.466Z"
       }
     ],
     "pinnedSystem": [

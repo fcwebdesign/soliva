@@ -88,6 +88,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           lang="fr" 
           className={`${isDraftMode ? 'preview-mode' : ''} ${isPreviewRoute ? (themeClass || '') : ''}`} 
           data-template={adminTemplateKey}
+          data-admin="true"
         >
           <head>
           <meta name="cache-control" content="no-cache, no-store, must-revalidate" />
