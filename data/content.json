@@ -1367,6 +1367,101 @@
               "title": "Deux colonnes"
             },
             "hidden": false
+          },
+          {
+            "id": "three-columns-1764073677045",
+            "type": "three-columns",
+            "title": "",
+            "leftColumn": [
+              {
+                "id": "image-leftColumn-1764073706819-pq37sso85",
+                "type": "image",
+                "images": [
+                  {
+                    "id": "image-1764073712073",
+                    "src": "/uploads/1764073716888-fc95da9f.webp",
+                    "alt": "",
+                    "aspectRatio": "1:1"
+                  }
+                ]
+              }
+            ],
+            "middleColumn": [
+              {
+                "id": "image-middleColumn-1764073849251-6udjpny6p",
+                "type": "image",
+                "images": [
+                  {
+                    "id": "image-1764073851193",
+                    "src": "/uploads/1764073855103-e95c9c2b.webp",
+                    "alt": "",
+                    "aspectRatio": "1:1"
+                  }
+                ]
+              }
+            ],
+            "rightColumn": [
+              {
+                "id": "content-1764073800658",
+                "type": "content",
+                "content": "<p>Soliva conçoit des sites Next.js rapides, accessibles et faciles à maintenir. Nous optimisons la performance mesurée (Core Web Vitals), le SEO et les animations GSAP sans alourdir le code. IA utile intégrée au CMS pour gagner du temps sur les contenus, avec un suivi clair des résultats.</p>"
+              }
+            ],
+            "layout": "left-middle-right",
+            "gap": "medium",
+            "alignment": "top",
+            "theme": "auto",
+            "hidden": false
+          },
+          {
+            "id": "four-columns-1764073920374",
+            "type": "four-columns",
+            "title": "",
+            "column1": [
+              {
+                "id": "image-column1-1764073943150-cksl2i57f",
+                "type": "image",
+                "images": [
+                  {
+                    "id": "image-1764073946343",
+                    "src": "/uploads/1764073949616-45b76ce3.webp",
+                    "alt": ""
+                  }
+                ]
+              }
+            ],
+            "column2": [
+              {
+                "id": "content-1764073961957",
+                "type": "content",
+                "content": "<p>dsfdsdsqdsf</p>"
+              }
+            ],
+            "column3": [
+              {
+                "id": "h2-1764073970932",
+                "type": "h2",
+                "content": "sdffsqfq"
+              }
+            ],
+            "column4": [
+              {
+                "id": "image-column4-1764073980857-87w6rn9q1",
+                "type": "image",
+                "images": [
+                  {
+                    "id": "image-1764073982531",
+                    "src": "/uploads/1764073986297-b99fece7.webp",
+                    "alt": ""
+                  }
+                ]
+              }
+            ],
+            "layout": "four-columns",
+            "gap": "medium",
+            "alignment": "top",
+            "theme": "auto",
+            "hidden": false
           }
         ],
         "hero": {

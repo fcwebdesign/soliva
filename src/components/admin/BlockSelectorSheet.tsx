@@ -4,20 +4,22 @@ import React, { useState } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Input } from '@/components/ui/input';
 import { Search, X, ChevronDown } from 'lucide-react';
-import { getCategorizedBlocksForColumns } from '@/utils/blockCategories';
+import { getCategorizedBlocksForColumns, getCategorizedBlocksAll } from '@/utils/blockCategories';
 
 interface BlockSelectorSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSelectBlock: (blockType: string) => void;
   title?: string;
+  excludeLayouts?: boolean; // Si true, exclut les blocs de layout (pour les colonnes)
 }
 
 export default function BlockSelectorSheet({ 
   open, 
   onOpenChange, 
   onSelectBlock,
-  title = 'Choisir un type de bloc'
+  title = 'Choisir un type de bloc',
+  excludeLayouts = false
 }: BlockSelectorSheetProps) {
   const [blockSearchTerm, setBlockSearchTerm] = useState('');
   const [openBlockGroups, setOpenBlockGroups] = useState<{ [key: string]: boolean }>({});
@@ -61,7 +63,11 @@ export default function BlockSelectorSheet({
         {/* Liste des blocs */}
         <div className="flex-1 overflow-y-auto">
           {(() => {
-            const categorizedBlocks = getCategorizedBlocksForColumns();
+            // Si excludeLayouts est false, utiliser tous les blocs (y compris layouts)
+            // Sinon, utiliser getCategorizedBlocksForColumns qui exclut les layouts
+            const categorizedBlocks = excludeLayouts 
+              ? getCategorizedBlocksForColumns()
+              : getCategorizedBlocksAll();
             const filteredCategorized = Object.entries(categorizedBlocks).map(([categoryName, categoryBlocks]) => {
               const filtered = categoryBlocks.filter((block: any) => {
                 const searchLower = blockSearchTerm.toLowerCase();

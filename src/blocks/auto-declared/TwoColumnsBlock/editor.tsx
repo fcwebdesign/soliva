@@ -778,6 +778,7 @@ export default function TwoColumnsBlockEditor({ data, onChange, compact = false,
           open={sheetOpen}
           onOpenChange={setSheetOpen}
           onSelectBlock={handleSelectBlock}
+          excludeLayouts={true} // Exclure les layouts dans les colonnes
         />
       </div>
     );

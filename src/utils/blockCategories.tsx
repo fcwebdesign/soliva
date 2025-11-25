@@ -110,6 +110,18 @@ export const getCategorizedBlocks = (filteredBlocks: any[]) => {
   return categorized;
 };
 
+// Fonction pour grouper les blocs par catégorie (tous les blocs, y compris layouts)
+export const getCategorizedBlocksAll = () => {
+  const allBlocks = getEffectiveBlocks(); // Tous les blocs, sans filtre
+  const categorized: { [key: string]: any[] } = {};
+  allBlocks.forEach(block => {
+    const catLabel = block.category && categoryLabels[block.category] ? categoryLabels[block.category] : defaultCategory;
+    if (!categorized[catLabel]) categorized[catLabel] = [];
+    categorized[catLabel].push(block);
+  });
+  return categorized;
+};
+
 // Fonction pour grouper les blocs par catégorie (colonnes)
 export const getCategorizedBlocksForColumns = () => {
   const allBlocks = getEffectiveBlocks().filter(b => b.category !== 'layout'); // on exclut les layouts dans les colonnes

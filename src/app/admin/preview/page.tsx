@@ -45,7 +45,16 @@ export default function AdminPreviewPage() {
   const [dragOverId, setDragOverId] = useState<string | null>(null);
   const [inspectorMode, setInspectorMode] = useState<boolean>(false);
   const [inspectorBlockId, setInspectorBlockId] = useState<string | null>(null);
-  const [inspectorColumn, setInspectorColumn] = useState<'leftColumn' | 'rightColumn' | null>(null);
+  const [inspectorColumn, setInspectorColumn] = useState<
+    | 'leftColumn'
+    | 'rightColumn'
+    | 'middleColumn'
+    | 'column1'
+    | 'column2'
+    | 'column3'
+    | 'column4'
+    | null
+  >(null);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   const [isBlockSheetOpen, setIsBlockSheetOpen] = useState(false);
   const templateKey = previewData?._template || initialPageData?._template || adminContent?._template || 'soliva';
@@ -100,19 +109,29 @@ export default function AdminPreviewPage() {
     inputBlocks
       .filter((b) => !hidden.has(String(b.id)))
       .map((b) => {
-        if (b.type !== 'two-columns') return b;
         const data = b.data || b;
-        const filterColumn = (colKey: 'leftColumn' | 'rightColumn') => {
-          const items = data[colKey] || [];
-          return items.filter((item: any) => !hidden.has(String(item?.id)));
-        };
+
+        // Gérer les layouts multi-colonnes pour masquer aussi les enfants cachés
+        const columnKeys =
+          b.type === 'two-columns'
+            ? (['leftColumn', 'rightColumn'] as const)
+            : b.type === 'three-columns'
+            ? (['leftColumn', 'middleColumn', 'rightColumn'] as const)
+            : b.type === 'four-columns'
+            ? (['column1', 'column2', 'column3', 'column4'] as const)
+            : null;
+
+        if (!columnKeys) return b;
+
+        const filteredData = { ...data };
+        columnKeys.forEach((key) => {
+          const items = data[key] || [];
+          filteredData[key] = items.filter((item: any) => !hidden.has(String(item?.id)));
+        });
+
         return {
           ...b,
-          data: {
-            ...data,
-            leftColumn: filterColumn('leftColumn'),
-            rightColumn: filterColumn('rightColumn'),
-          },
+          data: filteredData,
         };
       });
 
@@ -198,30 +217,102 @@ export default function AdminPreviewPage() {
   const handleAddBlock = (blockType: string) => {
     try {
       const newBlock = createAutoBlockInstance(blockType);
-      const newBlocks = [...blocks, newBlock];
-      const normalizedNewBlocks = normalizeBlocks(newBlocks);
       
-      // Récupérer l'ID du dernier bloc normalisé (peut être différent après normalisation)
-      const lastBlock = normalizedNewBlocks[normalizedNewBlocks.length - 1];
-      const finalBlockId = lastBlock?.id || newBlock.id;
+      // Vérifier si on est dans une colonne
+      // 1. Via inspectorColumn (déjà mis à jour quand on sélectionne une colonne)
+      // 2. Via selectedBlockId/inspectorBlockId au format blockId:leftColumn ou blockId:rightColumn
+      let targetColumn:
+        | 'leftColumn'
+        | 'rightColumn'
+        | 'middleColumn'
+        | 'column1'
+        | 'column2'
+        | 'column3'
+        | 'column4'
+        | null = inspectorColumn;
+      let parentLayoutBlockId: string | null = null;
       
-      setBlocks(normalizedNewBlocks);
-      setPreviewData((prev) => prev ? { ...prev, blocks: normalizedNewBlocks } : prev);
+      if (!targetColumn) {
+        const currentSelection = selectedBlockId || inspectorBlockId;
+        const columnMatch = currentSelection?.match(
+          /^(.+):(leftColumn|rightColumn|middleColumn|column1|column2|column3|column4)$/
+        );
+        if (columnMatch) {
+          [, parentLayoutBlockId, targetColumn] = columnMatch;
+        }
+      } else {
+        // Si inspectorColumn est défini, utiliser inspectorBlockId comme blockId
+        parentLayoutBlockId = inspectorBlockId || null;
+      }
       
-      // Sélectionner et ouvrir l'inspecteur pour le nouveau bloc (utiliser l'ID normalisé)
-      setSelectedBlockId(finalBlockId);
-      setInspectorMode(true);
-      setInspectorBlockId(finalBlockId);
-      setInspectorColumn(null);
-      
-      // Scroller vers le nouveau bloc après un court délai
-      setTimeout(() => {
-        scrollToBlock(finalBlockId);
-      }, 100);
-      
-      toast.success('Bloc ajouté', {
-        description: `Le bloc "${blockType}" a été ajouté à la page`
-      });
+      if (targetColumn && parentLayoutBlockId) {
+        // Ajouter le bloc dans une colonne d'un layout multi-colonnes
+        const column = targetColumn;
+        const layoutBlockIndex = blocks.findIndex(b => b.id === parentLayoutBlockId);
+        if (layoutBlockIndex === -1) {
+          toast.error('Erreur', { description: 'Bloc multi-colonnes introuvable' });
+          return;
+        }
+        
+        const layoutBlock = blocks[layoutBlockIndex];
+        const blockData = layoutBlock.data || layoutBlock;
+        const columnBlocks = blockData[column] || [];
+        
+        // Ajouter le nouveau bloc à la colonne
+        const updatedColumnBlocks = [...columnBlocks, newBlock];
+        const updatedBlockData = {
+          ...blockData,
+          [column]: updatedColumnBlocks
+        };
+        
+        // Mettre à jour le bloc two-columns
+        const updatedBlocks = [...blocks];
+        updatedBlocks[layoutBlockIndex] = {
+          ...layoutBlock,
+          data: updatedBlockData
+        };
+        
+        const normalizedNewBlocks = normalizeBlocks(updatedBlocks);
+        setBlocks(normalizedNewBlocks);
+        setPreviewData((prev) => prev ? { ...prev, blocks: normalizedNewBlocks } : prev);
+        
+        // Sélectionner et ouvrir l'inspecteur pour le nouveau bloc dans la colonne
+        const finalBlockId = newBlock.id;
+        setSelectedBlockId(finalBlockId);
+        setInspectorMode(true);
+        setInspectorBlockId(finalBlockId);
+        setInspectorColumn(column);
+        
+        toast.success('Bloc ajouté', {
+          description: `Le bloc "${blockType}" a été ajouté à la colonne ${column}`
+        });
+      } else {
+        // Ajouter le bloc à la racine (comportement normal)
+        const newBlocks = [...blocks, newBlock];
+        const normalizedNewBlocks = normalizeBlocks(newBlocks);
+        
+        // Récupérer l'ID du dernier bloc normalisé (peut être différent après normalisation)
+        const lastBlock = normalizedNewBlocks[normalizedNewBlocks.length - 1];
+        const finalBlockId = lastBlock?.id || newBlock.id;
+        
+        setBlocks(normalizedNewBlocks);
+        setPreviewData((prev) => prev ? { ...prev, blocks: normalizedNewBlocks } : prev);
+        
+        // Sélectionner et ouvrir l'inspecteur pour le nouveau bloc (utiliser l'ID normalisé)
+        setSelectedBlockId(finalBlockId);
+        setInspectorMode(true);
+        setInspectorBlockId(finalBlockId);
+        setInspectorColumn(null);
+        
+        // Scroller vers le nouveau bloc après un court délai
+        setTimeout(() => {
+          scrollToBlock(finalBlockId);
+        }, 100);
+        
+        toast.success('Bloc ajouté', {
+          description: `Le bloc "${blockType}" a été ajouté à la page`
+        });
+      }
     } catch (error) {
       console.error('Erreur lors de la création du bloc:', error);
       toast.error('Erreur', {
@@ -757,14 +848,33 @@ export default function AdminPreviewPage() {
                       onAddBlock={handleAddBlock}
                       onSelectBlock={(id) => {
                         let targetId = id;
-                        let targetColumn: 'leftColumn' | 'rightColumn' | null = null;
+                        let targetColumn:
+                          | 'leftColumn'
+                          | 'rightColumn'
+                          | 'middleColumn'
+                          | 'column1'
+                          | 'column2'
+                          | 'column3'
+                          | 'column4'
+                          | null = null;
                         if (id.includes(':')) {
                           const [base, colKey] = id.split(':');
                           targetId = base;
-                          if (colKey === 'leftColumn' || colKey === 'rightColumn') {
+                          if (
+                            colKey === 'leftColumn' ||
+                            colKey === 'rightColumn' ||
+                            colKey === 'middleColumn' ||
+                            colKey === 'column1' ||
+                            colKey === 'column2' ||
+                            colKey === 'column3' ||
+                            colKey === 'column4'
+                          ) {
                             targetColumn = colKey;
                           }
                         }
+                        
+                        // Mettre à jour selectedBlockId pour conserver le contexte de colonne
+                        setSelectedBlockId(id); // Garder le format blockId:column pour le contexte
                         
                         // Ouvrir l'inspecteur et scroller en même temps
                         setInspectorMode(true);
@@ -875,90 +985,62 @@ export default function AdminPreviewPage() {
                 // Chercher d'abord dans les blocs racine
                 let block = blocks.find(b => b.id === inspectorBlockId);
                 let blockParent: any = null;
-                let blockColumn: 'leftColumn' | 'rightColumn' | null = null;
+                let blockColumn:
+                  | 'leftColumn'
+                  | 'rightColumn'
+                  | 'middleColumn'
+                  | 'column1'
+                  | 'column2'
+                  | 'column3'
+                  | 'column4'
+                  | null = null;
                 let blockIndex: number = -1;
                 
-                // Si pas trouvé, chercher dans les colonnes des blocs two-columns
+                // Si pas trouvé, chercher dans les colonnes des blocs multi-colonnes
                 if (!block) {
                   console.log('🔍 Bloc non trouvé dans racine, recherche dans colonnes...');
                   for (const parentBlock of blocks) {
-                    if (parentBlock.type === 'two-columns') {
-                      // Essayer différents formats de données
-                      const blockData = parentBlock.data || parentBlock;
-                      const leftColumn = blockData.leftColumn || parentBlock.leftColumn || [];
-                      const rightColumn = blockData.rightColumn || parentBlock.rightColumn || [];
-                      
-                      console.log(`📋 Bloc two-columns ${parentBlock.id}:`, {
-                        leftColumn: leftColumn.map((b: any, idx: number) => {
-                          const blockId = b?.id || b?.data?.id || `no-id-${idx}`;
-                          console.log(`  📦 Colonne gauche [${idx}]:`, { 
-                            id: blockId, 
-                            type: b?.type,
-                            fullBlock: b 
-                          });
-                          return { id: blockId, type: b?.type };
-                        }),
-                        rightColumn: rightColumn.map((b: any, idx: number) => {
-                          const blockId = b?.id || b?.data?.id || `no-id-${idx}`;
-                          console.log(`  📦 Colonne droite [${idx}]:`, { 
-                            id: blockId, 
-                            type: b?.type,
-                            fullBlock: b 
-                          });
-                          return { id: blockId, type: b?.type };
-                        })
-                      });
-                      
-                      // Rechercher dans la colonne gauche
-                      const leftIndex = leftColumn.findIndex((b: any, idx: number) => {
-                        if (!b) return false;
-                        // Essayer différents formats d'ID
-                        const blockId = b.id || b.data?.id || (typeof b === 'string' ? b : null);
-                        // ID stable basé sur la position (même format que dans analyzeBlockStructure)
-                        const stableId = `${parentBlock.id}-leftColumn-${idx}`;
-                        const matches = blockId === inspectorBlockId || 
-                                       String(blockId) === String(inspectorBlockId) ||
-                                       stableId === inspectorBlockId ||
-                                       String(stableId) === String(inspectorBlockId);
-                        if (matches) {
-                          console.log('✅ Trouvé dans colonne gauche:', { blockId, stableId, index: idx, block: b });
-                        }
-                        return matches;
-                      });
-                      
-                      // Rechercher dans la colonne droite
-                      const rightIndex = rightColumn.findIndex((b: any, idx: number) => {
-                        if (!b) return false;
-                        // Essayer différents formats d'ID
-                        const blockId = b.id || b.data?.id || (typeof b === 'string' ? b : null);
-                        // ID stable basé sur la position (même format que dans analyzeBlockStructure)
-                        const stableId = `${parentBlock.id}-rightColumn-${idx}`;
-                        const matches = blockId === inspectorBlockId || 
-                                       String(blockId) === String(inspectorBlockId) ||
-                                       stableId === inspectorBlockId ||
-                                       String(stableId) === String(inspectorBlockId);
-                        if (matches) {
-                          console.log('✅ Trouvé dans colonne droite:', { blockId, stableId, index: idx, block: b });
-                        }
-                        return matches;
-                      });
-                      
-                      if (leftIndex !== -1) {
-                        block = leftColumn[leftIndex];
-                        blockParent = parentBlock;
-                        blockColumn = 'leftColumn';
-                        blockIndex = leftIndex;
-                        console.log('✅ Bloc trouvé dans colonne gauche à l\'index', leftIndex);
-                        break;
-                      } else if (rightIndex !== -1) {
-                        block = rightColumn[rightIndex];
-                        blockParent = parentBlock;
-                        blockColumn = 'rightColumn';
-                        blockIndex = rightIndex;
-                        console.log('✅ Bloc trouvé dans colonne droite à l\'index', rightIndex);
-                        break;
-                      }
+                    if (!['two-columns', 'three-columns', 'four-columns'].includes(parentBlock.type)) {
+                      continue;
                     }
+
+                    const blockData = parentBlock.data || parentBlock;
+                    const columnKeys =
+                      parentBlock.type === 'two-columns'
+                        ? ['leftColumn', 'rightColumn']
+                        : parentBlock.type === 'three-columns'
+                        ? ['leftColumn', 'middleColumn', 'rightColumn']
+                        : ['column1', 'column2', 'column3', 'column4'];
+
+                    columnKeys.forEach((colKey) => {
+                      const columnBlocks = blockData[colKey] || parentBlock[colKey] || [];
+                      console.log(`📋 Bloc ${parentBlock.type} ${parentBlock.id} — ${colKey}:`, columnBlocks);
+
+                      const foundIndex = columnBlocks.findIndex((b: any, idx: number) => {
+                        if (!b) return false;
+                        const blockId = b.id || b.data?.id || (typeof b === 'string' ? b : null);
+                        const stableId = `${parentBlock.id}-${colKey}-${idx}`;
+                        const matches =
+                          blockId === inspectorBlockId ||
+                          String(blockId) === String(inspectorBlockId) ||
+                          stableId === inspectorBlockId ||
+                          String(stableId) === String(inspectorBlockId);
+                        if (matches) {
+                          console.log(`✅ Trouvé dans ${colKey}:`, { blockId, stableId, index: idx, block: b });
+                        }
+                        return matches;
+                      });
+
+                      if (foundIndex !== -1 && !block) {
+                        block = columnBlocks[foundIndex];
+                        blockParent = parentBlock;
+                        blockColumn = colKey as any;
+                        blockIndex = foundIndex;
+                        console.log(`✅ Bloc trouvé dans ${colKey} à l'index`, foundIndex);
+                      }
+                    });
+
+                    if (block) break;
                   }
                 }
                 
@@ -967,13 +1049,18 @@ export default function AdminPreviewPage() {
                   console.log('🔍 Bloc introuvable:', inspectorBlockId);
                   console.log('📦 Blocs racine:', blocks.map(b => b.id));
                   console.log('📋 Blocs dans colonnes:', blocks
-                    .filter(b => b.type === 'two-columns')
+                    .filter(b => ['two-columns', 'three-columns', 'four-columns'].includes(b.type))
                     .map(b => {
                       const data = b.data || b;
                       return {
                         parentId: b.id,
                         leftColumn: (data.leftColumn || []).map((bl: any) => bl?.id || bl?.data?.id),
-                        rightColumn: (data.rightColumn || []).map((bl: any) => bl?.id || bl?.data?.id)
+                        middleColumn: (data.middleColumn || []).map((bl: any) => bl?.id || bl?.data?.id),
+                        rightColumn: (data.rightColumn || []).map((bl: any) => bl?.id || bl?.data?.id),
+                        column1: (data.column1 || []).map((bl: any) => bl?.id || bl?.data?.id),
+                        column2: (data.column2 || []).map((bl: any) => bl?.id || bl?.data?.id),
+                        column3: (data.column3 || []).map((bl: any) => bl?.id || bl?.data?.id),
+                        column4: (data.column4 || []).map((bl: any) => bl?.id || bl?.data?.id)
                       };
                     }));
                   
@@ -984,12 +1071,17 @@ export default function AdminPreviewPage() {
                   );
                 }
                 
-                // Déterminer quelle colonne ouvrir pour two-columns
-                const initialOpenColumn: 'leftColumn' | 'rightColumn' | null = blockParent?.type === 'two-columns' && blockColumn
-                  ? blockColumn
-                  : block.type === 'two-columns' && inspectorColumn
-                    ? inspectorColumn
-                    : null;
+                // Déterminer quelle colonne ouvrir pour l'éditeur compact
+                let initialOpenColumn: any = null;
+                if (blockParent?.type === 'two-columns' && blockColumn) {
+                  initialOpenColumn = blockColumn === 'leftColumn' ? 'left' : 'right';
+                } else if (blockParent?.type === 'three-columns' && blockColumn) {
+                  initialOpenColumn = blockColumn === 'leftColumn' ? 'left' : blockColumn === 'middleColumn' ? 'middle' : 'right';
+                } else if (blockParent?.type === 'four-columns' && blockColumn) {
+                  initialOpenColumn = blockColumn; // column1..column4
+                } else if (block.type === 'two-columns' && inspectorColumn) {
+                  initialOpenColumn = inspectorColumn === 'leftColumn' ? 'left' : 'right';
+                }
                 
                 // Extraire les données du bloc (peut être dans block.data ou directement dans block)
                 const blockData = block.data && typeof block.data === 'object' && Object.keys(block.data).length > 0
@@ -1057,7 +1149,7 @@ export default function AdminPreviewPage() {
                     }, { 
                       compact: true,
                       context: previewData, // Passer le contexte pour l'IA
-                      initialOpenColumn: initialOpenColumn ? (initialOpenColumn === 'leftColumn' ? 'left' : 'right') : null,
+                      initialOpenColumn: initialOpenColumn,
                       initialOpenBlockId: blockParent && blockColumn ? inspectorBlockId : null
                     })}
                   </div>
@@ -1131,16 +1223,17 @@ export default function AdminPreviewPage() {
           ? String(blk.id)
           : `${blk.type || 'block'}-${idx}`;
 
+      const normalizeColumn = (items: any[], colKey: string) =>
+        (items || []).map((item: any, itemIdx: number) => {
+          const itemId =
+            item?.id && String(item.id).trim() !== ''
+              ? String(item.id)
+              : `${baseId}-${colKey}-${itemIdx}-${item?.type || 'item'}`;
+          return { ...item, id: itemId };
+        });
+
       if (blk.type === 'two-columns') {
         const data = blk.data || blk;
-        const normalizeColumn = (items: any[], colKey: 'leftColumn' | 'rightColumn') =>
-          (items || []).map((item: any, itemIdx: number) => {
-            const itemId =
-              item?.id && String(item.id).trim() !== ''
-                ? String(item.id)
-                : `${baseId}-${colKey}-${itemIdx}-${item?.type || 'item'}`;
-            return { ...item, id: itemId };
-          });
 
         const leftColumn = normalizeColumn(data.leftColumn || blk.leftColumn || [], 'leftColumn');
         const rightColumn = normalizeColumn(data.rightColumn || blk.rightColumn || [], 'rightColumn');
@@ -1152,6 +1245,46 @@ export default function AdminPreviewPage() {
             ...data,
             leftColumn,
             rightColumn,
+          },
+        };
+      }
+
+      if (blk.type === 'three-columns') {
+        const data = blk.data || blk;
+
+        const leftColumn = normalizeColumn(data.leftColumn || blk.leftColumn || [], 'leftColumn');
+        const middleColumn = normalizeColumn(data.middleColumn || blk.middleColumn || [], 'middleColumn');
+        const rightColumn = normalizeColumn(data.rightColumn || blk.rightColumn || [], 'rightColumn');
+
+        return {
+          ...blk,
+          id: baseId,
+          data: {
+            ...data,
+            leftColumn,
+            middleColumn,
+            rightColumn,
+          },
+        };
+      }
+
+      if (blk.type === 'four-columns') {
+        const data = blk.data || blk;
+
+        const column1 = normalizeColumn(data.column1 || blk.column1 || [], 'column1');
+        const column2 = normalizeColumn(data.column2 || blk.column2 || [], 'column2');
+        const column3 = normalizeColumn(data.column3 || blk.column3 || [], 'column3');
+        const column4 = normalizeColumn(data.column4 || blk.column4 || [], 'column4');
+
+        return {
+          ...blk,
+          id: baseId,
+          data: {
+            ...data,
+            column1,
+            column2,
+            column3,
+            column4,
           },
         };
       }
