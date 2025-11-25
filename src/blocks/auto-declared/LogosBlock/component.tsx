@@ -4,6 +4,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import Image from 'next/image';
 import { getTypographyConfig, getTypographyClasses, getCustomColor, defaultTypography } from '@/utils/typography';
 import { useContentUpdate, fetchContentWithNoCache } from '@/hooks/useContentUpdate';
+import { resolvePalette } from '@/utils/palette';
 
 interface LogosData {
   title?: string;
@@ -98,7 +99,104 @@ export default function LogosBlock({ data }: { data: LogosData | any }) {
     // Toujours utiliser var(--foreground) pour s'adapter aux palettes
     return 'var(--foreground)';
   }, [typoConfig]);
-  
+
+  // Détecter automatiquement le thème en fonction de la luminosité du fond
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    const blockTheme = data.theme || 'auto';
+    
+    const detectTheme = () => {
+      try {
+        // Récupérer la couleur de fond (--card ou --background)
+        const cardColor = window.getComputedStyle(document.documentElement).getPropertyValue('--card').trim();
+        const bgColor = window.getComputedStyle(document.documentElement).getPropertyValue('--background').trim();
+        const colorToCheck = cardColor || bgColor;
+        
+        if (colorToCheck) {
+          // Créer une palette minimale pour calculer isDark
+          const palette = {
+            background: colorToCheck,
+            primary: '#000000',
+            secondary: '#000000',
+            accent: '#000000',
+            text: '#000000',
+            textSecondary: '#000000',
+            border: '#000000'
+          };
+          const resolved = resolvePalette(palette);
+          const detectedTheme = resolved.isDark ? 'dark' : 'light';
+          
+          // Mettre à jour data-block-theme sur la section
+          const section = document.querySelector('.logos-section');
+          if (section) {
+            // Si le thème est "auto", utiliser la détection
+            // Sinon, si le thème explicite ne correspond pas au fond, corriger automatiquement
+            let finalTheme = blockTheme;
+            if (blockTheme === 'auto') {
+              finalTheme = detectedTheme;
+            } else if (blockTheme === 'light' && resolved.isDark) {
+              // Thème light mais fond sombre -> corriger en dark
+              finalTheme = 'dark';
+            } else if (blockTheme === 'dark' && !resolved.isDark) {
+              // Thème dark mais fond clair -> corriger en light
+              finalTheme = 'light';
+            }
+            
+            section.setAttribute('data-block-theme', finalTheme);
+            
+            if (process.env.NODE_ENV === 'development') {
+              console.log('[LogosBlock] Thème appliqué:', finalTheme, { 
+                blockTheme, 
+                detectedTheme, 
+                isDark: resolved.isDark, 
+                color: colorToCheck 
+              });
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('[LogosBlock] Erreur détection thème:', e);
+      }
+    };
+    
+    // Détecter immédiatement
+    detectTheme();
+    
+    // Réécouter les changements de palette (via MutationObserver ou interval)
+    const interval = setInterval(detectTheme, 500);
+    return () => clearInterval(interval);
+  }, [data.theme, fullContent]);
+
+  // Logs de débogage pour les logos
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const htmlTheme = document.documentElement.getAttribute('data-theme');
+      const section = document.querySelector('.logos-section');
+      const sectionTheme = section?.getAttribute('data-theme') || section?.getAttribute('data-block-theme');
+      const firstLogoImg = document.querySelector('.logos-section .logo-item img');
+      const computedFilter = firstLogoImg ? window.getComputedStyle(firstLogoImg as Element).filter : 'none';
+      const bgColor = window.getComputedStyle(document.documentElement).getPropertyValue('--background').trim();
+      const cardColor = window.getComputedStyle(document.documentElement).getPropertyValue('--card').trim();
+      
+      console.log('🔍 [LogosBlock] Debug logos:', {
+        htmlDataTheme: htmlTheme,
+        sectionDataTheme: sectionTheme,
+        blockTheme: data.theme || 'auto',
+        computedFilter,
+        backgroundColor: bgColor,
+        cardColor,
+        hasSiteClass: document.body.classList.contains('site'),
+        logoImageClass: firstLogoImg?.classList.contains('logo-image'),
+        cssRules: {
+          'html[data-theme="dark"] .logos-section .logo-item img': document.querySelector('html[data-theme="dark"] .logos-section .logo-item img') ? 'exists' : 'not found',
+          '.logos-section[data-theme="dark"] .logo-item img': document.querySelector('.logos-section[data-theme="dark"] .logo-item img') ? 'exists' : 'not found',
+          '[data-theme="dark"] .logos-section .logo-item img': document.querySelector('[data-theme="dark"] .logos-section .logo-item img') ? 'exists' : 'not found',
+        }
+      });
+    }
+  }, [data.theme, fullContent]);
+
   return (
     <section className="logos-section" data-block-type="logos" data-block-theme={data.theme || 'auto'}>
       <div>

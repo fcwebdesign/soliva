@@ -1720,12 +1720,8 @@ html.preview-mode body {
 
 }
 
-/* Styles pour les images en dark mode */
-.site [data-theme="dark"] img {
-  filter: brightness(0.9) contrast(1.1);
-}
-
 /* Styles pour les logos clients avec adaptation au thème */
+/* IMPORTANT: Ces règles doivent être AVANT la règle générale sur les images */
 .logo-item {
   aspect-ratio: 1;
   display: flex;
@@ -1740,9 +1736,12 @@ html.preview-mode body {
 .site [data-theme="dark"] .logo-item {
   border: 1px solid rgba(255, 255, 255, 0.2);  /* blanc à 20% */
 }
+html[data-theme="dark"] .logo-item,
+[data-theme="dark"] .logo-item {
+  border: 1px solid rgba(255, 255, 255, 0.2);  /* blanc à 20% */
+}
 
 .logo-item img {
-  filter: grayscale(100%);
   transition: all 0.3s ease;
   max-width: 65%;
   max-height: 65%;
@@ -1752,20 +1751,41 @@ html.preview-mode body {
 }
 
 /* Adaptation des logos selon la luminosité de la palette */
-/* Par défaut : logos en noir (pour fond clair) */
+/* PRIORITÉ 1: Par défaut (si pas de thème explicite), logos en noir (pour fond clair) */
 .logos-section .logo-item img {
-  filter: grayscale(100%) brightness(0) contrast(1);
+  filter: grayscale(100%) brightness(0) contrast(1) !important;
 }
 
-/* Si le fond est sombre (dark palette ou thème dark), logos inversés en blanc */
+/* PRIORITÉ 2: Thème explicite de la section/bloc (priorité la plus haute - doit être APRÈS la règle par défaut) */
+/* Si la section/bloc a un thème light explicite, logos en noir (surcharge la règle par défaut si nécessaire) */
+.logos-section[data-theme="light"] .logo-item img,
+.logos-section[data-block-theme="light"] .logo-item img {
+  filter: grayscale(100%) brightness(0) contrast(1) !important;
+}
+
+/* Si la section/bloc a un thème dark explicite, logos inversés en blanc */
 .logos-section[data-theme="dark"] .logo-item img,
-.logos-section[data-block-theme="dark"] .logo-item img,
-[data-theme="dark"] .logos-section .logo-item img,
-[data-block-theme="dark"] .logos-section .logo-item img,
-html[data-theme="dark"] .logos-section .logo-item img,
-.dark .logos-section .logo-item img,
-.site [data-theme="dark"] .logos-section .logo-item img {
+.logos-section[data-block-theme="dark"] .logo-item img {
   filter: grayscale(100%) brightness(0) contrast(0) invert(1) !important;
+}
+
+/* PRIORITÉ 3: Si le HTML a data-theme="dark" ET que la section n'a pas de thème explicite */
+/* (seulement si la section a data-theme="auto" ou pas de data-theme) */
+html[data-theme="dark"] .logos-section:not([data-theme="light"]):not([data-block-theme="light"]):not([data-theme="dark"]):not([data-block-theme="dark"]) .logo-item img,
+[data-theme="dark"] .logos-section:not([data-theme="light"]):not([data-block-theme="light"]):not([data-theme="dark"]):not([data-block-theme="dark"]) .logo-item img,
+.dark .logos-section:not([data-theme="light"]):not([data-block-theme="light"]):not([data-theme="dark"]):not([data-block-theme="dark"]) .logo-item img,
+.site [data-theme="dark"] .logos-section:not([data-theme="light"]):not([data-block-theme="light"]):not([data-theme="dark"]):not([data-block-theme="dark"]) .logo-item img {
+  filter: grayscale(100%) brightness(0) contrast(0) invert(1) !important;
+}
+
+/* Styles pour les images en dark mode (exclure les logos) */
+/* Cette règle doit être APRÈS les règles des logos pour éviter les conflits */
+.site [data-theme="dark"] img:not(.logos-section img) {
+  filter: brightness(0.9) contrast(1.1);
+}
+html[data-theme="dark"] img:not(.logos-section img),
+[data-theme="dark"] img:not(.logos-section img) {
+  filter: brightness(0.9) contrast(1.1);
 }
 
 /* Styles pour le bloc Citation - adaptation aux palettes */

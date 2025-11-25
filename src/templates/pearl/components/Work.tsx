@@ -54,9 +54,9 @@ export default function WorkPearl({ content, fullContent }: {
   return (
     <section>
       <div className="py-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-end">
           {/* Titre à gauche */}
-          <div className="text-left">
+          <div className="text-left mb-4 lg:mb-0">
         <h1 
           className={h1Classes}
           style={h1CustomColor ? { color: h1CustomColor } : undefined}
@@ -67,9 +67,9 @@ export default function WorkPearl({ content, fullContent }: {
           
           {/* Description à droite, alignée à droite et en bas */}
         {subtitle && (
-            <div className="text-left md:text-right">
+            <div className="text-left lg:ml-auto lg:pl-8">
               <div
-                className={`max-w-2xl md:ml-auto ${pClasses}`}
+                className={`max-w-2xl ${pClasses}`}
                 style={pCustomColor ? { color: pCustomColor } : { color: 'var(--foreground)' }}
                 dangerouslySetInnerHTML={{ __html: subtitle }}
               />

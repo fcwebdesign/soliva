@@ -10,6 +10,8 @@ import BlogPearl from './components/Blog';
 import { useRevealAnimation } from '@/animations/reveal/hooks/useRevealAnimation';
 import RevealAnimation from '@/animations/reveal/RevealAnimationOriginal';
 import { getTypographyConfig, getTypographyClasses, getCustomColor, defaultTypography } from '@/utils/typography';
+import { resolvePaletteFromContent } from '@/utils/palette-resolver';
+import { resolvePalette } from '@/utils/palette';
 import '@/animations/reveal/reveal-original.css';
 import './pearl.css';
 
@@ -76,6 +78,51 @@ export default function PearlClient() {
 
   const { shouldShowReveal, isRevealComplete, completeReveal, config } = useRevealAnimation(revealConfig);
 
+  // Détecter si la palette est dark et appliquer data-theme sur html (comme dans l'iframe)
+  useEffect(() => {
+    if (typeof window === 'undefined' || !content) return;
+    
+    const detectTheme = () => {
+      try {
+        if (content?.metadata) {
+          const palette = resolvePaletteFromContent(content);
+          const resolved = resolvePalette(palette);
+          const theme = resolved.isDark ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', theme);
+          
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[Pearl] Thème détecté depuis metadata:', theme, { isDark: resolved.isDark, background: palette.background });
+          }
+          return;
+        }
+        
+        // Sinon, utiliser la variable CSS --background du DOM
+        const bgColor = window.getComputedStyle(document.documentElement).getPropertyValue('--background').trim();
+        if (bgColor) {
+          const palette = {
+            background: bgColor,
+            primary: '#000000',
+            secondary: '#000000',
+            accent: '#000000',
+            text: '#000000',
+            textSecondary: '#000000',
+            border: '#000000'
+          };
+          const resolved = resolvePalette(palette);
+          const theme = resolved.isDark ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', theme);
+          
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[Pearl] Thème détecté depuis CSS:', theme, { isDark: resolved.isDark, background: bgColor });
+          }
+        }
+      } catch (e) {
+        console.warn('[Pearl] Erreur détection thème:', e);
+      }
+    };
+    
+    detectTheme();
+  }, [content]);
 
   // Fonction pour réinitialiser l'animation (utile pour tester)
   const resetAnimation = () => {
