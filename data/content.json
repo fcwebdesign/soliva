@@ -1079,8 +1079,8 @@
           {
             "id": "page-intro-1763985269843",
             "type": "page-intro",
-            "title": "réalisation 3D",
-            "description": "<p>Parcourez une sélection de scènes 3D conçues pour sublimer des univers mode, luxe et culture. Chaque rendu est optimisé en Next.js, animé avec GSAP, et pensé pour la performance mesurée (Core Web Vitals) et le SEO. Nous intégrons de l’IA utile au workflow pour accélérer la production sans sacrifier l’exigence visuelle.</p>",
+            "title": "Showcase",
+            "description": "<p>Parcourez une sélection de projets conçus avec Next.js, animés avec GSAP, et optimisés pour la performance et les Core Web Vitals.</p>",
             "layout": "default"
           },
           {
@@ -1215,8 +1215,8 @@
             "title": "Nos réalisations",
             "maxProjects": 6,
             "selectedProjects": [
-              "velin",
               "projet-test",
+              "velin",
               "oko",
               "projet-2"
             ],

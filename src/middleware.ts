@@ -16,6 +16,19 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Route iframe de preview : autoriser l'iframe (SAMEORIGIN)
+  if (pathname === '/admin/preview/iframe') {
+    const response = NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
+    // Override les headers de sécurité pour autoriser l'iframe
+    response.headers.set('X-Frame-Options', 'SAMEORIGIN');
+    response.headers.delete('Content-Security-Policy'); // Retirer CSP si présent
+    return response;
+  }
+
   // Exclure l'admin et les pages de template de la redirection
   if (pathname.startsWith('/admin') || 
       pathname.startsWith('/agency-premium') ||

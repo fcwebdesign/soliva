@@ -26,9 +26,10 @@ export default function AdminPreviewPage() {
   const pageKey = searchParams.get('page') || 'studio';
   const [adminContent, setAdminContent] = useState<any>(null);
 
-  // Refs pour scroller vers un bloc dans l’éditeur et la preview
+  // Refs pour scroller vers un bloc dans l'éditeur et la preview
   const editorPaneRef = useRef<HTMLDivElement>(null);
   const previewPaneRef = useRef<HTMLDivElement>(null);
+  const previewIframeRef = useRef<HTMLIFrameElement>(null);
 
   // État local pour la preview
   const [previewData, setPreviewData] = useState<any>(null);
@@ -93,6 +94,51 @@ export default function AdminPreviewPage() {
       .map(([k, v]) => `${k}: ${v};`)
       .join(' ');
   }, [previewData, initialPageData, adminContent]);
+
+  // Écouter les messages de l'iframe et envoyer les données
+  useEffect(() => {
+    const sendDataToIframe = () => {
+      if (previewIframeRef.current?.contentWindow && previewData && blocks.length > 0) {
+        previewIframeRef.current.contentWindow.postMessage({
+          type: 'UPDATE_PREVIEW',
+          payload: {
+            previewData,
+            blocks,
+            paletteCss,
+            highlightBlockId: selectedBlockId || hoverBlockId || null
+          }
+        }, '*');
+      }
+    };
+
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'IFRAME_READY') {
+        // L'iframe est prête, envoyer les données initiales
+        sendDataToIframe();
+      } else if (event.data.type === 'BLOCK_CLICKED') {
+        // Un bloc a été cliqué dans l'iframe, sélectionner dans le parent
+        const blockId = event.data.payload.blockId;
+        setSelectedBlockId(blockId);
+        setInspectorMode(true);
+        setInspectorBlockId(blockId);
+        
+        // Envoyer le highlight à l'iframe
+        if (previewIframeRef.current?.contentWindow) {
+          previewIframeRef.current.contentWindow.postMessage({
+            type: 'HIGHLIGHT_BLOCK',
+            payload: { blockId }
+          }, '*');
+        }
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    
+    // Envoyer les données quand elles changent
+    sendDataToIframe();
+
+    return () => window.removeEventListener('message', handleMessage);
+  }, [previewData, blocks, paletteCss, selectedBlockId, hoverBlockId]);
 
   // Configurer ScrollTrigger pour utiliser le panneau de preview comme scroller
   useEffect(() => {
@@ -200,6 +246,18 @@ export default function AdminPreviewPage() {
         setInitialPageData(pageWithMeta);
         setPreviewData(pageWithMeta);
         setBlocks(normalizedBlocks);
+        
+        // Envoyer les données à l'iframe si elle est prête
+        if (previewIframeRef.current?.contentWindow) {
+          previewIframeRef.current.contentWindow.postMessage({
+            type: 'UPDATE_PREVIEW',
+            payload: {
+              previewData: pageWithMeta,
+              blocks: normalizedBlocks,
+              paletteCss: paletteCss
+            }
+          }, '*');
+        }
         console.log('[Preview] Page chargée', pageKey, { 
           template: nextTemplate, 
           blocks: pageBlocks.length,
@@ -312,8 +370,19 @@ export default function AdminPreviewPage() {
       setTimeout(() => el.classList.remove('ring', 'ring-blue-200'), 900);
     };
 
+    // Highlight dans l'éditeur (toujours direct)
     highlight(editorPaneRef.current, 'editorPane');
-    highlight(previewPaneRef.current, 'previewPane');
+    
+    // Pour la preview iframe, envoyer un seul message (scroll + highlight ensemble)
+    if (previewIframeRef.current?.contentWindow) {
+      previewIframeRef.current.contentWindow.postMessage({
+        type: 'SCROLL_TO_BLOCK',
+        payload: { blockId, alignToTop }
+      }, '*');
+    } else {
+      // Fallback : highlight direct si pas d'iframe
+      highlight(previewPaneRef.current, 'previewPane');
+    }
   };
 
   const toggleVisibility = (blockId: string) => {
@@ -879,18 +948,29 @@ export default function AdminPreviewPage() {
           onSelectBlock={handleAddBlock}
         />
 
-        <div
-          className="flex-1 overflow-y-auto px-6 py-6 preview-pane"
-          ref={previewPaneRef}
-        >
-          <div className="max-w-6xl mx-auto space-y-3">
-            <div className="text-sm text-gray-600 flex items-center justify-between">
-              <span>Preview</span>
-              <span className="text-xs text-gray-500">{blocks.length} bloc{blocks.length > 1 ? 's' : ''}</span>
-            </div>
-            <div
-              className="rounded-lg shadow-sm min-h-[240px] overflow-hidden border bg-[color:var(--card,var(--bg,#fff))] border-[color:var(--border,#e5e7eb)]"
-            >
+        <div className="flex-1 flex flex-col relative">
+          {/* Header de la preview */}
+          <div className="px-6 py-3 border-b border-gray-200 bg-white flex items-center justify-between">
+            <span className="text-sm text-gray-600">Preview</span>
+            <span className="text-xs text-gray-500">{blocks.length} bloc{blocks.length > 1 ? 's' : ''}</span>
+          </div>
+          
+          {/* Iframe pour la preview isolée (responsive correct) */}
+          <iframe
+            ref={previewIframeRef}
+            src={`/admin/preview/iframe?page=${pageKey}`}
+            className="flex-1 w-full border-0"
+            style={{ minHeight: '600px' }}
+            title="Preview"
+          />
+          
+          {/* Fallback si iframe non supportée */}
+          <div
+            className="flex-1 overflow-y-auto px-6 py-6 preview-pane hidden"
+            ref={previewPaneRef}
+            style={{ display: 'none' }}
+          >
+            <div className="max-w-6xl mx-auto space-y-3">
               {visibleBlocks.length > 0 && previewData ? (
                 <div className={`${templateKey === 'pearl' ? '' : 'site'} p-4`}>
                   <BlockRenderer

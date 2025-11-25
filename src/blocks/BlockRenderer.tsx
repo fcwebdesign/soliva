@@ -13,13 +13,15 @@ import { getAutoDeclaredBlock } from './auto-declared/registry';
 type BlockRendererProps = {
   blocks: AnyBlock[];
   content?: any;
-  /** Ajoute data-block-id sur chaque bloc, utile pour l’admin preview (scroll/selection). */
+  /** Ajoute data-block-id sur chaque bloc, utile pour l'admin preview (scroll/selection). */
   withDebugIds?: boolean;
-  /** Facultatif: force une surbrillance visuelle d’un bloc précis (admin preview). */
+  /** Facultatif: force une surbrillance visuelle d'un bloc précis (admin preview). */
   highlightBlockId?: string;
+  /** Désactive les animations ScrollTrigger (utile pour l'iframe) */
+  disableScrollAnimations?: boolean;
 };
 
-export default function BlockRenderer({ blocks, content: contentProp, withDebugIds = false, highlightBlockId }: BlockRendererProps) {
+export default function BlockRenderer({ blocks, content: contentProp, withDebugIds = false, highlightBlockId, disableScrollAnimations = false }: BlockRendererProps) {
   const { key } = useTemplate();
   const registry = registries[key] ?? defaultRegistry;
   const [fullContent, setFullContent] = useState<any>(contentProp || null);
@@ -98,6 +100,9 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
 
   // Refresh ScrollTrigger après que tous les blocs sont rendus
   useEffect(() => {
+    // Désactiver les animations si demandé (iframe)
+    if (disableScrollAnimations) return;
+    
     if (blocks.length > 0 && fullContent?.metadata?.scrollAnimations?.enabled) {
       let isMounted = true;
       const timeoutIds: NodeJS.Timeout[] = [];
@@ -170,10 +175,7 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
         }
       };
     }
-    
-    // Retourner undefined si la condition n'est pas remplie
-    return undefined;
-  }, [blocks, fullContent]);
+  }, [blocks.length, fullContent?.metadata?.scrollAnimations?.enabled, disableScrollAnimations]);
 
   // Helper pour obtenir le nom d'animation depuis le type de bloc
   // Utilise le registre des blocs auto-déclarés pour détecter automatiquement les nouveaux blocs
@@ -210,6 +212,11 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
 
   // Helper pour wrapper un bloc avec ScrollAnimated si nécessaire
   const wrapWithAnimation = (blockElement: React.ReactElement, blockType: string) => {
+    // Désactiver les animations si demandé (iframe)
+    if (disableScrollAnimations) {
+      return blockElement;
+    }
+    
     const scrollAnimations = fullContent?.metadata?.scrollAnimations;
     
     if (process.env.NODE_ENV === 'development') {

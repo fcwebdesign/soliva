@@ -23,6 +23,20 @@ const nextConfig = {
   async headers() {
     return [
       {
+        // Exception pour la route iframe de preview (doit pouvoir être intégrée)
+        source: '/admin/preview/iframe',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+        ],
+      },
+      {
         source: '/(.*)',
         headers: [
           {
