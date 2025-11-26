@@ -32,6 +32,9 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
   const title = blockData.title || 'Floating Images Gallery';
   const subtitle = blockData.subtitle || 'Next.js and GSAP';
   const intensity = typeof blockData.intensity === 'number' ? blockData.intensity : 50;
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const [headerInfo, setHeaderInfo] = useState<{ height: number; position: string }>({ height: 0, position: 'static' });
+  const [isFirstBlock, setIsFirstBlock] = useState(false);
 
   // Charger le contenu pour accéder à la typographie (comme PageIntroBlock)
   const [fullContent, setFullContent] = useState<any>(null);
@@ -126,12 +129,12 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
   ];
   const plane2Positions = [
     { left: '5%', top: '10%', width: 'clamp(100px, 12vw, 250px)' },
-    { left: '80%', top: '5%', width: 'clamp(80px, 10vw, 200px)' },
-    { left: '60%', top: '60%', width: 'clamp(100px, 12vw, 225px)' },
+    { left: '90%', top: '30%', width: 'clamp(80px, 10vw, 200px)' },
+    { left: '70%', top: '75%', width: 'clamp(100px, 12vw, 225px)' },
   ];
   const plane3Positions = [
-    { left: '65%', top: '2.5%', width: 'clamp(60px, 8vw, 150px)' },
-    { left: '40%', top: '75%', width: 'clamp(80px, 10vw, 200px)' },
+    { left: '65%', top: '15%', width: 'clamp(60px, 8vw, 150px)' },
+    { left: '40%', top: '90%', width: 'clamp(80px, 10vw, 200px)' },
   ];
 
   // Répartition des images suivant le pattern original (8 visuels)
@@ -169,13 +172,25 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
     yForceRef.current = lerp(yForceRef.current, 0, easing);
 
     if (plane1Ref.current) {
-      gsap.set(plane1Ref.current, { x: `+=${xForceRef.current}`, y: `+=${yForceRef.current}` });
+      gsap.set(plane1Ref.current, { 
+        x: `+=${xForceRef.current}`, 
+        y: `+=${yForceRef.current}`,
+        zIndex: 50 // Maintenir le z-index pendant l'animation
+      });
     }
     if (plane2Ref.current) {
-      gsap.set(plane2Ref.current, { x: `+=${xForceRef.current * 0.5}`, y: `+=${yForceRef.current * 0.5}` });
+      gsap.set(plane2Ref.current, { 
+        x: `+=${xForceRef.current * 0.5}`, 
+        y: `+=${yForceRef.current * 0.5}`,
+        zIndex: 50 // Maintenir le z-index pendant l'animation
+      });
     }
     if (plane3Ref.current) {
-      gsap.set(plane3Ref.current, { x: `+=${xForceRef.current * 0.25}`, y: `+=${yForceRef.current * 0.25}` });
+      gsap.set(plane3Ref.current, { 
+        x: `+=${xForceRef.current * 0.25}`, 
+        y: `+=${yForceRef.current * 0.25}`,
+        zIndex: 50 // Maintenir le z-index pendant l'animation
+      });
     }
 
     if (Math.abs(xForceRef.current) < 0.01) xForceRef.current = 0;
@@ -231,6 +246,82 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
     }
   };
 
+  // Détecter si le bloc est le premier rendu (pour compenser la hauteur du header sticky)
+  useEffect(() => {
+    const sectionEl = sectionRef.current;
+    if (!sectionEl) return;
+
+    const container = sectionEl.closest('.blocks-container');
+    if (!container) return;
+
+    const firstSection = container.querySelector('section[data-block-type]');
+    setIsFirstBlock(firstSection === sectionEl);
+  }, [images.length, blockData]);
+
+  // Mesurer la hauteur du header quand il est sticky (position différente de fixed/absolute)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const header = document.querySelector('header');
+    if (!header) return;
+
+    const headerElement = header as HTMLElement;
+    const updateHeaderInfo = () => {
+      const style = window.getComputedStyle(headerElement);
+      setHeaderInfo({
+        height: headerElement.getBoundingClientRect().height || 0,
+        position: style.position || 'static',
+      });
+    };
+
+    updateHeaderInfo();
+
+    const resizeObserver = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(updateHeaderInfo) : null;
+    if (resizeObserver) resizeObserver.observe(headerElement);
+    window.addEventListener('resize', updateHeaderInfo);
+
+    return () => {
+      if (resizeObserver) resizeObserver.disconnect();
+      window.removeEventListener('resize', updateHeaderInfo);
+    };
+  }, []);
+
+  const headerOffset =
+    isFirstBlock && headerInfo.position !== 'fixed' && headerInfo.position !== 'absolute'
+      ? headerInfo.height
+      : 0;
+
+  const sectionHeight = headerOffset ? `calc(100vh + ${headerOffset}px)` : '100vh';
+  const centerOffset = headerOffset ? headerOffset / 2 : 0;
+
+  const sectionBaseStyle = {
+    width: '100vw',
+    height: sectionHeight,
+    position: 'relative' as const,
+    overflow: 'hidden' as const,
+    backgroundColor: getBackgroundColor(),
+    color: getTextColor(),
+    marginLeft: 'calc(-50vw + 50%)',
+    marginRight: 'calc(-50vw + 50%)',
+    marginTop: headerOffset ? -headerOffset : 0,
+    marginBottom: 0,
+    paddingTop: 0,
+    top: 0,
+    zIndex: 30, // Laisser le header (z-40) au-dessus même quand on remonte le bloc
+  };
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[HeroFloatingGallery] layout', {
+        isFirstBlock,
+        headerOffset,
+        headerHeight: headerInfo.height,
+        headerPosition: headerInfo.position,
+        sectionHeight
+      });
+    }
+  }, [isFirstBlock, headerOffset, headerInfo.height, headerInfo.position, sectionHeight]);
+
+
   // Aucun visuel -> placeholder simple
   if (!images.length) {
     return (
@@ -239,16 +330,12 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
         data-block-type="hero-floating-gallery"
         data-block-theme={blockData.theme || 'auto'}
         data-transparent-header={blockData.transparentHeader ? 'true' : 'false'}
+        ref={sectionRef}
         style={{
-          width: '100vw',
-          height: '100vh',
+          ...sectionBaseStyle,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: getBackgroundColor(),
-          color: getTextColor(),
-          marginLeft: 'calc(-50vw + 50%)',
-          marginRight: 'calc(-50vw + 50%)',
         }}
       >
         <div style={{ textAlign: 'center', color: 'var(--muted-foreground)' }}>Ajoutez des images pour voir la galerie flottante.</div>
@@ -262,16 +349,8 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
       data-block-type="hero-floating-gallery"
       data-block-theme={blockData.theme || 'auto'}
       data-transparent-header={blockData.transparentHeader ? 'true' : 'false'}
-      style={{
-        width: '100vw',
-        height: '100vh',
-        position: 'relative',
-        overflow: 'hidden',
-        backgroundColor: getBackgroundColor(),
-        color: getTextColor(),
-        marginLeft: 'calc(-50vw + 50%)',
-        marginRight: 'calc(-50vw + 50%)',
-      }}
+      ref={sectionRef}
+      style={sectionBaseStyle}
       onMouseMove={manageMouseMove}
     >
       <div
@@ -281,11 +360,13 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
           width: '100%',
           height: '100%',
           overflow: 'hidden',
+          zIndex: 50, // S'assurer que les images passent devant le header
+          isolation: 'isolate', // Créer un nouveau contexte de stacking pour maintenir le z-index
         }}
       >
         <div
           ref={plane1Ref}
-          style={{ position: 'absolute', width: '100%', height: '100%', filter: 'brightness(0.7)' }}
+          style={{ position: 'absolute', width: '100%', height: '100%', zIndex: 50 }}
         >
           {planes.p1.map((img, idx) => {
             const pos = plane1Positions[idx % plane1Positions.length];
@@ -299,6 +380,8 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
                   width: pos.width,
                   height: 'auto',
                   objectFit: 'contain' as const,
+                  objectPosition: 'center' as const,
+                  transform: 'translate(-50%, -50%)',
                 };
               }
               // Convertir le ratio en valeur CSS (ex: '16:9' -> '16/9')
@@ -310,6 +393,8 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
                 width: pos.width,
                 aspectRatio: ratio,
                 objectFit: 'cover' as const,
+                objectPosition: 'center' as const,
+                transform: 'translate(-50%, -50%)',
               };
             };
             return (
@@ -325,7 +410,7 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
 
         <div
           ref={plane2Ref}
-          style={{ position: 'absolute', width: '100%', height: '100%', filter: 'brightness(0.6)' }}
+          style={{ position: 'absolute', width: '100%', height: '100%', zIndex: 50 }}
         >
           {planes.p2.map((img, idx) => {
             const pos = plane2Positions[idx % plane2Positions.length];
@@ -339,6 +424,8 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
                   width: pos.width,
                   height: 'auto',
                   objectFit: 'contain' as const,
+                  objectPosition: 'center' as const,
+                  transform: 'translate(-50%, -50%)',
                 };
               }
               // Convertir le ratio en valeur CSS (ex: '16:9' -> '16/9')
@@ -350,6 +437,8 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
                 width: pos.width,
                 aspectRatio: ratio,
                 objectFit: 'cover' as const,
+                objectPosition: 'center' as const,
+                transform: 'translate(-50%, -50%)',
               };
             };
             return (
@@ -365,7 +454,7 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
 
         <div
           ref={plane3Ref}
-          style={{ position: 'absolute', width: '100%', height: '100%', filter: 'brightness(0.5)' }}
+          style={{ position: 'absolute', width: '100%', height: '100%', zIndex: 50 }}
         >
           {planes.p3.map((img, idx) => {
             const pos = plane3Positions[idx % plane3Positions.length];
@@ -379,6 +468,8 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
                   width: pos.width,
                   height: 'auto',
                   objectFit: 'contain' as const,
+                  objectPosition: 'center' as const,
+                  transform: 'translate(-50%, -50%)',
                 };
               }
               // Convertir le ratio en valeur CSS (ex: '16:9' -> '16/9')
@@ -390,6 +481,8 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
                 width: pos.width,
                 aspectRatio: ratio,
                 objectFit: 'cover' as const,
+                objectPosition: 'center' as const,
+                transform: 'translate(-50%, -50%)',
               };
             };
             return (
@@ -409,10 +502,10 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
         style={{
           position: 'absolute',
           left: '50%',
-          top: '50%',
+          top: centerOffset ? `calc(40% + ${centerOffset}px)` : '40%',
           transform: 'translate(-50%, -50%)',
           textAlign: 'center',
-          zIndex: 10,
+          zIndex: 60, // Au-dessus des images et du header (header z-40, images z-50)
         }}
       >
         <h1 

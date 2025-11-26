@@ -421,7 +421,14 @@ export default function PearlClient() {
           />
           <main 
             data-view-transition-name={`main-${route}`}
-            className={`mx-auto px-4 sm:px-6 lg:px-8 py-8 ${
+            className={`mx-auto px-4 sm:px-6 lg:px-8 ${
+              // Retirer py-8 si le premier bloc est hero-floating-gallery
+              (() => {
+                const blocks = pageData?.blocks || [];
+                const firstVisibleBlock = blocks.find((b: any) => !b.hidden);
+                return firstVisibleBlock?.type === 'hero-floating-gallery' ? '' : 'py-8';
+              })()
+            } ${
               content.metadata?.layout === 'compact' ? 'max-w-7xl' :
               content.metadata?.layout === 'wide' ? 'max-w-custom-1920' :
               'max-w-screen-2xl' // standard par défaut (1536px, proche de 1440px)

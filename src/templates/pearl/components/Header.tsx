@@ -1,6 +1,6 @@
 "use client";
 import { Link } from "next-view-transitions";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { buildNavModel } from "@/utils/navModel";
 import { useTemplate } from "@/templates/context";
@@ -237,9 +237,50 @@ export default function HeaderPearl({ nav, pages, variant = 'classic', layout = 
 
   const overlayMobileOnly = variant !== 'minimal';
 
+  // Détecter si le premier bloc a data-transparent-header="true"
+  const [isTransparent, setIsTransparent] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  
+  useEffect(() => {
+    const checkTransparentHeader = () => {
+      const firstBlock = document.querySelector('[data-transparent-header="true"]');
+      setIsTransparent(!!firstBlock);
+    };
+    
+    checkTransparentHeader();
+    // Observer les changements de blocs
+    const observer = new MutationObserver(checkTransparentHeader);
+    observer.observe(document.body, { childList: true, subtree: true });
+    
+    return () => observer.disconnect();
+  }, []);
+
+  // Garder le comportement de blur au scroll même quand transparent (header hors flux)
+  useEffect(() => {
+    if (!isTransparent || typeof window === 'undefined') return;
+
+    const onScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [isTransparent]);
+
+  const headerBaseClasses = isTransparent
+    ? 'fixed top-0 left-0 right-0 z-40 w-full transition-all duration-300'
+    : 'sticky top-0 z-40 w-full transition-all duration-300';
+
+  const headerSkinClasses = isTransparent
+    ? scrolled
+      ? 'bg-background/80 backdrop-blur border-b border-border'
+      : 'bg-transparent backdrop-blur-none border-transparent'
+    : 'bg-background/80 backdrop-blur border-b border-border';
+
   // Utilisation de la palette : bg-background/80 au lieu de bg-white/80, border-border au lieu de border-gray-200
   return (
-    <header className="bg-background/80 backdrop-blur border-b border-border sticky top-0 z-40 w-full">
+    <header className={`${headerBaseClasses} ${headerSkinClasses}`}>
       <div className={`mx-auto px-4 sm:px-6 lg:px-8 ${
         layout === 'compact' ? 'max-w-7xl' :
         layout === 'wide' ? 'max-w-custom-1920' :
