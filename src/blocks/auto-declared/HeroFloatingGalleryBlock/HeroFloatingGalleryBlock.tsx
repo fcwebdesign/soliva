@@ -24,10 +24,12 @@ interface FloatingGalleryData {
 
 export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalleryData | any }) {
   const blockData = useMemo(() => (data as any).data || data, [data]);
-  const images = useMemo(
-    () => (blockData.images || []).filter((img: FloatingImage) => img?.src && !img.hidden),
-    [blockData]
-  );
+  const images = useMemo(() => {
+    // Limiter à 15 visuels max
+    return (blockData.images || [])
+      .filter((img: FloatingImage) => img?.src && !img.hidden)
+      .slice(0, 15);
+  }, [blockData]);
 
   const title = blockData.title?.trim() || '';
   const subtitle = blockData.subtitle?.trim() || '';
