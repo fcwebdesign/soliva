@@ -29,8 +29,8 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
     [blockData]
   );
 
-  const title = blockData.title || 'Floating Images Gallery';
-  const subtitle = blockData.subtitle || 'Next.js and GSAP';
+  const title = blockData.title?.trim() || '';
+  const subtitle = blockData.subtitle?.trim() || '';
   const intensity = typeof blockData.intensity === 'number' ? blockData.intensity : 50;
   const sectionRef = useRef<HTMLElement | null>(null);
   const [headerInfo, setHeaderInfo] = useState<{ height: number; position: string }>({ height: 0, position: 'static' });
@@ -508,18 +508,22 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
           zIndex: 60, // Au-dessus des images et du header (header z-40, images z-50)
         }}
       >
-        <h1 
-          className={headingClasses}
-          style={{ margin: 0, color: h1Color }}
-        >
-          {title}
-        </h1>
-        <h2 
-          className={h2Classes}
-          style={{ margin: 0, color: h2Color }}
-        >
-          {subtitle}
-        </h2>
+        {title && (
+          <h1 
+            className={headingClasses}
+            style={{ margin: 0, color: h1Color }}
+          >
+            {title}
+          </h1>
+        )}
+        {subtitle && (
+          <h2 
+            className={h2Classes}
+            style={{ margin: 0, color: h2Color }}
+          >
+            {subtitle}
+          </h2>
+        )}
       </div>
     </section>
   );
