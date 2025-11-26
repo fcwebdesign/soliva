@@ -6,7 +6,7 @@ import './ContactBlock';
 import './ContentBlock';
 import './ExpandableCard';
 import './FAQBlock';
-import './FloatingImageGalleryBlock';
+import './HeroFloatingGalleryBlock';
 import './FourColumnsBlock';
 import './GalleryGridBlock';
 import './H2Block';

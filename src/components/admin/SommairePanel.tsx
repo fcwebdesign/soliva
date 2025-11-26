@@ -136,6 +136,7 @@ const typeIcons: Record<string, React.ComponentType<any>> = {
   'three-columns': Grid3x3,
   'four-columns': Grid3x3,
   'gallery-grid': Grid3x3,
+  'floating-gallery': Image,
   'h2': Heading2,
   'h3': Type,
   'services': List,

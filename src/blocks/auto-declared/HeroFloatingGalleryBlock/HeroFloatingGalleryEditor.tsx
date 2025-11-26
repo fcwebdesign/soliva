@@ -23,6 +23,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { resolvePaletteFromContent } from '@/utils/palette-resolver';
 
@@ -31,6 +32,7 @@ interface FloatingImage {
   src: string;
   alt?: string;
   hidden?: boolean;
+  aspectRatio?: string; // 'auto' | '1:1' | '1:2' | '2:3' | '3:4' | '4:5' | '9:16' | '3:2' | '4:3' | '5:4' | '16:9' | '2:1' | '4:1' | '8:1' | 'stretch'
 }
 
 interface FloatingGalleryData {
@@ -39,6 +41,7 @@ interface FloatingGalleryData {
   intensity?: number;
   images?: FloatingImage[];
   theme?: 'light' | 'dark' | 'auto';
+  transparentHeader?: boolean;
 }
 
 function SortableFloatingImage({
@@ -49,6 +52,8 @@ function SortableFloatingImage({
   onToggleVisibility,
   onReplace,
   compact = false,
+  openSelect,
+  onOpenSelectChange,
 }: {
   image: FloatingImage;
   index: number;
@@ -57,6 +62,8 @@ function SortableFloatingImage({
   onToggleVisibility: () => void;
   onReplace: (file: File) => Promise<void>;
   compact?: boolean;
+  openSelect?: string | null;
+  onOpenSelectChange?: (value: string | null) => void;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -161,6 +168,54 @@ function SortableFloatingImage({
           placeholder="Description (alt text)"
           className="flex-1 min-w-0 px-2 py-1.5 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors"
         />
+        
+        {/* Select ratio d'aspect - exactement comme ImageBlock */}
+        <Select
+          value={image.aspectRatio || 'auto'}
+          onValueChange={(value) => {
+            onUpdate('aspectRatio', value);
+          }}
+          open={openSelect === `aspect-${index}`}
+          onOpenChange={(open) => {
+            if (onOpenSelectChange) {
+              onOpenSelectChange(open ? `aspect-${index}` : null);
+            }
+          }}
+        >
+          <SelectTrigger 
+            className="w-[75px] h-[32px] px-1.5 py-1 text-[12px] border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors shadow-none"
+            onClick={(e) => e.stopPropagation()}
+            onPointerDown={(e) => e.stopPropagation()}
+          >
+            <SelectValue placeholder="Ratio" />
+          </SelectTrigger>
+          <SelectContent 
+            className="shadow-none border rounded w-[200px]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <SelectItem value="auto" className="text-[13px] py-1.5">Auto</SelectItem>
+            <div className="px-2 py-1 text-[10px] font-semibold text-gray-500 uppercase">Square</div>
+            <SelectItem value="1:1" className="text-[13px] py-1.5">1:1</SelectItem>
+            <div className="px-2 py-1 text-[10px] font-semibold text-gray-500 uppercase">Portrait</div>
+            <div className="grid grid-cols-2 gap-0 px-1">
+              <SelectItem value="1:2" className="text-[13px] py-1.5">1:2</SelectItem>
+              <SelectItem value="2:3" className="text-[13px] py-1.5">2:3</SelectItem>
+              <SelectItem value="3:4" className="text-[13px] py-1.5">3:4</SelectItem>
+              <SelectItem value="4:5" className="text-[13px] py-1.5">4:5</SelectItem>
+              <SelectItem value="9:16" className="text-[13px] py-1.5">9:16</SelectItem>
+            </div>
+            <div className="px-2 py-1 text-[10px] font-semibold text-gray-500 uppercase">Landscape</div>
+            <div className="grid grid-cols-2 gap-0 px-1">
+              <SelectItem value="3:2" className="text-[13px] py-1.5">3:2</SelectItem>
+              <SelectItem value="4:3" className="text-[13px] py-1.5">4:3</SelectItem>
+              <SelectItem value="5:4" className="text-[13px] py-1.5">5:4</SelectItem>
+              <SelectItem value="16:9" className="text-[13px] py-1.5">16:9</SelectItem>
+              <SelectItem value="2:1" className="text-[13px] py-1.5">2:1</SelectItem>
+              <SelectItem value="4:1" className="text-[13px] py-1.5">4:1</SelectItem>
+              <SelectItem value="8:1" className="text-[13px] py-1.5">8:1</SelectItem>
+            </div>
+          </SelectContent>
+        </Select>
         
         {/* Icônes au hover : œil et poubelle */}
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -292,7 +347,7 @@ function SortableFloatingImage({
   );
 }
 
-export default function FloatingImageGalleryEditor({
+export default function HeroFloatingGalleryEditor({
   data,
   onChange,
   compact = false,
@@ -455,6 +510,23 @@ export default function FloatingImageGalleryEditor({
     return (
       <div className="block-editor">
         <div className="space-y-2">
+          {/* Option transparent header */}
+          <div className="flex items-center justify-between py-2 border-b border-gray-200">
+            <div className="flex-1">
+              <label className="block text-[11px] font-medium text-gray-700 mb-0.5">
+                Header transparent
+              </label>
+              <p className="text-[10px] text-gray-500">
+                Active uniquement si ce bloc est le premier. Le header devient transparent pour un effet hero.
+              </p>
+            </div>
+            <Switch
+              checked={data.transparentHeader || false}
+              onCheckedChange={(checked) => updateField('transparentHeader', checked)}
+              className="ml-4"
+            />
+          </div>
+
           <div className="grid grid-cols-1 gap-2 mb-4">
             <div>
               <label className="block text-[10px] text-gray-400 mb-1">Titre</label>
@@ -462,7 +534,7 @@ export default function FloatingImageGalleryEditor({
                 type="text"
                 value={data.title || ''}
                 onChange={(e) => updateField('title', e.target.value)}
-                placeholder="Floating Image Gallery"
+                placeholder="Hero Floating Gallery"
                 className="w-full px-2 py-1.5 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors"
               />
             </div>
@@ -584,6 +656,8 @@ export default function FloatingImageGalleryEditor({
                         onToggleVisibility={() => updateImage(index, 'hidden', !image.hidden)}
                         onReplace={(file) => replaceImage(index, file)}
                         compact
+                        openSelect={openSelect}
+                        onOpenSelectChange={setOpenSelect}
                       />
                     ))
                   )}

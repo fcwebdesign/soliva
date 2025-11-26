@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation';
 import ScrollAnimated from '@/components/ScrollAnimated';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { getTypographyConfig, getTypographyClasses, getCustomColor, defaultTypography } from '@/utils/typography';
-import { fetchContentWithNoCache } from '@/hooks/useContentUpdate';
+import { fetchContentWithNoCache, useContentUpdate } from '@/hooks/useContentUpdate';
 // Charger les blocs auto-déclarés et accéder au registre scalable
 import './auto-declared';
 import { getAutoDeclaredBlock } from './auto-declared/registry';
@@ -29,28 +29,23 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
   const registry = registries[key] ?? defaultRegistry;
   const [fullContent, setFullContent] = useState<any>(contentProp || null);
 
-  // Charger le contenu complet si non fourni (pour les animations)
+  // Charger le contenu complet (toujours depuis l'API pour avoir la typographie à jour)
   useEffect(() => {
-    if (contentProp) {
-      setFullContent(contentProp);
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🎬 [BlockRenderer] Contenu fourni via props:', !!contentProp?.metadata?.scrollAnimations);
-      }
-      return;
-    }
-
     const loadContent = async () => {
       try {
         if (process.env.NODE_ENV === 'development') {
           console.log('🎬 [BlockRenderer] Chargement du contenu depuis /api/content/metadata...');
         }
-        const response = await fetch('/api/content/metadata');
+        const response = await fetchContentWithNoCache('/api/content/metadata');
         if (response.ok) {
           const data = await response.json();
           setFullContent(data);
           if (process.env.NODE_ENV === 'development') {
             console.log('🎬 [BlockRenderer] Contenu chargé:', {
               hasMetadata: !!data.metadata,
+              hasTypography: !!data.metadata?.typography,
+              hasH1: !!data.metadata?.typography?.h1,
+              h1FontSize: data.metadata?.typography?.h1?.fontSize,
               hasScrollAnimations: !!data.metadata?.scrollAnimations,
               enabled: data.metadata?.scrollAnimations?.enabled,
               globalType: data.metadata?.scrollAnimations?.global?.type
@@ -64,7 +59,23 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
       }
     };
     loadContent();
-  }, [contentProp]);
+  }, []);
+  
+  // Écouter les mises à jour de contenu pour recharger fullContent (typographie + animations)
+  useContentUpdate(() => {
+    const loadContent = async () => {
+      try {
+        const response = await fetchContentWithNoCache('/api/content/metadata');
+        if (response.ok) {
+          const data = await response.json();
+          setFullContent(data);
+        }
+      } catch (error) {
+        // Ignorer silencieusement
+      }
+    };
+    loadContent();
+  });
 
   // Gestion du thème par bloc avec priorité sur le scroll
   useEffect(() => {
@@ -255,20 +266,35 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
   }
 
   // Déterminer quel bloc doit avoir le H1 (le premier page-intro ou hero)
-  const headingBlocks = ['page-intro', 'hero'];
-  const firstHeadingBlockIndex = blocks.findIndex(b => headingBlocks.includes(b.type));
+  const headingBlocks = ['page-intro', 'hero', 'hero-floating-gallery'];
+  
+  // Trouver le premier bloc hero visible (pas masqué)
+  const firstVisibleHeroIndex = blocks.findIndex(b => 
+    ['hero', 'hero-floating-gallery'].includes(b.type) && !(b as any).hidden
+  );
+  const hasVisibleHero = firstVisibleHeroIndex !== -1;
+  
+  // Trouver le premier bloc heading (page-intro ou hero) visible
+  const firstHeadingBlockIndex = blocks.findIndex(b => 
+    headingBlocks.includes(b.type) && !(b as any).hidden
+  );
   const hasHeadingBlock = firstHeadingBlockIndex !== -1;
   
-  // Récupérer le titre de la page si aucun bloc page-intro ou hero
+  // Récupérer le titre de la page si aucun bloc page-intro ou hero visible
   const pathname = usePathname();
   const [pageData, setPageData] = useState<any>(null);
   
+  // Charger pageData pour le titre automatique (comme PageIntroBlock)
   useEffect(() => {
-    if (hasHeadingBlock) return; // Pas besoin si on a déjà un bloc heading
+    // Ne pas charger pageData si un hero visible est présent
+    if (hasVisibleHero) return;
+    if (hasHeadingBlock) return;
     
     const loadPageData = async () => {
       try {
         const content = fullContent || await (await fetchContentWithNoCache('/api/content/metadata')).json();
+        
+        // Trouver la page courante
         const slug = pathname?.split('/').filter(Boolean).pop() || '';
         let currentPage = null;
         
@@ -287,16 +313,34 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
     };
     
     loadPageData();
-  }, [hasHeadingBlock, fullContent, pathname]);
+  }, [pathname, hasVisibleHero, hasHeadingBlock, fullContent]);
   
   // Typographie pour le titre automatique (même style que PageIntroBlock)
   const typoConfig = useMemo(() => {
-    return fullContent ? getTypographyConfig(fullContent) : {};
+    if (!fullContent) return {};
+    const config = getTypographyConfig(fullContent);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('📝 [BlockRenderer] Typo config:', {
+        hasFullContent: !!fullContent,
+        hasMetadata: !!fullContent?.metadata,
+        hasTypography: !!fullContent?.metadata?.typography,
+        hasH1: !!fullContent?.metadata?.typography?.h1,
+        h1Config: fullContent?.metadata?.typography?.h1
+      });
+    }
+    return config;
   }, [fullContent]);
   
   const headingClasses = useMemo(() => {
     const safeTypoConfig = typoConfig?.h1 ? { h1: typoConfig.h1 } : {};
     const classes = getTypographyClasses('h1', safeTypoConfig, defaultTypography.h1);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('📝 [BlockRenderer] Heading classes:', {
+        typoConfig: safeTypoConfig,
+        defaultTypography: defaultTypography.h1,
+        finalClasses: classes
+      });
+    }
     return classes
       .replace(/\btext-(gray|black|white|red|blue|green|yellow|purple|pink|indigo|orange)-\d+\b/g, '')
       .replace(/\btext-(gray|black|white|red|blue|green|yellow|purple|pink|indigo|orange)\b/g, '')
@@ -307,7 +351,26 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
   
   const h1Color = useMemo(() => {
     const customColor = getCustomColor('h1', typoConfig);
-    return customColor || 'var(--foreground)';
+    if (customColor) return customColor;
+    return 'var(--foreground)';
+  }, [typoConfig]);
+  
+  // Classes typographiques pour p (identique à PageIntroBlock)
+  const pClasses = useMemo(() => {
+    const classes = getTypographyClasses('p', typoConfig, defaultTypography.p);
+    return classes
+      .replace(/\btext-(gray|black|white|red|blue|green|yellow|purple|pink|indigo|orange)-\d+\b/g, '')
+      .replace(/\btext-(gray|black|white|red|blue|green|yellow|purple|pink|indigo|orange)\b/g, '')
+      .replace(/\btext-foreground\b/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }, [typoConfig]);
+  
+  // Couleur pour p (identique à PageIntroBlock)
+  const pColor = useMemo(() => {
+    const customColor = getCustomColor('p', typoConfig);
+    if (customColor) return customColor;
+    return 'var(--foreground)';
   }, [typoConfig]);
   
   // Déterminer le layout (comme PageIntroBlock)
@@ -318,8 +381,8 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
   
   return (
     <div className="blocks-container">
-      {/* Afficher le titre de la page automatiquement si aucun bloc page-intro ou hero */}
-      {!hasHeadingBlock && pageTitle && (
+      {/* Afficher le titre de la page automatiquement si aucun bloc page-intro ou hero visible */}
+      {!hasVisibleHero && !hasHeadingBlock && pageTitle && (
         <div 
           className="page-intro-block py-10"
           data-block-type="page-intro"
@@ -334,11 +397,17 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
                 >
                   {pageTitle}
                 </h1>
+                {process.env.NODE_ENV === 'development' && (
+                  <div className="text-xs text-gray-500 mt-1">
+                    Classes: {headingClasses}
+                  </div>
+                )}
               </div>
               {pageDescription && (
                 <div className="text-left lg:ml-auto lg:pl-8">
                   <div
-                    className="max-w-2xl"
+                    className={`max-w-2xl ${pClasses}`}
+                    style={{ color: pColor }}
                     dangerouslySetInnerHTML={{ __html: pageDescription }}
                   />
                 </div>
@@ -353,9 +422,15 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
                 >
                   {pageTitle}
                 </h1>
+                {process.env.NODE_ENV === 'development' && (
+                  <div className="text-xs text-gray-500 mt-1">
+                    Classes: {headingClasses}
+                  </div>
+                )}
                 {pageDescription && (
                   <div
-                    className="max-w-3xl mx-auto"
+                    className={`max-w-3xl mx-auto ${pClasses}`}
+                    style={{ color: pColor }}
                     dangerouslySetInnerHTML={{ __html: pageDescription }}
                   />
                 )}
@@ -366,10 +441,20 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
       )}
       
       {(() => {
+        // Trouver le premier bloc hero visible (hero ou hero-floating-gallery)
+        const firstVisibleHeroIndex = blocks.findIndex(b => 
+          ['hero', 'hero-floating-gallery'].includes(b.type) && !(b as any).hidden
+        );
+        const hasVisibleHero = firstVisibleHeroIndex !== -1;
+        
         // Filtrer les blocs masqués
-        const visibleBlocks = blocks.filter((block) => {
+        const visibleBlocks = blocks.filter((block, index) => {
           // Filtrer les blocs masqués
           if ((block as any).hidden) return false;
+          
+          // Ne pas masquer les blocs page-intro manuels - ils restent visibles
+          // Seul le titre automatique de la page est masqué si un hero visible est présent
+          
           
           // Pour les blocs two-columns, vérifier aussi les sous-blocs dans les colonnes
           if (block.type === 'two-columns') {

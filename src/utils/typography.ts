@@ -102,6 +102,7 @@ export function getTypographyClasses(
   return classes;
 }
 
+
 /**
  * Récupère la couleur personnalisée (hex) si elle existe, sinon null
  */

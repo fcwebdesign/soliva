@@ -520,7 +520,7 @@
       "work": "Image",
       "blog": "Coffee"
     },
-    "colorPalette": "purple",
+    "colorPalette": "moss",
     "customPalettes": [
       {
         "id": "phare-élégant-havrais",
@@ -658,7 +658,8 @@
       "work",
       "showcase",
       "about-us",
-      "lisa"
+      "lisa",
+      "studio"
     ],
     "location": "paris, le havre",
     "logoImage": "",
@@ -722,8 +723,70 @@
     "hero": {
       "title": "About us."
     },
-    "content": "<img src=\"/uploads/1763705071367-c45d1097.webp\" alt=\"\" />",
+    "content": "<img src=\"/uploads/1763705071367-c45d1097.webp\" alt=\"\" />\n<img src=\"/uploads/1764163849225-604fe89b.webp\" alt=\"\" />\n<img src=\"/uploads/1764163854153-08f84573.webp\" alt=\"\" />",
     "blocks": [
+      {
+        "id": "hero-floating-gallery-1764169382386",
+        "type": "hero-floating-gallery",
+        "title": "About us",
+        "subtitle": "Description",
+        "intensity": 84,
+        "theme": "auto",
+        "transparentHeader": true,
+        "images": [
+          {
+            "id": "floating-1764169414233-0.1826191109539822",
+            "src": "/uploads/1764169412958-2c69e211.webp",
+            "alt": "",
+            "objectFit": "cover",
+            "aspectRatio": "4:5"
+          },
+          {
+            "id": "floating-1764169414233-0.03382658340466649",
+            "src": "/uploads/1764169413319-df351887.webp",
+            "alt": "",
+            "objectFit": "cover",
+            "aspectRatio": "3:4"
+          },
+          {
+            "id": "floating-1764169414233-0.6431145158605238",
+            "src": "/uploads/1764169413892-b60523fd.webp",
+            "alt": "",
+            "objectFit": "cover",
+            "aspectRatio": "4:5"
+          },
+          {
+            "id": "floating-1764169414233-0.6315029255751355",
+            "src": "/uploads/1764169414063-4761b121.webp",
+            "alt": "",
+            "aspectRatio": "3:4"
+          },
+          {
+            "id": "floating-1764173932784-0.9690533191177262",
+            "src": "/uploads/1764173932310-41b063d7.webp",
+            "alt": "",
+            "aspectRatio": "4:5"
+          },
+          {
+            "id": "floating-1764173932784-0.7898104028984613",
+            "src": "/uploads/1764173932539-216267d0.webp",
+            "alt": "",
+            "aspectRatio": "4:5"
+          },
+          {
+            "id": "floating-1764173932784-0.21543545374947426",
+            "src": "/uploads/1764173932721-82dbeb6f.webp",
+            "alt": ""
+          },
+          {
+            "id": "floating-1764174004643-0.33315476235457786",
+            "src": "/uploads/1764174004168-1f67d913.webp",
+            "alt": "",
+            "objectFit": "cover"
+          }
+        ],
+        "hidden": false
+      },
       {
         "id": "image-1763705064111",
         "type": "image",
@@ -733,8 +796,21 @@
             "src": "/uploads/1763705071367-c45d1097.webp",
             "alt": "",
             "aspectRatio": "16:9"
+          },
+          {
+            "id": "image-1764163849448",
+            "src": "/uploads/1764163849225-604fe89b.webp",
+            "alt": "",
+            "aspectRatio": "16:9"
+          },
+          {
+            "id": "image-1764163856437",
+            "src": "/uploads/1764163854153-08f84573.webp",
+            "alt": "",
+            "aspectRatio": "16:9"
           }
-        ]
+        ],
+        "hidden": false
       },
       {
         "id": "contact-1763705096762",
@@ -742,7 +818,24 @@
         "title": "You want a demo ?",
         "ctaText": "yes",
         "ctaLink": "/contact",
-        "theme": "auto"
+        "theme": "auto",
+        "hidden": false
+      },
+      {
+        "id": "gallery-grid-1764163833094",
+        "type": "gallery-grid",
+        "data": {
+          "images": [],
+          "layout": "grid-3",
+          "gap": "medium",
+          "showFilters": true,
+          "showTitles": true,
+          "showDescriptions": true,
+          "enableLightbox": true,
+          "enableDownload": true,
+          "theme": "auto"
+        },
+        "hidden": false
       }
     ],
     "title": "Studio pearl",
@@ -1313,7 +1406,8 @@
                     "alt": "",
                     "aspectRatio": "1:1"
                   }
-                ]
+                ],
+                "hidden": false
               }
             ],
             "rightColumn": [
@@ -1327,14 +1421,16 @@
                     "alt": "",
                     "aspectRatio": "1:1"
                   }
-                ]
+                ],
+                "hidden": false
               }
             ],
-            "layout": "right-left",
+            "layout": "stacked-mobile",
             "gap": "medium",
             "alignment": "center",
             "theme": "auto",
             "title": "Deux colonnes",
+            "hidden": false,
             "data": {
               "id": "two-columns-1763700830594",
               "type": "two-columns",
@@ -1368,13 +1464,12 @@
                   "hidden": false
                 }
               ],
-              "layout": "right-left",
+              "layout": "stacked-mobile",
               "gap": "medium",
               "alignment": "center",
               "theme": "auto",
               "title": "Deux colonnes"
-            },
-            "hidden": false
+            }
           },
           {
             "id": "three-columns-1764073677045",
@@ -1415,11 +1510,56 @@
                 "content": "<p>Soliva conçoit des sites Next.js rapides, accessibles et faciles à maintenir. Nous optimisons la performance mesurée (Core Web Vitals), le SEO et les animations GSAP sans alourdir le code. IA utile intégrée au CMS pour gagner du temps sur les contenus, avec un suivi clair des résultats.</p>"
               }
             ],
-            "layout": "left-middle-right",
+            "layout": "stacked-tablet",
             "gap": "medium",
             "alignment": "top",
             "theme": "auto",
-            "hidden": false
+            "hidden": true,
+            "data": {
+              "id": "three-columns-1764073677045",
+              "type": "three-columns",
+              "title": "Trois colonnes",
+              "leftColumn": [
+                {
+                  "id": "image-leftColumn-1764073706819-pq37sso85",
+                  "type": "image",
+                  "images": [
+                    {
+                      "id": "image-1764073712073",
+                      "src": "/uploads/1764073716888-fc95da9f.webp",
+                      "alt": "",
+                      "aspectRatio": "1:1"
+                    }
+                  ]
+                }
+              ],
+              "middleColumn": [
+                {
+                  "id": "image-middleColumn-1764073849251-6udjpny6p",
+                  "type": "image",
+                  "images": [
+                    {
+                      "id": "image-1764073851193",
+                      "src": "/uploads/1764073855103-e95c9c2b.webp",
+                      "alt": "",
+                      "aspectRatio": "1:1"
+                    }
+                  ]
+                }
+              ],
+              "rightColumn": [
+                {
+                  "id": "content-1764073800658",
+                  "type": "content",
+                  "content": "<p>Soliva conçoit des sites Next.js rapides, accessibles et faciles à maintenir. Nous optimisons la performance mesurée (Core Web Vitals), le SEO et les animations GSAP sans alourdir le code. IA utile intégrée au CMS pour gagner du temps sur les contenus, avec un suivi clair des résultats.</p>"
+                }
+              ],
+              "layout": "stacked-tablet",
+              "gap": "medium",
+              "alignment": "top",
+              "theme": "auto",
+              "hidden": true
+            }
           },
           {
             "id": "four-columns-1764073920374",
@@ -1469,7 +1609,57 @@
             "gap": "medium",
             "alignment": "top",
             "theme": "auto",
-            "hidden": false
+            "hidden": true,
+            "data": {
+              "id": "four-columns-1764073920374",
+              "type": "four-columns",
+              "title": "Quatre colonnes",
+              "column1": [
+                {
+                  "id": "image-column1-1764073943150-cksl2i57f",
+                  "type": "image",
+                  "images": [
+                    {
+                      "id": "image-1764073946343",
+                      "src": "/uploads/1764073949616-45b76ce3.webp",
+                      "alt": ""
+                    }
+                  ]
+                }
+              ],
+              "column2": [
+                {
+                  "id": "content-1764073961957",
+                  "type": "content",
+                  "content": "<p>dsfdsdsqdsf</p>"
+                }
+              ],
+              "column3": [
+                {
+                  "id": "h2-1764073970932",
+                  "type": "h2",
+                  "content": "sdffsqfq"
+                }
+              ],
+              "column4": [
+                {
+                  "id": "image-column4-1764073980857-87w6rn9q1",
+                  "type": "image",
+                  "images": [
+                    {
+                      "id": "image-1764073982531",
+                      "src": "/uploads/1764073986297-b99fece7.webp",
+                      "alt": ""
+                    }
+                  ]
+                }
+              ],
+              "layout": "four-columns",
+              "gap": "medium",
+              "alignment": "top",
+              "theme": "auto",
+              "hidden": true
+            }
           }
         ],
         "hero": {
