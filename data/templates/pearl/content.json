@@ -520,7 +520,7 @@
       "work": "Image",
       "blog": "Coffee"
     },
-    "colorPalette": "moss",
+    "colorPalette": "vanilla",
     "customPalettes": [
       {
         "id": "phare-élégant-havrais",
@@ -725,68 +725,6 @@
     },
     "content": "<img src=\"/uploads/1763705071367-c45d1097.webp\" alt=\"\" />\n<img src=\"/uploads/1764163849225-604fe89b.webp\" alt=\"\" />\n<img src=\"/uploads/1764163854153-08f84573.webp\" alt=\"\" />",
     "blocks": [
-      {
-        "id": "hero-floating-gallery-1764169382386",
-        "type": "hero-floating-gallery",
-        "title": "About us",
-        "subtitle": "Description",
-        "intensity": 84,
-        "theme": "auto",
-        "transparentHeader": true,
-        "images": [
-          {
-            "id": "floating-1764169414233-0.1826191109539822",
-            "src": "/uploads/1764169412958-2c69e211.webp",
-            "alt": "",
-            "objectFit": "cover",
-            "aspectRatio": "4:5"
-          },
-          {
-            "id": "floating-1764169414233-0.03382658340466649",
-            "src": "/uploads/1764169413319-df351887.webp",
-            "alt": "",
-            "objectFit": "cover",
-            "aspectRatio": "3:4"
-          },
-          {
-            "id": "floating-1764169414233-0.6431145158605238",
-            "src": "/uploads/1764169413892-b60523fd.webp",
-            "alt": "",
-            "objectFit": "cover",
-            "aspectRatio": "4:5"
-          },
-          {
-            "id": "floating-1764169414233-0.6315029255751355",
-            "src": "/uploads/1764169414063-4761b121.webp",
-            "alt": "",
-            "aspectRatio": "3:4"
-          },
-          {
-            "id": "floating-1764173932784-0.9690533191177262",
-            "src": "/uploads/1764173932310-41b063d7.webp",
-            "alt": "",
-            "aspectRatio": "4:5"
-          },
-          {
-            "id": "floating-1764173932784-0.7898104028984613",
-            "src": "/uploads/1764173932539-216267d0.webp",
-            "alt": "",
-            "aspectRatio": "4:5"
-          },
-          {
-            "id": "floating-1764173932784-0.21543545374947426",
-            "src": "/uploads/1764173932721-82dbeb6f.webp",
-            "alt": ""
-          },
-          {
-            "id": "floating-1764174004643-0.33315476235457786",
-            "src": "/uploads/1764174004168-1f67d913.webp",
-            "alt": "",
-            "objectFit": "cover"
-          }
-        ],
-        "hidden": false
-      },
       {
         "id": "image-1763705064111",
         "type": "image",

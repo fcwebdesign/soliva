@@ -397,11 +397,6 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
                 >
                   {pageTitle}
                 </h1>
-                {process.env.NODE_ENV === 'development' && (
-                  <div className="text-xs text-gray-500 mt-1">
-                    Classes: {headingClasses}
-                  </div>
-                )}
               </div>
               {pageDescription && (
                 <div className="text-left lg:ml-auto lg:pl-8">
@@ -422,11 +417,6 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
                 >
                   {pageTitle}
                 </h1>
-                {process.env.NODE_ENV === 'development' && (
-                  <div className="text-xs text-gray-500 mt-1">
-                    Classes: {headingClasses}
-                  </div>
-                )}
                 {pageDescription && (
                   <div
                     className={`max-w-3xl mx-auto ${pClasses}`}
