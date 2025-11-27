@@ -567,6 +567,30 @@ export default function HeroFloatingGalleryEditor({
               </div>
             </div>
             <div>
+              <label className="block text-[10px] text-gray-400 mb-1">Parallax (scroll)</label>
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={!!data.parallax?.enabled}
+                  onCheckedChange={(checked) => updateField('parallax', { ...(data.parallax || {}), enabled: checked })}
+                />
+                <div className="flex-1 -mx-2 px-2">
+                  <Slider
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    value={[data.parallax?.speed ?? 0.25]}
+                    onValueChange={(values) =>
+                      updateField('parallax', { ...(data.parallax || {}), enabled: true, speed: values[0] })
+                    }
+                    disabled={!data.parallax?.enabled}
+                  />
+                </div>
+                <span className="text-[11px] text-gray-500 text-right flex-shrink-0 w-12">
+                  {(data.parallax?.speed ?? 0.25).toFixed(2)}
+                </span>
+              </div>
+            </div>
+            <div>
               <label className="block text-[10px] text-gray-400 mb-1">
                 Couleur de fond
                 {currentPalette && (
@@ -728,6 +752,32 @@ export default function HeroFloatingGalleryEditor({
                 <SelectItem value="dark">Noir</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <Label className="text-sm font-medium text-gray-700">Parallax (scroll)</Label>
+            <div className="flex items-center gap-3 mt-2">
+              <Switch
+                checked={!!data.parallax?.enabled}
+                onCheckedChange={(checked) => updateField('parallax', { ...(data.parallax || {}), enabled: checked })}
+              />
+              <div className="flex-1 -mx-2 px-2">
+                <Slider
+                  min={0}
+                  max={1}
+                  step={0.05}
+                  value={[data.parallax?.speed ?? 0.25]}
+                  onValueChange={(values) =>
+                    updateField('parallax', { ...(data.parallax || {}), enabled: true, speed: values[0] })
+                  }
+                  disabled={!data.parallax?.enabled}
+                />
+              </div>
+              <span className="text-xs text-gray-500 w-12 text-right flex-shrink-0">
+                {(data.parallax?.speed ?? 0.25).toFixed(2)}
+              </span>
+            </div>
           </div>
         </div>
       </div>

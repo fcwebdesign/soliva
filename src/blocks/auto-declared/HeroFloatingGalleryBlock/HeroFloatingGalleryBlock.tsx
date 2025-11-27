@@ -20,6 +20,10 @@ interface FloatingGalleryData {
   images?: FloatingImage[];
   theme?: 'light' | 'dark' | 'auto';
   transparentHeader?: boolean;
+  parallax?: {
+    enabled?: boolean;
+    speed?: number; // 0-1
+  };
 }
 
 export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalleryData | any }) {
@@ -37,6 +41,9 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
   const sectionRef = useRef<HTMLElement | null>(null);
   const [headerInfo, setHeaderInfo] = useState<{ height: number; position: string }>({ height: 0, position: 'static' });
   const [isFirstBlock, setIsFirstBlock] = useState(false);
+  const parallaxOffsetsRef = useRef<{ p1: number; p2: number; p3: number }>({ p1: 0, p2: 0, p3: 0 });
+  const parallaxStartRef = useRef<number | null>(null);
+  const parallaxRafRef = useRef<number | null>(null);
 
   // Charger le contenu pour accéder à la typographie (comme PageIntroBlock)
   const [fullContent, setFullContent] = useState<any>(null);
@@ -137,10 +144,10 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
   const plane3Positions = [
     { left: '65%', top: '15%', width: 'clamp(60px, 8vw, 150px)' },
     { left: '40%', top: '90%', width: 'clamp(80px, 10vw, 200px)' },
-    { left: '85%', top: '45%', width: 'clamp(70px, 9vw, 180px)' },
+    { left: '25%', top: '38%', width: 'clamp(70px, 9vw, 180px)' },
   ];
 
-  // Répartition des images suivant le pattern original (8 visuels)
+  // Répartition des images suivant le pattern original (9 visuels max)
   const planes = useMemo(() => {
     const p1: FloatingImage[] = [];
     const p2: FloatingImage[] = [];
@@ -172,27 +179,28 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
   const lerp = (start: number, target: number, amount: number) => start * (1 - amount) + target * amount;
 
   const animate = () => {
+    const pOffsets = parallaxOffsetsRef.current;
     xForceRef.current = lerp(xForceRef.current, 0, easing);
     yForceRef.current = lerp(yForceRef.current, 0, easing);
 
     if (plane1Ref.current) {
       gsap.set(plane1Ref.current, { 
         x: `+=${xForceRef.current}`, 
-        y: `+=${yForceRef.current}`,
+        y: pOffsets.p1 + yForceRef.current,
         zIndex: 50 // Maintenir le z-index pendant l'animation
       });
     }
     if (plane2Ref.current) {
       gsap.set(plane2Ref.current, { 
         x: `+=${xForceRef.current * 0.5}`, 
-        y: `+=${yForceRef.current * 0.5}`,
+        y: pOffsets.p2 + yForceRef.current * 0.5,
         zIndex: 50 // Maintenir le z-index pendant l'animation
       });
     }
     if (plane3Ref.current) {
       gsap.set(plane3Ref.current, { 
         x: `+=${xForceRef.current * 0.25}`, 
-        y: `+=${yForceRef.current * 0.25}`,
+        y: pOffsets.p3 + yForceRef.current * 0.25,
         zIndex: 50 // Maintenir le z-index pendant l'animation
       });
     }
@@ -296,6 +304,55 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
 
   const sectionHeight = headerOffset ? `calc(100vh + ${headerOffset}px)` : '100vh';
   const centerOffset = headerOffset ? headerOffset / 2 : 0;
+  const parallaxEnabled = !!blockData.parallax?.enabled;
+  const parallaxSpeed = typeof blockData.parallax?.speed === 'number' ? blockData.parallax.speed : 0.25;
+
+  // Parallax sur scroll (optionnel)
+  const applyParallax = () => {
+    const p = parallaxOffsetsRef.current;
+    if (plane1Ref.current) gsap.set(plane1Ref.current, { y: p.p1 });
+    if (plane2Ref.current) gsap.set(plane2Ref.current, { y: p.p2 });
+    if (plane3Ref.current) gsap.set(plane3Ref.current, { y: p.p3 });
+  };
+
+  useEffect(() => {
+    if (!parallaxEnabled) {
+      parallaxOffsetsRef.current = { p1: 0, p2: 0, p3: 0 };
+      applyParallax();
+      return;
+    }
+
+    const updateParallax = () => {
+      if (!sectionRef.current) return;
+      if (parallaxStartRef.current === null) {
+        parallaxStartRef.current = sectionRef.current.getBoundingClientRect().top + window.scrollY;
+      }
+      const delta = window.scrollY - parallaxStartRef.current;
+      const base = delta * parallaxSpeed;
+      parallaxOffsetsRef.current = {
+        p1: base,
+        p2: base * 0.65,
+        p3: base * 0.4,
+      };
+      if (parallaxRafRef.current) cancelAnimationFrame(parallaxRafRef.current);
+      parallaxRafRef.current = requestAnimationFrame(applyParallax);
+    };
+
+    const handleResize = () => {
+      parallaxStartRef.current = null;
+      updateParallax();
+    };
+
+    updateParallax();
+    window.addEventListener('scroll', updateParallax, { passive: true });
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      if (parallaxRafRef.current) cancelAnimationFrame(parallaxRafRef.current);
+      window.removeEventListener('scroll', updateParallax);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [parallaxEnabled, parallaxSpeed]);
 
   const sectionBaseStyle = {
     width: '100vw',
