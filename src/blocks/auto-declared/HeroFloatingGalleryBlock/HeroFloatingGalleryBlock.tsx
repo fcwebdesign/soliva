@@ -25,10 +25,10 @@ interface FloatingGalleryData {
 export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalleryData | any }) {
   const blockData = useMemo(() => (data as any).data || data, [data]);
   const images = useMemo(() => {
-    // Limiter à 8 visuels max
+    // Limiter à 9 visuels max
     return (blockData.images || [])
       .filter((img: FloatingImage) => img?.src && !img.hidden)
-      .slice(0, 8);
+      .slice(0, 9);
   }, [blockData]);
 
   const title = blockData.title?.trim() || '';
@@ -137,6 +137,7 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
   const plane3Positions = [
     { left: '65%', top: '15%', width: 'clamp(60px, 8vw, 150px)' },
     { left: '40%', top: '90%', width: 'clamp(80px, 10vw, 200px)' },
+    { left: '85%', top: '45%', width: 'clamp(70px, 9vw, 180px)' },
   ];
 
   // Répartition des images suivant le pattern original (8 visuels)
@@ -153,6 +154,7 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
       { plane: 'p2', slot: 2 },
       { plane: 'p3', slot: 0 },
       { plane: 'p3', slot: 1 },
+      { plane: 'p3', slot: 2 },
     ];
 
     images.forEach((img, idx) => {
@@ -504,7 +506,7 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
         style={{
           position: 'absolute',
           left: '50%',
-          top: centerOffset ? `calc(40% + ${centerOffset}px)` : '40%',
+          top: centerOffset ? `calc(45% + ${centerOffset}px)` : '45%',
           transform: 'translate(-50%, -50%)',
           textAlign: 'center',
           zIndex: 60, // Au-dessus des images et du header (header z-40, images z-50)
