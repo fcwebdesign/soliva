@@ -7,6 +7,7 @@ import { useContentUpdate, fetchContentWithNoCache } from '@/hooks/useContentUpd
 interface ContentData {
   content: string;
   theme?: 'light' | 'dark' | 'auto';
+  width?: 'full' | 'small' | 'medium' | 'large';
 }
 
 export default function ContentBlock({ data }: { data: ContentData | any }) {
@@ -71,6 +72,22 @@ export default function ContentBlock({ data }: { data: ContentData | any }) {
     // Toujours utiliser var(--foreground) pour s'adapter aux palettes
     return 'var(--foreground)';
   }, [typoConfig]);
+
+  const widthClass = (() => {
+    switch (blockData.width) {
+      case 'xsmall':
+        return 'max-w-sm';
+      case 'small':
+        return 'max-w-xl';
+      case 'medium':
+        return 'max-w-2xl';
+      case 'large':
+        return 'max-w-5xl';
+      case 'full':
+      default:
+        return 'max-w-none';
+    }
+  })();
   
   if (!content) {
     return null;
@@ -83,7 +100,7 @@ export default function ContentBlock({ data }: { data: ContentData | any }) {
       data-block-theme={blockData.theme || (data as any).theme || 'auto'}
     >
       <div 
-        className={`prose prose-lg custom-lists ${pClasses}`}
+        className={`prose prose-lg custom-lists ${pClasses} ${widthClass}`}
         style={{ color: pColor }}
         dangerouslySetInnerHTML={{ __html: content }}
       />

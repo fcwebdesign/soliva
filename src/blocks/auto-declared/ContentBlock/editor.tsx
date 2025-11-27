@@ -6,6 +6,7 @@ interface ContentData {
   id?: string;
   content: string;
   theme?: 'light' | 'dark' | 'auto';
+  width?: 'full' | 'small' | 'medium' | 'large';
 }
 
 export default function ContentBlockEditor({ data, onChange, context, compact = false }: { data: ContentData; onChange: (data: ContentData) => void; context?: any; compact?: boolean }) {
@@ -119,6 +120,20 @@ export default function ContentBlockEditor({ data, onChange, context, compact = 
 
   return (
     <div className="block-editor">
+      <div className="mb-3">
+        <label className="block text-[11px] text-gray-500 mb-1">Largeur</label>
+        <select
+          value={data.width || 'full'}
+          onChange={(e) => onChange({ ...data, width: e.target.value as any })}
+          className="w-full px-2 py-1.5 text-[13px] border border-gray-200 rounded focus:border-blue-400 focus:outline-none"
+        >
+          <option value="full">Full (100%)</option>
+          <option value="large">Large (max-w-5xl)</option>
+          <option value="medium">Medium (max-w-2xl)</option>
+          <option value="small">Small (max-w-xl)</option>
+          <option value="xsmall">Extra Small (max-w-sm)</option>
+        </select>
+      </div>
       <WysiwygEditor
         value={data.content || ''}
         onChange={handleContentChange}

@@ -11,6 +11,9 @@ interface ThreeColumnsData {
   rightColumn?: any[];
   layout?: 'left-middle-right' | 'stacked-mobile' | 'stacked-tablet';
   gap?: 'small' | 'medium' | 'large';
+  leftRowGap?: 'inherit' | 'none' | 'small' | 'medium' | 'large';
+  middleRowGap?: 'inherit' | 'none' | 'small' | 'medium' | 'large';
+  rightRowGap?: 'inherit' | 'none' | 'small' | 'medium' | 'large';
   alignment?: 'top' | 'center' | 'bottom';
   theme?: 'light' | 'dark' | 'auto';
 }
@@ -26,6 +29,9 @@ export default function ThreeColumnsBlock({ data }: { data: ThreeColumnsData }) 
   const rightColumn = blockData.rightColumn || [];
   const layout = blockData.layout || 'left-middle-right';
   const gap = blockData.gap || 'medium';
+  const leftRowGap = blockData.leftRowGap || 'inherit';
+  const middleRowGap = blockData.middleRowGap || 'inherit';
+  const rightRowGap = blockData.rightRowGap || 'inherit';
   const alignment = blockData.alignment || 'top';
   const blockTheme = blockData.theme || 'auto';
 
@@ -47,9 +53,18 @@ export default function ThreeColumnsBlock({ data }: { data: ThreeColumnsData }) 
     'stacked-tablet': 'grid-cols-1 md:grid-cols-3'
   };
   const layoutClass = layoutClasses[layout] || 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
-  const gapClass = gapClasses[gap] || 'gap-6';
   const alignmentClass = alignmentClasses[alignment] || 'items-start';
-  const gapValue = gap === 'small' ? 'var(--gap-sm)' : gap === 'large' ? 'var(--gap-lg)' : 'var(--gap)';
+  const columnGapValue = gap === 'small' ? 'var(--gap-sm)' : gap === 'large' ? 'var(--gap-lg)' : 'var(--gap)';
+  const rowGapFor = (val: 'inherit' | 'none' | 'small' | 'medium' | 'large') => {
+    if (val === 'none') return '0px';
+    if (val === 'small') return 'var(--gap-sm)';
+    if (val === 'large') return 'var(--gap-lg)';
+    if (val === 'medium') return 'var(--gap)';
+    return '1.5rem';
+  };
+  const leftRowGapValue = rowGapFor(leftRowGap);
+  const middleRowGapValue = rowGapFor(middleRowGap);
+  const rightRowGapValue = rowGapFor(rightRowGap);
   
   // Ne rien rendre tant que le composant n'est pas monté
   if (!mounted) {
@@ -155,14 +170,14 @@ export default function ThreeColumnsBlock({ data }: { data: ThreeColumnsData }) 
           </div>
         );
       })()}
-      <div className={`grid ${layoutClass} ${gapClass} ${alignmentClass}`} style={{ gap: gapValue }}>
-        <div className="flex flex-col" style={{ gap: gapValue }}>
+      <div className={`grid ${layoutClass} ${alignmentClass}`} style={{ columnGap: columnGapValue, rowGap: '1.5rem' }}>
+        <div className="flex flex-col" style={{ rowGap: leftRowGapValue }}>
           {leftColumn.map(renderSubBlock)}
         </div>
-        <div className="flex flex-col" style={{ gap: gapValue }}>
+        <div className="flex flex-col" style={{ rowGap: middleRowGapValue }}>
           {middleColumn.map(renderSubBlock)}
         </div>
-        <div className="flex flex-col" style={{ gap: gapValue }}>
+        <div className="flex flex-col" style={{ rowGap: rightRowGapValue }}>
           {rightColumn.map(renderSubBlock)}
         </div>
       </div>

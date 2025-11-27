@@ -3,7 +3,6 @@ import { useRef, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Link } from "next-view-transitions";
 import { getTypographyConfig, getTypographyClasses, defaultTypography } from "@/utils/typography";
-import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 

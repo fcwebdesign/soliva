@@ -12,6 +12,8 @@ interface TwoColumnsData {
   rightColumn?: any[];
   layout?: 'left-right' | 'right-left' | 'stacked-mobile';
   gap?: 'small' | 'medium' | 'large';
+  leftRowGap?: 'inherit' | 'none' | 'small' | 'medium' | 'large';
+  rightRowGap?: 'inherit' | 'none' | 'small' | 'medium' | 'large';
   alignment?: 'top' | 'center' | 'bottom';
   theme?: 'light' | 'dark' | 'auto';
 }
@@ -29,6 +31,8 @@ export default function TwoColumnsBlock({ data }: { data: TwoColumnsData }) {
   const rightColumn = blockData.rightColumn || [];
   const layout = blockData.layout || 'left-right';
   const gap = blockData.gap || 'medium';
+  const leftRowGap = blockData.leftRowGap || 'inherit';
+  const rightRowGap = blockData.rightRowGap || 'inherit';
   const alignment = blockData.alignment || 'top';
   const blockTheme = blockData.theme || 'auto';
 
@@ -50,9 +54,17 @@ export default function TwoColumnsBlock({ data }: { data: TwoColumnsData }) {
     'stacked-mobile': 'grid-cols-1 lg:grid-cols-2'
   };
   const layoutClass = layoutClasses[layout] || 'grid-cols-1 md:grid-cols-2';
-  const gapClass = gapClasses[gap] || 'gap-8';
   const alignmentClass = alignmentClasses[alignment] || 'items-start';
-  const gapValue = gap === 'small' ? 'var(--gap-sm)' : gap === 'large' ? 'var(--gap-lg)' : 'var(--gap)';
+  const columnGapValue = gap === 'small' ? 'var(--gap-sm)' : gap === 'large' ? 'var(--gap-lg)' : 'var(--gap)';
+  const rowGapFor = (val: 'inherit' | 'none' | 'small' | 'medium' | 'large') => {
+    if (val === 'none') return '0px';
+    if (val === 'small') return 'var(--gap-sm)';
+    if (val === 'large') return 'var(--gap-lg)';
+    if (val === 'medium') return 'var(--gap)';
+    return '1.5rem'; // valeur par défaut si inherit
+  };
+  const leftRowGapValue = rowGapFor(leftRowGap);
+  const rightRowGapValue = rowGapFor(rightRowGap);
   
   // Ne rien rendre tant que le composant n'est pas monté
   if (!mounted) {
@@ -157,22 +169,22 @@ export default function TwoColumnsBlock({ data }: { data: TwoColumnsData }) {
           </div>
         );
       })()}
-      <div className={`grid ${layoutClass} ${gapClass} ${alignmentClass}`} style={{ gap: gapValue }}>
+      <div className={`grid ${layoutClass} ${alignmentClass}`} style={{ columnGap: columnGapValue, rowGap: '1.5rem' }}>
         {layout === 'right-left' ? (
           <>
-            <div className="flex flex-col" style={{ gap: gapValue }}>
+            <div className="flex flex-col" style={{ rowGap: rightRowGapValue }}>
               {rightColumn.filter((block: any) => !block.hidden).map(renderSubBlock)}
             </div>
-            <div className="flex flex-col" style={{ gap: gapValue }}>
+            <div className="flex flex-col" style={{ rowGap: leftRowGapValue }}>
               {leftColumn.filter((block: any) => !block.hidden).map(renderSubBlock)}
             </div>
           </>
         ) : (
           <>
-            <div className="flex flex-col" style={{ gap: gapValue }}>
+            <div className="flex flex-col" style={{ rowGap: leftRowGapValue }}>
               {leftColumn.filter((block: any) => !block.hidden).map(renderSubBlock)}
             </div>
-            <div className="flex flex-col" style={{ gap: gapValue }}>
+            <div className="flex flex-col" style={{ rowGap: rightRowGapValue }}>
               {rightColumn.filter((block: any) => !block.hidden).map(renderSubBlock)}
             </div>
           </>

@@ -22,6 +22,9 @@ interface ThreeColumnsData {
   rightColumn?: any[];
   layout?: 'left-middle-right' | 'stacked-mobile' | 'stacked-tablet';
   gap?: 'small' | 'medium' | 'large';
+  leftRowGap?: 'inherit' | 'none' | 'small' | 'medium' | 'large';
+  middleRowGap?: 'inherit' | 'none' | 'small' | 'medium' | 'large';
+  rightRowGap?: 'inherit' | 'none' | 'small' | 'medium' | 'large';
   alignment?: 'top' | 'center' | 'bottom';
   theme?: 'light' | 'dark' | 'auto';
 }
@@ -316,57 +319,76 @@ export default function ThreeColumnsBlockEditor({
 
   const renderColumnEditor = (column: 'leftColumn' | 'middleColumn' | 'rightColumn', title: string) => {
     const blocks = data[column] || [];
+    const columnGapKey =
+      column === 'leftColumn' ? 'leftRowGap' : column === 'middleColumn' ? 'middleRowGap' : 'rightRowGap';
+    const columnGapValue = (data as any)[columnGapKey] || 'inherit';
     
     return (
       <div className="border border-gray-200 rounded-lg p-4">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 gap-2">
           <h4 className="text-sm font-medium text-gray-700">{title}</h4>
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" size="sm" className="flex items-center gap-2">
-                <Plus className="h-4 w-4" />
-                Ajouter un bloc
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="w-[400px] sm:w-[540px]">
-              <SheetHeader>
-                <SheetTitle>Choisir un type de bloc</SheetTitle>
-                <SheetDescription>
-                  Sélectionnez le type de bloc à ajouter dans {title.toLowerCase()}
-                </SheetDescription>
-              </SheetHeader>
-              
-              <div className="space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto mt-6">
-                {Object.entries(getCategorizedBlocksForColumns()).map(([categoryName, categoryBlocks]) => (
-                  <div key={categoryName} className="mb-6">
-                    <button
-                      onClick={() => setOpenGroups(prev => ({ ...prev, [categoryName]: !prev[categoryName] }))}
-                      className="flex w-full items-center justify-between rounded-lg bg-neutral-100/70 px-3 py-2 text-sm font-semibold mb-3"
-                    >
-                      <span>{categoryName}</span>
-                      <ChevronDown className={`h-4 w-4 transition-transform ${openGroups[categoryName] ? "rotate-180" : "rotate-0"}`} />
-                    </button>
-                    
-                    {openGroups[categoryName] && (
-                      <div className="grid grid-cols-2 gap-3 p-3">
-                        {categoryBlocks.map((block) => (
-                          <SheetTrigger asChild key={block.type}>
-                            <button
-                              onClick={() => addBlockToColumn(column, block.type)}
-                              className="relative flex h-28 flex-col items-center justify-center gap-2 rounded-xl border bg-white p-3 text-center transition-shadow outline-none hover:shadow-sm focus-visible:ring"
-                            >
-                              {block.preview}
-                              <span className="text-[13px] leading-tight">{block.label}</span>
-                            </button>
-                          </SheetTrigger>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </SheetContent>
-          </Sheet>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <label className="text-[10px] text-gray-400">Espacement</label>
+              <select
+                value={columnGapValue}
+                onChange={(e) => updateField(columnGapKey, e.target.value)}
+                className="h-8 px-2 py-1 text-[12px] border border-gray-200 rounded focus:border-blue-400 focus:outline-none"
+              >
+                <option value="inherit">Hériter</option>
+                <option value="none">Aucun</option>
+                <option value="small">Petit</option>
+                <option value="medium">Moyen</option>
+                <option value="large">Grand</option>
+              </select>
+            </div>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="sm" className="flex items-center gap-2">
+                  <Plus className="h-4 w-4" />
+                  Ajouter un bloc
+                </Button>
+              </SheetTrigger>
+              <SheetContent className="w-[400px] sm:w-[540px]">
+                <SheetHeader>
+                  <SheetTitle>Choisir un type de bloc</SheetTitle>
+                  <SheetDescription>
+                    Sélectionnez le type de bloc à ajouter dans {title.toLowerCase()}
+                  </SheetDescription>
+                </SheetHeader>
+                
+                <div className="space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto mt-6">
+                  {Object.entries(getCategorizedBlocksForColumns()).map(([categoryName, categoryBlocks]) => (
+                    <div key={categoryName} className="mb-6">
+                      <button
+                        onClick={() => setOpenGroups(prev => ({ ...prev, [categoryName]: !prev[categoryName] }))}
+                        className="flex w-full items-center justify-between rounded-lg bg-neutral-100/70 px-3 py-2 text-sm font-semibold mb-3"
+                      >
+                        <span>{categoryName}</span>
+                        <ChevronDown className={`h-4 w-4 transition-transform ${openGroups[categoryName] ? "rotate-180" : "rotate-0"}`} />
+                      </button>
+                      
+                      {openGroups[categoryName] && (
+                        <div className="grid grid-cols-2 gap-3 p-3">
+                          {categoryBlocks.map((block) => (
+                            <SheetTrigger asChild key={block.type}>
+                              <button
+                                onClick={() => addBlockToColumn(column, block.type)}
+                                className="relative flex h-28 flex-col items-center justify-center gap-2 rounded-xl border bg-white p-3 text-center transition-shadow outline-none hover:shadow-sm focus-visible:ring"
+                              >
+                                {block.preview}
+                                <span className="text-[13px] leading-tight">{block.label}</span>
+                              </button>
+                            </SheetTrigger>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
         
         <div className="space-y-3">
@@ -694,6 +716,26 @@ export default function ThreeColumnsBlockEditor({
                 </span>
                 {openColumn === 'left' ? <ChevronUp className="w-3 h-3 text-gray-400" /> : <ChevronDown className="w-3 h-3 text-gray-400" />}
               </button>
+              {normalizedColumns.leftColumn.length >= 2 && (
+                <div className="px-2 pb-2 flex items-center gap-2">
+                  <label className="text-[10px] text-gray-400">Espacement</label>
+                  <Select
+                    value={(data as any).leftRowGap || 'inherit'}
+                    onValueChange={(value) => updateField('leftRowGap', value)}
+                  >
+                    <SelectTrigger className="h-8 px-2 py-1 text-[12px] shadow-none border border-gray-200 rounded">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent side="bottom" align="end">
+                      <SelectItem value="inherit">Hériter</SelectItem>
+                      <SelectItem value="none">Aucun</SelectItem>
+                      <SelectItem value="small">Petit</SelectItem>
+                      <SelectItem value="medium">Moyen</SelectItem>
+                      <SelectItem value="large">Grand</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               {openColumn === 'left' && (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'leftColumn')}>
                   <SortableContext items={normalizedColumns.leftColumn.map((b) => b.id)} strategy={verticalListSortingStrategy}>
@@ -735,6 +777,26 @@ export default function ThreeColumnsBlockEditor({
                 </span>
                 {openColumn === 'middle' ? <ChevronUp className="w-3 h-3 text-gray-400" /> : <ChevronDown className="w-3 h-3 text-gray-400" />}
               </button>
+              {normalizedColumns.middleColumn.length >= 2 && (
+                <div className="px-2 pb-2 flex items-center gap-2">
+                  <label className="text-[10px] text-gray-400">Espacement</label>
+                  <Select
+                    value={(data as any).middleRowGap || 'inherit'}
+                    onValueChange={(value) => updateField('middleRowGap', value)}
+                  >
+                    <SelectTrigger className="h-8 px-2 py-1 text-[12px] shadow-none border border-gray-200 rounded">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent side="bottom" align="end">
+                      <SelectItem value="inherit">Hériter</SelectItem>
+                      <SelectItem value="none">Aucun</SelectItem>
+                      <SelectItem value="small">Petit</SelectItem>
+                      <SelectItem value="medium">Moyen</SelectItem>
+                      <SelectItem value="large">Grand</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               {openColumn === 'middle' && (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'middleColumn')}>
                   <SortableContext items={normalizedColumns.middleColumn.map((b) => b.id)} strategy={verticalListSortingStrategy}>
@@ -776,6 +838,26 @@ export default function ThreeColumnsBlockEditor({
                 </span>
                 {openColumn === 'right' ? <ChevronUp className="w-3 h-3 text-gray-400" /> : <ChevronDown className="w-3 h-3 text-gray-400" />}
               </button>
+              {normalizedColumns.rightColumn.length >= 2 && (
+                <div className="px-2 pb-2 flex items-center gap-2">
+                  <label className="text-[10px] text-gray-400">Espacement</label>
+                  <Select
+                    value={(data as any).rightRowGap || 'inherit'}
+                    onValueChange={(value) => updateField('rightRowGap', value)}
+                  >
+                    <SelectTrigger className="h-8 px-2 py-1 text-[12px] shadow-none border border-gray-200 rounded">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent side="bottom" align="end">
+                      <SelectItem value="inherit">Hériter</SelectItem>
+                      <SelectItem value="none">Aucun</SelectItem>
+                      <SelectItem value="small">Petit</SelectItem>
+                      <SelectItem value="medium">Moyen</SelectItem>
+                      <SelectItem value="large">Grand</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               {openColumn === 'right' && (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'rightColumn')}>
                   <SortableContext items={normalizedColumns.rightColumn.map((b) => b.id)} strategy={verticalListSortingStrategy}>
