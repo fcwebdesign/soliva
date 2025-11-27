@@ -12,7 +12,8 @@ import {
   List,
   Quote,
   FileText,
-  LayoutPanelTop
+  LayoutPanelTop,
+  MousePointer2
 } from 'lucide-react';
 import { getBlockMetadata } from '@/blocks/auto-declared/registry';
 import '@/blocks/auto-declared'; // side-effect to populate registry
@@ -39,6 +40,7 @@ const iconMap: Record<string, LucideIcon> = {
   faq: List,
   'expandable-card': List,
   'page-intro': FileText,
+  'hover-clients': MousePointer2,
 };
 
 const iconClass = "h-7 w-7 text-gray-600";
@@ -95,6 +97,7 @@ const staticBlocks = [
   { type: 'services', label: 'Liste titre/texte', category: 'content', preview: renderLucideIcon('services') },
   { type: 'three-columns', label: 'Trois colonnes', category: 'layout', preview: renderLucideIcon('three-columns') },
   { type: 'two-columns', label: 'Deux colonnes', category: 'layout', preview: renderLucideIcon('two-columns') },
+  { type: 'hover-clients', label: 'Hover clients', category: 'interactive', preview: renderLucideIcon('hover-clients') },
 ];
 
 const getEffectiveBlocks = () => getBlocksFromRegistry() || staticBlocks;
