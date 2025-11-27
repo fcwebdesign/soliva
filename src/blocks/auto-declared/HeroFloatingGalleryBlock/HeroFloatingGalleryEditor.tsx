@@ -405,7 +405,7 @@ export default function HeroFloatingGalleryEditor({
     updateField('images', next);
   };
 
-  const MAX_IMAGES = 15;
+  const MAX_IMAGES = 8;
 
   const addImage = () => {
     if (imagesWithIds.length >= MAX_IMAGES) {

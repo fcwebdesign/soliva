@@ -25,10 +25,10 @@ interface FloatingGalleryData {
 export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalleryData | any }) {
   const blockData = useMemo(() => (data as any).data || data, [data]);
   const images = useMemo(() => {
-    // Limiter à 15 visuels max
+    // Limiter à 8 visuels max
     return (blockData.images || [])
       .filter((img: FloatingImage) => img?.src && !img.hidden)
-      .slice(0, 15);
+      .slice(0, 8);
   }, [blockData]);
 
   const title = blockData.title?.trim() || '';
@@ -123,50 +123,36 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
   const xForceRef = useRef(0);
   const yForceRef = useRef(0);
 
-  // Positions réparties sur 3 plans, plus de slots pour éviter les chevauchements (15 max)
+  // Positions exactes de la démo (3 plans) - responsive avec clamp
   const plane1Positions = [
-    { left: '10%', top: '65%', width: 'clamp(120px, 12vw, 260px)' },
-    { left: '30%', top: '15%', width: 'clamp(100px, 10vw, 220px)' },
-    { left: '55%', top: '70%', width: 'clamp(110px, 11vw, 240px)' },
-    { left: '80%', top: '25%', width: 'clamp(90px, 9vw, 200px)' },
-    { left: '20%', top: '40%', width: 'clamp(90px, 10vw, 210px)' },
-    { left: '65%', top: '5%', width: 'clamp(80px, 8vw, 180px)' },
+    { left: '90%', top: '70%', width: 'clamp(120px, 15vw, 300px)' },
+    { left: '5%', top: '65%', width: 'clamp(120px, 15vw, 300px)' },
+    { left: '35%', top: '0%', width: 'clamp(100px, 12vw, 225px)' },
   ];
   const plane2Positions = [
-    { left: '5%', top: '20%', width: 'clamp(90px, 9vw, 200px)' },
-    { left: '40%', top: '85%', width: 'clamp(100px, 10vw, 220px)' },
-    { left: '75%', top: '55%', width: 'clamp(90px, 9vw, 210px)' },
-    { left: '55%', top: '35%', width: 'clamp(85px, 9vw, 200px)' },
-    { left: '25%', top: '80%', width: 'clamp(80px, 8vw, 180px)' },
+    { left: '5%', top: '10%', width: 'clamp(100px, 12vw, 250px)' },
+    { left: '90%', top: '30%', width: 'clamp(80px, 10vw, 200px)' },
+    { left: '70%', top: '75%', width: 'clamp(100px, 12vw, 225px)' },
   ];
   const plane3Positions = [
-    { left: '15%', top: '10%', width: 'clamp(70px, 7vw, 150px)' },
-    { left: '50%', top: '50%', width: 'clamp(80px, 8vw, 170px)' },
-    { left: '85%', top: '10%', width: 'clamp(70px, 7vw, 150px)' },
-    { left: '70%', top: '85%', width: 'clamp(75px, 7vw, 160px)' },
+    { left: '65%', top: '15%', width: 'clamp(60px, 8vw, 150px)' },
+    { left: '40%', top: '90%', width: 'clamp(80px, 10vw, 200px)' },
   ];
 
-  // Répartition des images suivant un pattern élargi (15 visuels max)
+  // Répartition des images suivant le pattern original (8 visuels)
   const planes = useMemo(() => {
     const p1: FloatingImage[] = [];
     const p2: FloatingImage[] = [];
     const p3: FloatingImage[] = [];
     const pattern = [
       { plane: 'p1', slot: 0 },
-      { plane: 'p2', slot: 0 },
-      { plane: 'p3', slot: 0 },
       { plane: 'p1', slot: 1 },
-      { plane: 'p2', slot: 1 },
-      { plane: 'p3', slot: 1 },
       { plane: 'p1', slot: 2 },
+      { plane: 'p2', slot: 0 },
+      { plane: 'p2', slot: 1 },
       { plane: 'p2', slot: 2 },
-      { plane: 'p3', slot: 2 },
-      { plane: 'p1', slot: 3 },
-      { plane: 'p2', slot: 3 },
-      { plane: 'p1', slot: 4 },
-      { plane: 'p2', slot: 4 },
-      { plane: 'p3', slot: 3 },
-      { plane: 'p1', slot: 5 },
+      { plane: 'p3', slot: 0 },
+      { plane: 'p3', slot: 1 },
     ];
 
     images.forEach((img, idx) => {
