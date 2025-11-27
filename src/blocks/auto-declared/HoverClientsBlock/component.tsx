@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { CustomEase } from 'gsap/CustomEase';
+import { getTypographyConfig, getTypographyClasses, getCustomColor, defaultTypography } from '@/utils/typography';
+import { fetchContentWithNoCache, useContentUpdate } from '@/hooks/useContentUpdate';
 
 interface HoverClientItem {
   id?: string;
@@ -30,13 +32,19 @@ export default function HoverClientsBlock({ data }: { data: HoverClientsData }) 
   const {
     title = 'Trusted us',
     subtitle = 'Selected clients',
-    backgroundColor = '#0d0d10',
-    textColor = '#ffffff',
-    mutedColor = '#b3b3b3',
-    accentColor = '#ffffff',
+    backgroundColor: rawBackgroundColor,
+    textColor: rawTextColor,
+    mutedColor: rawMutedColor,
+    accentColor: rawAccentColor,
     theme = 'auto',
     items: rawItems = [],
   } = blockData;
+
+  // Ignorer les anciennes valeurs par défaut pour utiliser le thème
+  const backgroundColor = rawBackgroundColor && rawBackgroundColor !== '#0d0d10' ? rawBackgroundColor : undefined;
+  const textColor = rawTextColor && rawTextColor !== '#ffffff' ? rawTextColor : undefined;
+  const mutedColor = rawMutedColor && rawMutedColor !== '#b3b3b3' ? rawMutedColor : undefined;
+  const accentColor = rawAccentColor && rawAccentColor !== '#ffffff' ? rawAccentColor : undefined;
 
   const items = useMemo(
     () => (rawItems || []).filter((item) => item && !item.hidden && (item.name || item.image?.src)),
@@ -45,6 +53,82 @@ export default function HoverClientsBlock({ data }: { data: HoverClientsData }) 
 
   const previewRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const [fullContent, setFullContent] = useState<any>(null);
+
+  // Charger le contenu pour accéder à la typographie
+  useEffect(() => {
+    const loadContent = async () => {
+      try {
+        const response = await fetchContentWithNoCache('/api/content/metadata');
+        if (response.ok) {
+          const data = await response.json();
+          setFullContent(data);
+        }
+      } catch (error) {
+        // Ignorer silencieusement si erreur
+      }
+    };
+    loadContent();
+  }, []);
+
+  // Écouter les mises à jour de contenu pour recharger la typographie
+  useContentUpdate(() => {
+    const loadContent = async () => {
+      try {
+        const response = await fetchContentWithNoCache('/api/content/metadata');
+        if (response.ok) {
+          const data = await response.json();
+          setFullContent(data);
+        }
+      } catch (error) {
+        // Ignorer silencieusement si erreur
+      }
+    };
+    loadContent();
+  });
+
+  // Récupérer la config typographie
+  const typoConfig = useMemo(() => {
+    return fullContent ? getTypographyConfig(fullContent) : {};
+  }, [fullContent]);
+
+  // Classes typographiques pour h2 (sans la couleur pour la gérer via style)
+  const h2Classes = useMemo(() => {
+    const safeTypoConfig = typoConfig?.h2 ? { h2: typoConfig.h2 } : {};
+    const classes = getTypographyClasses('h2', safeTypoConfig, defaultTypography.h2);
+    return classes
+      .replace(/\btext-(gray|black|white|red|blue|green|yellow|purple|pink|indigo|orange)-\d+\b/g, '')
+      .replace(/\btext-(gray|black|white|red|blue|green|yellow|purple|pink|indigo|orange)\b/g, '')
+      .replace(/\btext-foreground\b/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }, [typoConfig]);
+
+  // Couleur pour h2 : hex personnalisée ou var(--foreground) pour s'adapter aux palettes
+  const h2Color = useMemo(() => {
+    const customColor = getCustomColor('h2', typoConfig);
+    if (customColor) return customColor;
+    return 'var(--foreground)';
+  }, [typoConfig]);
+
+  // Classes typographiques pour h3 (sans la couleur pour la gérer via style)
+  const h3Classes = useMemo(() => {
+    const safeTypoConfig = typoConfig?.h3 ? { h3: typoConfig.h3 } : {};
+    const classes = getTypographyClasses('h3', safeTypoConfig, defaultTypography.h3);
+    return classes
+      .replace(/\btext-(gray|black|white|red|blue|green|yellow|purple|pink|indigo|orange)-\d+\b/g, '')
+      .replace(/\btext-(gray|black|white|red|blue|green|yellow|purple|pink|indigo|orange)\b/g, '')
+      .replace(/\btext-foreground\b/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }, [typoConfig]);
+
+  // Couleur pour h3 : hex personnalisée ou var(--foreground) pour s'adapter aux palettes
+  const h3Color = useMemo(() => {
+    const customColor = getCustomColor('h3', typoConfig);
+    if (customColor) return customColor;
+    return 'var(--foreground)';
+  }, [typoConfig]);
 
   useEffect(() => {
     if (!previewRef.current || !listRef.current || items.length === 0) return;
@@ -60,73 +144,138 @@ export default function HoverClientsBlock({ data }: { data: HoverClientsData }) 
       // ignore duplicate ease creation
     }
 
-    const preview = previewRef.current;
-    const entries = Array.from(listRef.current.querySelectorAll<HTMLElement>('[data-client-item]'));
-    let active: { wrapper: HTMLDivElement; img: HTMLImageElement; index: number } | null = null;
+    const clientsPreview = previewRef.current;
+    const clientNames = Array.from(listRef.current.querySelectorAll<HTMLElement>('[data-client-item]'));
 
-    const hideActive = () => {
-      if (!active) return;
-      const target = active;
-      active = null;
-      gsap.to(target.img, {
-        opacity: 0,
-        duration: 0.45,
-        ease: 'power1.out',
-        onComplete: () => target.wrapper.remove(),
-      });
-    };
-
-    const showIndex = (index: number) => {
-      const item = items[index];
-      if (!item?.image?.src) return;
-      if (active && active.index === index) return;
-      hideActive();
-
-      const wrapper = document.createElement('div');
-      wrapper.className = 'hover-client-img-wrapper';
-
-      const img = document.createElement('img');
-      img.src = item.image.src || '';
-      img.alt = item.image.alt || item.name || 'Client';
-      wrapper.appendChild(img);
-      preview.appendChild(wrapper);
-
-      gsap.set(wrapper, {
-        clipPath: 'polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%)',
-      });
-      gsap.set(img, { scale: 1.15, opacity: 0 });
-
-      active = { wrapper, img, index };
-
-      gsap.to(wrapper, {
-        clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
-        duration: 0.55,
-        ease: 'hop',
-      });
-      gsap.to(img, { opacity: 1, duration: 0.35, ease: 'power2.out' });
-      gsap.to(img, { scale: 1, duration: 1.1, ease: 'hop' });
-    };
+    let activeClientIndex = -1;
 
     const cleanups: Array<() => void> = [];
-    entries.forEach((entry, index) => {
-      const onEnter = () => showIndex(index);
-      const onLeave = (evt: PointerEvent) => {
-        if (entry.contains(evt.relatedTarget as Node)) return;
-        if (active?.index === index) {
-          hideActive();
+
+    clientNames.forEach((client, index) => {
+      let activeClientImgWrapper: HTMLDivElement | null = null;
+      let activeClientImg: HTMLImageElement | null = null;
+
+      const handleMouseOver = () => {
+        if (activeClientIndex === index) return;
+
+        if (activeClientIndex !== -1) {
+          const previousClient = clientNames[activeClientIndex];
+          const mouseoutEvent = new Event('mouseout');
+          previousClient.dispatchEvent(mouseoutEvent);
+        }
+
+        activeClientIndex = index;
+        const item = items[index];
+        if (!item?.image?.src) return;
+
+        const clientImgWrapper = document.createElement('div');
+        clientImgWrapper.className = 'hover-client-img-wrapper';
+        
+        // S'assurer que le wrapper est bien positionné et invisible au départ
+        clientImgWrapper.style.position = 'absolute';
+        clientImgWrapper.style.top = '0';
+        clientImgWrapper.style.left = '0';
+        clientImgWrapper.style.width = '100%';
+        clientImgWrapper.style.height = '100%';
+        clientImgWrapper.style.clipPath = 'polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%)';
+        clientImgWrapper.style.overflow = 'hidden';
+
+        const clientImg = document.createElement('img');
+        clientImg.src = item.image.src || '';
+        clientImg.alt = item.image.alt || item.name || 'Client';
+        
+        // S'assurer que l'image est bien positionnée et invisible au départ
+        clientImg.style.position = 'absolute';
+        clientImg.style.top = '0';
+        clientImg.style.left = '0';
+        clientImg.style.width = '100%';
+        clientImg.style.height = '100%';
+        clientImg.style.objectFit = 'cover';
+        clientImg.style.opacity = '0';
+        clientImg.style.transform = 'scale(1.25)';
+        clientImg.style.transformOrigin = 'center center';
+
+        clientImgWrapper.appendChild(clientImg);
+        clientsPreview.appendChild(clientImgWrapper);
+        
+        // Maintenant on peut utiliser GSAP pour les animations
+        gsap.set(clientImgWrapper, {
+          clipPath: 'polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%)',
+        });
+        gsap.set(clientImg, { 
+          scale: 1.25, 
+          opacity: 0,
+        });
+
+        activeClientImgWrapper = clientImgWrapper;
+        activeClientImg = clientImg;
+
+        gsap.to(clientImgWrapper, {
+          clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
+          duration: 0.5,
+          ease: 'hop',
+        });
+
+        gsap.to(clientImg, {
+          opacity: 1,
+          duration: 0.25,
+          ease: 'power2.out',
+        });
+
+        gsap.to(clientImg, {
+          scale: 1,
+          duration: 1.25,
+          ease: 'hop',
+        });
+      };
+
+      const handleMouseOut = (event: Event) => {
+        const mouseEvent = event as MouseEvent;
+        if (mouseEvent.relatedTarget && client.contains(mouseEvent.relatedTarget as Node)) {
+          return;
+        }
+
+        if (activeClientIndex === index) {
+          activeClientIndex = -1;
+        }
+
+        if (activeClientImg && activeClientImgWrapper) {
+          const clientImgToRemove = activeClientImg;
+          const clientImgWrapperToRemove = activeClientImgWrapper;
+
+          activeClientImg = null;
+          activeClientImgWrapper = null;
+
+          gsap.to(clientImgToRemove, {
+            opacity: 0,
+            duration: 0.5,
+            ease: 'power1.out',
+            onComplete: () => {
+              clientImgWrapperToRemove.remove();
+            },
+          });
         }
       };
-      entry.addEventListener('pointerenter', onEnter);
-      entry.addEventListener('pointerleave', onLeave);
+
+      client.addEventListener('mouseover', handleMouseOver);
+      client.addEventListener('mouseout', handleMouseOut);
+
       cleanups.push(() => {
-        entry.removeEventListener('pointerenter', onEnter);
-        entry.removeEventListener('pointerleave', onLeave);
+        client.removeEventListener('mouseover', handleMouseOver);
+        client.removeEventListener('mouseout', handleMouseOut);
+        if (activeClientImg) {
+          gsap.killTweensOf(activeClientImg);
+        }
+        if (activeClientImgWrapper) {
+          gsap.killTweensOf(activeClientImgWrapper);
+          activeClientImgWrapper.remove();
+        }
       });
     });
 
     return () => {
       cleanups.forEach((fn) => fn());
-      hideActive();
+      activeClientIndex = -1;
     };
   }, [items]);
 
@@ -140,19 +289,36 @@ export default function HoverClientsBlock({ data }: { data: HoverClientsData }) 
       data-block-type="hover-clients"
       data-block-theme={theme}
       style={
-        {
-          '--hc-bg': backgroundColor,
-          '--hc-text': textColor,
-          '--hc-muted': mutedColor,
-          '--hc-accent': accentColor,
-        } as React.CSSProperties
+        (() => {
+          const styles: React.CSSProperties = {};
+          if (backgroundColor) {
+            styles.backgroundColor = backgroundColor;
+          }
+          if (textColor) {
+            (styles as any)['--hc-text'] = textColor;
+          }
+          if (mutedColor) {
+            (styles as any)['--hc-muted'] = mutedColor;
+          }
+          if (accentColor) {
+            (styles as any)['--hc-accent'] = accentColor;
+          }
+          return Object.keys(styles).length > 0 ? styles : undefined;
+        })()
       }
     >
       <div className="hover-clients-preview" ref={previewRef} aria-hidden />
 
       <div className="hover-clients-header">
         {subtitle && <p className="hover-clients-kicker">{subtitle}</p>}
-        {title && <h2 className="hover-clients-title">{title}</h2>}
+        {title && (
+          <h2 
+            className={`hover-clients-title ${h2Classes}`}
+            style={{ color: textColor || h2Color }}
+          >
+            {title}
+          </h2>
+        )}
       </div>
 
       <div className="hover-clients-list" ref={listRef}>
@@ -163,9 +329,13 @@ export default function HoverClientsBlock({ data }: { data: HoverClientsData }) 
             className="hover-client-name"
             role="button"
             tabIndex={0}
-            onFocus={() => showForKeyboard(previewRef, items, idx)}
           >
-            <h3>{item.name}</h3>
+            <h3 
+              className={h3Classes}
+              style={{ color: textColor || h3Color }}
+            >
+              {item.name}
+            </h3>
           </div>
         ))}
       </div>
@@ -175,46 +345,55 @@ export default function HoverClientsBlock({ data }: { data: HoverClientsData }) 
           position: relative;
           width: 100%;
           min-height: min(100vh, 900px);
-          padding: clamp(1.5rem, 3vw, 2.5rem);
+          padding-left: clamp(1.5rem, 3vw, 2.5rem);
+          padding-right: clamp(1.5rem, 3vw, 2.5rem);
+          padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
           display: flex;
           flex-direction: column;
           justify-content: flex-end;
+          align-items: flex-start;
           gap: clamp(1.5rem, 3vw, 2.5rem);
-          background: var(--hc-bg);
-          color: var(--hc-text);
+          color: var(--hc-text, var(--foreground));
           overflow: hidden;
-          isolation: isolate;
         }
 
         .hover-clients-preview {
           position: absolute;
-          inset: 0;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 60%;
+          height: 50%;
+          z-index: 0;
           pointer-events: none;
-          display: block;
-          width: 100%;
-          height: 100%;
-          overflow: hidden;
         }
 
         .hover-client-img-wrapper {
           position: absolute;
-          inset: 15% 20%;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%);
           will-change: clip-path;
           overflow: hidden;
         }
 
         .hover-client-img-wrapper img {
           position: absolute;
-          inset: 0;
+          top: 0;
+          left: 0;
           width: 100%;
           height: 100%;
           object-fit: cover;
+          object-position: center;
+          transform-origin: center center;
           will-change: transform, opacity;
         }
 
         .hover-clients-header {
           position: relative;
-          z-index: 2;
+          z-index: 1;
           mix-blend-mode: difference;
         }
 
@@ -222,7 +401,7 @@ export default function HoverClientsBlock({ data }: { data: HoverClientsData }) 
           text-transform: uppercase;
           letter-spacing: 0.08em;
           font-size: 0.85rem;
-          color: var(--hc-muted);
+          color: var(--hc-muted, var(--muted-foreground));
           margin-bottom: 0.35rem;
         }
 
@@ -231,31 +410,30 @@ export default function HoverClientsBlock({ data }: { data: HoverClientsData }) 
           font-weight: 600;
           letter-spacing: -0.02em;
           line-height: 1;
-          color: var(--hc-text);
         }
 
         .hover-clients-list {
           position: relative;
-          z-index: 2;
+          width: 80%;
+          margin-bottom: 8rem;
           display: flex;
           flex-wrap: wrap;
-          gap: clamp(0.5rem, 1vw, 0.9rem);
-          max-width: 1200px;
+          justify-content: flex-start;
+          gap: 0.75rem;
           mix-blend-mode: difference;
+          z-index: 2;
         }
 
         .hover-client-name {
           position: relative;
+          display: inline-block;
           cursor: pointer;
-          outline: none;
         }
 
         .hover-client-name h3 {
           font-size: clamp(2rem, 3vw, 3.2rem);
           font-weight: 500;
           line-height: 1;
-          color: var(--hc-text);
-          text-wrap: balance;
         }
 
         .hover-client-name::after {
@@ -264,22 +442,26 @@ export default function HoverClientsBlock({ data }: { data: HoverClientsData }) 
           left: 0;
           bottom: 0;
           width: 100%;
-          height: 0.14rem;
-          background: var(--hc-accent);
+          height: 0.15rem;
+          background: var(--hc-accent, var(--foreground));
           transform: scaleX(0);
           transform-origin: right;
-          transition: transform 260ms ease-out;
+          transition: transform 300ms ease-out;
         }
 
-        .hover-client-name:hover::after,
-        .hover-client-name:focus-visible::after {
+        .hover-client-name:hover::after {
           transform: scaleX(1);
           transform-origin: left;
         }
 
         @media (max-width: 1000px) {
-          .hover-client-img-wrapper {
-            inset: 10% 8%;
+          .hover-clients-preview {
+            width: 100%;
+            height: 100%;
+          }
+
+          .hover-clients-list {
+            width: 100%;
           }
 
           .hover-clients-section {
@@ -299,27 +481,4 @@ export default function HoverClientsBlock({ data }: { data: HoverClientsData }) 
       `}</style>
     </section>
   );
-}
-
-// Focus support: show image on keyboard focus
-function showForKeyboard(
-  previewRef: React.RefObject<HTMLDivElement>,
-  items: HoverClientItem[],
-  index: number
-) {
-  const preview = previewRef.current;
-  const item = items[index];
-  if (!preview || !item?.image?.src) return;
-
-  const existing = preview.querySelector('.hover-client-img-wrapper');
-  if (existing) existing.remove();
-
-  const wrapper = document.createElement('div');
-  wrapper.className = 'hover-client-img-wrapper';
-
-  const img = document.createElement('img');
-  img.src = item.image.src || '';
-  img.alt = item.image.alt || item.name || 'Client';
-  wrapper.appendChild(img);
-  preview.appendChild(wrapper);
 }

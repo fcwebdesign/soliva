@@ -13,10 +13,6 @@ registerAutoBlock({
   defaultData: {
     title: 'Trusted us',
     subtitle: 'Selected clients',
-    backgroundColor: '#0d0d10',
-    textColor: '#ffffff',
-    mutedColor: '#b3b3b3',
-    accentColor: '#ffffff',
     theme: 'auto',
     items: [
       { id: 'client-1', name: 'Native Instruments', image: { src: 'https://images.unsplash.com/photo-1470229538611-16ba8c7ffbd7?auto=format&fit=crop&w=1400&q=80', alt: 'Native Instruments' } },

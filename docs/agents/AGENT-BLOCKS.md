@@ -81,6 +81,10 @@ export default function MonBloc({ data }: { data: MonBlocData }) {
 
 ### Étape 3 : Éditeur Admin (`editor.tsx`)
 
+⚠️ **OBLIGATOIRE : Support du mode compact**
+
+Tous les éditeurs DOIVENT supporter le paramètre `compact` pour fonctionner correctement dans l'éditeur visuel. Voici le template complet :
+
 ```typescript
 import React from 'react';
 import { Label } from '@/components/ui/label';
@@ -91,9 +95,40 @@ interface MonBlocEditorProps {
     content: string;
   };
   onChange: (data: any) => void;
+  compact?: boolean; // ⚠️ OBLIGATOIRE
 }
 
-export default function MonBlocEditor({ data, onChange }: MonBlocEditorProps) {
+export default function MonBlocEditor({ data, onChange, compact = false }: MonBlocEditorProps) {
+  // Version compacte pour l'éditeur visuel (OBLIGATOIRE)
+  if (compact) {
+    return (
+      <div className="space-y-2">
+        <div>
+          <label className="block text-[10px] text-gray-400 mb-1">Titre</label>
+          <input
+            type="text"
+            value={data.title || ''}
+            onChange={(e) => onChange({ ...data, title: e.target.value })}
+            placeholder="Titre du bloc"
+            className="w-full px-2 py-1.5 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors"
+          />
+        </div>
+        
+        <div>
+          <label className="block text-[10px] text-gray-400 mb-1">Contenu</label>
+          <textarea
+            value={data.content || ''}
+            onChange={(e) => onChange({ ...data, content: e.target.value })}
+            placeholder="Contenu du bloc"
+            rows={3}
+            className="w-full px-2 py-2 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none resize-none transition-colors min-h-[80px]"
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // Version normale pour le BO classique
   return (
     <div className="space-y-4">
       <div>
@@ -121,6 +156,19 @@ export default function MonBlocEditor({ data, onChange }: MonBlocEditorProps) {
   );
 }
 ```
+
+#### 🎨 Styles du mode compact (à respecter)
+
+- **Labels** : `text-[10px] text-gray-400 mb-1`
+- **Inputs** : `px-2 py-1.5 text-[13px] border border-gray-200 rounded focus:border-blue-400`
+- **Textareas** : `px-2 py-2 text-[13px] min-h-[80px]`
+- **Espacement** : `space-y-2` entre les champs
+- **Couleurs** : Gris clair pour les labels, bordures grises, focus bleu
+
+**Exemples de référence** :
+- `/src/blocks/auto-declared/QuoteBlock/editor.tsx` (simple)
+- `/src/blocks/auto-declared/ContactBlock/editor.tsx` (moyen)
+- `/src/blocks/auto-declared/GalleryGridBlock/editor.tsx` (complexe)
 
 ### Étape 4 : Enregistrement (`index.ts`)
 
@@ -354,11 +402,20 @@ Avant de push un nouveau bloc :
 - [ ] TypeScript compile (`npm run build`)
 - [ ] Types exportés si nécessaires
 - [ ] Composant testé visuellement
-- [ ] Éditeur fonctionnel dans l'admin
+- [ ] **Éditeur supporte le mode `compact` (OBLIGATOIRE)**
+- [ ] Éditeur fonctionnel dans l'admin (mode normal ET compact)
 - [ ] Valeurs par défaut gérées
 - [ ] Attributs `data-block-type` et `data-block-theme` présents
 - [ ] Documentation inline (commentaires JSDoc)
 - [ ] Pas de `console.log`
+
+### ⚠️ Vérification du mode compact
+
+Pour tester le mode compact :
+1. Aller dans l'admin : `http://localhost:3000/admin?page=home`
+2. Ajouter un bloc dans une colonne (TwoColumnsBlock, ThreeColumnsBlock, etc.)
+3. L'éditeur doit s'afficher en mode compact avec les styles réduits
+4. Si l'éditeur ne s'affiche pas ou est mal formaté → le mode compact n'est pas implémenté correctement
 
 ---
 
