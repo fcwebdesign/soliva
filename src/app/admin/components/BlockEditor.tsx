@@ -509,14 +509,31 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
     onUpdate(newData);
   };
 
+  const enforceHeroFloatingFirst = (list: Block[]) => {
+    const heroIndex = list.findIndex((b) => b.type === 'hero-floating-gallery');
+    if (heroIndex > 0) {
+      const hero = list[heroIndex];
+      const rest = list.filter((_, i) => i !== heroIndex);
+      return [hero, ...rest];
+    }
+    return list;
+  };
+
   const addBlock = (type: string) => {
-    
+    // Limiter à un seul bloc hero-floating-gallery
+    if (type === 'hero-floating-gallery' && blocks.some((b) => b.type === 'hero-floating-gallery')) {
+      alert('Le bloc Hero Floating Gallery est déjà présent en première position.');
+      setIsSheetOpen(false);
+      return;
+    }
+
     try {
       // Créer automatiquement le bloc avec les bonnes données depuis le registre
       const newBlock = createAutoBlockInstance(type);
       
-      
-      const newBlocks = [...blocks, newBlock];
+      const newBlocks = type === 'hero-floating-gallery'
+        ? enforceHeroFloatingFirst([newBlock, ...blocks])
+        : enforceHeroFloatingFirst([...blocks, newBlock]);
       setBlocks(newBlocks);
       
       // Mémoriser l'ID du bloc créé pour le scroll
@@ -535,7 +552,9 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
         content: ''
       };
       
-      const newBlocks = [...blocks, fallbackBlock];
+      const newBlocks = type === 'hero-floating-gallery'
+        ? enforceHeroFloatingFirst([fallbackBlock, ...blocks])
+        : enforceHeroFloatingFirst([...blocks, fallbackBlock]);
       setBlocks(newBlocks);
       
       // Mémoriser l'ID du bloc fallback pour le scroll
@@ -955,6 +974,11 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
 
   // Drag & drop natif
   const handleDragStart = (e: React.DragEvent, index: number) => {
+    // Empêcher le drag du hero-floating-gallery pour le maintenir en première position
+    if (blocks[index]?.type === 'hero-floating-gallery') {
+      e.preventDefault();
+      return;
+    }
     setDraggedIndex(index);
     e.dataTransfer.effectAllowed = 'move';
   };
@@ -972,8 +996,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
     const newBlocks = [...blocks];
     const [draggedBlock] = newBlocks.splice(draggedIndex, 1);
     newBlocks.splice(dropIndex, 0, draggedBlock);
-    
-    const cleanedBlocks = cleanInvalidBlocks(newBlocks);
+    const cleanedBlocks = cleanInvalidBlocks(enforceHeroFloatingFirst(newBlocks));
     setBlocks(cleanedBlocks);
     updateBlocksContent(cleanedBlocks);
     setDraggedIndex(null);
@@ -1960,7 +1983,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
               )}
               <div 
                 className="block-header"
-                draggable
+                draggable={block.type !== 'hero-floating-gallery'}
                 onDragStart={(e) => handleDragStart(e, index)}
                 onDragEnd={handleDragEndNative}
               >
@@ -1968,6 +1991,11 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
                   ⋮⋮
                 </div>
                 <span className="block-type">{renderBlockTypeLabel(block.type)}</span>
+                {block.type === 'hero-floating-gallery' && (
+                  <span className="ml-2 text-[11px] text-blue-600 font-medium">
+                    Toujours en première position
+                  </span>
+                )}
                 <button
                   onClick={() => toggleBlockVisibility(block.id)}
                   className="toggle-block mr-2"
