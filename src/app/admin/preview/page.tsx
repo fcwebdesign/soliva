@@ -407,14 +407,14 @@ export default function AdminPreviewPage() {
         
         // Envoyer les données à l'iframe si elle est prête
         if (previewIframeRef.current?.contentWindow) {
-          const visibleBlocksAtInit = applyVisibility(normalizedBlocks, hiddenBlockIds);
+          const visibleBlocksAtInit = applyVisibility(normalizedBlocks, restoredHiddenIds);
           previewIframeRef.current.contentWindow.postMessage({
             type: 'UPDATE_PREVIEW',
             payload: {
               previewData: pageWithMeta,
               blocks: visibleBlocksAtInit,
               paletteCss: paletteCss,
-              hiddenBlockIds: Array.from(hiddenBlockIds)
+              hiddenBlockIds: Array.from(restoredHiddenIds)
             }
           }, '*');
         }
@@ -553,13 +553,18 @@ export default function AdminPreviewPage() {
       } else {
         next.add(blockId);
       }
+      // Mettre à jour le flag hidden dans les blocs (niveau racine)
+      const updatedBlocks = blocks.map((b) => b.id === blockId ? { ...b, hidden: next.has(blockId) } : b);
+      setBlocks(updatedBlocks);
+      setPreviewData((prev) => prev ? { ...prev, blocks: updatedBlocks } : prev);
+
       // Envoyer immédiatement la mise à jour à l'iframe
       if (previewIframeRef.current?.contentWindow && previewData) {
-        const updatedVisibleBlocks = applyVisibility(blocks, next);
+        const updatedVisibleBlocks = applyVisibility(updatedBlocks, next);
         previewIframeRef.current.contentWindow.postMessage({
           type: 'UPDATE_PREVIEW',
           payload: {
-            previewData,
+            previewData: { ...previewData, blocks: updatedBlocks },
             blocks: updatedVisibleBlocks,
             paletteCss,
             highlightBlockId: selectedBlockId || hoverBlockId || null,
