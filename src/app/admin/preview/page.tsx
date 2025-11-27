@@ -59,6 +59,18 @@ export default function AdminPreviewPage() {
   const [isBlockSheetOpen, setIsBlockSheetOpen] = useState(false);
   const templateKey = previewData?._template || initialPageData?._template || adminContent?._template || 'soliva';
 
+  // Assurer le hero-floating-gallery en première position (et unique)
+  const normalizeHeroFloating = (list: any[]) => {
+    const heroes = list.filter((b) => b.type === 'hero-floating-gallery');
+    if (heroes.length === 0) return { blocks: list, moved: false };
+
+    const primary = heroes[0];
+    const others = list.filter((b) => b !== primary && b.type !== 'hero-floating-gallery');
+    const normalized = [primary, ...others];
+    const moved = normalized[0] !== list[0] || heroes.length > 1 || normalized.length !== list.length;
+    return { blocks: normalized, moved };
+  };
+
   // Réinitialiser la sélection/inspecteur quand on change de page
   useEffect(() => {
     setSelectedBlockId(null);
@@ -205,17 +217,29 @@ export default function AdminPreviewPage() {
   const handleUpdate = (data: any) => {
     const merged = adminContent?.metadata ? { ...data, metadata: adminContent.metadata } : data;
     setPreviewData(merged);
-    if (Array.isArray((data as any)?.blocks)) {
-      setBlocks((data as any).blocks);
-      if (!selectedBlockId && (data as any).blocks.length > 0) {
-        setSelectedBlockId((data as any).blocks[0].id);
+    const incomingBlocks = Array.isArray((data as any)?.blocks) ? (data as any).blocks : [];
+    const normalized = normalizeHeroFloating(incomingBlocks);
+    if (incomingBlocks.length > 0) {
+      setBlocks(normalized.blocks);
+      if (!selectedBlockId && normalized.blocks.length > 0) {
+        setSelectedBlockId(normalized.blocks[0].id);
       }
+      // Propager les blocs normalisés dans la preview pour rester synchro
+      setPreviewData((prev) => prev ? { ...prev, blocks: normalized.blocks } : prev);
     }
   };
 
   // Fonction pour ajouter un nouveau bloc
   const handleAddBlock = (blockType: string) => {
     try {
+      if (blockType === 'hero-floating-gallery' && blocks.some((b) => b.type === 'hero-floating-gallery')) {
+        toast.info('Bloc Hero déjà présent', {
+          description: 'Le bloc Hero Floating Gallery doit rester unique et en première position.'
+        });
+        setIsBlockSheetOpen(false);
+        return;
+      }
+
       const newBlock = createAutoBlockInstance(blockType);
       
       // Vérifier si on est dans une colonne
@@ -289,11 +313,9 @@ export default function AdminPreviewPage() {
       } else {
         // Ajouter le bloc à la racine (comportement normal)
         const newBlocks = [...blocks, newBlock];
-        const normalizedNewBlocks = normalizeBlocks(newBlocks);
-        
-        // Récupérer l'ID du dernier bloc normalisé (peut être différent après normalisation)
-        const lastBlock = normalizedNewBlocks[normalizedNewBlocks.length - 1];
-        const finalBlockId = lastBlock?.id || newBlock.id;
+        const normalizedHero = normalizeHeroFloating(newBlocks);
+        const normalizedNewBlocks = normalizeBlocks(normalizedHero.blocks);
+        const finalBlockId = newBlock.id;
         
         setBlocks(normalizedNewBlocks);
         setPreviewData((prev) => prev ? { ...prev, blocks: normalizedNewBlocks } : prev);
@@ -631,8 +653,14 @@ export default function AdminPreviewPage() {
     if (fromIndex === -1 || toIndex === -1) return;
     const [moved] = current.splice(fromIndex, 1);
     current.splice(toIndex, 0, moved);
-    setBlocks(current);
-    setPreviewData((prev) => prev ? { ...prev, blocks: current } : prev);
+    const normalized = normalizeHeroFloating(current);
+    setBlocks(normalized.blocks);
+    setPreviewData((prev) => prev ? { ...prev, blocks: normalized.blocks } : prev);
+    if (normalized.moved) {
+      toast.info('Bloc Hero déplacé', {
+        description: 'Le Hero Floating Gallery reste en première position.'
+      });
+    }
     setSelectedBlockId(fromId);
   };
 

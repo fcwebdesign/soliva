@@ -167,6 +167,7 @@ function SortableItem({
   index: number;
   renderSection: (section: Section, index?: number, dragListeners?: any) => React.ReactNode;
 }) {
+  const isHeroFloating = section.type === 'hero-floating-gallery';
   const {
     attributes,
     listeners,
@@ -174,7 +175,7 @@ function SortableItem({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: section.id });
+  } = useSortable({ id: section.id, disabled: isHeroFloating });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -188,7 +189,7 @@ function SortableItem({
       style={style}
       {...attributes}
     >
-      {renderSection(section, index, listeners)}
+      {renderSection(section, index, isHeroFloating ? undefined : listeners)}
     </div>
   );
 }
@@ -341,15 +342,32 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
     });
   };
 
+  const keepHeroFirst = (sections: Section[]) => {
+    const heroIndex = sections.findIndex((s) => s.type === 'hero-floating-gallery');
+    if (heroIndex > 0) {
+      const hero = sections[heroIndex];
+      const rest = sections.filter((_, i) => i !== heroIndex);
+      return [hero, ...rest];
+    }
+    return sections;
+  };
+
   // Fonction de gestion du drag & drop avec dnd-kit
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
+      const overSection = sectionsState.find(section => section.id === over.id);
+      // Ne pas autoriser de drop au-dessus du hero
+      if (overSection?.type === 'hero-floating-gallery') {
+        return;
+      }
+
       const oldIndex = sectionsState.findIndex(section => section.id === active.id);
       const newIndex = sectionsState.findIndex(section => section.id === over.id);
 
-      const newSections = arrayMove(sectionsState, oldIndex, newIndex);
+      const movedSections = arrayMove(sectionsState, oldIndex, newIndex);
+      const newSections = keepHeroFirst(movedSections);
       setSectionsState(newSections);
 
       // Notifier le parent pour mettre à jour les blocs
@@ -372,6 +390,7 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
     const isExpanded = expandedSections.has(section.id);
     const isSelected = selectedBlockId === section.id;
     const isHidden = hiddenBlockIds.has(section.id);
+    const isHeroFloating = section.type === 'hero-floating-gallery';
     
     return (
       <div key={section.id}>
@@ -379,7 +398,7 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
           className={`flex items-center gap-1 py-1 px-2 group transition-colors ${
             section.type === 'column' ? 'cursor-default' : 'cursor-pointer'
           } ${
-            section.level === 0 && index !== undefined ? 'cursor-grab active:cursor-grabbing' : ''
+            section.level === 0 && index !== undefined && !isHeroFloating ? 'cursor-grab active:cursor-grabbing' : ''
           } ${
             isSelected ? 'border-l-blue-500' : ''
           } ${isHidden ? 'opacity-50' : ''}`}
@@ -427,7 +446,7 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
               e.currentTarget.style.backgroundColor = 'transparent';
             }
           }}
-          {...(dragListeners && section.level === 0 ? {
+          {...(dragListeners && section.level === 0 && !isHeroFloating ? {
             ...dragListeners,
             onPointerDown: (e: React.PointerEvent) => {
               // Ne pas activer le drag si on clique directement (sans déplacement)
@@ -472,9 +491,32 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
           </div>
           
           {/* Label */}
-          <span className={`text-sm flex-1 truncate ${isHidden ? 'text-gray-400 line-through' : ''}`} style={{ color: isHidden ? 'var(--admin-text-muted)' : 'var(--admin-text-secondary)' }}>
-            {section.label}
-          </span>
+          <div className="flex-1 flex items-center gap-2.5 min-w-0">
+            <span className={`text-sm truncate ${isHidden ? 'text-gray-400 line-through' : ''}`} style={{ color: isHidden ? 'var(--admin-text-muted)' : 'var(--admin-text-secondary)' }}>
+              {section.label}
+            </span>
+            {isHeroFloating && (
+              <div className="flex items-center gap-1">
+                <span className="text-[10px] font-semibold text-gray-600 bg-gray-100 border border-gray-200 rounded px-1.5 py-0.5 whitespace-nowrap">
+                  Hero fixé
+                </span>
+                <HoverCard openDelay={200} closeDelay={100}>
+                  <HoverCardTrigger asChild>
+                    <button
+                      type="button"
+                      className="p-1 rounded text-gray-400 hover:text-gray-600"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Info className="w-3 h-3" />
+                    </button>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="w-64 text-xs">
+                    Le bloc Hero Floating Gallery est fixé en première position et ne peut pas être déplacé. Ajoutez vos autres sections en dessous.
+                  </HoverCardContent>
+                </HoverCard>
+              </div>
+            )}
+          </div>
           
           {/* Actions */}
           {renderAction ? (
