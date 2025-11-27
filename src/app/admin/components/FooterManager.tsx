@@ -126,6 +126,26 @@ const FooterManager = ({ content, onSave, onUpdate }: FooterManagerProps): React
                 }}
       />
 
+      {/* Section Sticky Footer (démo) */}
+      <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
+        <div className="flex items-start justify-between">
+          <div>
+            <div className="text-sm font-semibold text-gray-800">Effet sticky footer (démo)</div>
+            <p className="text-xs text-gray-500">Inspiré du tuto Olivier Larose. Le footer se révèle progressivement au scroll. La hauteur est calculée automatiquement.</p>
+          </div>
+          <Switch
+            checked={!!footerData.stickyFooter?.enabled}
+            onCheckedChange={(checked) => {
+              setFooterData(prev => ({
+                ...prev,
+                stickyFooter: { enabled: checked }
+              }));
+              window.dispatchEvent(new CustomEvent('footer-changed'));
+            }}
+          />
+        </div>
+      </div>
+
       <NavigationSection
         footerData={footerData}
         availablePages={availablePages}
@@ -156,46 +176,6 @@ const FooterManager = ({ content, onSave, onUpdate }: FooterManagerProps): React
         onUpdateSocialLink={updateSocialLink}
         onRemoveSocialLink={removeSocialLink}
       />
-
-      {/* Section Sticky Footer (démo) */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
-        <div className="flex items-start justify-between">
-          <div>
-            <div className="text-sm font-semibold text-gray-800">Effet sticky footer (démo)</div>
-            <p className="text-xs text-gray-500">Inspiré du tuto Olivier Larose. Fixe le footer en bas avec effet sticky.</p>
-          </div>
-          <Switch
-            checked={!!footerData.stickyFooter?.enabled}
-            onCheckedChange={(checked) => {
-              setFooterData(prev => ({ 
-                ...prev, 
-                stickyFooter: { ...(prev.stickyFooter || {}), enabled: checked } 
-              }));
-              window.dispatchEvent(new CustomEvent('footer-changed'));
-            }}
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <label className="text-xs text-gray-500">Hauteur (px)</label>
-          <Input
-            type="number"
-            min={400}
-            max={1400}
-            value={footerData.stickyFooter?.height ?? 800}
-            disabled={!footerData.stickyFooter?.enabled}
-            onChange={(e) => {
-              const val = parseInt(e.target.value, 10);
-              const height = Number.isFinite(val) ? val : 800;
-              setFooterData(prev => ({
-                ...prev,
-                stickyFooter: { ...(prev.stickyFooter || {}), height }
-              }));
-              window.dispatchEvent(new CustomEvent('footer-changed'));
-            }}
-            className="w-28"
-          />
-        </div>
-      </div>
 
       <LegalSection
         footerData={footerData}

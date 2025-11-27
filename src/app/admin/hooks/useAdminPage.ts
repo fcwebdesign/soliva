@@ -310,11 +310,13 @@ export const useAdminPage = () => {
               logo: fd.logo,
               logoImage: fd.logoImage,
               description: fd.description,
+              footerVariant: fd.variant || contentToSave?.footer?.footerVariant || 'classic',
               links: fd.links,
               socialLinks: fd.socialLinks,
               copyright: fd.copyright,
               bottomLinks: fd.bottomLinks,
               legalPageLabels: fd.legalPageLabels,
+              stickyFooter: fd.stickyFooter || { enabled: false, height: 800 },
             },
           };
         }

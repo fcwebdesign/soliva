@@ -1,7 +1,12 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import TransitionLink from './TransitionLink';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface FooterLink {
   title: string;
@@ -47,6 +52,9 @@ interface Page {
 }
 
 const Footer: React.FC<FooterProps> = ({ content, fullContent }) => {
+  console.log('📦 [Footer] Content reçu:', content);
+  console.log('📦 [Footer] stickyFooter:', content?.stickyFooter);
+  
   const [footerContent, setFooterContent] = useState<FooterContent>(content);
   const [allPages, setAllPages] = useState<Page[]>([]);
 
@@ -232,7 +240,7 @@ const Footer: React.FC<FooterProps> = ({ content, fullContent }) => {
   };
 
   const footerElement = (
-    <footer className="py-12" style={{ height: footerContent.stickyFooter?.enabled ? '100%' : undefined }}>
+    <footer className="py-12">
       <div className="mx-auto px-4 lg:px-6">
         {renderTop()}
 
@@ -305,24 +313,84 @@ const Footer: React.FC<FooterProps> = ({ content, fullContent }) => {
     </footer>
   );
 
-  // Effet sticky footer (inspiré Olivier Larose)
+  // Effet sticky footer (inspiré Olivier Larose - Méthode 1 avec fixed)
+  const containerRef = useRef<HTMLDivElement>(null);
+  const stickyHeight = footerContent.stickyFooter?.height || 800;
+  
+  useGSAP(() => {
+    console.log('🎬 [StickyFooter] useGSAP appelé');
+    console.log('🎬 [StickyFooter] enabled:', footerContent.stickyFooter?.enabled);
+    console.log('🎬 [StickyFooter] containerRef.current:', containerRef.current);
+    
+    if (!footerContent.stickyFooter?.enabled) {
+      console.log('⏭️ [StickyFooter] Désactivé');
+      return;
+    }
+    
+    if (!containerRef.current) {
+      console.log('⏭️ [StickyFooter] Pas de containerRef');
+      return;
+    }
+
+    const container = containerRef.current;
+    const mainElement = document.querySelector('main') || document.body;
+    
+    console.log('🎯 [StickyFooter] Main element:', mainElement);
+    console.log('📏 [StickyFooter] Hauteur:', stickyHeight);
+    
+    // Animation du clip-path : commence masqué (tout en bas) et se révèle progressivement
+    // Le trigger est sur le main : quand le bas du main arrive en bas de la fenêtre, on commence à révéler
+    console.log('🎨 [StickyFooter] Création animation GSAP...');
+    
+    const animation = gsap.fromTo(
+      container,
+      {
+        clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)" // Masqué
+      },
+      {
+        clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)", // Révélé
+        ease: "none",
+        scrollTrigger: {
+          trigger: mainElement,
+          start: "bottom bottom", // Quand le bas du main arrive en bas de la fenêtre
+          end: `bottom top-=${stickyHeight}`, // Sur une distance égale à la hauteur du footer
+          scrub: true,
+          markers: true, // Pour debug - à retirer après
+          onStart: () => console.log('🚀 [StickyFooter] Animation démarrée'),
+          onUpdate: (self) => console.log('🔄 [StickyFooter] Progress:', self.progress),
+        }
+      }
+    );
+
+    console.log('✅ [StickyFooter] Animation créée:', animation);
+    console.log('✅ [StickyFooter] ScrollTrigger:', animation.scrollTrigger);
+
+    return () => {
+      console.log('🧹 [StickyFooter] Cleanup');
+      if (animation?.scrollTrigger) {
+        animation.scrollTrigger.kill();
+      }
+    };
+  }, { scope: containerRef, dependencies: [footerContent.stickyFooter?.enabled, stickyHeight] });
+
   if (footerContent.stickyFooter?.enabled) {
-    const stickyHeight = footerContent.stickyFooter?.height || 800;
     return (
-      <div 
-        className="relative"
-        style={{ height: `${stickyHeight}px`, clipPath: 'polygon(0% 0, 100% 0%, 100% 100%, 0 100%)' }}
+      <div
+        ref={containerRef}
+        className="relative w-full"
+        style={{ 
+          height: `${stickyHeight}px`,
+          clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)" // Commence masqué
+        }}
       >
-        <div 
-          className="relative"
-          style={{ height: `calc(100vh + ${stickyHeight}px)`, top: '-100vh' }}
+        <div
+          className="fixed bottom-0 left-0 right-0 w-full"
+          style={{ 
+            height: `${stickyHeight}px`,
+            zIndex: 10
+          }}
         >
-          <div 
-            className="sticky w-full"
-            style={{ top: `calc(100vh - ${stickyHeight}px)`, height: `${stickyHeight}px` }}
-          >
-            {footerElement}
-          </div>
+          {footerElement}
         </div>
       </div>
     );

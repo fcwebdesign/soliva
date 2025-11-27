@@ -726,6 +726,84 @@
     "content": "<img src=\"/uploads/1763705071367-c45d1097.webp\" alt=\"\" />\n<img src=\"/uploads/1764163849225-604fe89b.webp\" alt=\"\" />\n<img src=\"/uploads/1764163854153-08f84573.webp\" alt=\"\" />",
     "blocks": [
       {
+        "id": "hero-floating-gallery-1764185477070",
+        "type": "hero-floating-gallery",
+        "title": "Pearl",
+        "subtitle": "",
+        "intensity": 67,
+        "theme": "auto",
+        "transparentHeader": true,
+        "images": [
+          {
+            "id": "floating-1764187730543-0.4104768924110638",
+            "src": "/uploads/1764187728879-7bf196fb.webp",
+            "alt": "",
+            "aspectRatio": "4:5",
+            "hidden": false
+          },
+          {
+            "id": "floating-1764187730543-0.4220345188427853",
+            "src": "/uploads/1764187729459-6fdd4f16.webp",
+            "alt": "",
+            "aspectRatio": "4:5",
+            "hidden": false
+          },
+          {
+            "id": "floating-1764187730543-0.24114240945224752",
+            "src": "/uploads/1764187729660-be9b5aa5.webp",
+            "alt": "",
+            "aspectRatio": "4:5",
+            "hidden": false
+          },
+          {
+            "id": "floating-1764187730543-0.207177942346494",
+            "src": "/uploads/1764187729805-53cdee64.webp",
+            "alt": "",
+            "aspectRatio": "9:16",
+            "hidden": false
+          },
+          {
+            "id": "floating-1764187730543-0.6159993006383994",
+            "src": "/uploads/1764187730017-679aa03e.webp",
+            "alt": "",
+            "aspectRatio": "9:16",
+            "hidden": false
+          },
+          {
+            "id": "floating-1764187730543-0.9377056208876244",
+            "src": "/uploads/1764187730172-58be5258.webp",
+            "alt": "",
+            "hidden": false,
+            "aspectRatio": "4:5"
+          },
+          {
+            "id": "floating-1764188521571-0.6127050819574172",
+            "src": "/uploads/1764188521191-05c11410.webp",
+            "alt": "",
+            "hidden": false,
+            "aspectRatio": "4:5"
+          },
+          {
+            "id": "floating-1764225520451-0.9059041428920314",
+            "src": "/uploads/1764225520320-0a3ce6dc.webp",
+            "alt": "",
+            "aspectRatio": "9:16",
+            "hidden": false
+          },
+          {
+            "id": "floating-1764225798205-0.6296456325620235",
+            "src": "/uploads/1764225798089-76a75e09.webp",
+            "alt": "",
+            "aspectRatio": "1:1"
+          }
+        ],
+        "hidden": false,
+        "parallax": {
+          "enabled": true,
+          "speed": 0.9
+        }
+      },
+      {
         "id": "image-1763705064111",
         "type": "image",
         "images": [
@@ -757,22 +835,6 @@
         "ctaText": "yes",
         "ctaLink": "/contact",
         "theme": "auto",
-        "hidden": false
-      },
-      {
-        "id": "gallery-grid-1764163833094",
-        "type": "gallery-grid",
-        "data": {
-          "images": [],
-          "layout": "grid-3",
-          "gap": "medium",
-          "showFilters": true,
-          "showTitles": true,
-          "showDescriptions": true,
-          "enableLightbox": true,
-          "enableDownload": true,
-          "theme": "auto"
-        },
         "hidden": false
       }
     ],
@@ -1055,6 +1117,7 @@
     "logo": "Pearl",
     "logoImage": "",
     "description": "",
+    "footerVariant": "classic",
     "links": [
       {
         "id": "link-1761591595663",
@@ -1093,7 +1156,10 @@
       "home",
       "work"
     ],
-    "legalPageLabels": {}
+    "legalPageLabels": {},
+    "stickyFooter": {
+      "enabled": true
+    }
   },
   "_template": "pearl",
   "site": {
@@ -1112,7 +1178,7 @@
       {
         "id": "showcase",
         "title": "Showcase",
-        "content": "<img src=\"/uploads/1763980744747-ee935e8f.webp\" alt=\"\" />",
+        "content": "<img src=\"/uploads/1763980744747-ee935e8f.webp\" alt=\"\" />\n<img src=\"/uploads/1763913862565-f80c099b.webp\" alt=\"\" />",
         "slug": "showcase",
         "status": "published",
         "description": "<p>Découvrez notre showcase, un véritable écrin de créativité !</p><p></p><p></p>",
@@ -1328,7 +1394,7 @@
                 "aspectRatio": "16:9"
               }
             ],
-            "hidden": true
+            "hidden": false
           },
           {
             "id": "two-columns-1763700830594",
@@ -1649,7 +1715,8 @@
             "type": "page-intro",
             "title": "Olivia",
             "description": "Description of the page",
-            "layout": "default"
+            "layout": "default",
+            "hidden": false
           },
           {
             "id": "image-1764068163072",
@@ -1661,7 +1728,8 @@
                 "alt": "",
                 "aspectRatio": "16:9"
               }
-            ]
+            ],
+            "hidden": false
           },
           {
             "id": "projects-1764068260082",
@@ -1670,7 +1738,8 @@
             "maxProjects": 6,
             "selectedProjects": [],
             "theme": "auto",
-            "columns": 2
+            "columns": 2,
+            "hidden": true
           }
         ],
         "publishedAt": "2025-11-25T10:55:21.466Z"
