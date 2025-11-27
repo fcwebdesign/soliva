@@ -42,6 +42,7 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
   const [headerInfo, setHeaderInfo] = useState<{ height: number; position: string }>({ height: 0, position: 'static' });
   const [isFirstBlock, setIsFirstBlock] = useState(false);
   const parallaxOffsetsRef = useRef<{ p1: number; p2: number; p3: number }>({ p1: 0, p2: 0, p3: 0 });
+  const lastParallaxRef = useRef<{ p1: number; p2: number; p3: number }>({ p1: 0, p2: 0, p3: 0 });
   const parallaxStartRef = useRef<number | null>(null);
   const parallaxRafRef = useRef<number | null>(null);
 
@@ -134,7 +135,7 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
   const plane1Positions = [
     { left: '90%', top: '70%', width: 'clamp(120px, 15vw, 300px)' },
     { left: '5%', top: '65%', width: 'clamp(120px, 15vw, 300px)' },
-    { left: '35%', top: '0%', width: 'clamp(100px, 12vw, 225px)' },
+    { left: '35%', top: '10%', width: 'clamp(100px, 12vw, 225px)' },
   ];
   const plane2Positions = [
     { left: '5%', top: '10%', width: 'clamp(100px, 12vw, 250px)' },
@@ -142,7 +143,7 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
     { left: '70%', top: '75%', width: 'clamp(100px, 12vw, 225px)' },
   ];
   const plane3Positions = [
-    { left: '65%', top: '15%', width: 'clamp(60px, 8vw, 150px)' },
+    { left: '65%', top: '25%', width: 'clamp(60px, 8vw, 150px)' },
     { left: '40%', top: '90%', width: 'clamp(80px, 10vw, 200px)' },
     { left: '25%', top: '38%', width: 'clamp(70px, 9vw, 180px)' },
   ];
@@ -179,28 +180,27 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
   const lerp = (start: number, target: number, amount: number) => start * (1 - amount) + target * amount;
 
   const animate = () => {
-    const pOffsets = parallaxOffsetsRef.current;
     xForceRef.current = lerp(xForceRef.current, 0, easing);
     yForceRef.current = lerp(yForceRef.current, 0, easing);
 
     if (plane1Ref.current) {
       gsap.set(plane1Ref.current, { 
         x: `+=${xForceRef.current}`, 
-        y: pOffsets.p1 + yForceRef.current,
+        y: `+=${yForceRef.current}`,
         zIndex: 50 // Maintenir le z-index pendant l'animation
       });
     }
     if (plane2Ref.current) {
       gsap.set(plane2Ref.current, { 
         x: `+=${xForceRef.current * 0.5}`, 
-        y: pOffsets.p2 + yForceRef.current * 0.5,
+        y: `+=${yForceRef.current * 0.5}`,
         zIndex: 50 // Maintenir le z-index pendant l'animation
       });
     }
     if (plane3Ref.current) {
       gsap.set(plane3Ref.current, { 
         x: `+=${xForceRef.current * 0.25}`, 
-        y: pOffsets.p3 + yForceRef.current * 0.25,
+        y: `+=${yForceRef.current * 0.25}`,
         zIndex: 50 // Maintenir le z-index pendant l'animation
       });
     }
@@ -307,18 +307,21 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
   const parallaxEnabled = !!blockData.parallax?.enabled;
   const parallaxSpeed = typeof blockData.parallax?.speed === 'number' ? blockData.parallax.speed : 0.25;
 
-  // Parallax sur scroll (optionnel)
-  const applyParallax = () => {
-    const p = parallaxOffsetsRef.current;
-    if (plane1Ref.current) gsap.set(plane1Ref.current, { y: p.p1 });
-    if (plane2Ref.current) gsap.set(plane2Ref.current, { y: p.p2 });
-    if (plane3Ref.current) gsap.set(plane3Ref.current, { y: p.p3 });
-  };
-
+  // Parallax sur scroll (optionnel) : appliquer des deltas pour ne pas écraser le flottant
   useEffect(() => {
+    const applyParallaxDelta = (next: { p1: number; p2: number; p3: number }) => {
+      const last = lastParallaxRef.current;
+      const delta1 = next.p1 - last.p1;
+      const delta2 = next.p2 - last.p2;
+      const delta3 = next.p3 - last.p3;
+      if (plane1Ref.current && delta1 !== 0) gsap.set(plane1Ref.current, { y: `+=${delta1}` });
+      if (plane2Ref.current && delta2 !== 0) gsap.set(plane2Ref.current, { y: `+=${delta2}` });
+      if (plane3Ref.current && delta3 !== 0) gsap.set(plane3Ref.current, { y: `+=${delta3}` });
+      lastParallaxRef.current = next;
+    };
+
     if (!parallaxEnabled) {
-      parallaxOffsetsRef.current = { p1: 0, p2: 0, p3: 0 };
-      applyParallax();
+      applyParallaxDelta({ p1: 0, p2: 0, p3: 0 });
       return;
     }
 
@@ -329,13 +332,12 @@ export default function HeroFloatingGalleryBlock({ data }: { data: FloatingGalle
       }
       const delta = window.scrollY - parallaxStartRef.current;
       const base = delta * parallaxSpeed;
-      parallaxOffsetsRef.current = {
+      const next = {
         p1: base,
         p2: base * 0.65,
         p3: base * 0.4,
       };
-      if (parallaxRafRef.current) cancelAnimationFrame(parallaxRafRef.current);
-      parallaxRafRef.current = requestAnimationFrame(applyParallax);
+      applyParallaxDelta(next);
     };
 
     const handleResize = () => {
