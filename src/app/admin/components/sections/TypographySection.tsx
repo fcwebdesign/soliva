@@ -264,12 +264,22 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
     }
   }, [localData?.metadata?.typography, isInitialized]);
 
+  const normalizeLineHeight = (val: string) => {
+    const trimmed = val.trim();
+    // Si l'utilisateur tape un nombre (ex: 0.75 ou 1.1), convertir en classe Tailwind arbitraire leading-[x]
+    if (/^\\d+(\\.\\d+)?$/.test(trimmed)) {
+      return `leading-[${trimmed}]`;
+    }
+    return trimmed;
+  };
+
   const updateTypography = (element: 'h1' | 'h2' | 'h3' | 'h4' | 'h1Single' | 'p' | 'nav' | 'footer', property: string, value: string) => {
+    const nextValue = property === 'lineHeight' ? normalizeLineHeight(value) : value;
     setTypography(prev => ({
       ...prev,
       [element]: {
         ...prev[element],
-        [property]: value
+        [property]: nextValue
       }
     }));
   };
@@ -428,6 +438,16 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
             </select>
+            <input
+              type="text"
+              value={config.lineHeight}
+              onChange={(e) => updateTypography(element, 'lineHeight', e.target.value)}
+              placeholder="leading-[1.05] ou 1.1"
+              className="mt-2 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+            <p className="text-[11px] text-gray-500 mt-1">
+              Choisissez une option ou saisissez une classe Tailwind (leading-[1.05]) ou une valeur CSS (1.1).
+            </p>
           </div>
 
           {/* Tracking */}
@@ -547,4 +567,3 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
 };
 
 export default TypographySection;
-

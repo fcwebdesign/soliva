@@ -7,6 +7,10 @@ export default {
     join(__dirname, 'components/**/*.{js,ts,jsx,tsx}'),
     join(__dirname, 'src/**/*.{js,ts,jsx,tsx}'),
   ],
+  safelist: [
+    // Autoriser les line-height arbitraires (leading-[0.75] etc.) configurées depuis l'admin typo
+    { pattern: /leading-\[.*?\]/ },
+  ],
   theme: {
     container: {
       center: true,

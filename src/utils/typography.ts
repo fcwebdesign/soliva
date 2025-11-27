@@ -83,16 +83,26 @@ export function getTypographyClasses(
   }
 ): string {
   const elementConfig = config[element] || {};
+  const normalizeLineHeight = (val: string | undefined) => {
+    if (!val) return val;
+    const trimmed = val.trim();
+    // Si c'est un nombre, le transformer en classe Tailwind arbitraire leading-[x]
+    if (/^-?\d+(\.\d+)?$/.test(trimmed)) {
+      return `leading-[${trimmed}]`;
+    }
+    return trimmed;
+  };
   
   // Si une couleur personnalisée (hex) est définie, on l'appliquera via style inline
   // Sinon, on utilise la classe Tailwind (qui peut être un token de palette)
   const colorValue = elementConfig.color || defaults.color;
   const isCustomColor = colorValue && colorValue.startsWith('#');
+  const lineHeightValue = normalizeLineHeight(elementConfig.lineHeight) || normalizeLineHeight(defaults.lineHeight);
   
   const classes = [
     elementConfig.fontSize || defaults.fontSize,
     elementConfig.fontWeight || defaults.fontWeight,
-    elementConfig.lineHeight || defaults.lineHeight,
+    lineHeightValue,
     // Si c'est une couleur hex, on ne l'ajoute pas aux classes (on l'appliquera via style)
     // Sinon, on ajoute la classe Tailwind
     !isCustomColor ? colorValue : null,
@@ -182,4 +192,3 @@ export const defaultTypography = {
     tracking: 'tracking-normal'
   }
 };
-
