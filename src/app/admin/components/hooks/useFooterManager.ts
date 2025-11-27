@@ -37,6 +37,10 @@ export interface FooterData {
     customUrl: string;
     target: string;
   }>;
+  stickyFooter?: {
+    enabled?: boolean;
+    height?: number;
+  };
 }
 
 export const useFooterManager = (content: any) => {
@@ -49,7 +53,8 @@ export const useFooterManager = (content: any) => {
     socialLinks: content?.footer?.socialLinks || [],
     copyright: content?.footer?.copyright || '© 2024 Soliva. Tous droits réservés.',
     bottomLinks: content?.footer?.bottomLinks || [],
-    legalPageLabels: content?.footer?.legalPageLabels || {}
+    legalPageLabels: content?.footer?.legalPageLabels || {},
+    stickyFooter: content?.footer?.stickyFooter || { enabled: false, height: 800 }
   });
 
   const [draggedItem, setDraggedItem] = useState<any>(null);
@@ -79,7 +84,8 @@ export const useFooterManager = (content: any) => {
       socialLinks: content?.footer?.socialLinks || [],
       copyright: content?.footer?.copyright || '© 2024 Soliva. Tous droits réservés.',
       bottomLinks: content?.footer?.bottomLinks || [],
-      legalPageLabels: content?.footer?.legalPageLabels || {}
+      legalPageLabels: content?.footer?.legalPageLabels || {},
+      stickyFooter: content?.footer?.stickyFooter || { enabled: false, height: 800 }
     });
     setLogoType(content?.footer?.logoImage ? 'image' : 'text');
   }, [content]);

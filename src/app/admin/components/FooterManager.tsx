@@ -5,6 +5,8 @@ import IdentitySection from './sections/IdentitySection';
 import NavigationSection from './sections/NavigationSection';
 import SocialSection from './sections/SocialSection';
 import LegalSection from './sections/LegalSection';
+import { Switch } from '@/components/ui/switch';
+import { Input } from '@/components/ui/input';
 
 interface FooterManagerProps {
   content: any;
@@ -83,7 +85,8 @@ const FooterManager = ({ content, onSave, onUpdate }: FooterManagerProps): React
         socialLinks: footerData.socialLinks,
         copyright: footerData.copyright,
         bottomLinks: footerData.bottomLinks,
-        legalPageLabels: footerData.legalPageLabels
+        legalPageLabels: footerData.legalPageLabels,
+        stickyFooter: footerData.stickyFooter || { enabled: false, height: 800 }
       }
     };
     try {
@@ -153,6 +156,46 @@ const FooterManager = ({ content, onSave, onUpdate }: FooterManagerProps): React
         onUpdateSocialLink={updateSocialLink}
         onRemoveSocialLink={removeSocialLink}
       />
+
+      {/* Section Sticky Footer (démo) */}
+      <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
+        <div className="flex items-start justify-between">
+          <div>
+            <div className="text-sm font-semibold text-gray-800">Effet sticky footer (démo)</div>
+            <p className="text-xs text-gray-500">Inspiré du tuto Olivier Larose. Fixe le footer en bas avec effet sticky.</p>
+          </div>
+          <Switch
+            checked={!!footerData.stickyFooter?.enabled}
+            onCheckedChange={(checked) => {
+              setFooterData(prev => ({ 
+                ...prev, 
+                stickyFooter: { ...(prev.stickyFooter || {}), enabled: checked } 
+              }));
+              window.dispatchEvent(new CustomEvent('footer-changed'));
+            }}
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <label className="text-xs text-gray-500">Hauteur (px)</label>
+          <Input
+            type="number"
+            min={400}
+            max={1400}
+            value={footerData.stickyFooter?.height ?? 800}
+            disabled={!footerData.stickyFooter?.enabled}
+            onChange={(e) => {
+              const val = parseInt(e.target.value, 10);
+              const height = Number.isFinite(val) ? val : 800;
+              setFooterData(prev => ({
+                ...prev,
+                stickyFooter: { ...(prev.stickyFooter || {}), height }
+              }));
+              window.dispatchEvent(new CustomEvent('footer-changed'));
+            }}
+            className="w-28"
+          />
+        </div>
+      </div>
 
       <LegalSection
         footerData={footerData}

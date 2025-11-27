@@ -29,6 +29,10 @@ interface FooterContent {
   copyright?: string;
   bottomLinks?: string[];
   legalPageLabels?: Record<string, string | CustomLabel>;
+   stickyFooter?: {
+    enabled?: boolean;
+    height?: number;
+  };
 }
 
 interface FooterProps {
@@ -227,8 +231,8 @@ const Footer: React.FC<FooterProps> = ({ content, fullContent }) => {
     }
   };
 
-  return (
-    <footer className="py-12">
+  const footerElement = (
+    <footer className="py-12" style={{ height: footerContent.stickyFooter?.enabled ? '100%' : undefined }}>
       <div className="mx-auto px-4 lg:px-6">
         {renderTop()}
 
@@ -300,6 +304,31 @@ const Footer: React.FC<FooterProps> = ({ content, fullContent }) => {
       </div>
     </footer>
   );
+
+  // Effet sticky footer (inspiré Olivier Larose)
+  if (footerContent.stickyFooter?.enabled) {
+    const stickyHeight = footerContent.stickyFooter?.height || 800;
+    return (
+      <div 
+        className="relative"
+        style={{ height: `${stickyHeight}px`, clipPath: 'polygon(0% 0, 100% 0%, 100% 100%, 0 100%)' }}
+      >
+        <div 
+          className="relative"
+          style={{ height: `calc(100vh + ${stickyHeight}px)`, top: '-100vh' }}
+        >
+          <div 
+            className="sticky w-full"
+            style={{ top: `calc(100vh - ${stickyHeight}px)`, height: `${stickyHeight}px` }}
+          >
+            {footerElement}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return footerElement;
 };
 
 export default Footer;
