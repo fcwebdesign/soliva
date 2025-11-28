@@ -500,7 +500,7 @@ export default function MouseImageGalleryEditor({
   };
 
   if (compact) {
-    return (
+  return (
       <div className="block-editor">
         <div className="space-y-2">
           {/* Option transparent header */}
@@ -741,25 +741,25 @@ export default function MouseImageGalleryEditor({
               <span className="text-xs text-gray-500 w-12 text-right flex-shrink-0">
                 {data.maxImages ?? 8}
               </span>
-            </div>
-          </div>
+        </div>
+      </div>
           <div>
             <Label className="text-sm font-medium text-gray-700">Images au chargement</Label>
             <div className="flex items-center gap-3 mt-2">
               <div className="flex-1 -mx-2 px-2">
-                <Slider
-                  min={0}
+          <Slider
+            min={0}
                   max={10}
-                  step={1}
+            step={1}
                   value={[data.initialImages ?? 3]}
                   onValueChange={(values) => updateField('initialImages', values[0])}
-                />
+          />
               </div>
               <span className="text-xs text-gray-500 w-12 text-right flex-shrink-0">
                 {data.initialImages ?? 3}
               </span>
             </div>
-          </div>
+        </div>
           <div>
             <Label className="text-sm font-medium text-gray-700">Couleur de fond</Label>
             <Select
@@ -769,14 +769,14 @@ export default function MouseImageGalleryEditor({
               onOpenChange={(open) => setOpenSelect(open ? 'theme-full' : null)}
             >
               <SelectTrigger className="w-full mt-2">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="auto">Auto</SelectItem>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="auto">Auto</SelectItem>
                 <SelectItem value="light">Blanc</SelectItem>
                 <SelectItem value="dark">Noir</SelectItem>
-              </SelectContent>
-            </Select>
+            </SelectContent>
+          </Select>
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -818,7 +818,7 @@ export default function MouseImageGalleryEditor({
       </div>
 
       <div>
-        <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between">
           <div>
             <h4 className="text-sm font-medium text-gray-700">Images de la galerie ({imagesWithIds.length})</h4>
             <p className="text-[12px] text-gray-500">Déplacez pour réordonner, masque/affichez au besoin.</p>
@@ -859,9 +859,9 @@ export default function MouseImageGalleryEditor({
             >
               <Plus className="h-4 w-4" />
               {isUploading ? '...' : 'Ajouter'}
-            </Button>
+        </Button>
           </div>
-        </div>
+      </div>
 
         <DndContext
           sensors={sensors}
@@ -869,28 +869,28 @@ export default function MouseImageGalleryEditor({
           onDragEnd={handleDragEnd}
         >
           <SortableContext items={imagesWithIds.map((img, idx) => img.id || `mouse-image-${idx}`)} strategy={verticalListSortingStrategy}>
-            <div className="space-y-2">
+          <div className="space-y-2">
               {imagesWithIds.map((image, index) => (
-                <SortableImageItem
+              <SortableImageItem
                   key={image.id}
-                  image={image}
-                  index={index}
+                image={image}
+                index={index}
                   onUpdate={(field, value) => updateImage(index, field, value)}
-                  onRemove={() => removeImage(index)}
+                onRemove={() => removeImage(index)}
                   onToggleVisibility={() => updateImage(index, 'hidden', !image.hidden)}
                   onReplace={(file) => replaceImage(index, file)}
                   openSelect={openSelect}
                   onOpenSelectChange={setOpenSelect}
-                />
-              ))}
+              />
+            ))}
               {imagesWithIds.length === 0 && (
                 <div className="rounded-lg border border-dashed border-gray-200 bg-gray-50 px-4 py-6 text-center text-sm text-gray-500">
                   Pas encore d'image. Ajoutez-en une pour démarrer.
-                </div>
-              )}
-            </div>
-          </SortableContext>
-        </DndContext>
+              </div>
+            )}
+          </div>
+        </SortableContext>
+      </DndContext>
       </div>
     </div>
   );

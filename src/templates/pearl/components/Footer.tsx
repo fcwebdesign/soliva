@@ -336,7 +336,7 @@ export default function FooterPearl({ footer, pages, layout = 'standard', fullCo
           }}
         >
           {/* Div avec hauteur calculée et top négatif pour créer l'espace de scroll - exactement comme la démo */}
-          <div 
+          <div
             className="relative"
             style={{ 
               height: `calc(100vh + ${footerHeight}px)`,
@@ -346,14 +346,14 @@ export default function FooterPearl({ footer, pages, layout = 'standard', fullCo
             {/* Div sticky qui reste collé en bas pendant le scroll - exactement comme la démo */}
             <div 
               style={{ 
-                height: `${footerHeight}px`,
+              height: `${footerHeight}px`,
                 position: 'sticky',
                 top: `calc(100vh - ${footerHeight}px)`
-              }}
-            >
-              <footer className="bg-muted border-t border-border">
-                {footerContent}
-              </footer>
+            }}
+          >
+            <footer className="bg-muted border-t border-border">
+              {footerContent}
+            </footer>
             </div>
           </div>
         </div>

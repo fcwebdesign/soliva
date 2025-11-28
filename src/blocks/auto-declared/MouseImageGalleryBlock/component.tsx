@@ -116,7 +116,7 @@ export default function MouseImageGalleryBlock({ data }: { data: MouseImageGalle
 
     const updateParallax = () => {
       if (!sectionRef.current) return;
-      
+
       if (parallaxStartRef.current === null) {
         parallaxStartRef.current = sectionRef.current.getBoundingClientRect().top + window.scrollY;
       }
@@ -375,12 +375,12 @@ export default function MouseImageGalleryBlock({ data }: { data: MouseImageGalle
           
           return (
             <img
-              key={img.id || `mouse-image-${idx}`}
+            key={img.id || `mouse-image-${idx}`}
               ref={imageRefs[idx]}
               src={img.src}
               alt={img.alt || ''}
               loading="lazy"
-              className="mouse-gallery__item"
+            className="mouse-gallery__item"
               style={getImageStyle()}
             />
           );
