@@ -23,10 +23,11 @@ import './TestimonialBlock';
 import './ThreeColumnsBlock';
 import './TwoColumnsBlock';
 import './TwoImagesBlock';
+import './MouseImageGalleryBlock';
 
 // Pour ajouter un nouveau bloc :
 // 1. Créer un dossier src/blocks/auto-declared/MonBloc/
 // 2. Exécuter: npm run generate-blocks
 // 3. C'est tout !
 
-// 20 blocs auto-déclarés disponibles
+// 21 blocs auto-déclarés disponibles
