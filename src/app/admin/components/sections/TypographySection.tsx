@@ -66,6 +66,13 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
       lineHeight: 'leading-relaxed',
       color: 'text-gray-600',
       tracking: 'tracking-normal'
+    },
+    kicker: {
+      fontSize: 'text-sm',
+      fontWeight: 'font-medium',
+      lineHeight: 'leading-normal',
+      color: 'text-gray-500',
+      tracking: 'tracking-wider'
     }
   });
 
@@ -112,6 +119,7 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
     const defaultColorP = getDefaultPaletteColor('p');
     const defaultColorNav = getDefaultPaletteColor('nav');
     const defaultColorFooter = getDefaultPaletteColor('footer');
+    const defaultColorKicker = getDefaultPaletteColor('kicker');
     
     setTypography({
       h1: {
@@ -169,6 +177,13 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
         lineHeight: typoConfig.footer?.lineHeight || 'leading-relaxed',
         color: typoConfig.footer?.color || defaultColorFooter,
         tracking: typoConfig.footer?.tracking || 'tracking-normal'
+      },
+      kicker: {
+        fontSize: typoConfig.kicker?.fontSize || 'text-sm',
+        fontWeight: typoConfig.kicker?.fontWeight || 'font-medium',
+        lineHeight: typoConfig.kicker?.lineHeight || 'leading-normal',
+        color: typoConfig.kicker?.color || defaultColorKicker,
+        tracking: typoConfig.kicker?.tracking || 'tracking-wider'
       }
     });
     setIsInitialized(true);
@@ -194,6 +209,7 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
       p: typography.p,
       nav: typography.nav,
       footer: typography.footer,
+      kicker: typography.kicker,
     });
     
     // Éviter les sauvegardes si rien n'a changé ou si c'est la même valeur que la dernière sauvegarde
@@ -214,6 +230,7 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
         p: typography.p,
         nav: typography.nav,
         footer: typography.footer,
+        kicker: typography.kicker,
       };
       
       // Marquer comme sauvegardé AVANT d'appeler updateField pour éviter les boucles
@@ -267,13 +284,18 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
   const normalizeLineHeight = (val: string) => {
     const trimmed = val.trim();
     // Si l'utilisateur tape un nombre (ex: 0.75 ou 1.1), convertir en classe Tailwind arbitraire leading-[x]
-    if (/^\\d+(\\.\\d+)?$/.test(trimmed)) {
+    // Vérifier si c'est déjà une classe leading-[...] ou si c'est un nombre pur
+    if (/^leading-\[/.test(trimmed)) {
+      // Déjà une classe Tailwind arbitraire, la retourner telle quelle
+      return trimmed;
+    }
+    if (/^-?\d+(\.\d+)?$/.test(trimmed)) {
       return `leading-[${trimmed}]`;
     }
     return trimmed;
   };
 
-  const updateTypography = (element: 'h1' | 'h2' | 'h3' | 'h4' | 'h1Single' | 'p' | 'nav' | 'footer', property: string, value: string) => {
+  const updateTypography = (element: 'h1' | 'h2' | 'h3' | 'h4' | 'h1Single' | 'p' | 'nav' | 'footer' | 'kicker', property: string, value: string) => {
     const nextValue = property === 'lineHeight' ? normalizeLineHeight(value) : value;
     setTypography(prev => ({
       ...prev,
@@ -381,7 +403,7 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
     return color.startsWith('#');
   };
 
-  const renderElementConfig = (element: 'h1' | 'h2' | 'h3' | 'h4' | 'h1Single' | 'p' | 'nav' | 'footer', label: string) => {
+  const renderElementConfig = (element: 'h1' | 'h2' | 'h3' | 'h4' | 'h1Single' | 'p' | 'nav' | 'footer' | 'kicker', label: string) => {
     const config = typography[element];
     
     return (
@@ -528,6 +550,7 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
             {element === 'h4' && <h4>Exemple de titre H4</h4>}
             {element === 'h1Single' && <h1>Exemple de titre projet/article</h1>}
             {element === 'p' && <p>Exemple de paragraphe avec du texte pour voir le rendu.</p>}
+            {element === 'kicker' && <span>Exemple de subtitle / kicker</span>}
             {element === 'nav' && <nav><a href="#" className="hover:text-gray-900">Lien de navigation</a></nav>}
             {element === 'footer' && <footer><p>Texte du footer avec exemple de lien</p></footer>}
           </div>
@@ -551,6 +574,7 @@ const TypographySection: React.FC<TypographySectionProps> = ({ localData, update
         {renderElementConfig('h4', 'Titre H4')}
         {renderElementConfig('h1Single', 'H1 Projets/Articles individuels')}
         {renderElementConfig('p', 'Paragraphe')}
+        {renderElementConfig('kicker', 'Subtitle / Kicker')}
         {renderElementConfig('nav', 'Navigation / Menu')}
         {renderElementConfig('footer', 'Footer')}
       </div>

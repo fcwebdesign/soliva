@@ -512,7 +512,8 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
         }
 
         // 2) Fallback sur les blocs auto-déclarés (scalable)
-        const scalable = getAutoDeclaredBlock(block.type);
+        // Passer le templateKey pour permettre les surcharges par template
+        const scalable = getAutoDeclaredBlock(block.type, key);
         if (scalable?.component) {
           if (process.env.NODE_ENV !== 'production') {
             console.log(`✅ [BlockRenderer] Utilisation du bloc auto-déclaré pour ${block.type}`);

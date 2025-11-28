@@ -55,8 +55,42 @@ export function registerAutoBlock<T>(mod: BlockModule<T>) {
   REGISTRY.set(mod.type, mod);
 }
 
+// Registre des surcharges par template
+// Pour ajouter une surcharge, créez un fichier dans src/templates/{template}/blocks/{BlockName}.tsx
+// et importez-le ici
+// 
+// Exemple d'utilisation :
+// import HoverClientsBlockPearl from '@/templates/pearl/blocks/HoverClientsBlock';
+// const TEMPLATE_OVERRIDES = {
+//   pearl: {
+//     'hover-clients': HoverClientsBlockPearl,
+//   },
+// };
+
+const TEMPLATE_OVERRIDES: Record<string, Record<string, React.ComponentType<any>>> = {
+  // Ajoutez vos surcharges ici
+  // Exemple :
+  // starter: {
+  //   'services': ServicesStarter, // importé en haut du fichier
+  // },
+};
+
 // Fonctions de récupération
-export function getAutoDeclaredBlock(type: string) {
+export function getAutoDeclaredBlock(type: string, templateKey?: string) {
+  // 1. Vérifier d'abord les surcharges du template (si templateKey fourni)
+  if (templateKey && TEMPLATE_OVERRIDES[templateKey]?.[type]) {
+    const OverrideComponent = TEMPLATE_OVERRIDES[templateKey][type];
+    const baseBlock = REGISTRY.get(type);
+    if (baseBlock) {
+      // Retourner le bloc avec le composant surchargé
+      return {
+        ...baseBlock,
+        component: OverrideComponent,
+      };
+    }
+  }
+  
+  // 2. Fallback : bloc auto-déclaré par défaut
   return REGISTRY.get(type);
 }
 

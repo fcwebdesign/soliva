@@ -5,6 +5,7 @@ import gsap from 'gsap';
 import { CustomEase } from 'gsap/CustomEase';
 import { getTypographyConfig, getTypographyClasses, getCustomColor, defaultTypography } from '@/utils/typography';
 import { fetchContentWithNoCache, useContentUpdate } from '@/hooks/useContentUpdate';
+import './styles.css';
 
 interface HoverClientItem {
   id?: string;
@@ -128,6 +129,25 @@ export default function HoverClientsBlock({ data }: { data: HoverClientsData }) 
     const customColor = getCustomColor('h3', typoConfig);
     if (customColor) return customColor;
     return 'var(--foreground)';
+  }, [typoConfig]);
+
+  // Classes typographiques pour le kicker/subtitle
+  const kickerClasses = useMemo(() => {
+    const safeTypoConfig = typoConfig?.kicker ? { kicker: typoConfig.kicker } : {};
+    const classes = getTypographyClasses('kicker', safeTypoConfig, defaultTypography.kicker);
+    return classes
+      .replace(/\btext-(gray|black|white|red|blue|green|yellow|purple|pink|indigo|orange)-\d+\b/g, '')
+      .replace(/\btext-(gray|black|white|red|blue|green|yellow|purple|pink|indigo|orange)\b/g, '')
+      .replace(/\btext-foreground\b/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }, [typoConfig]);
+
+  // Couleur pour le kicker : hex personnalisée ou var(--muted-foreground) pour s'adapter aux palettes
+  const kickerColor = useMemo(() => {
+    const customColor = getCustomColor('kicker', typoConfig);
+    if (customColor) return customColor;
+    return 'var(--muted-foreground)';
   }, [typoConfig]);
 
   useEffect(() => {
@@ -310,7 +330,14 @@ export default function HoverClientsBlock({ data }: { data: HoverClientsData }) 
       <div className="hover-clients-preview" ref={previewRef} aria-hidden />
 
       <div className="hover-clients-header">
-        {subtitle && <p className="hover-clients-kicker">{subtitle}</p>}
+        {subtitle && (
+          <span 
+            className={`hover-clients-kicker ${kickerClasses}`}
+            style={{ color: mutedColor || kickerColor }}
+          >
+            {subtitle}
+          </span>
+        )}
         {title && (
           <h2 
             className={`hover-clients-title ${h2Classes}`}
@@ -339,146 +366,6 @@ export default function HoverClientsBlock({ data }: { data: HoverClientsData }) 
           </div>
         ))}
       </div>
-
-      <style jsx>{`
-        .hover-clients-section {
-          position: relative;
-          width: 100%;
-          min-height: min(100vh, 900px);
-          padding-left: clamp(1.5rem, 3vw, 2.5rem);
-          padding-right: clamp(1.5rem, 3vw, 2.5rem);
-          padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
-          align-items: flex-start;
-          gap: clamp(1.5rem, 3vw, 2.5rem);
-          color: var(--hc-text, var(--foreground));
-          overflow: hidden;
-        }
-
-        .hover-clients-preview {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 60%;
-          height: 50%;
-          z-index: 0;
-          pointer-events: none;
-        }
-
-        .hover-client-img-wrapper {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%);
-          will-change: clip-path;
-          overflow: hidden;
-        }
-
-        .hover-client-img-wrapper img {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          object-position: center;
-          transform-origin: center center;
-          will-change: transform, opacity;
-        }
-
-        .hover-clients-header {
-          position: relative;
-          z-index: 1;
-          mix-blend-mode: difference;
-        }
-
-        .hover-clients-kicker {
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          font-size: 0.85rem;
-          color: var(--hc-muted, var(--muted-foreground));
-          margin-bottom: 0.35rem;
-        }
-
-        .hover-clients-title {
-          font-size: clamp(2.5rem, 5vw, 4rem);
-          font-weight: 600;
-          letter-spacing: -0.02em;
-          line-height: 1;
-        }
-
-        .hover-clients-list {
-          position: relative;
-          width: 80%;
-          margin-bottom: 8rem;
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: flex-start;
-          gap: 0.75rem;
-          mix-blend-mode: difference;
-          z-index: 2;
-        }
-
-        .hover-client-name {
-          position: relative;
-          display: inline-block;
-          cursor: pointer;
-        }
-
-        .hover-client-name h3 {
-          font-size: clamp(2rem, 3vw, 3.2rem);
-          font-weight: 500;
-          line-height: 1;
-        }
-
-        .hover-client-name::after {
-          content: '';
-          position: absolute;
-          left: 0;
-          bottom: 0;
-          width: 100%;
-          height: 0.15rem;
-          background: var(--hc-accent, var(--foreground));
-          transform: scaleX(0);
-          transform-origin: right;
-          transition: transform 300ms ease-out;
-        }
-
-        .hover-client-name:hover::after {
-          transform: scaleX(1);
-          transform-origin: left;
-        }
-
-        @media (max-width: 1000px) {
-          .hover-clients-preview {
-            width: 100%;
-            height: 100%;
-          }
-
-          .hover-clients-list {
-            width: 100%;
-          }
-
-          .hover-clients-section {
-            min-height: 80vh;
-          }
-        }
-
-        @media (max-width: 640px) {
-          .hover-clients-list {
-            gap: 0.4rem;
-          }
-
-          .hover-client-name h3 {
-            font-size: clamp(1.5rem, 6vw, 2.4rem);
-          }
-        }
-      `}</style>
     </section>
   );
 }

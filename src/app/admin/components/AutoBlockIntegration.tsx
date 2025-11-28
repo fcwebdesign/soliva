@@ -90,13 +90,13 @@ export function renderAutoBlockEditor(block: any, onUpdate?: (updates: any) => v
   return (
     <div className="block-editor">
       {autoBlock.editor ? (
-        <autoBlock.editor
-          data={blockData}
-          compact={compact}
-          context={editorContext}
-          initialOpenColumn={initialOpenColumn}
-          initialOpenBlockId={initialOpenBlockId}
-          onChange={(updates: any) => {
+        React.createElement(autoBlock.editor as React.ComponentType<any>, {
+          data: blockData,
+          compact: compact,
+          context: editorContext,
+          initialOpenColumn: initialOpenColumn,
+          initialOpenBlockId: initialOpenBlockId,
+          onChange: (updates: any) => {
             // Mettre à jour le bloc avec les nouvelles données
             // Si le bloc a déjà une structure avec data, fusionner dans data
             // Sinon, fusionner directement (structure plate)
@@ -122,8 +122,8 @@ export function renderAutoBlockEditor(block: any, onUpdate?: (updates: any) => v
             if (onUpdate) onUpdate(updatedBlock);
             // Cette fonction sera appelée par le parent
             console.log('🔄 Mise à jour du bloc auto-déclaré:', { block, updates, updatedBlock });
-          }}
-        />
+          }
+        })
       ) : (
         <div className="p-4 bg-yellow-50 border border-yellow-200 rounded">
           <p className="text-sm text-yellow-800">

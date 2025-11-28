@@ -3,7 +3,7 @@
  * Empêche la corruption de typography qui pourrait contenir tout le contenu
  */
 
-const VALID_TYPO_KEYS = ['h1', 'h2', 'h3', 'h4', 'h1Single', 'p', 'nav', 'footer'] as const;
+const VALID_TYPO_KEYS = ['h1', 'h2', 'h3', 'h4', 'h1Single', 'p', 'nav', 'footer', 'kicker'] as const;
 const VALID_TYPO_PROPS = ['fontSize', 'fontWeight', 'lineHeight', 'color', 'tracking'] as const;
 
 export type TypographyConfig = {

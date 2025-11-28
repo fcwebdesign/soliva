@@ -59,6 +59,13 @@ export interface TypographyConfig {
     color?: string;
     tracking?: string;
   };
+  kicker?: {
+    fontSize?: string;
+    fontWeight?: string;
+    lineHeight?: string;
+    color?: string;
+    tracking?: string;
+  };
 }
 
 /**
@@ -72,7 +79,7 @@ export function getTypographyConfig(content: any): TypographyConfig {
  * Génère les classes CSS pour un élément typographique
  */
 export function getTypographyClasses(
-  element: 'h1' | 'h2' | 'h3' | 'h4' | 'h1Single' | 'p' | 'nav' | 'footer',
+  element: 'h1' | 'h2' | 'h3' | 'h4' | 'h1Single' | 'p' | 'nav' | 'footer' | 'kicker',
   config: TypographyConfig,
   defaults: {
     fontSize: string;
@@ -86,9 +93,13 @@ export function getTypographyClasses(
   const normalizeLineHeight = (val: string | undefined) => {
     if (!val) return val;
     const trimmed = val.trim();
-    // Si c'est un nombre, le transformer en classe Tailwind arbitraire leading-[x]
+    // Si c'est déjà une classe leading-[...], la retourner telle quelle
+    if (/^leading-\[/.test(trimmed)) {
+      return trimmed;
+    }
+    // Si c'est un nombre, on ne l'ajoute pas aux classes (on l'appliquera via style inline)
     if (/^-?\d+(\.\d+)?$/.test(trimmed)) {
-      return `leading-[${trimmed}]`;
+      return null; // Ne pas ajouter aux classes, sera appliqué via style inline
     }
     return trimmed;
   };
@@ -102,6 +113,7 @@ export function getTypographyClasses(
   const classes = [
     elementConfig.fontSize || defaults.fontSize,
     elementConfig.fontWeight || defaults.fontWeight,
+    // Ne pas ajouter lineHeight si c'est une valeur numérique (sera appliqué via style inline)
     lineHeightValue,
     // Si c'est une couleur hex, on ne l'ajoute pas aux classes (on l'appliquera via style)
     // Sinon, on ajoute la classe Tailwind
@@ -117,7 +129,7 @@ export function getTypographyClasses(
  * Récupère la couleur personnalisée (hex) si elle existe, sinon null
  */
 export function getCustomColor(
-  element: 'h1' | 'h2' | 'h3' | 'h4' | 'h1Single' | 'p' | 'nav' | 'footer',
+  element: 'h1' | 'h2' | 'h3' | 'h4' | 'h1Single' | 'p' | 'nav' | 'footer' | 'kicker',
   config: TypographyConfig
 ): string | null {
   const elementConfig = config[element];
@@ -126,6 +138,33 @@ export function getCustomColor(
   // Si c'est une couleur hex, la retourner
   if (elementConfig.color.startsWith('#')) {
     return elementConfig.color;
+  }
+  
+  return null;
+}
+
+/**
+ * Récupère le line-height personnalisé (numérique) si il existe, sinon null
+ * Les valeurs numériques seront appliquées via style inline pour éviter les conflits CSS
+ */
+export function getCustomLineHeight(
+  element: 'h1' | 'h2' | 'h3' | 'h4' | 'h1Single' | 'p' | 'nav' | 'footer' | 'kicker',
+  config: TypographyConfig
+): string | null {
+  const elementConfig = config[element];
+  if (!elementConfig?.lineHeight) return null;
+  
+  const trimmed = elementConfig.lineHeight.trim();
+  
+  // Si c'est déjà une classe leading-[...], extraire la valeur
+  const match = trimmed.match(/^leading-\[([^\]]+)\]$/);
+  if (match) {
+    return match[1];
+  }
+  
+  // Si c'est un nombre pur (ex: "0.75"), le retourner
+  if (/^-?\d+(\.\d+)?$/.test(trimmed)) {
+    return trimmed;
   }
   
   return null;
@@ -190,5 +229,12 @@ export const defaultTypography = {
     lineHeight: 'leading-relaxed',
     color: 'text-gray-600',
     tracking: 'tracking-normal'
+  },
+  kicker: {
+    fontSize: 'text-sm',
+    fontWeight: 'font-medium',
+    lineHeight: 'leading-normal',
+    color: 'text-gray-500',
+    tracking: 'tracking-wider'
   }
 };

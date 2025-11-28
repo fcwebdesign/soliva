@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
-import { getTypographyConfig, getTypographyClasses, getCustomColor, defaultTypography } from '@/utils/typography';
+import { getTypographyConfig, getTypographyClasses, getCustomColor, getCustomLineHeight, defaultTypography } from '@/utils/typography';
 import { useContentUpdate, fetchContentWithNoCache } from '@/hooks/useContentUpdate';
 
 interface H2Data {
@@ -75,7 +75,14 @@ export default function H2Block({ data }: { data: H2Data | any }) {
     // Toujours utiliser var(--foreground) pour s'adapter aux palettes
     return 'var(--foreground)';
   }, [typoConfig]);
-  
+
+  // Line-height personnalisé (numérique) pour h2, appliqué via style inline
+  const h2LineHeight = useMemo(() => {
+    const customLineHeight = getCustomLineHeight('h2', typoConfig);
+    if (customLineHeight) return customLineHeight;
+    return undefined;
+  }, [typoConfig]);
+
   if (!content) {
     return null;
   }
@@ -83,7 +90,10 @@ export default function H2Block({ data }: { data: H2Data | any }) {
   return (
     <h2 
       className={h2Classes}
-      style={{ color: h2Color }}
+      style={{ 
+        color: h2Color,
+        ...(h2LineHeight && { lineHeight: h2LineHeight })
+      }}
       data-block-type="h2"
       data-block-theme={blockData.theme || (data as any).theme || 'auto'}
     >
