@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import gsap from 'gsap';
 
 interface GalleryImage {
@@ -16,7 +16,7 @@ interface MouseImageGalleryData {
   images?: GalleryImage[];
   theme?: 'light' | 'dark' | 'auto';
   transparentHeader?: boolean;
-  speed?: number; // 0-100
+  speed?: number; // 0-100 (plus haut = plus réactif)
 }
 
 export default function MouseImageGalleryBlock({ data }: { data: MouseImageGalleryData | any }) {
@@ -27,71 +27,117 @@ export default function MouseImageGalleryBlock({ data }: { data: MouseImageGalle
   );
 
   const speed = typeof blockData.speed === 'number' ? blockData.speed : 60;
-  const containerRef = useRef<HTMLElement | null>(null);
+  const stageRef = useRef<HTMLElement | null>(null);
   const imageRefs = useRef<HTMLDivElement[]>([]);
+  const indexRef = useRef(0);
+  const lastPosRef = useRef<{ x: number; y: number } | null>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container || images.length === 0) return;
+    setReady(true);
+  }, []);
+
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage || images.length === 0) return;
 
     const els = imageRefs.current.slice(0, images.length);
+    const triggerDistance = 40; // px avant de changer d'image
 
-    // Position initiale au centre
-    const rect = container.getBoundingClientRect();
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
+    // Set initial state
     els.forEach((el) => {
-      gsap.set(el, { x: centerX, y: centerY, opacity: 0, scale: 0.9 });
+      gsap.set(el, { opacity: 0, scale: 0.9, xPercent: -50, yPercent: -50 });
     });
 
-    const handleMove = (e: PointerEvent) => {
-      const bounds = container.getBoundingClientRect();
-      const x = e.clientX - bounds.left;
-      const y = e.clientY - bounds.top;
-      els.forEach((el, idx) => {
-        const damping = 0.25 + idx * 0.05;
-        gsap.to(el, {
-          x,
-          y,
-          scale: 1,
-          rotate: gsap.utils.random(-3, 3),
-          opacity: 1,
-          duration: Math.max(0.15, (1 - speed / 120) + damping),
-          ease: 'power3.out',
-          overwrite: true,
-          zIndex: 10 + idx,
-        });
+    const getNext = () => {
+      const idx = indexRef.current % images.length;
+      indexRef.current += 1;
+      return els[idx];
+    };
+
+    const handleMove = (evt: PointerEvent) => {
+      const bounds = stage.getBoundingClientRect();
+      const x = evt.clientX - bounds.left;
+      const y = evt.clientY - bounds.top;
+
+      if (!lastPosRef.current) {
+        lastPosRef.current = { x, y };
+      }
+
+      const dx = x - lastPosRef.current.x;
+      const dy = y - lastPosRef.current.y;
+      const dist = Math.hypot(dx, dy);
+
+      if (dist < triggerDistance) return;
+      lastPosRef.current = { x, y };
+
+      const el = getNext();
+      const prev = els[(indexRef.current - 2 + images.length) % images.length];
+
+      const damping = Math.max(0.12, 1 - speed / 120); // plus la vitesse est haute, plus l'anim est courte
+
+      gsap.set(el, {
+        x,
+        y,
+        scale: 0.8,
+        rotation: gsap.utils.random(-6, 6),
+        opacity: 0,
+        zIndex: 10 + indexRef.current,
       });
+
+      gsap.to(el, {
+        opacity: 1,
+        scale: 1,
+        rotation: 0,
+        duration: damping,
+        ease: 'power3.out',
+        overwrite: true,
+      });
+
+      if (prev) {
+        gsap.to(prev, {
+          opacity: 0,
+          scale: 0.9,
+          duration: 0.35,
+          ease: 'power2.out',
+          overwrite: true,
+        });
+      }
     };
 
     const handleLeave = () => {
+      lastPosRef.current = null;
       els.forEach((el) => {
-        gsap.to(el, { opacity: 0, duration: 0.25, scale: 0.9, ease: 'power2.out' });
+        gsap.to(el, { opacity: 0, scale: 0.9, duration: 0.25, ease: 'power2.out', overwrite: true });
       });
     };
 
-    container.addEventListener('pointermove', handleMove);
-    container.addEventListener('pointerenter', handleMove);
-    container.addEventListener('pointerleave', handleLeave);
+    stage.addEventListener('pointermove', handleMove);
+    stage.addEventListener('pointerenter', handleMove);
+    stage.addEventListener('pointerleave', handleLeave);
 
     return () => {
-      container.removeEventListener('pointermove', handleMove);
-      container.removeEventListener('pointerenter', handleMove);
-      container.removeEventListener('pointerleave', handleLeave);
+      stage.removeEventListener('pointermove', handleMove);
+      stage.removeEventListener('pointerenter', handleMove);
+      stage.removeEventListener('pointerleave', handleLeave);
     };
   }, [images, speed]);
+
+  if (!ready) {
+    return <section className="mouse-gallery-block" style={{ minHeight: '70vh' }}></section>;
+  }
 
   if (images.length === 0) {
     return (
       <section className="mouse-gallery-block" data-block-type="mouse-image-gallery">
-        <div className="mouse-gallery__empty">Ajoutez des images pour activer la galerie souris.</div>
+        <div className="mouse-gallery__empty">Ajoutez des images pour activer la galerie.</div>
       </section>
     );
   }
 
   return (
     <section
-      ref={containerRef}
+      ref={stageRef}
       className="mouse-gallery-block"
       data-block-type="mouse-image-gallery"
       data-block-theme={blockData.theme || 'auto'}
@@ -123,12 +169,14 @@ export default function MouseImageGalleryBlock({ data }: { data: MouseImageGalle
           overflow: hidden;
           background: var(--background, #0f0f0f);
           color: var(--foreground, #f7f7f7);
+          cursor: none;
         }
         .mouse-gallery__header {
           position: relative;
           z-index: 2;
           max-width: 960px;
           padding: clamp(1.5rem, 4vw, 3rem);
+          pointer-events: none;
         }
         .mouse-gallery__title {
           font-size: clamp(2.4rem, 5vw, 3.8rem);
@@ -145,7 +193,7 @@ export default function MouseImageGalleryBlock({ data }: { data: MouseImageGalle
         .mouse-gallery__stage {
           position: relative;
           width: 100%;
-          height: calc(85vh);
+          height: 70vh;
           pointer-events: none;
         }
         .mouse-gallery__item {
@@ -160,6 +208,7 @@ export default function MouseImageGalleryBlock({ data }: { data: MouseImageGalle
           pointer-events: none;
           opacity: 0;
           transform: translate(-50%, -50%);
+          will-change: transform, opacity;
         }
         .mouse-gallery__item img {
           width: 100%;
@@ -173,11 +222,14 @@ export default function MouseImageGalleryBlock({ data }: { data: MouseImageGalle
           color: #888;
         }
         @media (max-width: 768px) {
+          .mouse-gallery-block {
+            cursor: default;
+          }
           .mouse-gallery__item {
             width: clamp(140px, 40vw, 220px);
           }
           .mouse-gallery__stage {
-            height: 70vh;
+            height: 60vh;
           }
         }
       `}</style>
