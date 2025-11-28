@@ -29,7 +29,7 @@ export default function InfiniteTextScrollBlock({ data }: { data: InfiniteTextSc
   const sliderRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
   
-  const xPercentRef = useRef(0);
+  const xRef = useRef(0);
   const directionRef = useRef(-1);
   const animationFrameRef = useRef<number | null>(null);
 
@@ -119,7 +119,7 @@ export default function InfiniteTextScrollBlock({ data }: { data: InfiniteTextSc
     const measure = () => {
       if (!sectionRef.current || !firstTextRef.current) return;
       const containerWidth = sectionRef.current.clientWidth || 0;
-      const textWidth = firstTextRef.current.offsetWidth || 0;
+      const textWidth = firstTextRef.current.getBoundingClientRect().width || 0;
       if (containerWidth === 0 || textWidth === 0) return;
       // on vise au moins 2x la largeur du conteneur pour éviter les trous
       const needed = Math.max(2, Math.ceil((containerWidth * 2) / textWidth));
@@ -129,9 +129,19 @@ export default function InfiniteTextScrollBlock({ data }: { data: InfiniteTextSc
     const handleResize = () => measure();
     const raf = requestAnimationFrame(measure);
     window.addEventListener('resize', handleResize);
+
+    // Observer les changements de taille (typo responsive, chargement de font)
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(() => measure());
+      if (firstTextRef.current) ro.observe(firstTextRef.current);
+      if (sectionRef.current) ro.observe(sectionRef.current);
+    }
+
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', handleResize);
+      if (ro) ro.disconnect();
     };
   }, [text, textTypographyClasses, size]);
 
@@ -206,21 +216,27 @@ export default function InfiniteTextScrollBlock({ data }: { data: InfiniteTextSc
 
     // Animation continue du texte (exactement comme la démo)
     const animate = () => {
-      // Logique exacte de la démo : reset transparent
-      if (xPercentRef.current < -100) {
-        xPercentRef.current = 0;
-      } else if (xPercentRef.current > 0) {
-        xPercentRef.current = -100;
+      const singleWidth = firstTextRef.current?.getBoundingClientRect().width || 0;
+      if (singleWidth === 0) {
+        animationFrameRef.current = requestAnimationFrame(animate);
+        return;
       }
-      
-      if (sliderRef.current?.children?.length) {
-        gsap.set(sliderRef.current.children, { xPercent: xPercentRef.current });
-      }
-      
-      // Vitesse ajustable : speed 0-100, converti proportionnellement (démo originale = 0.1)
-      const baseSpeed = 0.1;
+
+      // Vitesse ajustable : base 0.6px/frame approximatif
+      const baseSpeed = 0.6;
       const animationSpeed = baseSpeed * (speed / 50);
-      xPercentRef.current += animationSpeed * directionRef.current;
+      xRef.current += animationSpeed * directionRef.current;
+
+      // Loop : dès qu'on dépasse la largeur d'un item, on recycle
+      if (xRef.current <= -singleWidth) {
+        xRef.current += singleWidth;
+      } else if (xRef.current >= 0) {
+        xRef.current -= singleWidth;
+      }
+
+      if (sliderRef.current) {
+        gsap.set(sliderRef.current, { x: xRef.current });
+      }
       
       animationFrameRef.current = requestAnimationFrame(animate);
     };
@@ -317,14 +333,9 @@ export default function InfiniteTextScrollBlock({ data }: { data: InfiniteTextSc
           line-height: 1; /* évite la coupure verticale */
         }
         .infinite-text-scroll__text--second {
-          position: absolute;
-          left: 100%;
-          top: 0;
-        }
-        @media (max-width: 768px) {
-          .infinite-text-scroll__text {
-            font-size: clamp(60px, 20vw, 120px) !important;
-          }
+          position: relative; /* ne pas sortir du flux pour éviter les vides quand on duplique */
+          left: auto;
+          top: auto;
         }
       `}</style>
     </section>
