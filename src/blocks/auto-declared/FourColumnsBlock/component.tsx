@@ -12,6 +12,10 @@ interface FourColumnsData {
   column4?: any[];
   layout?: 'four-columns' | 'stacked-mobile' | 'stacked-tablet';
   gap?: 'small' | 'medium' | 'large';
+  column1RowGap?: 'inherit' | 'none' | 'small' | 'medium' | 'large';
+  column2RowGap?: 'inherit' | 'none' | 'small' | 'medium' | 'large';
+  column3RowGap?: 'inherit' | 'none' | 'small' | 'medium' | 'large';
+  column4RowGap?: 'inherit' | 'none' | 'small' | 'medium' | 'large';
   alignment?: 'top' | 'center' | 'bottom';
   theme?: 'light' | 'dark' | 'auto';
 }
@@ -28,6 +32,10 @@ export default function FourColumnsBlock({ data }: { data: FourColumnsData }) {
   const column4 = blockData.column4 || [];
   const layout = blockData.layout || 'four-columns';
   const gap = blockData.gap || 'medium';
+  const column1RowGap = blockData.column1RowGap || 'inherit';
+  const column2RowGap = blockData.column2RowGap || 'inherit';
+  const column3RowGap = blockData.column3RowGap || 'inherit';
+  const column4RowGap = blockData.column4RowGap || 'inherit';
   const alignment = blockData.alignment || 'top';
   const blockTheme = blockData.theme || 'auto';
 
@@ -52,6 +60,17 @@ export default function FourColumnsBlock({ data }: { data: FourColumnsData }) {
   const gapClass = gapClasses[gap] || 'gap-4';
   const alignmentClass = alignmentClasses[alignment] || 'items-start';
   const gapValue = gap === 'small' ? 'var(--gap-sm)' : gap === 'large' ? 'var(--gap-lg)' : 'var(--gap)';
+  const rowGapFor = (val: 'inherit' | 'none' | 'small' | 'medium' | 'large') => {
+    if (val === 'none') return '0px';
+    if (val === 'small') return 'var(--gap-sm)';
+    if (val === 'large') return 'var(--gap-lg)';
+    if (val === 'medium') return 'var(--gap)';
+    return '1.5rem';
+  };
+  const column1RowGapValue = rowGapFor(column1RowGap);
+  const column2RowGapValue = rowGapFor(column2RowGap);
+  const column3RowGapValue = rowGapFor(column3RowGap);
+  const column4RowGapValue = rowGapFor(column4RowGap);
   
   // Ne rien rendre tant que le composant n'est pas monté
   if (!mounted) {
@@ -158,17 +177,17 @@ export default function FourColumnsBlock({ data }: { data: FourColumnsData }) {
         );
       })()}
       <div className={`grid ${layoutClass} ${gapClass} ${alignmentClass}`} style={{ gap: gapValue }}>
-        <div className="flex flex-col" style={{ gap: gapValue }}>
-          {column1.map(renderSubBlock)}
+        <div className="flex flex-col" style={{ rowGap: column1RowGapValue }}>
+          {column1.filter((block: any) => !block.hidden).map(renderSubBlock)}
         </div>
-        <div className="flex flex-col" style={{ gap: gapValue }}>
-          {column2.map(renderSubBlock)}
+        <div className="flex flex-col" style={{ rowGap: column2RowGapValue }}>
+          {column2.filter((block: any) => !block.hidden).map(renderSubBlock)}
         </div>
-        <div className="flex flex-col" style={{ gap: gapValue }}>
-          {column3.map(renderSubBlock)}
+        <div className="flex flex-col" style={{ rowGap: column3RowGapValue }}>
+          {column3.filter((block: any) => !block.hidden).map(renderSubBlock)}
         </div>
-        <div className="flex flex-col" style={{ gap: gapValue }}>
-          {column4.map(renderSubBlock)}
+        <div className="flex flex-col" style={{ rowGap: column4RowGapValue }}>
+          {column4.filter((block: any) => !block.hidden).map(renderSubBlock)}
         </div>
       </div>
     </section>

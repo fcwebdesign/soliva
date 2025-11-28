@@ -690,6 +690,26 @@ export default function FourColumnsBlockEditor({
                 </span>
                 {openColumn === 'column1' ? <ChevronUp className="w-3 h-3 text-gray-400" /> : <ChevronDown className="w-3 h-3 text-gray-400" />}
               </button>
+              {normalizedColumns.column1.length >= 2 && (
+                <div className="px-2 pb-2 flex items-center gap-2">
+                  <label className="text-[10px] text-gray-400">Espacement</label>
+                  <Select
+                    value={(data as any).column1RowGap || 'inherit'}
+                    onValueChange={(value) => updateField('column1RowGap', value)}
+                  >
+                    <SelectTrigger className="h-8 px-2 py-1 text-[12px] shadow-none border border-gray-200 rounded">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent side="bottom" align="end">
+                      <SelectItem value="inherit">Hériter</SelectItem>
+                      <SelectItem value="none">Aucun</SelectItem>
+                      <SelectItem value="small">Petit</SelectItem>
+                      <SelectItem value="medium">Moyen</SelectItem>
+                      <SelectItem value="large">Grand</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               {openColumn === 'column1' && (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'column1')}>
                   <SortableContext items={normalizedColumns.column1.map((b) => b.id)} strategy={verticalListSortingStrategy}>
@@ -731,6 +751,26 @@ export default function FourColumnsBlockEditor({
                 </span>
                 {openColumn === 'column2' ? <ChevronUp className="w-3 h-3 text-gray-400" /> : <ChevronDown className="w-3 h-3 text-gray-400" />}
               </button>
+              {normalizedColumns.column2.length >= 2 && (
+                <div className="px-2 pb-2 flex items-center gap-2">
+                  <label className="text-[10px] text-gray-400">Espacement</label>
+                  <Select
+                    value={(data as any).column2RowGap || 'inherit'}
+                    onValueChange={(value) => updateField('column2RowGap', value)}
+                  >
+                    <SelectTrigger className="h-8 px-2 py-1 text-[12px] shadow-none border border-gray-200 rounded">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent side="bottom" align="end">
+                      <SelectItem value="inherit">Hériter</SelectItem>
+                      <SelectItem value="none">Aucun</SelectItem>
+                      <SelectItem value="small">Petit</SelectItem>
+                      <SelectItem value="medium">Moyen</SelectItem>
+                      <SelectItem value="large">Grand</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               {openColumn === 'column2' && (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'column2')}>
                   <SortableContext items={normalizedColumns.column2.map((b) => b.id)} strategy={verticalListSortingStrategy}>
@@ -772,6 +812,26 @@ export default function FourColumnsBlockEditor({
                 </span>
                 {openColumn === 'column3' ? <ChevronUp className="w-3 h-3 text-gray-400" /> : <ChevronDown className="w-3 h-3 text-gray-400" />}
               </button>
+              {normalizedColumns.column3.length >= 2 && (
+                <div className="px-2 pb-2 flex items-center gap-2">
+                  <label className="text-[10px] text-gray-400">Espacement</label>
+                  <Select
+                    value={(data as any).column3RowGap || 'inherit'}
+                    onValueChange={(value) => updateField('column3RowGap', value)}
+                  >
+                    <SelectTrigger className="h-8 px-2 py-1 text-[12px] shadow-none border border-gray-200 rounded">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent side="bottom" align="end">
+                      <SelectItem value="inherit">Hériter</SelectItem>
+                      <SelectItem value="none">Aucun</SelectItem>
+                      <SelectItem value="small">Petit</SelectItem>
+                      <SelectItem value="medium">Moyen</SelectItem>
+                      <SelectItem value="large">Grand</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               {openColumn === 'column3' && (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'column3')}>
                   <SortableContext items={normalizedColumns.column3.map((b) => b.id)} strategy={verticalListSortingStrategy}>
@@ -813,6 +873,26 @@ export default function FourColumnsBlockEditor({
                 </span>
                 {openColumn === 'column4' ? <ChevronUp className="w-3 h-3 text-gray-400" /> : <ChevronDown className="w-3 h-3 text-gray-400" />}
               </button>
+              {normalizedColumns.column4.length >= 2 && (
+                <div className="px-2 pb-2 flex items-center gap-2">
+                  <label className="text-[10px] text-gray-400">Espacement</label>
+                  <Select
+                    value={(data as any).column4RowGap || 'inherit'}
+                    onValueChange={(value) => updateField('column4RowGap', value)}
+                  >
+                    <SelectTrigger className="h-8 px-2 py-1 text-[12px] shadow-none border border-gray-200 rounded">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent side="bottom" align="end">
+                      <SelectItem value="inherit">Hériter</SelectItem>
+                      <SelectItem value="none">Aucun</SelectItem>
+                      <SelectItem value="small">Petit</SelectItem>
+                      <SelectItem value="medium">Moyen</SelectItem>
+                      <SelectItem value="large">Grand</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               {openColumn === 'column4' && (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'column4')}>
                   <SortableContext items={normalizedColumns.column4.map((b) => b.id)} strategy={verticalListSortingStrategy}>

@@ -61,14 +61,7 @@ function SortableBlockItem({
 }) {
   const blockId = block.id && block.id.trim() !== '' ? block.id : `block-${column}-${index}`;
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging
-  } = useSortable({ id: blockId });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: blockId });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -544,13 +537,9 @@ export default function ThreeColumnsBlockEditor({
     const getInitialColumn = (): OpenColumn | null => {
       if (initialOpenColumn) return initialOpenColumn;
       if (initialOpenBlockId) {
-        const leftColumn = data.leftColumn || [];
-        const middleColumn = data.middleColumn || [];
-        const rightColumn = data.rightColumn || [];
-
-        if (leftColumn.some((b: any) => b.id === initialOpenBlockId)) return 'left';
-        if (middleColumn.some((b: any) => b.id === initialOpenBlockId)) return 'middle';
-        if (rightColumn.some((b: any) => b.id === initialOpenBlockId)) return 'right';
+        if ((data.leftColumn || []).some((b: any) => b.id === initialOpenBlockId)) return 'left';
+        if ((data.middleColumn || []).some((b: any) => b.id === initialOpenBlockId)) return 'middle';
+        if ((data.rightColumn || []).some((b: any) => b.id === initialOpenBlockId)) return 'right';
       }
       return null;
     };
@@ -567,7 +556,7 @@ export default function ThreeColumnsBlockEditor({
       useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
     );
 
-    // Normaliser les IDs des blocs pour garantir un drag & drop stable
+    // Normaliser les IDs pour garantir un drag & drop stable
     useEffect(() => {
       let needsUpdate = false;
       const updatedData = { ...data };
