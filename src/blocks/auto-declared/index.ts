@@ -22,6 +22,7 @@ import './ServicesBlock';
 import './TestimonialBlock';
 import './ThreeColumnsBlock';
 import './TwoColumnsBlock';
+import './TwoImagesBlock';
 
 // Pour ajouter un nouveau bloc :
 // 1. Créer un dossier src/blocks/auto-declared/MonBloc/
