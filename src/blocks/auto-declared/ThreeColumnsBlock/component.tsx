@@ -172,13 +172,13 @@ export default function ThreeColumnsBlock({ data }: { data: ThreeColumnsData }) 
       })()}
       <div className={`grid ${layoutClass} ${alignmentClass}`} style={{ columnGap: columnGapValue, rowGap: '1.5rem' }}>
         <div className="flex flex-col" style={{ rowGap: leftRowGapValue }}>
-          {leftColumn.map(renderSubBlock)}
+          {leftColumn.filter((block: any) => !block.hidden).map(renderSubBlock)}
         </div>
         <div className="flex flex-col" style={{ rowGap: middleRowGapValue }}>
-          {middleColumn.map(renderSubBlock)}
+          {middleColumn.filter((block: any) => !block.hidden).map(renderSubBlock)}
         </div>
         <div className="flex flex-col" style={{ rowGap: rightRowGapValue }}>
-          {rightColumn.map(renderSubBlock)}
+          {rightColumn.filter((block: any) => !block.hidden).map(renderSubBlock)}
         </div>
       </div>
     </section>
