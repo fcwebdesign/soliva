@@ -3,10 +3,6 @@ import { useRef, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Link } from "next-view-transitions";
 import { getTypographyConfig, getTypographyClasses, defaultTypography } from "@/utils/typography";
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
 
 type PageLink = { slug?: string; id?: string; title?: string };
 
@@ -269,39 +265,7 @@ export default function FooterPearl({ footer, pages, layout = 'standard', fullCo
     };
   }, [footer?.stickyFooter?.enabled, footer, footerHeight]);
   
-  // Animation simple : footer révélé au scroll (approche simplifiée)
-  useEffect(() => {
-    if (!footer?.stickyFooter?.enabled || !containerRef.current || footerHeight === 0 || !hasEnoughContent) {
-      return;
-    }
-
-    const container = containerRef.current;
-    const mainElement = document.querySelector('main') || document.body;
-    
-    // Approche simple : clip-path qui révèle le footer de bas en haut
-    const animation = gsap.fromTo(
-      container,
-      { 
-        clipPath: "inset(100% 0 0 0)" // Masqué (100% du haut)
-      },
-      {
-        clipPath: "inset(0 0 0 0)", // Révélé complètement
-        ease: "none",
-        scrollTrigger: {
-          trigger: mainElement,
-          start: "bottom bottom",
-          end: `+=${footerHeight}`,
-          scrub: true,
-        }
-      }
-    );
-
-    return () => {
-      if (animation?.scrollTrigger) {
-        animation.scrollTrigger.kill();
-      }
-    };
-  }, [footer?.stickyFooter?.enabled, footerHeight, hasEnoughContent, pathname]); // pathname pour réinitialiser à chaque page
+  // Pas besoin d'animation GSAP - la démo utilise CSS sticky pur
 
   // Callback ref pour mesurer la hauteur du footer
   const measureFooterRef = (element: HTMLElement | null) => {
@@ -349,6 +313,7 @@ export default function FooterPearl({ footer, pages, layout = 'standard', fullCo
   }, [footer?.stickyFooter?.enabled, footerHeight, pathname]); // pathname dans les dépendances
 
   // Si sticky est activé, hauteur calculée ET contenu suffisant, appliquer l'effet sticky
+  // Structure exacte de la démo Footer1.jsx
   if (footer?.stickyFooter?.enabled && footerHeight > 0 && hasEnoughContent) {
     return (
       <>
@@ -361,26 +326,35 @@ export default function FooterPearl({ footer, pages, layout = 'standard', fullCo
           {footerContent}
         </footer>
         
-        {/* Container sticky avec clip-path - structure exacte de la démo */}
+        {/* Structure exacte de la démo Footer1.jsx */}
         <div
           ref={containerRef}
-          className="relative w-full"
+          className="relative"
           style={{ 
             height: `${footerHeight}px`,
-            clipPath: "inset(100% 0 0 0)" // Commence masqué
+            clipPath: "polygon(0% 0, 100% 0%, 100% 100%, 0 100%)" // Toujours visible comme dans la démo
           }}
         >
-          <div
-            className="fixed bottom-0 left-0 right-0 w-full"
+          {/* Div avec hauteur calculée et top négatif pour créer l'espace de scroll - exactement comme la démo */}
+          <div 
+            className="relative"
             style={{ 
-              height: `${footerHeight}px`,
-              zIndex: 10,
-              backgroundColor: 'var(--muted, hsl(var(--muted)))'
+              height: `calc(100vh + ${footerHeight}px)`,
+              top: `-100vh`
             }}
           >
-            <footer className="bg-muted border-t border-border">
-              {footerContent}
-            </footer>
+            {/* Div sticky qui reste collé en bas pendant le scroll - exactement comme la démo */}
+            <div 
+              style={{ 
+                height: `${footerHeight}px`,
+                position: 'sticky',
+                top: `calc(100vh - ${footerHeight}px)`
+              }}
+            >
+              <footer className="bg-muted border-t border-border">
+                {footerContent}
+              </footer>
+            </div>
           </div>
         </div>
       </>
