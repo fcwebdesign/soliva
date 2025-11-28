@@ -24,6 +24,7 @@ import './ThreeColumnsBlock';
 import './TwoColumnsBlock';
 import './TwoImagesBlock';
 import './MouseImageGalleryBlock';
+import './InfiniteTextScrollBlock';
 
 // Pour ajouter un nouveau bloc :
 // 1. Créer un dossier src/blocks/auto-declared/MonBloc/
