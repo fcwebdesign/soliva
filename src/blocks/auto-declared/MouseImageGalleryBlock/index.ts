@@ -4,12 +4,12 @@ import MouseImageGalleryEditor from './editor';
 
 registerAutoBlock({
   type: 'mouse-image-gallery',
-  label: 'Mouse Image Gallery',
+  label: 'Hero fixé - Mouse Image Gallery',
   icon: '🖱️',
   category: 'hero',
   component: MouseImageGalleryBlock,
   editor: MouseImageGalleryEditor,
-  description: 'Galerie qui suit la souris (inspirée Olivier Larose)',
+  description: 'Hero fixé : galerie qui suit la souris (inspirée Olivier Larose). Toujours en première position.',
   defaultData: {
     title: 'Mouse Image Gallery',
     subtitle: 'Passe la souris pour révéler les visuels.',

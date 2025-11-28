@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import gsap from 'gsap';
+import React, { useMemo, useRef, useEffect, useState } from 'react';
 
 interface GalleryImage {
   id?: string;
   src: string;
   alt?: string;
   hidden?: boolean;
+  aspectRatio?: string; // 'auto' | '1:1' | '1:2' | '2:3' | '3:4' | '4:5' | '9:16' | '3:2' | '4:3' | '5:4' | '16:9' | '2:1' | '4:1' | '8:1' | 'stretch'
 }
 
 interface MouseImageGalleryData {
@@ -17,6 +17,11 @@ interface MouseImageGalleryData {
   theme?: 'light' | 'dark' | 'auto';
   transparentHeader?: boolean;
   speed?: number; // 0-100 (plus haut = plus réactif)
+  maxImages?: number; // Nombre max d'images visibles
+  parallax?: {
+    enabled?: boolean;
+    speed?: number; // 0-1
+  };
 }
 
 export default function MouseImageGalleryBlock({ data }: { data: MouseImageGalleryData | any }) {
@@ -26,110 +31,242 @@ export default function MouseImageGalleryBlock({ data }: { data: MouseImageGalle
     [blockData]
   );
 
-  const speed = typeof blockData.speed === 'number' ? blockData.speed : 60;
-  const stageRef = useRef<HTMLElement | null>(null);
-  const imageRefs = useRef<HTMLDivElement[]>([]);
-  const indexRef = useRef(0);
-  const lastPosRef = useRef<{ x: number; y: number } | null>(null);
-  const [ready, setReady] = useState(false);
+  const maxNumberOfImages = useMemo(() => {
+    return typeof blockData.maxImages === 'number' ? blockData.maxImages : 8;
+  }, [blockData.maxImages]);
+  const stepThreshold = 150; // Seuil de pas avant de changer d'image
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const stageRef = useRef<HTMLDivElement | null>(null);
+  const [headerInfo, setHeaderInfo] = useState<{ height: number; position: string }>({ height: 0, position: 'static' });
+  const [isFirstBlock, setIsFirstBlock] = useState(false);
+  
+  // Variables pour suivre l'état (comme dans la démo originale)
+  const stepsRef = useRef(0);
+  const currentIndexRef = useRef(0);
+  const nbOfImagesRef = useRef(0);
 
+  // Créer les refs pour chaque image - utiliser useMemo pour s'assurer qu'elles sont créées
+  const imageRefs = useMemo(() => {
+    return images.map(() => React.createRef<HTMLImageElement>());
+  }, [images.length]);
+
+  // Détecter si le bloc est le premier rendu (pour compenser la hauteur du header sticky)
   useEffect(() => {
-    setReady(true);
-  }, []);
+    const sectionEl = sectionRef.current;
+    if (!sectionEl) return;
 
+    const container = sectionEl.closest('.blocks-container');
+    if (!container) return;
+
+    const firstSection = container.querySelector('section[data-block-type]');
+    setIsFirstBlock(firstSection === sectionEl);
+  }, [images.length, blockData]);
+
+  // Mesurer la hauteur du header quand il est sticky (position différente de fixed/absolute)
   useEffect(() => {
-    const stage = stageRef.current;
-    if (!stage || images.length === 0) return;
+    if (typeof window === 'undefined') return;
+    const header = document.querySelector('header');
+    if (!header) return;
 
-    const els = imageRefs.current.slice(0, images.length);
-    const triggerDistance = 40; // px avant de changer d'image
-
-    // Set initial state
-    els.forEach((el) => {
-      gsap.set(el, { opacity: 0, scale: 0.9, xPercent: -50, yPercent: -50 });
-    });
-
-    const getNext = () => {
-      const idx = indexRef.current % images.length;
-      indexRef.current += 1;
-      return els[idx];
-    };
-
-    const handleMove = (evt: PointerEvent) => {
-      const bounds = stage.getBoundingClientRect();
-      const x = evt.clientX - bounds.left;
-      const y = evt.clientY - bounds.top;
-
-      if (!lastPosRef.current) {
-        lastPosRef.current = { x, y };
-      }
-
-      const dx = x - lastPosRef.current.x;
-      const dy = y - lastPosRef.current.y;
-      const dist = Math.hypot(dx, dy);
-
-      if (dist < triggerDistance) return;
-      lastPosRef.current = { x, y };
-
-      const el = getNext();
-      const prev = els[(indexRef.current - 2 + images.length) % images.length];
-
-      const damping = Math.max(0.12, 1 - speed / 120); // plus la vitesse est haute, plus l'anim est courte
-
-      gsap.set(el, {
-        x,
-        y,
-        scale: 0.8,
-        rotation: gsap.utils.random(-6, 6),
-        opacity: 0,
-        zIndex: 10 + indexRef.current,
-      });
-
-      gsap.to(el, {
-        opacity: 1,
-        scale: 1,
-        rotation: 0,
-        duration: damping,
-        ease: 'power3.out',
-        overwrite: true,
-      });
-
-      if (prev) {
-        gsap.to(prev, {
-          opacity: 0,
-          scale: 0.9,
-          duration: 0.35,
-          ease: 'power2.out',
-          overwrite: true,
-        });
-      }
-    };
-
-    const handleLeave = () => {
-      lastPosRef.current = null;
-      els.forEach((el) => {
-        gsap.to(el, { opacity: 0, scale: 0.9, duration: 0.25, ease: 'power2.out', overwrite: true });
+    const headerElement = header as HTMLElement;
+    const updateHeaderInfo = () => {
+      const style = window.getComputedStyle(headerElement);
+      setHeaderInfo({
+        height: headerElement.getBoundingClientRect().height || 0,
+        position: style.position || 'static',
       });
     };
 
-    stage.addEventListener('pointermove', handleMove);
-    stage.addEventListener('pointerenter', handleMove);
-    stage.addEventListener('pointerleave', handleLeave);
+    updateHeaderInfo();
+
+    const resizeObserver = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(updateHeaderInfo) : null;
+    if (resizeObserver) resizeObserver.observe(headerElement);
+    window.addEventListener('resize', updateHeaderInfo);
 
     return () => {
-      stage.removeEventListener('pointermove', handleMove);
-      stage.removeEventListener('pointerenter', handleMove);
-      stage.removeEventListener('pointerleave', handleLeave);
+      if (resizeObserver) resizeObserver.disconnect();
+      window.removeEventListener('resize', updateHeaderInfo);
     };
-  }, [images, speed]);
+  }, []);
 
-  if (!ready) {
-    return <section className="mouse-gallery-block" style={{ minHeight: '70vh' }}></section>;
-  }
+  const headerOffset =
+    isFirstBlock && headerInfo.position !== 'fixed' && headerInfo.position !== 'absolute'
+      ? headerInfo.height
+      : 0;
+
+  const sectionHeight = headerOffset ? `calc(100vh + ${headerOffset}px)` : '100vh';
+  
+  // Parallax
+  const parallaxEnabled = !!blockData.parallax?.enabled;
+  const parallaxSpeed = typeof blockData.parallax?.speed === 'number' ? blockData.parallax.speed : 0.25;
+  const parallaxStartRef = useRef<number | null>(null);
+
+  // Parallax sur scroll : appliquer un décalage Y aux images visibles
+  useEffect(() => {
+    if (!parallaxEnabled) {
+      // Réinitialiser les transforms si le parallax est désactivé
+      imageRefs.forEach((ref) => {
+        if (ref.current) {
+          ref.current.style.transform = `translateX(-50%) translateY(-50%)`;
+        }
+      });
+      return;
+    }
+
+    const updateParallax = () => {
+      if (!sectionRef.current) return;
+      
+      if (parallaxStartRef.current === null) {
+        parallaxStartRef.current = sectionRef.current.getBoundingClientRect().top + window.scrollY;
+      }
+      
+      const delta = window.scrollY - parallaxStartRef.current;
+      const parallaxOffset = delta * parallaxSpeed;
+      
+      // Appliquer le décalage parallax à toutes les images visibles
+      imageRefs.forEach((ref) => {
+        if (ref.current && ref.current.style.display === 'block') {
+          // Appliquer le parallax en additionnant au translateY existant
+          ref.current.style.transform = `translateX(-50%) translateY(calc(-50% + ${parallaxOffset}px))`;
+        }
+      });
+    };
+
+    const handleResize = () => {
+      parallaxStartRef.current = null;
+      updateParallax();
+    };
+
+    updateParallax();
+    window.addEventListener('scroll', updateParallax, { passive: true });
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('scroll', updateParallax);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [parallaxEnabled, parallaxSpeed, imageRefs]);
+
+  const manageMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { clientX, clientY, movementX, movementY } = e;
+
+    stepsRef.current += Math.abs(movementX) + Math.abs(movementY);
+
+    if (stepsRef.current >= currentIndexRef.current * stepThreshold) {
+      // Utiliser clientX et clientY directement comme dans la démo originale
+      moveImage(clientX, clientY);
+
+      // Utiliser la valeur à jour de maxNumberOfImages
+      const currentMaxImages = typeof blockData.maxImages === 'number' ? blockData.maxImages : 8;
+      if (nbOfImagesRef.current === currentMaxImages) {
+        removeImage();
+      }
+    }
+
+    if (currentIndexRef.current === imageRefs.length) {
+      currentIndexRef.current = 0;
+      stepsRef.current = -stepThreshold;
+    }
+  };
+
+  const moveImage = (x: number, y: number) => {
+    const currentImage = imageRefs[currentIndexRef.current]?.current;
+    if (!currentImage) return;
+
+    // Positionner directement avec clientX/clientY comme dans la démo
+    currentImage.style.left = x + 'px';
+    currentImage.style.top = y + 'px';
+    currentImage.style.display = 'block';
+    currentIndexRef.current++;
+    nbOfImagesRef.current++;
+    setZIndex();
+  };
+
+  const setZIndex = () => {
+    const visibleImages = getCurrentImages();
+    for (let i = 0; i < visibleImages.length; i++) {
+      if (visibleImages[i]) {
+        visibleImages[i].style.zIndex = i.toString();
+      }
+    }
+  };
+
+  const removeImage = () => {
+    const visibleImages = getCurrentImages();
+    if (visibleImages[0]) {
+      visibleImages[0].style.display = 'none';
+      nbOfImagesRef.current--;
+    }
+  };
+
+  const getCurrentImages = (): (HTMLImageElement | null)[] => {
+    const images: (HTMLImageElement | null)[] = [];
+    const indexOfFirst = currentIndexRef.current - nbOfImagesRef.current;
+    for (let i = indexOfFirst; i < currentIndexRef.current; i++) {
+      let targetIndex = i;
+      if (targetIndex < 0) targetIndex += imageRefs.length;
+      images.push(imageRefs[targetIndex]?.current || null);
+    }
+    return images;
+  };
+
+  // Déterminer la couleur de fond selon le thème
+  const getBackgroundColor = () => {
+    const theme = blockData.theme || 'auto';
+    if (theme === 'light') {
+      return '#ffffff';
+    } else if (theme === 'dark') {
+      return '#050505';
+    } else {
+      // Auto : utiliser la variable CSS de la palette
+      return 'var(--background)';
+    }
+  };
+
+  const getTextColor = () => {
+    const theme = blockData.theme || 'auto';
+    if (theme === 'light') {
+      return '#000000';
+    } else if (theme === 'dark') {
+      return '#ffffff';
+    } else {
+      // Auto : utiliser la variable CSS de la palette
+      return 'var(--foreground)';
+    }
+  };
+
+  const sectionBaseStyle = {
+    width: '100vw',
+    height: sectionHeight,
+    position: 'relative' as const,
+    overflow: 'hidden' as const,
+    backgroundColor: getBackgroundColor(),
+    color: getTextColor(),
+    marginLeft: 'calc(-50vw + 50%)',
+    marginRight: 'calc(-50vw + 50%)',
+    marginTop: headerOffset ? -headerOffset : 0,
+    marginBottom: 0,
+    paddingTop: 0,
+    top: 0,
+    zIndex: 30,
+    cursor: 'none',
+  };
 
   if (images.length === 0) {
     return (
-      <section className="mouse-gallery-block" data-block-type="mouse-image-gallery">
+      <section
+        ref={sectionRef}
+        className="mouse-gallery-block"
+        data-block-type="mouse-image-gallery"
+        data-block-theme={blockData.theme || 'auto'}
+        data-transparent-header={blockData.transparentHeader ? 'true' : 'false'}
+        style={{
+          ...sectionBaseStyle,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <div className="mouse-gallery__empty">Ajoutez des images pour activer la galerie.</div>
       </section>
     );
@@ -137,99 +274,112 @@ export default function MouseImageGalleryBlock({ data }: { data: MouseImageGalle
 
   return (
     <section
-      ref={stageRef}
+      ref={sectionRef}
       className="mouse-gallery-block"
       data-block-type="mouse-image-gallery"
       data-block-theme={blockData.theme || 'auto'}
       data-transparent-header={blockData.transparentHeader ? 'true' : 'false'}
+      style={sectionBaseStyle}
     >
-      <div className="mouse-gallery__header">
+      <div className="mouse-gallery__header" style={{ color: getTextColor() }}>
         {blockData.title && <h1 className="mouse-gallery__title">{blockData.title}</h1>}
         {blockData.subtitle && <p className="mouse-gallery__subtitle">{blockData.subtitle}</p>}
       </div>
 
-      <div className="mouse-gallery__stage">
-        {images.map((img, idx) => (
-          <div
-            key={img.id || `mouse-image-${idx}`}
-            ref={(el) => {
-              if (el) imageRefs.current[idx] = el;
-            }}
-            className="mouse-gallery__item"
-          >
-            <img src={img.src} alt={img.alt || ''} loading="lazy" />
-          </div>
-        ))}
+      <div
+        ref={stageRef}
+        onMouseMove={manageMouseMove}
+        className="mouse-gallery__stage"
+      >
+        {images.map((img, idx) => {
+          // Calculer le style selon le ratio d'aspect (comme HeroFloatingGalleryBlock)
+          const getImageStyle = () => {
+            if (!img.aspectRatio || img.aspectRatio === 'auto') {
+              return {
+                width: '30vw',
+                height: 'auto',
+                objectFit: 'contain' as const,
+                objectPosition: 'center' as const,
+              };
+            }
+            // Convertir le ratio en valeur CSS (ex: '16:9' -> '16/9')
+            const ratio = img.aspectRatio.replace(':', '/');
+            return {
+              width: '30vw',
+              aspectRatio: ratio,
+              objectFit: 'cover' as const,
+              objectPosition: 'center' as const,
+            };
+          };
+          
+          return (
+            <img
+              key={img.id || `mouse-image-${idx}`}
+              ref={imageRefs[idx]}
+              src={img.src}
+              alt={img.alt || ''}
+              loading="lazy"
+              className="mouse-gallery__item"
+              style={getImageStyle()}
+            />
+          );
+        })}
       </div>
 
       <style jsx>{`
         .mouse-gallery-block {
-          position: relative;
-          min-height: 85vh;
-          overflow: hidden;
-          background: var(--background, #0f0f0f);
-          color: var(--foreground, #f7f7f7);
-          cursor: none;
+          /* Les styles sont maintenant dans sectionBaseStyle */
         }
         .mouse-gallery__header {
           position: relative;
           z-index: 2;
-          max-width: 960px;
-          padding: clamp(1.5rem, 4vw, 3rem);
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: clamp(2rem, 5vw, 4rem);
           pointer-events: none;
         }
         .mouse-gallery__title {
-          font-size: clamp(2.4rem, 5vw, 3.8rem);
-          letter-spacing: -0.04em;
-          line-height: 1.05;
-          margin: 0 0 0.5rem;
+          font-size: clamp(2.5rem, 6vw, 4.5rem);
+          font-weight: 400;
+          letter-spacing: -0.02em;
+          line-height: 1.1;
+          margin: 0 0 1rem;
         }
         .mouse-gallery__subtitle {
-          max-width: 60ch;
-          color: rgba(255, 255, 255, 0.7);
+          max-width: 65ch;
+          font-size: clamp(1rem, 1.5vw, 1.125rem);
+          opacity: 0.7;
           line-height: 1.6;
           margin: 0;
+          font-weight: 300;
         }
         .mouse-gallery__stage {
-          position: relative;
-          width: 100%;
-          height: 70vh;
-          pointer-events: none;
-        }
-        .mouse-gallery__item {
           position: absolute;
           top: 0;
           left: 0;
-          width: clamp(160px, 18vw, 280px);
-          aspect-ratio: 4 / 5;
-          border-radius: 20px;
-          overflow: hidden;
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
-          pointer-events: none;
-          opacity: 0;
-          transform: translate(-50%, -50%);
-          will-change: transform, opacity;
-        }
-        .mouse-gallery__item img {
           width: 100%;
           height: 100%;
-          object-fit: cover;
-          display: block;
+          overflow: hidden;
+        }
+        .mouse-gallery__item {
+          position: absolute;
+          display: none;
+          transform: translateX(-50%) translateY(-50%);
+          pointer-events: none;
+          max-width: 30vw;
         }
         .mouse-gallery__empty {
-          padding: 2rem;
+          padding: 4rem 2rem;
           text-align: center;
-          color: #888;
+          color: rgba(255, 255, 255, 0.4);
+          font-size: 1.125rem;
         }
         @media (max-width: 768px) {
           .mouse-gallery-block {
             cursor: default;
           }
           .mouse-gallery__item {
-            width: clamp(140px, 40vw, 220px);
-          }
-          .mouse-gallery__stage {
-            height: 60vh;
+            width: 40vw;
           }
         }
       `}</style>

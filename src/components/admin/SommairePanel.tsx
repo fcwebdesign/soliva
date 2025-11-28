@@ -343,7 +343,8 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
   };
 
   const keepHeroFirst = (sections: Section[]) => {
-    const heroIndex = sections.findIndex((s) => s.type === 'hero-floating-gallery');
+    const heroTypes = ['hero-floating-gallery', 'mouse-image-gallery'];
+    const heroIndex = sections.findIndex((s) => heroTypes.includes(s.type));
     if (heroIndex > 0) {
       const hero = sections[heroIndex];
       const rest = sections.filter((_, i) => i !== heroIndex);
@@ -359,7 +360,8 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
     if (over && active.id !== over.id) {
       const overSection = sectionsState.find(section => section.id === over.id);
       // Ne pas autoriser de drop au-dessus du hero
-      if (overSection?.type === 'hero-floating-gallery') {
+      const heroTypes = ['hero-floating-gallery', 'mouse-image-gallery'];
+      if (overSection?.type && heroTypes.includes(overSection.type)) {
         return;
       }
 
@@ -390,7 +392,8 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
     const isExpanded = expandedSections.has(section.id);
     const isSelected = selectedBlockId === section.id;
     const isHidden = hiddenBlockIds.has(section.id);
-    const isHeroFloating = section.type === 'hero-floating-gallery';
+    const heroTypes = ['hero-floating-gallery', 'mouse-image-gallery'];
+    const isHeroFloating = heroTypes.includes(section.type);
     
     return (
       <div key={section.id}>
@@ -511,7 +514,7 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
                     </button>
                   </HoverCardTrigger>
                   <HoverCardContent className="w-64 text-xs">
-                    Le bloc Hero Floating Gallery est fixé en première position et ne peut pas être déplacé. Ajoutez vos autres sections en dessous.
+                    Le bloc Hero est fixé en première position et ne peut pas être déplacé. Ajoutez vos autres sections en dessous.
                   </HoverCardContent>
                 </HoverCard>
               </div>

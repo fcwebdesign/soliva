@@ -59,13 +59,14 @@ export default function AdminPreviewPage() {
   const [isBlockSheetOpen, setIsBlockSheetOpen] = useState(false);
   const templateKey = previewData?._template || initialPageData?._template || adminContent?._template || 'soliva';
 
-  // Assurer le hero-floating-gallery en première position (et unique)
+  // Assurer les blocs hero en première position (et unique)
   const normalizeHeroFloating = (list: any[]) => {
-    const heroes = list.filter((b) => b.type === 'hero-floating-gallery');
+    const heroTypes = ['hero-floating-gallery', 'mouse-image-gallery'];
+    const heroes = list.filter((b) => heroTypes.includes(b.type));
     if (heroes.length === 0) return { blocks: list, moved: false };
 
     const primary = heroes[0];
-    const others = list.filter((b) => b !== primary && b.type !== 'hero-floating-gallery');
+    const others = list.filter((b) => b !== primary && !heroTypes.includes(b.type));
     const normalized = [primary, ...others];
     const moved = normalized[0] !== list[0] || heroes.length > 1 || normalized.length !== list.length;
     return { blocks: normalized, moved };
@@ -232,9 +233,10 @@ export default function AdminPreviewPage() {
   // Fonction pour ajouter un nouveau bloc
   const handleAddBlock = (blockType: string) => {
     try {
-      if (blockType === 'hero-floating-gallery' && blocks.some((b) => b.type === 'hero-floating-gallery')) {
+      const heroTypes = ['hero-floating-gallery', 'mouse-image-gallery'];
+      if (heroTypes.includes(blockType) && blocks.some((b) => heroTypes.includes(b.type))) {
         toast.info('Bloc Hero déjà présent', {
-          description: 'Le bloc Hero Floating Gallery doit rester unique et en première position.'
+          description: 'Un bloc Hero est déjà présent en première position.'
         });
         setIsBlockSheetOpen(false);
         return;

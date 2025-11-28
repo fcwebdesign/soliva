@@ -509,8 +509,10 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
     onUpdate(newData);
   };
 
-  const enforceHeroFloatingFirst = (list: Block[]) => {
-    const heroIndex = list.findIndex((b) => b.type === 'hero-floating-gallery');
+  const enforceHeroFirst = (list: Block[]) => {
+    // Chercher les blocs hero (hero-floating-gallery ou mouse-image-gallery)
+    const heroTypes = ['hero-floating-gallery', 'mouse-image-gallery'];
+    const heroIndex = list.findIndex((b) => heroTypes.includes(b.type));
     if (heroIndex > 0) {
       const hero = list[heroIndex];
       const rest = list.filter((_, i) => i !== heroIndex);
@@ -520,9 +522,10 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
   };
 
   const addBlock = (type: string) => {
-    // Limiter à un seul bloc hero-floating-gallery
-    if (type === 'hero-floating-gallery' && blocks.some((b) => b.type === 'hero-floating-gallery')) {
-      alert('Le bloc Hero Floating Gallery est déjà présent en première position.');
+    // Limiter à un seul bloc hero (hero-floating-gallery ou mouse-image-gallery)
+    const heroTypes = ['hero-floating-gallery', 'mouse-image-gallery'];
+    if (heroTypes.includes(type) && blocks.some((b) => heroTypes.includes(b.type))) {
+      alert('Un bloc Hero est déjà présent en première position.');
       setIsSheetOpen(false);
       return;
     }
@@ -531,9 +534,9 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
       // Créer automatiquement le bloc avec les bonnes données depuis le registre
       const newBlock = createAutoBlockInstance(type);
       
-      const newBlocks = type === 'hero-floating-gallery'
-        ? enforceHeroFloatingFirst([newBlock, ...blocks])
-        : enforceHeroFloatingFirst([...blocks, newBlock]);
+      const newBlocks = heroTypes.includes(type)
+        ? enforceHeroFirst([newBlock, ...blocks])
+        : enforceHeroFirst([...blocks, newBlock]);
       setBlocks(newBlocks);
       
       // Mémoriser l'ID du bloc créé pour le scroll
@@ -552,9 +555,10 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
         content: ''
       };
       
-      const newBlocks = type === 'hero-floating-gallery'
-        ? enforceHeroFloatingFirst([fallbackBlock, ...blocks])
-        : enforceHeroFloatingFirst([...blocks, fallbackBlock]);
+      const heroTypes = ['hero-floating-gallery', 'mouse-image-gallery'];
+      const newBlocks = heroTypes.includes(type)
+        ? enforceHeroFirst([fallbackBlock, ...blocks])
+        : enforceHeroFirst([...blocks, fallbackBlock]);
       setBlocks(newBlocks);
       
       // Mémoriser l'ID du bloc fallback pour le scroll
@@ -974,8 +978,9 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
 
   // Drag & drop natif
   const handleDragStart = (e: React.DragEvent, index: number) => {
-    // Empêcher le drag du hero-floating-gallery pour le maintenir en première position
-    if (blocks[index]?.type === 'hero-floating-gallery') {
+    // Empêcher le drag des blocs hero pour les maintenir en première position
+    const heroTypes = ['hero-floating-gallery', 'mouse-image-gallery'];
+    if (blocks[index]?.type && heroTypes.includes(blocks[index].type)) {
       e.preventDefault();
       return;
     }
@@ -993,10 +998,18 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
     e.preventDefault();
     if (draggedIndex === null || draggedIndex === dropIndex) return;
 
+    // Empêcher le drop au-dessus d'un bloc hero
+    const heroTypes = ['hero-floating-gallery', 'mouse-image-gallery'];
+    if (blocks[dropIndex]?.type && heroTypes.includes(blocks[dropIndex].type)) {
+      setDraggedIndex(null);
+      setDragOverIndex(null);
+      return;
+    }
+
     const newBlocks = [...blocks];
     const [draggedBlock] = newBlocks.splice(draggedIndex, 1);
     newBlocks.splice(dropIndex, 0, draggedBlock);
-    const cleanedBlocks = cleanInvalidBlocks(enforceHeroFloatingFirst(newBlocks));
+    const cleanedBlocks = cleanInvalidBlocks(enforceHeroFirst(newBlocks));
     setBlocks(cleanedBlocks);
     updateBlocksContent(cleanedBlocks);
     setDraggedIndex(null);
@@ -1983,7 +1996,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
               )}
               <div 
                 className="block-header"
-                draggable={block.type !== 'hero-floating-gallery'}
+                draggable={block.type !== 'hero-floating-gallery' && block.type !== 'mouse-image-gallery'}
                 onDragStart={(e) => handleDragStart(e, index)}
                 onDragEnd={handleDragEndNative}
               >
@@ -1991,7 +2004,7 @@ export default function BlockEditor({ pageData, pageKey, onUpdate, onShowArticle
                   ⋮⋮
                 </div>
                 <span className="block-type">{renderBlockTypeLabel(block.type)}</span>
-                {block.type === 'hero-floating-gallery' && (
+                {(block.type === 'hero-floating-gallery' || block.type === 'mouse-image-gallery') && (
                   <span className="ml-2 text-[11px] text-blue-600 font-medium">
                     Toujours en première position
                   </span>
