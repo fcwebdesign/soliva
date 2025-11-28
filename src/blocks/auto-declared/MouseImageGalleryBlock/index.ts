@@ -16,6 +16,7 @@ registerAutoBlock({
     speed: 60,
     theme: 'auto',
     transparentHeader: true,
+    initialImages: 3,
     images: [],
   },
 });

@@ -44,6 +44,7 @@ interface MouseImageGalleryData {
   transparentHeader?: boolean;
   speed?: number;
   maxImages?: number;
+  initialImages?: number; // Nombre d'images affichées au chargement (0-10)
   parallax?: {
     enabled?: boolean;
     speed?: number; // 0-1
@@ -559,6 +560,21 @@ export default function MouseImageGalleryEditor({
               </div>
             </div>
             <div>
+              <label className="block text-[10px] text-gray-400 mb-1">Images au chargement</label>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 -mx-2 px-2">
+                  <Slider
+                    min={0}
+                    max={10}
+                    step={1}
+                    value={[data.initialImages ?? 3]}
+                    onValueChange={(values) => updateField('initialImages', values[0])}
+                  />
+                </div>
+                <span className="text-[11px] text-gray-500 text-right flex-shrink-0">{data.initialImages ?? 3}</span>
+              </div>
+            </div>
+            <div>
               <label className="block text-[10px] text-gray-400 mb-1">Parallax (scroll)</label>
               <div className="flex items-center gap-2">
                 <Switch
@@ -724,6 +740,23 @@ export default function MouseImageGalleryEditor({
               </div>
               <span className="text-xs text-gray-500 w-12 text-right flex-shrink-0">
                 {data.maxImages ?? 8}
+              </span>
+            </div>
+          </div>
+          <div>
+            <Label className="text-sm font-medium text-gray-700">Images au chargement</Label>
+            <div className="flex items-center gap-3 mt-2">
+              <div className="flex-1 -mx-2 px-2">
+                <Slider
+                  min={0}
+                  max={10}
+                  step={1}
+                  value={[data.initialImages ?? 3]}
+                  onValueChange={(values) => updateField('initialImages', values[0])}
+                />
+              </div>
+              <span className="text-xs text-gray-500 w-12 text-right flex-shrink-0">
+                {data.initialImages ?? 3}
               </span>
             </div>
           </div>

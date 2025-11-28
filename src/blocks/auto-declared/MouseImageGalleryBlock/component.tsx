@@ -18,6 +18,7 @@ interface MouseImageGalleryData {
   transparentHeader?: boolean;
   speed?: number; // 0-100 (plus haut = plus réactif)
   maxImages?: number; // Nombre max d'images visibles
+  initialImages?: number; // Nombre d'images affichées au chargement (0-10)
   parallax?: {
     enabled?: boolean;
     speed?: number; // 0-1
@@ -146,6 +147,66 @@ export default function MouseImageGalleryBlock({ data }: { data: MouseImageGalle
       window.removeEventListener('resize', handleResize);
     };
   }, [parallaxEnabled, parallaxSpeed, imageRefs]);
+
+  // Afficher les images initiales au chargement pour habiller la page
+  useEffect(() => {
+    if (images.length === 0) return;
+    if (typeof window === 'undefined') return;
+
+    // Réinitialiser toutes les images d'abord
+    imageRefs.forEach((ref) => {
+      if (ref.current) {
+        ref.current.style.display = 'none';
+      }
+    });
+    nbOfImagesRef.current = 0;
+
+    const showInitialImages = () => {
+      if (!stageRef.current) return;
+
+      // Utiliser la valeur configurée ou 3 par défaut
+      const configuredInitial = typeof blockData.initialImages === 'number' ? blockData.initialImages : 3;
+      const numInitialImages = Math.min(Math.max(0, configuredInitial), images.length);
+      
+      // Si 0, ne rien afficher
+      if (numInitialImages === 0) {
+        currentIndexRef.current = 0;
+        return;
+      }
+
+      const initialIndices = [...Array(numInitialImages).keys()]; // Les N premières : 0, 1, 2, ...
+
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+
+      initialIndices.forEach((imgIndex, idx) => {
+        const imageRef = imageRefs[imgIndex];
+        if (!imageRef?.current) return;
+
+        // Position aléatoire dans le viewport (éviter les bords)
+        const margin = 150; // Marge pour éviter les bords
+        const randomX = margin + Math.random() * (viewportWidth - margin * 2);
+        const randomY = margin + Math.random() * (viewportHeight - margin * 2);
+
+        // Positionner l'image
+        imageRef.current.style.left = randomX + 'px';
+        imageRef.current.style.top = randomY + 'px';
+        imageRef.current.style.display = 'block';
+        imageRef.current.style.zIndex = idx.toString();
+
+        // Mettre à jour les compteurs pour suivre les images visibles
+        nbOfImagesRef.current++;
+      });
+
+      // Initialiser currentIndexRef pour continuer après les images initiales
+      // On commence après le dernier index utilisé pour éviter les conflits
+      currentIndexRef.current = numInitialImages % images.length;
+    };
+
+    // Attendre un peu pour que le layout soit prêt
+    const timeout = setTimeout(showInitialImages, 100);
+    return () => clearTimeout(timeout);
+  }, [images.length, imageRefs, blockData.initialImages]);
 
   const manageMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const { clientX, clientY, movementX, movementY } = e;
