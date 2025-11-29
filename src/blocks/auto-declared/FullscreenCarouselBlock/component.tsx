@@ -187,14 +187,14 @@ export default function FullscreenCarouselBlock({ data }: { data: FullscreenCaro
         } : {}),
         backgroundColor: getBackgroundColor(),
         color: getTextColor(),
-        marginTop: 'var(--section)',
+        marginTop: isFullscreen ? 0 : 'var(--section)',
       }}
     >
       <div
         className="fullscreen-carousel__inner"
         style={{
           padding: isFullscreen
-            ? 'clamp(1.5rem, 3vw, 3.5rem) clamp(0.5rem, 1vw, 1.25rem)'
+            ? '0'
             : 'clamp(1.5rem, 3vw, 3.5rem)',
           display: 'flex',
           flexDirection: 'column',
