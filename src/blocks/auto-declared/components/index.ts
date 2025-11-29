@@ -14,4 +14,4 @@ export { default as AspectRatioSelect } from './AspectRatioSelect';
 export type { AspectRatioValue } from './AspectRatioSelect';
 export { default as SortableImageItem } from './SortableImageItem';
 export type { ImageItemData } from './SortableImageItem';
-
+export { default as ImageListEditor } from './ImageListEditor';
