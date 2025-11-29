@@ -50,6 +50,9 @@ export default function TwoImagesBlock({ data }: { data: TwoImagesData | any }) 
   const firstImage = isReversed ? rightImage : leftImage; // Toujours la petite
   const secondImage = isReversed ? leftImage : rightImage; // Toujours la grande
   const firstIsSmall = true; // La première est toujours la petite
+  const firstColOrder = isReversed ? 'md:order-2' : 'md:order-1';
+  const secondColOrder = isReversed ? 'md:order-1' : 'md:order-2';
+  
 
   return (
     <section 
@@ -58,52 +61,36 @@ export default function TwoImagesBlock({ data }: { data: TwoImagesData | any }) 
       data-block-theme={blockData.theme || 'auto'}
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 items-start min-h-0">
-        {/* Première image (gauche si normal, droite si inversé) */}
+        {/* Première image (gauche si normal, droite si inversé) - TOUJOURS LA PETITE */}
         {firstImage?.src && (() => {
           // Récupérer les données de la bonne image selon l'inversion
           const imageData = isReversed ? blockData.rightImage : blockData.leftImage;
           const getImageStyle = () => {
             if (!imageData?.aspectRatio || imageData.aspectRatio === 'auto') {
-              return { className: firstIsSmall ? 'w-full md:max-w-sm h-auto object-contain' : 'w-full h-auto object-contain' };
+              return { className: 'w-full md:max-w-sm h-auto object-contain' };
             }
             // Convertir le ratio en valeur CSS (ex: '16:9' -> '16/9')
             const ratio = imageData.aspectRatio.replace(':', '/');
             return {
-              className: firstIsSmall ? 'w-full md:max-w-sm object-cover' : 'w-full object-cover',
+              className: 'w-full md:max-w-sm object-cover',
               style: { aspectRatio: ratio }
             };
           };
           const imageStyle = getImageStyle();
           
-          // Si c'est la petite image, appliquer les alignements
-          if (firstIsSmall) {
-            const horizontalAlign = imageData?.alignHorizontal ?? 'left';
-            const justifyClass = 
-              horizontalAlign === 'left' ? 'justify-start' :
-              horizontalAlign === 'center' ? 'justify-center' :
-              'justify-end';
-            
-            const verticalAlign = imageData?.alignVertical ?? 'center';
-            const itemsClass = 
-              verticalAlign === 'top' ? 'items-start' :
-              verticalAlign === 'center' ? 'items-center' :
-              'items-end';
-            
-            return (
-              <div className={`flex ${itemsClass} ${justifyClass} w-full h-full`}>
-                <img 
-                  src={firstImage.src} 
-                  alt={firstImage.alt || ''} 
-                  className={imageStyle.className}
-                  style={imageStyle.style}
-                  loading="lazy"
-                />
-              </div>
-            );
-          }
+          // La première image est TOUJOURS la petite
+          // SOLUTION SIMPLE : Toujours centrer la petite image
+          const justifyClass = 'justify-center';
+          
+          const verticalAlign = imageData?.alignVertical ?? 'center';
+          const itemsClass = 
+            verticalAlign === 'top' ? 'items-start' :
+            verticalAlign === 'center' ? 'items-center' :
+            'items-end';
+          
           
           return (
-            <div className="flex items-center justify-center w-full">
+            <div className={`flex ${itemsClass} ${justifyClass} w-full h-full ${firstColOrder}`}>
               <img 
                 src={firstImage.src} 
                 alt={firstImage.alt || ''} 
@@ -146,7 +133,7 @@ export default function TwoImagesBlock({ data }: { data: TwoImagesData | any }) 
             'items-end';
           
           return (
-            <div className={`flex ${itemsClass} ${justifyClass} w-full h-full`}>
+            <div className={`flex ${itemsClass} ${justifyClass} w-full h-full ${secondColOrder}`}>
               <img 
                 src={secondImage.src} 
                 alt={secondImage.alt || ''} 
@@ -158,7 +145,7 @@ export default function TwoImagesBlock({ data }: { data: TwoImagesData | any }) 
           );
           
           return (
-            <div className="flex items-center justify-center w-full">
+            <div className={`flex items-center justify-center w-full ${secondColOrder}`}>
               <img 
                 src={secondImage.src} 
                 alt={secondImage.alt || ''} 
@@ -173,4 +160,3 @@ export default function TwoImagesBlock({ data }: { data: TwoImagesData | any }) 
     </section>
   );
 }
-
