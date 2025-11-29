@@ -266,11 +266,11 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
   }
 
   // Déterminer quel bloc doit avoir le H1 (le premier page-intro ou hero)
-  const headingBlocks = ['page-intro', 'hero', 'hero-floating-gallery'];
+  const headingBlocks = ['page-intro', 'hero', 'hero-floating-gallery', 'hero-simple'];
   
   // Trouver le premier bloc hero visible (pas masqué)
   const firstVisibleHeroIndex = blocks.findIndex(b => 
-    ['hero', 'hero-floating-gallery'].includes(b.type) && !(b as any).hidden
+    ['hero', 'hero-floating-gallery', 'hero-simple'].includes(b.type) && !(b as any).hidden
   );
   const hasVisibleHero = firstVisibleHeroIndex !== -1;
   

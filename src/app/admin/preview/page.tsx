@@ -61,7 +61,7 @@ export default function AdminPreviewPage() {
 
   // Assurer les blocs hero en première position (et unique)
   const normalizeHeroFloating = (list: any[]) => {
-    const heroTypes = ['hero-floating-gallery', 'mouse-image-gallery'];
+    const heroTypes = ['hero-floating-gallery', 'mouse-image-gallery', 'hero-simple'];
     const heroes = list.filter((b) => heroTypes.includes(b.type));
     if (heroes.length === 0) return { blocks: list, moved: false };
 
@@ -233,7 +233,7 @@ export default function AdminPreviewPage() {
   // Fonction pour ajouter un nouveau bloc
   const handleAddBlock = (blockType: string) => {
     try {
-      const heroTypes = ['hero-floating-gallery', 'mouse-image-gallery'];
+      const heroTypes = ['hero-floating-gallery', 'mouse-image-gallery', 'hero-simple'];
       if (heroTypes.includes(blockType) && blocks.some((b) => heroTypes.includes(b.type))) {
         toast.info('Bloc Hero déjà présent', {
           description: 'Un bloc Hero est déjà présent en première position.'

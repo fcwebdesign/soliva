@@ -123,19 +123,20 @@ body:not(.admin-page) .site [data-theme="dark"] h3 {
 
 /* Global section spacing: top-only (front only, all templates) */
 body:not(.admin-page) section[data-block-type] {
-  padding-top: var(--section);
+  margin-top: var(--section);
   padding-bottom: 0 !important;
 }
 
-/* Évite le double padding quand un layout applique déjà un padding global :
-   le premier bloc ne rajoute pas de padding-top supplémentaire. */
+/* Évite le double margin quand un layout applique déjà un margin global :
+   le premier bloc ne rajoute pas de margin-top supplémentaire. */
 body:not(.admin-page) .blocks-container > section[data-block-type]:first-of-type {
-  padding-top: 0 !important;
+  margin-top: 0 !important;
 }
 
 /* Blocs hero fullscreen : pas de padding, vont jusqu'en haut */
 body:not(.admin-page) section[data-block-type="hero-floating-gallery"],
-body:not(.admin-page) section[data-block-type="mouse-image-gallery"] {
+body:not(.admin-page) section[data-block-type="mouse-image-gallery"],
+body:not(.admin-page) section[data-block-type="hero-simple"] {
   padding-top: 0 !important;
   margin-top: 0 !important;
 }
@@ -143,13 +144,15 @@ body:not(.admin-page) section[data-block-type="mouse-image-gallery"] {
 
 /* Retirer le padding-top du main quand le premier bloc est hero-floating-gallery */
 body:not(.admin-page) main:has(> .blocks-container > section[data-block-type="hero-floating-gallery"]:first-of-type),
-body:not(.admin-page) main:has(> .blocks-container > section[data-block-type="mouse-image-gallery"]:first-of-type) {
+body:not(.admin-page) main:has(> .blocks-container > section[data-block-type="mouse-image-gallery"]:first-of-type),
+body:not(.admin-page) main:has(> .blocks-container > section[data-block-type="hero-simple"]:first-of-type) {
   padding-top: 0 !important;
 }
 
 /* S'assurer que le bloc hero-floating-gallery commence vraiment en haut et passe derrière le header */
 body:not(.admin-page) section[data-block-type="hero-floating-gallery"]:first-of-type,
-body:not(.admin-page) section[data-block-type="mouse-image-gallery"]:first-of-type {
+body:not(.admin-page) section[data-block-type="mouse-image-gallery"]:first-of-type,
+body:not(.admin-page) section[data-block-type="hero-simple"]:first-of-type {
   position: relative;
   top: 0;
 }

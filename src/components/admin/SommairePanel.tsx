@@ -343,7 +343,7 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
   };
 
   const keepHeroFirst = (sections: Section[]) => {
-    const heroTypes = ['hero-floating-gallery', 'mouse-image-gallery'];
+    const heroTypes = ['hero-floating-gallery', 'mouse-image-gallery', 'hero-simple'];
     const heroIndex = sections.findIndex((s) => heroTypes.includes(s.type));
     if (heroIndex > 0) {
       const hero = sections[heroIndex];
@@ -360,7 +360,7 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
     if (over && active.id !== over.id) {
       const overSection = sectionsState.find(section => section.id === over.id);
       // Ne pas autoriser de drop au-dessus du hero
-      const heroTypes = ['hero-floating-gallery', 'mouse-image-gallery'];
+      const heroTypes = ['hero-floating-gallery', 'mouse-image-gallery', 'hero-simple'];
       if (overSection?.type && heroTypes.includes(overSection.type)) {
         return;
       }
@@ -392,7 +392,7 @@ export default function SommairePanel({ className = "", blocks = [], onSelectBlo
     const isExpanded = expandedSections.has(section.id);
     const isSelected = selectedBlockId === section.id;
     const isHidden = hiddenBlockIds.has(section.id);
-    const heroTypes = ['hero-floating-gallery', 'mouse-image-gallery'];
+    const heroTypes = ['hero-floating-gallery', 'mouse-image-gallery', 'hero-simple'];
     const isHeroFloating = heroTypes.includes(section.type);
     
     return (
