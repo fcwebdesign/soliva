@@ -423,20 +423,21 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
         ) : (
           <div className="relative">
             <div className="overflow-hidden" ref={emblaRef}>
-              <div className="flex gap-8 pr-4">
+              <div className={`flex gap-8 ${
+                columns === 2 ? 'md:pr-8 lg:pr-8' :
+                columns === 4 ? 'md:pr-8 lg:pr-24' :
+                'md:pr-8 lg:pr-16'
+              }`}>
                 {displayedProjects.map((project) => {
                   // Ajuster la base pour compenser le gap afin que le dernier slide ne soit pas rogné
-                  const base =
-                    columns === 2
-                      ? 'calc(50% - var(--gap, 2rem))'
-                      : columns === 4
-                      ? 'calc(25% - var(--gap, 2rem))'
-                      : 'calc(33.333% - var(--gap, 2rem))';
                   return (
                     <div
                       key={project.id}
-                      className="flex-none w-full"
-                      style={{ flexBasis: base }}
+                      className={`flex-none w-full ${
+                        columns === 2 ? 'md:w-1/2 lg:w-1/2' :
+                        columns === 4 ? 'md:w-1/2 lg:w-1/4' :
+                        'md:w-1/2 lg:w-1/3'
+                      }`}
                     >
                       {renderProject(project)}
                     </div>
