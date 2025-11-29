@@ -26,10 +26,11 @@ import './TwoImagesBlock';
 import './MouseImageGalleryBlock';
 import './InfiniteTextScrollBlock';
 import './HeroSimpleBlock';
+import './FullscreenCarouselBlock';
 
 // Pour ajouter un nouveau bloc :
 // 1. Créer un dossier src/blocks/auto-declared/MonBloc/
 // 2. Exécuter: npm run generate-blocks
 // 3. C'est tout !
 
-// 21 blocs auto-déclarés disponibles
+// 22 blocs auto-déclarés disponibles
