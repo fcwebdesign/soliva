@@ -159,7 +159,6 @@ export default function FullscreenCarouselBlock({ data }: { data: FullscreenCaro
           <h2
             className="fullscreen-carousel__title"
             style={{
-              textAlign: 'center',
               fontSize: 'clamp(1.5rem, 4vw, 2.75rem)',
               margin: 0,
             }}

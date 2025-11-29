@@ -141,6 +141,17 @@ body:not(.admin-page) section[data-block-type="hero-simple"] {
   margin-top: 0 !important;
 }
 
+/* Forcer le padding à 0 pour le carousel en mode fullscreen */
+section[data-block-type="fullscreen-carousel"][data-fullscreen="true"] .fullscreen-carousel__inner,
+body:not(.admin-page) section[data-block-type="fullscreen-carousel"][data-fullscreen="true"] .fullscreen-carousel__inner {
+  padding: 0 !important;
+}
+
+/* Laisser la marge globale pour le fullscreen-carousel (bord à bord mais espacé comme les autres sections) */
+body:not(.admin-page) section[data-block-type="fullscreen-carousel"][data-fullscreen="true"] {
+  margin-top: var(--section);
+}
+
 
 /* Retirer le padding-top du main quand le premier bloc est hero-floating-gallery */
 body:not(.admin-page) main:has(> .blocks-container > section[data-block-type="hero-floating-gallery"]:first-of-type),
