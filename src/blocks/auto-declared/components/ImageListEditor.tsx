@@ -41,6 +41,8 @@ export default function ImageListEditor<T extends ImageItemData>({
   defaultAspectRatio = 'auto',
   altPlaceholder = 'Description (alt text)',
 }: ImageListEditorProps<T>) {
+  const [openSelect, setOpenSelect] = useState<string | null>(null);
+  
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } })
@@ -109,6 +111,12 @@ export default function ImageListEditor<T extends ImageItemData>({
                     compact
                     onUpdate={(field, value) => updateItem(idx, { [field]: value } as Partial<T>)}
                     onRemove={() => removeItem(idx)}
+                    onToggleVisibility={() => {
+                      const current = normalizedItems[idx];
+                      updateItem(idx, { hidden: !current.hidden } as Partial<T>);
+                    }}
+                    openSelect={openSelect}
+                    onOpenSelectChange={setOpenSelect}
                     compactFields={[
                       { key: 'alt', placeholder: altPlaceholder },
                     ]}
@@ -117,9 +125,14 @@ export default function ImageListEditor<T extends ImageItemData>({
               </SortableContext>
             </DndContext>
           )}
-          <Button type="button" size="sm" variant="outline" onClick={addItem} className="w-full text-[12px]">
-            <Plus className="h-3 w-3 mr-1" /> Ajouter une image
-          </Button>
+          <button
+            type="button"
+            onClick={addItem}
+            className="w-full px-2 py-2 text-xs border border-dashed border-gray-300 rounded text-gray-500 hover:text-gray-700 hover:border-gray-400 hover:bg-gray-50 transition-colors"
+          >
+            <Plus className="h-3 w-3 inline mr-1" />
+            Ajouter une image
+          </button>
         </div>
       </div>
     );
@@ -148,6 +161,12 @@ export default function ImageListEditor<T extends ImageItemData>({
                 compact={false}
                 onUpdate={(field, value) => updateItem(idx, { [field]: value } as Partial<T>)}
                 onRemove={() => removeItem(idx)}
+                onToggleVisibility={() => {
+                  const current = normalizedItems[idx];
+                  updateItem(idx, { hidden: !current.hidden } as Partial<T>);
+                }}
+                openSelect={openSelect}
+                onOpenSelectChange={setOpenSelect}
               />
             ))}
             {!normalizedItems.length && (

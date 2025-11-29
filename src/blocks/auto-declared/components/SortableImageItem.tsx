@@ -159,10 +159,10 @@ export default function SortableImageItem<T extends ImageItemData>({
                     e.stopPropagation();
                     onRemove();
                   }}
-                  className="p-1 hover:bg-red-50 rounded transition-colors"
+                  className="cursor-pointer flex-shrink-0 p-0.5"
                   title="Supprimer"
                 >
-                  <Trash2 className="w-3 h-3 text-red-500" />
+                  <Trash2 className="w-3 h-3 text-gray-400 hover:text-red-500" />
                 </button>
               )}
             </div>

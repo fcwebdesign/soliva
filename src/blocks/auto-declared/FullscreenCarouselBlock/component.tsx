@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useMemo, useRef, useEffect, useState } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { ReusableImage, ImageData, ImageItemData, AspectRatioValue } from '@/blocks/auto-declared/components';
-import { useContentUpdate } from '../../../hooks/useContentUpdate';
+import { getTypographyConfig, getTypographyClasses, getCustomLineHeight, getCustomColor, defaultTypography } from '@/utils/typography';
+import { useContentUpdate, fetchContentWithNoCache } from '../../../hooks/useContentUpdate';
+import useEmblaCarousel from 'embla-carousel-react';
 
 interface CarouselImage extends ImageItemData {
   aspectRatio?: AspectRatioValue | string;
@@ -32,9 +34,37 @@ export default function FullscreenCarouselBlock({ data }: { data: FullscreenCaro
     }
     return result;
   }, [data]);
-  
+  const [fullContent, setFullContent] = useState<any>(null);
+
+  // Charger la typographie globale
+  useEffect(() => {
+    const loadContent = async () => {
+      try {
+        const res = await fetchContentWithNoCache('/api/content/metadata');
+        if (res.ok) {
+          const json = await res.json();
+          setFullContent(json);
+        }
+      } catch {
+        // silencieux
+      }
+    };
+    loadContent();
+  }, []);
+
   useContentUpdate(() => {
-    // Le useMemo se mettra à jour automatiquement
+    const reload = async () => {
+      try {
+        const res = await fetchContentWithNoCache('/api/content/metadata');
+        if (res.ok) {
+          const json = await res.json();
+          setFullContent(json);
+        }
+      } catch {
+        // silencieux
+      }
+    };
+    reload();
   });
 
   // Filtrer les images cachées (comme ImageBlock)
@@ -42,16 +72,12 @@ export default function FullscreenCarouselBlock({ data }: { data: FullscreenCaro
     const allImages = blockData.images || [];
     return allImages.filter((img: CarouselImage) => !img.hidden && img.src);
   }, [blockData.images]);
-
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const trackRef = useRef<HTMLDivElement | null>(null);
-  const pointer = useRef<{ dragging: boolean; startX: number; startTranslate: number; pointerId: number | null }>({
-    dragging: false,
-    startX: 0,
-    startTranslate: 0,
-    pointerId: null,
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: 'start',
+    containScroll: 'trimSnaps',
+    dragFree: false,
+    loop: true,
   });
-  const [translate, setTranslate] = useState(0);
 
   const getBackgroundColor = () => {
     const theme = blockData.theme || 'auto';
@@ -66,55 +92,50 @@ export default function FullscreenCarouselBlock({ data }: { data: FullscreenCaro
     return 'var(--foreground)';
   };
 
-  const clampTranslate = (value: number) => {
-    const containerWidth = containerRef.current?.offsetWidth || 0;
-    const trackWidth = trackRef.current?.scrollWidth || 0;
-    if (trackWidth <= containerWidth) return 0;
-    const min = containerWidth - trackWidth;
-    return Math.min(0, Math.max(value, min));
-  };
+  // Typographie H2 (titre)
+  const typoConfig = useMemo(() => (fullContent ? getTypographyConfig(fullContent) : {}), [fullContent]);
+  const titleClasses = useMemo(() => {
+    const safe = (typoConfig as any)?.h2 ? { h2: (typoConfig as any).h2 } : {};
+    const classes = getTypographyClasses('h2', safe as any, defaultTypography.h2);
+    return classes
+      .replace(/\btext-(gray|black|white|red|blue|green|yellow|purple|pink|indigo|orange)-\d+\b/g, '')
+      .replace(/\btext-(gray|black|white|red|blue|green|yellow|purple|pink|indigo|orange)\b/g, '')
+      .replace(/\btext-foreground\b/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }, [typoConfig]);
+  const titleLineHeight = useMemo(() => getCustomLineHeight('h2', typoConfig as any), [typoConfig]);
+  const titleColor = useMemo(() => {
+    const custom = getCustomColor('h2', typoConfig as any);
+    if (custom) return custom;
+    return 'var(--foreground)';
+  }, [typoConfig]);
+  const [atStart, setAtStart] = useState(true);
+  const [atEnd, setAtEnd] = useState(false);
 
-  const handleNext = () => {
-    const containerWidth = containerRef.current?.offsetWidth || 0;
-    setTranslate((prev) => clampTranslate(prev - containerWidth * 0.5));
-  };
-  const handlePrev = () => {
-    const containerWidth = containerRef.current?.offsetWidth || 0;
-    setTranslate((prev) => clampTranslate(prev + containerWidth * 0.5));
-  };
+  const handleNext = () => emblaApi?.scrollNext();
+  const handlePrev = () => emblaApi?.scrollPrev();
 
+  // Mettre à jour les états de bord pour styler les flèches (inactif en bout de piste)
   useEffect(() => {
-    setTranslate(0);
-  }, [images]);
-
-  useEffect(() => {
-    const onPointerMove = (e: PointerEvent) => {
-      if (!pointer.current.dragging) return;
-      const delta = e.clientX - pointer.current.startX;
-      setTranslate(clampTranslate(pointer.current.startTranslate + delta));
+    if (!emblaApi) return;
+    const update = () => {
+      setAtStart(!emblaApi.canScrollPrev());
+      setAtEnd(!emblaApi.canScrollNext());
     };
-    const onPointerUp = () => {
-      pointer.current.dragging = false;
-      if (pointer.current.pointerId !== null) {
-        containerRef.current?.releasePointerCapture(pointer.current.pointerId);
-      }
-      pointer.current.pointerId = null;
-    };
-    window.addEventListener('pointermove', onPointerMove);
-    window.addEventListener('pointerup', onPointerUp);
+    emblaApi.on('select', update);
+    emblaApi.on('reInit', update);
+    update();
     return () => {
-      window.removeEventListener('pointermove', onPointerMove);
-      window.removeEventListener('pointerup', onPointerUp);
+      emblaApi.off('select', update);
+      emblaApi.off('reInit', update);
     };
-  }, []);
+  }, [emblaApi]);
 
-  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    pointer.current.dragging = true;
-    pointer.current.startX = e.clientX;
-    pointer.current.startTranslate = translate;
-    pointer.current.pointerId = e.pointerId;
-    e.currentTarget.setPointerCapture(e.pointerId);
-  };
+  // Réinitialiser Embla quand la liste d'images change
+  useEffect(() => {
+    emblaApi?.reInit();
+  }, [images, emblaApi]);
 
   // Vérifier si on a des images
   if (images.length === 0) {
@@ -147,44 +168,101 @@ export default function FullscreenCarouselBlock({ data }: { data: FullscreenCaro
       <div
         className="fullscreen-carousel__inner"
         style={{
-          padding: isFullscreen ? '0' : 'clamp(1.5rem, 3vw, 3.5rem)',
+          // Pas de padding vertical : la section a déjà la marge globale.
+          // En mode non fullscreen, on suit strictement le padding horizontal global (sans fallback clamp).
+          padding: isFullscreen ? '0' : '0 var(--container-padding, 0)',
           display: 'flex',
           flexDirection: 'column',
-          gap: 'clamp(1rem, 2vw, 2rem)',
+          gap: 0,
         }}
       >
         {blockData.title && (
-          <h2
-            className="fullscreen-carousel__title"
+          <div
+            className="fullscreen-carousel__title-container mx-auto px-4 sm:px-6 lg:px-8 mb-12 flex items-center justify-between gap-4 flex-wrap"
             style={{
-              fontSize: 'clamp(1.5rem, 4vw, 2.75rem)',
-              margin: 0,
+              width: '100%',
+              maxWidth: 'var(--max-width)',
             }}
           >
-            {blockData.title}
-          </h2>
+            <h2
+              className={`fullscreen-carousel__title ${titleClasses}`}
+              style={{
+                margin: 0,
+                color: titleColor,
+                ...(titleLineHeight ? { lineHeight: titleLineHeight } : {}),
+              }}
+            >
+              {blockData.title}
+            </h2>
+
+            <div
+              className="fullscreen-carousel__nav"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.75rem',
+              }}
+            >
+              <button
+                type="button"
+                onClick={handlePrev}
+                aria-label="Image précédente"
+                className={`fullscreen-carousel__nav-btn ${atStart ? 'is-disabled' : ''}`}
+                disabled={atStart}
+                style={{
+                  backgroundColor: atStart ? 'var(--muted)' : 'var(--primary)',
+                  color: atStart ? 'var(--muted-foreground)' : 'var(--primary-foreground)',
+                  border: atStart ? '1px solid var(--border)' : 'none',
+                  opacity: atStart ? 0.5 : 1,
+                  cursor: atStart ? 'not-allowed' : 'pointer',
+                }}
+              >
+                ←
+              </button>
+              <button
+                type="button"
+                onClick={handleNext}
+                aria-label="Image suivante"
+                className={`fullscreen-carousel__nav-btn ${atEnd ? 'is-disabled' : ''}`}
+                disabled={atEnd}
+                style={{
+                  backgroundColor: atEnd ? 'var(--muted)' : 'var(--primary)',
+                  color: atEnd ? 'var(--muted-foreground)' : 'var(--primary-foreground)',
+                  border: atEnd ? '1px solid var(--border)' : 'none',
+                  opacity: atEnd ? 0.5 : 1,
+                  cursor: atEnd ? 'not-allowed' : 'pointer',
+                }}
+              >
+                →
+              </button>
+            </div>
+          </div>
         )}
 
         <div
-          ref={containerRef}
           className="fullscreen-carousel__viewport"
-          onPointerDown={handlePointerDown}
           style={{
             overflow: 'hidden',
             cursor: 'grab',
+            userSelect: 'auto',
           }}
+          ref={emblaRef}
         >
           <div
-            ref={trackRef}
             className="fullscreen-carousel__track"
             style={{
               display: 'flex',
               gap: blockData.gap === 'small' ? 'var(--gap-sm, 1rem)' : 
                    blockData.gap === 'large' ? 'var(--gap-lg, 3rem)' : 
                    'var(--gap, 2rem)',
-              transform: `translateX(${translate}px)`,
-              transition: pointer.current.dragging ? 'none' : 'transform 0.25s ease',
-              willChange: 'transform',
+              // Garder un espace de part et d'autre, même en loop
+              paddingLeft: blockData.gap === 'small' ? 'var(--gap-sm, 1rem)' :
+                           blockData.gap === 'large' ? 'var(--gap-lg, 3rem)' :
+                           'var(--gap, 2rem)',
+              paddingRight: blockData.gap === 'small' ? 'var(--gap-sm, 1rem)' :
+                            blockData.gap === 'large' ? 'var(--gap-lg, 3rem)' :
+                            'var(--gap, 2rem)',
             }}
           >
             {images.map((img, idx) => {
@@ -246,32 +324,6 @@ export default function FullscreenCarouselBlock({ data }: { data: FullscreenCaro
           </div>
         </div>
 
-        <div
-          className="fullscreen-carousel__nav"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '1.25rem',
-          }}
-        >
-          <button
-            type="button"
-            onClick={handlePrev}
-            aria-label="Image précédente"
-            className="fullscreen-carousel__nav-btn"
-          >
-            ←
-          </button>
-          <button
-            type="button"
-            onClick={handleNext}
-            aria-label="Image suivante"
-            className="fullscreen-carousel__nav-btn"
-          >
-            →
-          </button>
-        </div>
       </div>
 
       <style jsx>{`
@@ -282,8 +334,6 @@ export default function FullscreenCarouselBlock({ data }: { data: FullscreenCaro
           padding: 0 !important;
         }
         .fullscreen-carousel__nav-btn {
-          background: transparent;
-          border: 1px solid currentColor;
           border-radius: 9999px;
           width: 42px;
           height: 42px;
@@ -291,12 +341,14 @@ export default function FullscreenCarouselBlock({ data }: { data: FullscreenCaro
           align-items: center;
           justify-content: center;
           font-size: 18px;
-          cursor: pointer;
-          transition: background 0.2s ease, color 0.2s ease;
+          transition: transform 0.2s ease, opacity 0.2s ease;
         }
-        .fullscreen-carousel__nav-btn:hover {
-          background: currentColor;
-          color: ${getBackgroundColor()};
+        .fullscreen-carousel__nav-btn:not(.is-disabled):hover {
+          transform: scale(1.05);
+          opacity: 0.9;
+        }
+        .fullscreen-carousel__nav-btn.is-disabled {
+          pointer-events: none;
         }
       `}</style>
     </section>

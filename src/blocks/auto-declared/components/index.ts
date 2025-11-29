@@ -15,3 +15,5 @@ export type { AspectRatioValue } from './AspectRatioSelect';
 export { default as SortableImageItem } from './SortableImageItem';
 export type { ImageItemData } from './SortableImageItem';
 export { default as ImageListEditor } from './ImageListEditor';
+export { default as ReusableImage, type ImageData } from './ReusableImage';
+export { default as ImageEditorField } from './ImageEditorField';

@@ -526,6 +526,19 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
             theme: (block as any).theme || 'auto',
             isFirstHeading // Passer la prop pour gérer H1 vs H2
           };
+          // Debug temporaire pour fullscreen-carousel
+          if ((block as any).type === 'fullscreen-carousel' && process.env.NODE_ENV !== 'production') {
+            console.log('🔍 [BlockRenderer] fullscreen-carousel block data:', {
+              'block.fullscreen': (block as any).fullscreen,
+              'block.gap': (block as any).gap,
+              'data.fullscreen': (data as any).fullscreen,
+              'data.gap': (data as any).gap,
+              'block keys': Object.keys(block),
+              'data keys': Object.keys(data),
+              'full block': block,
+              'full data': data
+            });
+          }
           const blockElement = <BlockComponent key={block.id} data={data} />;
           const wrapped = wrapWithAnimation(blockElement, block.type);
           if (withDebugIds) {

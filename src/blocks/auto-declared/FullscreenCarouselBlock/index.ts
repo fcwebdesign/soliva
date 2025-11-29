@@ -19,5 +19,7 @@ registerAutoBlock({
       { src: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1200&q=80', alt: 'Image 4' },
     ],
     theme: 'auto',
+    gap: 'medium',
+    fullscreen: false,
   },
 });
