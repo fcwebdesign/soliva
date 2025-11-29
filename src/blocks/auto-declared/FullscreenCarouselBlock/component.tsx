@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useMemo, useRef, useEffect, useState } from 'react';
+import Image from 'next/image';
+import { ImageItemData, AspectRatioValue } from '@/blocks/auto-declared/components';
 
-interface CarouselImage {
-  src?: string;
-  alt?: string;
+interface CarouselImage extends ImageItemData {
+  aspectRatio?: AspectRatioValue | string;
 }
 
 interface FullscreenCarouselData {
@@ -153,7 +154,7 @@ export default function FullscreenCarouselBlock({ data }: { data: FullscreenCaro
                 style={{
                   minWidth: 'clamp(220px, 23vw, 420px)',
                   maxWidth: 'clamp(220px, 23vw, 420px)',
-                  height: 'clamp(240px, 32vw, 520px)',
+                  height: img?.aspectRatio && img.aspectRatio !== 'auto' ? 'auto' : 'clamp(240px, 32vw, 520px)',
                   overflow: 'hidden',
                   borderRadius: '8px',
                   backgroundColor: 'var(--muted, #f4f4f4)',
@@ -162,17 +163,27 @@ export default function FullscreenCarouselBlock({ data }: { data: FullscreenCaro
                 }}
               >
                 {img?.src ? (
-                  <img
-                    src={img.src}
-                    alt={img.alt || ''}
+                  <div
+                    className="fullscreen-carousel__image-wrapper"
                     style={{
+                      position: 'relative',
                       width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      display: 'block',
+                      height: img?.aspectRatio && img.aspectRatio !== 'auto' ? 'auto' : '100%',
+                      aspectRatio:
+                        img?.aspectRatio && img.aspectRatio !== 'auto'
+                          ? (img.aspectRatio as string).replace(':', '/')
+                          : undefined,
                     }}
-                    loading="lazy"
-                  />
+                  >
+                    <Image
+                      src={img.src}
+                      alt={img.alt || ''}
+                      fill
+                      sizes="(max-width: 768px) 75vw, (max-width: 1200px) 35vw, 420px"
+                      style={{ objectFit: 'cover' }}
+                      priority={idx === 0}
+                    />
+                  </div>
                 ) : (
                   <div
                     style={{

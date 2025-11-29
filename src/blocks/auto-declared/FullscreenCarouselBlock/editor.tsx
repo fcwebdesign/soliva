@@ -4,13 +4,26 @@ import React, { useState, useMemo } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Trash2, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { resolvePaletteFromContent } from '@/utils/palette-resolver';
+import { SortableImageItem, ImageItemData, AspectRatioValue } from '@/blocks/auto-declared/components';
+import {
+  DndContext,
+  closestCenter,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  arrayMove,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 
-interface CarouselImage {
-  src?: string;
-  alt?: string;
-}
+type CarouselImage = ImageItemData & {
+  aspectRatio?: AspectRatioValue | string;
+};
 
 interface FullscreenCarouselData {
   title?: string;
@@ -30,6 +43,10 @@ export default function FullscreenCarouselEditor({
   context?: any;
 }) {
   const [openSelect, setOpenSelect] = useState<string | null>(null);
+  const sensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } })
+  );
   const currentPalette = useMemo(() => {
     if (!context) return null;
     try {
@@ -41,18 +58,34 @@ export default function FullscreenCarouselEditor({
 
   const images = data.images || [];
 
-  const updateImage = (index: number, field: keyof CarouselImage, value: string) => {
-    const next = images.map((img, i) => (i === index ? { ...img, [field]: value } : img));
+  const updateImage = (index: number, payload: Partial<CarouselImage>) => {
+    const next = images.map((img, i) => (i === index ? { ...img, ...payload } : img));
     onChange({ ...data, images: next });
   };
 
   const addImage = () => {
-    onChange({ ...data, images: [...images, { src: '', alt: '' }] });
+    const next: CarouselImage = {
+      id: `img-${Date.now()}`,
+      src: '',
+      alt: '',
+      aspectRatio: '16:9',
+    };
+    onChange({ ...data, images: [...images, next] });
   };
 
   const removeImage = (index: number) => {
     const next = images.filter((_, i) => i !== index);
     onChange({ ...data, images: next });
+  };
+
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = images.findIndex((img) => (img.id || '') === active.id);
+    const newIndex = images.findIndex((img) => (img.id || '') === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+    const reordered = arrayMove(images, oldIndex, newIndex);
+    onChange({ ...data, images: reordered });
   };
 
   if (compact) {
@@ -70,37 +103,42 @@ export default function FullscreenCarouselEditor({
         </div>
 
         <div className="space-y-2">
-          <label className="block text-[10px] text-gray-400">Images</label>
-          {images.map((img, idx) => (
-            <div key={idx} className="border border-gray-200 rounded p-2 space-y-2">
-              <input
-                type="text"
-                value={img.src || ''}
-                onChange={(e) => updateImage(idx, 'src', e.target.value)}
-                placeholder="URL de l'image"
-                className="w-full px-2 py-1.5 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors"
-              />
-              <input
-                type="text"
-                value={img.alt || ''}
-                onChange={(e) => updateImage(idx, 'alt', e.target.value)}
-                placeholder="Texte alternatif"
-                className="w-full px-2 py-1.5 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors"
-              />
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={() => removeImage(idx)}
-                className="text-[12px] text-red-600 hover:text-red-700"
-              >
-                <Trash2 className="h-3 w-3 mr-1" /> Supprimer
-              </Button>
-            </div>
-          ))}
-          <Button type="button" size="sm" variant="outline" onClick={addImage} className="w-full text-[12px]">
-            <Plus className="h-3 w-3 mr-1" /> Ajouter une image
-          </Button>
+          <label className="block text-[11px] uppercase tracking-wide text-gray-500 mb-1.5">
+            Images ({images.length})
+          </label>
+          <div className="space-y-1">
+            {images.length === 0 ? (
+              <div className="text-center py-4 text-xs text-gray-400 border border-dashed border-gray-200 rounded">
+                Aucune image
+              </div>
+            ) : (
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <SortableContext
+                  items={images.map((img, idx) => img.id || `img-${idx}`)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {images.map((img, idx) => (
+                    <SortableImageItem
+                      key={img.id || `img-${idx}`}
+                      item={img as CarouselImage}
+                      index={idx}
+                      compact
+                      onUpdate={(field, value) => updateImage(idx, { [field]: value })}
+                      onRemove={() => removeImage(idx)}
+                      openSelect={openSelect}
+                      onOpenSelectChange={setOpenSelect}
+                      compactFields={[
+                        { key: 'alt', placeholder: 'Description (alt text)' },
+                      ]}
+                    />
+                  ))}
+                </SortableContext>
+              </DndContext>
+            )}
+            <Button type="button" size="sm" variant="outline" onClick={addImage} className="w-full text-[12px]">
+              <Plus className="h-3 w-3 mr-1" /> Ajouter une image
+            </Button>
+          </div>
         </div>
 
         <div>
@@ -161,46 +199,30 @@ export default function FullscreenCarouselEditor({
           </Button>
         </div>
 
-        <div className="space-y-3">
-          {images.map((img, idx) => (
-            <div key={idx} className="border border-gray-200 rounded p-3 space-y-3">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <div>
-                  <Label className="text-xs font-medium text-gray-600">Image URL</Label>
-                  <Input
-                    type="text"
-                    value={img.src || ''}
-                    onChange={(e) => updateImage(idx, 'src', e.target.value)}
-                    placeholder="https://..."
-                    className="w-full mt-1"
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs font-medium text-gray-600">Alt</Label>
-                  <Input
-                    type="text"
-                    value={img.alt || ''}
-                    onChange={(e) => updateImage(idx, 'alt', e.target.value)}
-                    placeholder="Texte alternatif"
-                    className="w-full mt-1"
-                  />
-                </div>
-              </div>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={() => removeImage(idx)}
-                className="text-red-600 hover:text-red-700"
-              >
-                <Trash2 className="h-4 w-4 mr-2" /> Supprimer
-              </Button>
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext
+            items={images.map((img, idx) => img.id || `img-${idx}`)}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="space-y-3">
+              {images.map((img, idx) => (
+                <SortableImageItem
+                  key={img.id || `img-${idx}`}
+                  item={img as CarouselImage}
+                  index={idx}
+                  compact={false}
+                  onUpdate={(field, value) => updateImage(idx, { [field]: value })}
+                  onRemove={() => removeImage(idx)}
+                  openSelect={openSelect}
+                  onOpenSelectChange={setOpenSelect}
+                />
+              ))}
+              {!images.length && (
+                <div className="text-sm text-gray-500">Aucune image. Ajoutez-en une pour commencer.</div>
+              )}
             </div>
-          ))}
-          {!images.length && (
-            <div className="text-sm text-gray-500">Aucune image. Ajoutez-en une pour commencer.</div>
-          )}
-        </div>
+          </SortableContext>
+        </DndContext>
       </div>
     </div>
   );
