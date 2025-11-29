@@ -2,7 +2,8 @@
 
 import React, { useMemo, useRef, useEffect, useState } from 'react';
 import { ReusableImage, ImageData, ImageItemData, AspectRatioValue } from '@/blocks/auto-declared/components';
-import { useContentUpdate } from '../../../hooks/useContentUpdate';
+import { getTypographyConfig, getTypographyClasses, getCustomLineHeight, defaultTypography } from '@/utils/typography';
+import { useContentUpdate, fetchContentWithNoCache } from '../../../hooks/useContentUpdate';
 
 interface CarouselImage extends ImageItemData {
   aspectRatio?: AspectRatioValue | string;
@@ -42,6 +43,7 @@ export default function FullscreenCarouselBlock({ data }: { data: FullscreenCaro
     const allImages = blockData.images || [];
     return allImages.filter((img: CarouselImage) => !img.hidden && img.src);
   }, [blockData.images]);
+  const [fullContent, setFullContent] = useState<any>(null);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const trackRef = useRef<HTMLDivElement | null>(null);
@@ -52,6 +54,50 @@ export default function FullscreenCarouselBlock({ data }: { data: FullscreenCaro
     pointerId: null,
   });
   const [translate, setTranslate] = useState(0);
+
+  // Charger la typographie globale
+  useEffect(() => {
+    const loadContent = async () => {
+      try {
+        const res = await fetchContentWithNoCache('/api/content/metadata');
+        if (res.ok) {
+          const json = await res.json();
+          setFullContent(json);
+        }
+      } catch {
+        // silencieux
+      }
+    };
+    loadContent();
+  }, []);
+
+  useContentUpdate(() => {
+    const reload = async () => {
+      try {
+        const res = await fetchContentWithNoCache('/api/content/metadata');
+        if (res.ok) {
+          const json = await res.json();
+          setFullContent(json);
+        }
+      } catch {
+        // silencieux
+      }
+    };
+    reload();
+  });
+
+  const typoConfig = useMemo(() => (fullContent ? getTypographyConfig(fullContent) : {}), [fullContent]);
+  const titleClasses = useMemo(() => {
+    const safe = (typoConfig as any)?.h2 ? { h2: (typoConfig as any).h2 } : {};
+    const classes = getTypographyClasses('h2', safe as any, defaultTypography.h2);
+    return classes
+      .replace(/\btext-(gray|black|white|red|blue|green|yellow|purple|pink|indigo|orange)-\d+\b/g, '')
+      .replace(/\btext-(gray|black|white|red|blue|green|yellow|purple|pink|indigo|orange)\b/g, '')
+      .replace(/\btext-foreground\b/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }, [typoConfig]);
+  const titleLineHeight = useMemo(() => getCustomLineHeight('h2', typoConfig as any), [typoConfig]);
 
   const getBackgroundColor = () => {
     const theme = blockData.theme || 'auto';
@@ -157,10 +203,10 @@ export default function FullscreenCarouselBlock({ data }: { data: FullscreenCaro
       >
         {blockData.title && (
           <h2
-            className="fullscreen-carousel__title"
+            className={`fullscreen-carousel__title ${titleClasses}`}
             style={{
-              fontSize: 'clamp(1.5rem, 4vw, 2.75rem)',
               margin: 0,
+              ...(titleLineHeight ? { lineHeight: titleLineHeight } : {}),
             }}
           >
             {blockData.title}
@@ -277,12 +323,6 @@ export default function FullscreenCarouselBlock({ data }: { data: FullscreenCaro
       </div>
 
       <style jsx>{`
-        .fullscreen-carousel-block[data-fullscreen="true"] .fullscreen-carousel__inner {
-          padding: 0 !important;
-        }
-        .fullscreen-carousel-block--fullscreen .fullscreen-carousel__inner {
-          padding: 0 !important;
-        }
         .fullscreen-carousel__nav-btn {
           background: transparent;
           border: 1px solid currentColor;
