@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import { Link } from 'next-view-transitions';
-import { getTypographyConfig, getTypographyClasses, defaultTypography } from '@/utils/typography';
+import { getTypographyConfig, getTypographyClasses, getCustomLineHeight, defaultTypography } from '@/utils/typography';
 import { fetchContentWithNoCache, useContentUpdate } from '@/hooks/useContentUpdate';
 
 interface HeroSimpleData {
@@ -35,6 +35,11 @@ export default function HeroSimpleBlock({ data }: { data: HeroSimpleData | any }
   const supertitle = blockData.supertitle?.trim() || '';
   const title = blockData.title?.trim() || '';
   const subtitle = blockData.subtitle?.trim() || '';
+  const hasTitle = !!title;
+  const hasSubtitle = !!subtitle;
+  // Gestion sémantique : si pas de titre, le sous-titre devient le heading (un seul élément visible)
+  const renderTitle = hasTitle ? title : subtitle || '';
+  const renderSubtitle = hasTitle ? subtitle : '';
   const backgroundImage = blockData.backgroundImage;
   const contentPosition = blockData.contentPosition || 'center';
   const contentAlignment = blockData.contentAlignment || 'center';
@@ -109,6 +114,10 @@ export default function HeroSimpleBlock({ data }: { data: HeroSimpleData | any }
       .replace(/\s+/g, ' ')
       .trim();
   }, [typoConfig, isFirstHeading]);
+  const headingLineHeight = useMemo(() => {
+    const targetElement: 'h1' | 'h2' = isFirstHeading ? 'h1' : 'h2';
+    return getCustomLineHeight(targetElement, typoConfig);
+  }, [typoConfig, isFirstHeading]);
 
   // Classes typographiques pour h2 (pour le sous-titre)
   const h2Classes = useMemo(() => {
@@ -121,6 +130,7 @@ export default function HeroSimpleBlock({ data }: { data: HeroSimpleData | any }
       .replace(/\s+/g, ' ')
       .trim();
   }, [typoConfig]);
+  const h2LineHeight = useMemo(() => getCustomLineHeight('h2', typoConfig), [typoConfig]);
 
   // Classes typographiques pour h3 (pour le surtitre)
   const h3Classes = useMemo(() => {
@@ -133,6 +143,7 @@ export default function HeroSimpleBlock({ data }: { data: HeroSimpleData | any }
       .replace(/\s+/g, ' ')
       .trim();
   }, [typoConfig]);
+  const h3LineHeight = useMemo(() => getCustomLineHeight('h3', typoConfig), [typoConfig]);
 
   // Détecter si le bloc est le premier rendu (pour compenser la hauteur du header sticky)
   useEffect(() => {
@@ -260,20 +271,21 @@ export default function HeroSimpleBlock({ data }: { data: HeroSimpleData | any }
   };
 
   const getTextColor = () => {
-    const theme = blockData.theme || 'auto';
-    if (theme === 'light') {
-      return '#000000';
-    } else if (theme === 'dark') {
-      return '#ffffff';
-    } else {
-      return 'var(--foreground)';
+    if (blockData.textColor === '#000000' || blockData.textColor === '#fff' || blockData.textColor === '#ffffff') {
+      return blockData.textColor;
     }
+    const theme = blockData.theme || 'auto';
+    if (theme === 'light') return '#000000';
+    if (theme === 'dark') return '#ffffff';
+    return 'var(--foreground)';
   };
 
   // Styles pour le positionnement du contenu
   const getContentStyles = () => {
     const horizontalPadding = 'clamp(1rem, 2vw, 2rem)'; // px-4 sm:px-6 lg:px-8
-    
+    const halfScreenMax = `min(50vw, ${getSiteMaxWidth / 2}px)`; // limiter à la moitié de l'écran pour start/end
+    const centerMax = `min(900px, calc(100% - 2 * ${horizontalPadding}))`; // plafonner le centre
+
     const styles: React.CSSProperties = {
       position: 'absolute',
       paddingTop: 0,
@@ -289,7 +301,7 @@ export default function HeroSimpleBlock({ data }: { data: HeroSimpleData | any }
     // Position verticale
     switch (contentPosition) {
       case 'top':
-        styles.top = 'clamp(2rem, 5vw, 4rem)';
+        styles.top = `calc(${headerOffset}px + clamp(3rem, 6vw, 5rem))`;
         styles.bottom = undefined;
         break;
       case 'center':
@@ -314,16 +326,18 @@ export default function HeroSimpleBlock({ data }: { data: HeroSimpleData | any }
         styles.paddingLeft = 0;
         styles.paddingRight = 0;
         styles.width = 'auto';
-        styles.maxWidth = `${getSiteMaxWidth}px`;
+        styles.maxWidth = halfScreenMax;
         break;
       case 'center':
         // Centré : simple avec left/right et text-align center
-        styles.left = `max(${horizontalPadding}, calc((100% - ${getSiteMaxWidth}px) / 2 + ${horizontalPadding}))`;
-        styles.right = `max(${horizontalPadding}, calc((100% - ${getSiteMaxWidth}px) / 2 + ${horizontalPadding}))`;
-        styles.paddingLeft = 0;
-        styles.paddingRight = 0;
+        styles.left = horizontalPadding;
+        styles.right = horizontalPadding;
+        styles.paddingLeft = horizontalPadding;
+        styles.paddingRight = horizontalPadding;
         styles.width = 'auto';
-        styles.maxWidth = `${getSiteMaxWidth}px`;
+        styles.maxWidth = centerMax;
+        styles.marginLeft = 'auto';
+        styles.marginRight = 'auto';
         styles.textAlign = 'center';
         break;
       case 'end':
@@ -333,7 +347,7 @@ export default function HeroSimpleBlock({ data }: { data: HeroSimpleData | any }
         styles.paddingLeft = 0;
         styles.paddingRight = 0;
         styles.width = 'auto';
-        styles.maxWidth = `${getSiteMaxWidth}px`;
+        styles.maxWidth = halfScreenMax;
         break;
     }
 
@@ -399,17 +413,31 @@ export default function HeroSimpleBlock({ data }: { data: HeroSimpleData | any }
             {supertitle}
           </p>
         )}
-        {title && (
+        {renderTitle && (
           <HeadingTag 
-            className={`hero-simple__title ${headingClasses}`}
+            className={`hero-simple__title ${
+              hasTitle ? headingClasses : `${h2Classes} hero-simple__subtitle`
+            }`}
             style={{ 
               color: getTextColor(),
+              ...(hasTitle
+                ? headingLineHeight
+                  ? { lineHeight: headingLineHeight }
+                  : {}
+                : h2LineHeight
+                ? { lineHeight: h2LineHeight }
+                : {}),
+              ...(hasTitle
+                ? {}
+                : {
+                    marginTop: 'clamp(0.5rem, 0.5vw, 2.25rem)',
+                  }),
             }}
           >
-            {title}
+            {renderTitle}
           </HeadingTag>
         )}
-            {subtitle && (
+            {renderSubtitle && (
               <h2 
                 className={`hero-simple__subtitle ${h2Classes}`}
                 style={{ 
@@ -418,6 +446,7 @@ export default function HeroSimpleBlock({ data }: { data: HeroSimpleData | any }
                   textAlign: contentAlignment === 'center' ? 'center' : 'left',
                   marginLeft: contentAlignment === 'center' ? 'auto' : 0,
                   marginRight: contentAlignment === 'center' ? 'auto' : 0,
+                  ...(h2LineHeight ? { lineHeight: h2LineHeight } : {}),
                 }}
               >
                 {subtitle}
@@ -476,15 +505,21 @@ export default function HeroSimpleBlock({ data }: { data: HeroSimpleData | any }
         .hero-simple__title {
           font-size: clamp(2.5rem, 6vw, 4.5rem);
           letter-spacing: -0.02em;
-          line-height: 1.1;
         }
         .hero-simple__supertitle {
           max-width: 65ch;
-          margin-bottom: 0;
+          margin-bottom: clamp(0.5rem, 2.5vw, 2.25rem);
         }
         .hero-simple__subtitle {
           max-width: 65ch;
           margin: 0;
+        }
+        /* Espacement vertical contrôlé entre les éléments */
+        .hero-simple__title {
+          margin-top: clamp(0.5rem, 2.5vw, 2.25rem);
+        }
+        .hero-simple__title + .hero-simple__subtitle {
+          margin-top: clamp(1rem, 2.5vw, 2.5rem);
         }
         /* Desktop : rapprocher le surtitre du h1 avec transform */
         @media (min-width: 769px) {

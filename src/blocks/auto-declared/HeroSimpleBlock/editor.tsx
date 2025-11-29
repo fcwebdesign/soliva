@@ -20,6 +20,7 @@ interface HeroSimpleData {
   contentPosition?: 'top' | 'center' | 'bottom';
   contentAlignment?: 'start' | 'center' | 'end';
   theme?: 'light' | 'dark' | 'auto';
+  textColor?: string;
   transparentHeader?: boolean;
   parallax?: {
     enabled?: boolean;
@@ -310,7 +311,7 @@ export default function HeroSimpleEditor({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
             <div>
               <label className="block text-[10px] text-gray-400 mb-1">
-                Couleur de fond
+                Couleur du texte
                 {currentPalette && (
                   <span className="ml-1 text-[9px] text-gray-500">
                     (Palette: {currentPalette.name})
@@ -318,20 +319,20 @@ export default function HeroSimpleEditor({
                 )}
               </label>
               <Select
-                value={data.theme || 'auto'}
-                onValueChange={(value) => updateField('theme', value as any)}
-                open={openSelect === 'theme'}
-                onOpenChange={(open) => setOpenSelect(open ? 'theme' : null)}
+                value={data.textColor || 'auto'}
+                onValueChange={(value) => updateField('textColor', value === 'auto' ? undefined : value)}
+                open={openSelect === 'textColor'}
+                onOpenChange={(open) => setOpenSelect(open ? 'textColor' : null)}
               >
                 <SelectTrigger className="w-full h-auto px-2 py-1.5 text-[13px] leading-normal font-normal shadow-none rounded border">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="shadow-none border rounded">
                   <SelectItem value="auto" className="text-[13px]">
-                    Auto {currentPalette && `(${paletteBackgroundColor})`}
+                    Auto (Palette)
                   </SelectItem>
-                  <SelectItem value="light" className="text-[13px]">Blanc</SelectItem>
-                  <SelectItem value="dark" className="text-[13px]">Noir</SelectItem>
+                  <SelectItem value="#ffffff" className="text-[13px]">Blanc</SelectItem>
+                  <SelectItem value="#000000" className="text-[13px]">Noir</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -545,20 +546,20 @@ export default function HeroSimpleEditor({
         </div>
 
         <div>
-          <Label className="text-sm font-medium text-gray-700">Couleur de fond</Label>
+          <Label className="text-sm font-medium text-gray-700">Couleur du texte</Label>
           <Select
-            value={data.theme || 'auto'}
-            onValueChange={(value) => updateField('theme', value as any)}
-            open={openSelect === 'theme-full'}
-            onOpenChange={(open) => setOpenSelect(open ? 'theme-full' : null)}
+            value={data.textColor || 'auto'}
+            onValueChange={(value) => updateField('textColor', value === 'auto' ? undefined : value)}
+            open={openSelect === 'textColor-full'}
+            onOpenChange={(open) => setOpenSelect(open ? 'textColor-full' : null)}
           >
             <SelectTrigger className="w-full mt-2">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="auto">Auto</SelectItem>
-              <SelectItem value="light">Blanc</SelectItem>
-              <SelectItem value="dark">Noir</SelectItem>
+              <SelectItem value="auto">Auto (Palette)</SelectItem>
+              <SelectItem value="#ffffff">Blanc</SelectItem>
+              <SelectItem value="#000000">Noir</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -658,4 +659,3 @@ export default function HeroSimpleEditor({
     </div>
   );
 }
-
