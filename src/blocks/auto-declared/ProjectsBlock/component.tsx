@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'next-view-transitions';
 import { getTypographyConfig, getTypographyClasses, getCustomColor, defaultTypography } from '@/utils/typography';
 import { useContentUpdate, fetchContentWithNoCache } from '@/hooks/useContentUpdate';
+import useEmblaCarousel from 'embla-carousel-react';
 
 interface ProjectsData {
   id?: string;
@@ -33,17 +34,21 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
   const blockData = (data as any).data || data;
   const { title = "NOS RÉALISATIONS", maxProjects = 6, selectedProjects = [], columns = 3, displayMode = 'grid' } = blockData;
   
-  // Générer un ID unique pour le carousel
-  const carouselId = blockData.id || `projects-${Math.random().toString(36).substr(2, 9)}`;
-  
   // État pour les projets récupérés depuis l'API
   const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [fullContent, setFullContent] = useState<any>(null);
-  
-  // États pour la navigation du carousel
-  const [currentPage, setCurrentPage] = useState(0);
-  const [windowWidth, setWindowWidth] = useState(0);
+  const [windowWidth, setWindowWidth] = useState<number>(1440);
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: 'start',
+    containScroll: 'trimSnaps',
+    loop: false,
+    dragFree: false,
+    slidesToScroll: 1,
+  });
+  const [hasScroll, setHasScroll] = useState(false);
+  const [canPrev, setCanPrev] = useState(false);
+  const [canNext, setCanNext] = useState(false);
   
   // Récupérer les projets et le contenu complet depuis l'API
   useEffect(() => {
@@ -172,12 +177,38 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
     fetchData();
   });
   
-  // Gérer la largeur de la fenêtre
+  // Synchro nav Embla
   useEffect(() => {
-    const updateWidth = () => setWindowWidth(window.innerWidth);
-    updateWidth();
-    window.addEventListener('resize', updateWidth);
-    return () => window.removeEventListener('resize', updateWidth);
+    if (!emblaApi) return;
+    const update = () => {
+      setHasScroll(emblaApi.canScrollNext() || emblaApi.canScrollPrev());
+      setCanPrev(emblaApi.canScrollPrev());
+      setCanNext(emblaApi.canScrollNext());
+    };
+    emblaApi.on('select', update);
+    emblaApi.on('reInit', update);
+    update();
+    return () => {
+      emblaApi.off('select', update);
+      emblaApi.off('reInit', update);
+    };
+  }, [emblaApi]);
+
+  // Réinit Embla après rendu (quand les projets sont prêts)
+  useEffect(() => {
+    emblaApi?.reInit();
+  }, [emblaApi]);
+
+  // Suivre la largeur fenêtre pour calculer projectsPerPage
+  useEffect(() => {
+    const update = () => {
+      if (typeof window !== 'undefined') {
+        setWindowWidth(window.innerWidth);
+      }
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
   }, []);
   
   // Récupérer les styles typographiques
@@ -260,19 +291,7 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
     }
   }
   
-  // Logique d'affichage :
-  // - displayMode 'carousel' : toujours carousel
-  // - displayMode 'grid' : toujours grille (pas de navigation)
-  // - pas défini ou autre : auto (carousel si trop de projets)
-  const needsNavigation = displayMode === 'carousel' 
-    ? true 
-    : displayMode === 'grid' 
-      ? false 
-      : actualCount > projectsPerPage;
-  
-  const maxPages = Math.ceil(displayedProjects.length / projectsPerPage);
-  const isFirstPage = currentPage === 0;
-  const isLastPage = currentPage === maxPages - 1;
+  const needsNavigation = displayMode !== 'grid' && hasScroll;
   
   // Fonction pour rendre un projet avec le style de survol
   const renderProject = (project: Project) => (
@@ -360,157 +379,71 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
           )}
           
           {/* Navigation - sur la même ligne que le titre */}
-          {needsNavigation && (
+          {needsNavigation && displayMode !== 'grid' && (
             <div className="flex space-x-2">
               <button
-                onClick={() => {
-                  if (!isFirstPage) {
-                    const newPage = currentPage - 1;
-                    setCurrentPage(newPage);
-                    
-                    const carousel = document.getElementById(`carousel-${carouselId}`);
-                    if (carousel) {
-                      // Calculer la translation en pixels pour plus de précision
-                      const firstItem = carousel.querySelector('div');
-                      if (firstItem) {
-                        const itemWidth = firstItem.offsetWidth;
-                        const gap = 32; // 2rem = 32px
-                        const translateX = -(newPage * (itemWidth + gap));
-                        carousel.style.transform = `translateX(${translateX}px)`;
-                      }
-                    }
-                  }
-                }}
-                className={`w-8 h-8 rounded-full transition-all duration-300 flex items-center justify-center font-semibold ${
-                  isFirstPage ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
+                onClick={() => emblaApi?.scrollPrev()}
+                className={`w-[42px] h-[42px] rounded-full transition-all duration-300 flex items-center justify-center font-semibold ${
+                  !canPrev ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
                 }`}
                 style={{
-                  backgroundColor: isFirstPage ? 'var(--muted)' : 'var(--primary)',
-                  color: isFirstPage ? 'var(--muted-foreground)' : 'var(--primary-foreground)',
-                  border: isFirstPage ? '1px solid var(--border)' : 'none'
-                }}
-                onMouseEnter={(e) => {
-                  if (!isFirstPage) {
-                    e.currentTarget.style.opacity = '0.9';
-                    e.currentTarget.style.transform = 'scale(1.1)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isFirstPage) {
-                    e.currentTarget.style.opacity = '1';
-                    e.currentTarget.style.transform = 'scale(1)';
-                  }
+                  backgroundColor: !canPrev ? 'var(--muted)' : 'var(--primary)',
+                  color: !canPrev ? 'var(--muted-foreground)' : 'var(--primary-foreground)',
+                  border: !canPrev ? '1px solid var(--border)' : 'none'
                 }}
               >
-                <svg 
-                  width="20" 
-                  height="20" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-5 h-5"
-                >
-                  <path 
-                    fillRule="evenodd" 
-                    clipRule="evenodd" 
-                    d="M10.5303 5.46967C10.8232 5.76256 10.8232 6.23744 10.5303 6.53033L5.81066 11.25H20C20.4142 11.25 20.75 11.5858 20.75 12C20.75 12.4142 20.4142 12.75 20 12.75H5.81066L10.5303 17.4697C10.8232 17.7626 10.8232 18.2374 10.5303 18.5303C10.2374 18.8232 9.76256 18.8232 9.46967 18.5303L3.46967 12.5303C3.17678 12.2374 3.17678 11.7626 3.46967 11.4697L9.46967 5.46967C9.76256 5.17678 10.2374 5.17678 10.5303 5.46967Z" 
-                    fill="currentColor"
-                  />
-                </svg>
+                ←
               </button>
               <button
-                onClick={() => {
-                  if (!isLastPage) {
-                    const newPage = currentPage + 1;
-                    setCurrentPage(newPage);
-                    
-                    const carousel = document.getElementById(`carousel-${carouselId}`);
-                    if (carousel) {
-                      // Calculer la translation en pixels pour plus de précision
-                      const firstItem = carousel.querySelector('div');
-                      if (firstItem) {
-                        const itemWidth = firstItem.offsetWidth;
-                        const gap = 32; // 2rem = 32px
-                        const translateX = -(newPage * (itemWidth + gap));
-                        carousel.style.transform = `translateX(${translateX}px)`;
-                      }
-                    }
-                  }
-                }}
-                className={`w-8 h-8 rounded-full transition-all duration-300 flex items-center justify-center font-semibold ${
-                  isLastPage ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
+                onClick={() => emblaApi?.scrollNext()}
+                className={`w-[42px] h-[42px] rounded-full transition-all duration-300 flex items-center justify-center font-semibold ${
+                  !canNext ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
                 }`}
                 style={{
-                  backgroundColor: isLastPage ? 'var(--muted)' : 'var(--primary)',
-                  color: isLastPage ? 'var(--muted-foreground)' : 'var(--primary-foreground)',
-                  border: isLastPage ? '1px solid var(--border)' : 'none'
-                }}
-                onMouseEnter={(e) => {
-                  if (!isLastPage) {
-                    e.currentTarget.style.opacity = '0.9';
-                    e.currentTarget.style.transform = 'scale(1.1)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isLastPage) {
-                    e.currentTarget.style.opacity = '1';
-                    e.currentTarget.style.transform = 'scale(1)';
-                  }
+                  backgroundColor: !canNext ? 'var(--muted)' : 'var(--primary)',
+                  color: !canNext ? 'var(--muted-foreground)' : 'var(--primary-foreground)',
+                  border: !canNext ? '1px solid var(--border)' : 'none'
                 }}
               >
-                <svg 
-                  width="20" 
-                  height="20" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-5 h-5"
-                >
-                  <path 
-                    fillRule="evenodd" 
-                    clipRule="evenodd" 
-                    d="M13.4697 5.46967C13.7626 5.17678 14.2374 5.17678 14.5303 5.46967L20.5303 11.4697C20.8232 11.7626 20.8232 12.2374 20.5303 12.5303L14.5303 18.5303C14.2374 18.8232 13.7626 18.8232 13.4697 18.5303C13.1768 18.2374 13.1768 17.7626 13.4697 17.4697L18.1893 12.75H4C3.58579 12.75 3.25 12.4142 3.25 12C3.25 11.5858 3.58579 11.25 4 11.25H18.1893L13.4697 6.53033C13.1768 6.23744 13.1768 5.76256 13.4697 5.46967Z" 
-                    fill="currentColor"
-                  />
-                </svg>
+                →
               </button>
             </div>
           )}
         </div>
         
-        {/* Grille des projets avec carousel si nécessaire */}
-        {needsNavigation ? (
-          <div className="relative">
-            <div className="overflow-hidden">
-              <div 
-                className="flex transition-transform duration-300 ease-in-out" 
-                id={`carousel-${carouselId}`} 
-                style={{ transform: 'translateX(0%)' }}
-              >
-                {displayedProjects.map((project, index) => (
-                  <div 
-                    key={project.id} 
-                    className={`flex-shrink-0 ${
-                      actualCount === 1 ? 'w-full' :
-                      actualCount === 2 ? 'w-full md:w-[calc(50%-1rem)]' :
-                      columns === 2 ? 'w-full md:w-[calc(50%-1rem)]' :
-                      columns === 4 ? 'w-full md:w-[calc(50%-1rem)] lg:w-[calc(25%-1.5rem)]' :
-                      'w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.33rem)]' // 3 colonnes par défaut
-                    } ${index < displayedProjects.length - 1 ? 'mr-8' : ''}`}
-                  >
-                    {renderProject(project)}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        ) : (
+        {/* Grille des projets ou carousel Embla */}
+        {displayMode === 'grid' ? (
           <div className={`grid grid-cols-1 sm:grid-cols-2 gap-8 ${
             columns === 2 ? 'lg:grid-cols-2' :
             columns === 4 ? 'lg:grid-cols-4 work-columns-4' :
-            'lg:grid-cols-3' // Par défaut 3 colonnes
+            'lg:grid-cols-3'
           }`}>
             {displayedProjects.map(project => renderProject(project))}
+          </div>
+        ) : (
+          <div className="relative">
+            <div className="overflow-hidden" ref={emblaRef}>
+              <div className="flex gap-8 pr-4">
+                {displayedProjects.map((project) => {
+                  // Ajuster la base pour compenser le gap afin que le dernier slide ne soit pas rogné
+                  const base =
+                    columns === 2
+                      ? 'calc(50% - var(--gap, 2rem))'
+                      : columns === 4
+                      ? 'calc(25% - var(--gap, 2rem))'
+                      : 'calc(33.333% - var(--gap, 2rem))';
+                  return (
+                    <div
+                      key={project.id}
+                      className="flex-none w-full"
+                      style={{ flexBasis: base }}
+                    >
+                      {renderProject(project)}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         )}
       </div>
