@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useTheme } from '../../../hooks/useTheme';
 import { getTypographyConfig, getTypographyClasses, getCustomColor, defaultTypography } from '@/utils/typography';
 import { useContentUpdate, fetchContentWithNoCache } from '@/hooks/useContentUpdate';
+import useEmblaCarousel from 'embla-carousel-react';
 
 interface TestimonialItem {
   id: string;
@@ -36,24 +37,17 @@ export default function TestimonialBlock({ data }: { data: TestimonialData | any
   const theme = blockData.theme || 'auto';
   const columns = blockData.columns || 3;
   
-  // Générer un ID unique pour le carousel
-  const carouselId = blockData.id || `testimonials-${Math.random().toString(36).substr(2, 9)}`;
-  
-  // États pour la navigation du carousel
-  const [currentPage, setCurrentPage] = useState(0);
-  const [windowWidth, setWindowWidth] = useState(0);
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: 'start',
+    containScroll: 'trimSnaps',
+    loop: true,
+    dragFree: false,
+    slidesToScroll: 1,
+  });
+  const [hasScroll, setHasScroll] = useState(false);
+  const [canPrev, setCanPrev] = useState(false);
+  const [canNext, setCanNext] = useState(false);
   const [fullContent, setFullContent] = useState<any>(null);
-  
-  // Mettre à jour la largeur de la fenêtre
-  useEffect(() => {
-    const updateWidth = () => {
-      setWindowWidth(window.innerWidth);
-    };
-    
-    updateWidth();
-    window.addEventListener('resize', updateWidth);
-    return () => window.removeEventListener('resize', updateWidth);
-  }, []);
   
   // Charger le contenu pour accéder à la typographie
   useEffect(() => {
@@ -91,6 +85,28 @@ export default function TestimonialBlock({ data }: { data: TestimonialData | any
   const typoConfig = useMemo(() => {
     return fullContent ? getTypographyConfig(fullContent) : {};
   }, [fullContent]);
+
+  // Synchroniser l'état de navigation avec Embla
+  useEffect(() => {
+    if (!emblaApi) return;
+    const update = () => {
+      setHasScroll(emblaApi.canScrollNext() || emblaApi.canScrollPrev());
+      setCanPrev(emblaApi.canScrollPrev());
+      setCanNext(emblaApi.canScrollNext());
+    };
+    emblaApi.on('select', update);
+    emblaApi.on('reInit', update);
+    update();
+    return () => {
+      emblaApi.off('select', update);
+      emblaApi.off('reInit', update);
+    };
+  }, [emblaApi]);
+
+  // Réinitialiser Embla quand la liste ou la config change
+  useEffect(() => {
+    emblaApi?.reInit();
+  }, [items, columns, emblaApi]);
   
   // Classes typographiques pour h2 (sans la couleur pour la gérer via style)
   const h2Classes = useMemo(() => {
@@ -156,32 +172,7 @@ export default function TestimonialBlock({ data }: { data: TestimonialData | any
     );
   }
 
-  const actualCount = items.length;
-  
-  // Calculer le nombre de témoignages par page selon la largeur et le nombre de colonnes
-  let itemsPerPage;
-  if (actualCount === 1) {
-    itemsPerPage = 1;
-  } else if (actualCount === 2) {
-    itemsPerPage = windowWidth < 768 ? 1 : 2;
-  } else {
-    // Utiliser le nombre de colonnes configuré
-    if (columns === 2) {
-      itemsPerPage = windowWidth < 768 ? 1 : 2;
-    } else if (columns === 4) {
-      itemsPerPage = windowWidth < 768 ? 1 : windowWidth < 1024 ? 2 : 4;
-    } else {
-      // 3 colonnes par défaut
-      itemsPerPage = windowWidth < 768 ? 1 : windowWidth < 1024 ? 2 : 3;
-    }
-  }
-  
-  // Le carousel est nécessaire si on a plus de témoignages que ce qui peut être affiché sur une page
-  const needsNavigation = actualCount > itemsPerPage;
-  
-  const maxPages = Math.ceil(items.length / itemsPerPage);
-  const isFirstPage = currentPage === 0;
-  const isLastPage = currentPage === maxPages - 1;
+  const needsNavigation = hasScroll;
 
   // Fonction pour rendre un témoignage
   const renderTestimonial = (item: TestimonialItem) => (
@@ -248,7 +239,7 @@ export default function TestimonialBlock({ data }: { data: TestimonialData | any
     >
       <div className="space-y-8">
         {/* Titre de la section et navigation du carousel */}
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mb-12">
           {title && (
             <div>
               <h2 
@@ -265,43 +256,24 @@ export default function TestimonialBlock({ data }: { data: TestimonialData | any
           {needsNavigation && (
             <div className="flex space-x-2">
               <button
-                onClick={() => {
-                  if (!isFirstPage) {
-                    const newPage = currentPage - 1;
-                    setCurrentPage(newPage);
-                    
-                    const carousel = document.getElementById(`carousel-${carouselId}`);
-                    if (carousel) {
-                      // Calculer la translation en pixels pour plus de précision
-                      const firstItem = carousel.querySelector('div');
-                      if (firstItem) {
-                        const itemWidth = firstItem.offsetWidth;
-                        const gap = 32; // 2rem = 32px
-                        const translateX = -(newPage * (itemWidth + gap));
-                        carousel.style.transform = `translateX(${translateX}px)`;
-                      }
-                    }
-                  }
-                }}
-                className={`w-8 h-8 rounded-full transition-all duration-300 flex items-center justify-center font-semibold ${
-                  isFirstPage ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
+                onClick={() => emblaApi?.scrollPrev()}
+                className={`w-[42px] h-[42px] rounded-full transition-all duration-300 flex items-center justify-center font-semibold ${
+                  !canPrev ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
                 }`}
                 style={{
-                  backgroundColor: isFirstPage ? 'var(--muted)' : 'var(--primary)',
-                  color: isFirstPage ? 'var(--muted-foreground)' : 'var(--primary-foreground)',
-                  border: isFirstPage ? '1px solid var(--border)' : 'none'
+                  backgroundColor: !canPrev ? 'var(--muted)' : 'var(--primary)',
+                  color: !canPrev ? 'var(--muted-foreground)' : 'var(--primary-foreground)',
+                  border: !canPrev ? '1px solid var(--border)' : 'none'
                 }}
                 onMouseEnter={(e) => {
-                  if (!isFirstPage) {
+                  if (canPrev) {
                     e.currentTarget.style.opacity = '0.9';
                     e.currentTarget.style.transform = 'scale(1.1)';
                   }
                 }}
                 onMouseLeave={(e) => {
-                  if (!isFirstPage) {
-                    e.currentTarget.style.opacity = '1';
-                    e.currentTarget.style.transform = 'scale(1)';
-                  }
+                  e.currentTarget.style.opacity = '1';
+                  e.currentTarget.style.transform = 'scale(1)';
                 }}
               >
                 <svg 
@@ -321,43 +293,24 @@ export default function TestimonialBlock({ data }: { data: TestimonialData | any
                 </svg>
               </button>
               <button
-                onClick={() => {
-                  if (!isLastPage) {
-                    const newPage = currentPage + 1;
-                    setCurrentPage(newPage);
-                    
-                    const carousel = document.getElementById(`carousel-${carouselId}`);
-                    if (carousel) {
-                      // Calculer la translation en pixels pour plus de précision
-                      const firstItem = carousel.querySelector('div');
-                      if (firstItem) {
-                        const itemWidth = firstItem.offsetWidth;
-                        const gap = 32; // 2rem = 32px
-                        const translateX = -(newPage * (itemWidth + gap));
-                        carousel.style.transform = `translateX(${translateX}px)`;
-                      }
-                    }
-                  }
-                }}
-                className={`w-8 h-8 rounded-full transition-all duration-300 flex items-center justify-center font-semibold ${
-                  isLastPage ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
+                onClick={() => emblaApi?.scrollNext()}
+                className={`w-[42px] h-[42px] rounded-full transition-all duration-300 flex items-center justify-center font-semibold ${
+                  !canNext ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
                 }`}
                 style={{
-                  backgroundColor: isLastPage ? 'var(--muted)' : 'var(--primary)',
-                  color: isLastPage ? 'var(--muted-foreground)' : 'var(--primary-foreground)',
-                  border: isLastPage ? '1px solid var(--border)' : 'none'
+                  backgroundColor: !canNext ? 'var(--muted)' : 'var(--primary)',
+                  color: !canNext ? 'var(--muted-foreground)' : 'var(--primary-foreground)',
+                  border: !canNext ? '1px solid var(--border)' : 'none'
                 }}
                 onMouseEnter={(e) => {
-                  if (!isLastPage) {
+                  if (canNext) {
                     e.currentTarget.style.opacity = '0.9';
                     e.currentTarget.style.transform = 'scale(1.1)';
                   }
                 }}
                 onMouseLeave={(e) => {
-                  if (!isLastPage) {
-                    e.currentTarget.style.opacity = '1';
-                    e.currentTarget.style.transform = 'scale(1)';
-                  }
+                  e.currentTarget.style.opacity = '1';
+                  e.currentTarget.style.transform = 'scale(1)';
                 }}
               >
                 <svg 
@@ -380,41 +333,31 @@ export default function TestimonialBlock({ data }: { data: TestimonialData | any
           )}
         </div>
 
-        {/* Grille des témoignages avec carousel si nécessaire */}
-        {needsNavigation ? (
-          <div className="relative">
-            <div className="overflow-hidden">
-              <div 
-                className="flex transition-transform duration-300 ease-in-out gap-8" 
-                id={`carousel-${carouselId}`} 
-                style={{ transform: 'translateX(0%)' }}
-              >
-                {items.map((item, index) => (
-                  <div 
-                    key={item.id} 
-                    className={`flex-shrink-0 ${
-                      actualCount === 1 ? 'w-full' :
-                      actualCount === 2 ? 'w-full md:w-[calc(50%-1rem)]' :
-                      columns === 2 ? 'w-full md:w-[calc(50%-1rem)]' :
-                      columns === 4 ? 'w-full md:w-[calc(50%-1rem)] lg:w-[calc(25%-1.5rem)]' :
-                      'w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.33rem)]' // 3 colonnes par défaut
-                    }`}
-                  >
-                    {renderTestimonial(item)}
-                  </div>
-                ))}
-              </div>
+        {/* Carousel Embla */}
+        <div className="relative">
+          <div className="overflow-hidden" ref={emblaRef}>
+            <div
+              className="flex gap-8"
+              style={{
+                paddingLeft: 'clamp(1rem, 2vw, 2rem)',
+                paddingRight: 'clamp(1rem, 2vw, 2rem)',
+              }}
+            >
+              {items.map((item) => (
+                <div
+                  key={item.id}
+                  className={`flex-none w-full ${
+                    columns === 2 ? 'md:w-1/2 lg:w-1/2' :
+                    columns === 4 ? 'md:w-1/2 lg:w-1/4' :
+                    'md:w-1/2 lg:w-1/3'
+                  }`}
+                >
+                  {renderTestimonial(item)}
+                </div>
+              ))}
             </div>
           </div>
-        ) : (
-          <div className={`grid grid-cols-1 sm:grid-cols-2 gap-8 ${
-            columns === 2 ? 'lg:grid-cols-2' :
-            columns === 4 ? 'lg:grid-cols-4' :
-            'lg:grid-cols-3' // Par défaut 3 colonnes
-          }`}>
-            {items.map(item => renderTestimonial(item))}
-          </div>
-        )}
+        </div>
       </div>
     </section>
   );
