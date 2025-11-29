@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 import { getTypographyConfig, getTypographyClasses, defaultTypography } from '@/utils/typography';
 import { fetchContentWithNoCache, useContentUpdate } from '@/hooks/useContentUpdate';
 
@@ -517,4 +517,3 @@ export default function HeroSimpleBlock({ data }: { data: HeroSimpleData | any }
     </section>
   );
 }
-
