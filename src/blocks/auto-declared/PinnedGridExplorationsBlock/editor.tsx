@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useMemo } from 'react';
 import ImageListEditor from '@/blocks/auto-declared/components/ImageListEditor';
 import type { ImageItemData } from '@/blocks/auto-declared/components';
 import {
@@ -10,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { toast } from 'sonner';
 
 interface PinnedGridExplorationsData {
   duration?: number;
@@ -34,7 +33,6 @@ export default function PinnedGridExplorationsEditor({ data, onChange }: { data:
   const update = (field: keyof PinnedGridExplorationsData, value: any) => {
     onChange({ ...data, [field]: value });
   };
-  const hasWarnedRef = useRef(false);
 
   const slots: ImageItemData[] = useMemo(() => {
     const base = Array.isArray(data.images) ? data.images : [];
@@ -46,19 +44,6 @@ export default function PinnedGridExplorationsEditor({ data, onChange }: { data:
       aspectRatio: typeof item === 'string' ? '16:9' : item.aspectRatio || '16:9',
     }));
   }, [data.images]);
-  const filledCount = slots.filter((s) => s.src && s.src.trim() !== '').length;
-
-  useEffect(() => {
-    if (filledCount < 9 && !hasWarnedRef.current) {
-      toast.error('Ajoute 9 images avant de sauvegarder (pinned-grid-explorations).', {
-        className: 'bg-red-600 text-white border border-red-700',
-      });
-      hasWarnedRef.current = true;
-    }
-    if (filledCount >= 9) {
-      hasWarnedRef.current = false;
-    }
-  }, [filledCount]);
 
   return (
     <div className="space-y-6">
@@ -102,12 +87,7 @@ export default function PinnedGridExplorationsEditor({ data, onChange }: { data:
       </div>
 
       <div className="space-y-4">
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span className="font-medium">Images (9 slots, UI unifiée)</span>
-          <span className={filledCount < 9 ? 'text-red-500' : 'text-gray-500'}>
-            {filledCount}/9
-          </span>
-        </div>
+        <div className="text-xs font-medium text-muted-foreground">Images (9 slots, UI unifiée)</div>
         <ImageListEditor
           items={slots}
           onChange={(next) => {
@@ -121,8 +101,8 @@ export default function PinnedGridExplorationsEditor({ data, onChange }: { data:
           showAspectRatio={false}
           maxItems={9}
         />
-        <p className={`text-[11px] ${filledCount < 9 ? 'text-red-500' : 'text-gray-500'}`}>
-          9 images fixes : remplacez-les, pas d’ajout au-delà. (Ajoutez les {9 - filledCount} manquantes avant de sauvegarder)
+        <p className="text-[11px] text-gray-700">
+          9 images maximum. S’il y en a moins, elles seront dupliquées pour remplir la grille de 9 images.
         </p>
       </div>
     </div>
