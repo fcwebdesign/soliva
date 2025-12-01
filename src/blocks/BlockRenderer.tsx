@@ -3,7 +3,7 @@
 import { useTemplate } from '@/templates/context';
 import { registries, defaultRegistry } from './registry';
 import type { AnyBlock } from './types';
-import { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 import ScrollAnimated from '@/components/ScrollAnimated';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -150,8 +150,23 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
       timeoutIds.push(timeout1, timeout2);
       
       // Observer pour détecter quand de nouveaux éléments sont ajoutés au DOM
-      const observer = new MutationObserver(() => {
+      const observer = new MutationObserver((mutations) => {
         if (!isMounted) return;
+        
+        // Ignorer les changements causés par ScrollTrigger pin (pin-spacer)
+        // Ces changements causent des boucles infinies
+        const hasPinSpacer = mutations.some(mutation => {
+          return Array.from(mutation.addedNodes).some((node: any) => {
+            return node?.classList?.contains?.('pin-spacer') || 
+                   node?.querySelector?.('.pin-spacer');
+          });
+        });
+        
+        if (hasPinSpacer) {
+          // Ignorer les changements de pin-spacer pour éviter les boucles
+          return;
+        }
+        
         // Vérifier que le conteneur existe toujours avant de refresh
         const container = document.querySelector('.blocks-container');
         if (container && document.body.contains(container)) {
@@ -230,6 +245,11 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
     if (disableScrollAnimations) {
       return blockElement;
     }
+    // Certains blocs (ex: pin) doivent rester libres de ScrollTrigger global
+    if (blockType === 'pinned-section') {
+      return blockElement;
+    }
+    
     
     const scrollAnimations = fullContent?.metadata?.scrollAnimations;
     
@@ -541,7 +561,14 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
           }
           const blockElement = <BlockComponent key={block.id} data={data} />;
           const wrapped = wrapWithAnimation(blockElement, block.type);
+          // Cas particulier : pinned-section ne supporte pas d'être rewrapé (ScrollTrigger pin-spacer)
           if (withDebugIds) {
+            if (block.type === 'pinned-section') {
+              return React.cloneElement(wrapped as any, {
+                key: block.id,
+                'data-block-id': block.id,
+              });
+            }
             return (
               <div
                 key={block.id}
