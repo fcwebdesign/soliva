@@ -64,7 +64,6 @@ export default function PinnedSectionBlock({ data }: { data: PinnedSectionData |
       data-block-type="pinned-section"
       data-block-theme={theme}
       {...(debugId ? { 'data-block-id': debugId } : {})}
-      style={{ marginTop: 'var(--section)' }}
       className="relative"
     >
       <div
@@ -74,6 +73,7 @@ export default function PinnedSectionBlock({ data }: { data: PinnedSectionData |
           color: textColor,
           paddingTop: typeof paddingY === 'number' ? paddingY : 96,
           paddingBottom: typeof paddingY === 'number' ? paddingY : 96,
+          marginTop: 'var(--section)',
         }}
         className="relative overflow-hidden"
       >

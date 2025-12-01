@@ -245,12 +245,10 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
     if (disableScrollAnimations) {
       return blockElement;
     }
-    // Certains blocs (ex: pin) doivent rester libres de ScrollTrigger global
+    // Exclure le bloc pinned-section des animations globales (conflict pin/spacer)
     if (blockType === 'pinned-section') {
       return blockElement;
     }
-    
-    
     const scrollAnimations = fullContent?.metadata?.scrollAnimations;
     
     if (process.env.NODE_ENV === 'development') {
