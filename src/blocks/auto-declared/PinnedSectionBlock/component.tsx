@@ -68,6 +68,7 @@ export default function PinnedSectionBlock({ data }: { data: PinnedSectionData |
         color: textColor,
         paddingTop: typeof paddingY === 'number' ? paddingY : 96,
         paddingBottom: typeof paddingY === 'number' ? paddingY : 96,
+        marginTop: 'var(--section)',
       }}
       className="relative overflow-hidden"
     >
