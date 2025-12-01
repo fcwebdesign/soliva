@@ -28,6 +28,8 @@ import './InfiniteTextScrollBlock';
 import './HeroSimpleBlock';
 import './FullscreenCarouselBlock';
 import './PinnedSectionBlock';
+import './PinnedGridDemoBlock';
+import './PinnedGridExplorationsBlock';
 
 // Pour ajouter un nouveau bloc :
 // 1. Créer un dossier src/blocks/auto-declared/MonBloc/

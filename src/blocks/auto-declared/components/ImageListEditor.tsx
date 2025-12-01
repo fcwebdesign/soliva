@@ -27,6 +27,10 @@ export interface ImageListEditorProps<T extends ImageItemData> {
   defaultAspectRatio?: AspectRatioValue | string;
   /** Placeholder pour l'alt dans le mode compact */
   altPlaceholder?: string;
+  /** Afficher ou non le select d'aspect ratio par image (true par défaut) */
+  showAspectRatio?: boolean;
+  /** Limite facultative du nombre d'images (bloque l'ajout) */
+  maxItems?: number;
 }
 
 /**
@@ -40,6 +44,8 @@ export default function ImageListEditor<T extends ImageItemData>({
   compact = true,
   defaultAspectRatio = 'auto',
   altPlaceholder = 'Description (alt text)',
+  showAspectRatio = true,
+  maxItems,
 }: ImageListEditorProps<T>) {
   const [openSelect, setOpenSelect] = useState<string | null>(null);
   
@@ -49,12 +55,20 @@ export default function ImageListEditor<T extends ImageItemData>({
   );
 
   const normalizedItems: T[] = useMemo(() => {
-    return (items || []).map((img, idx) => ({
-      ...img,
-      id: img.id || `img-${idx}`,
-      aspectRatio: (img as any).aspectRatio || defaultAspectRatio,
-    }));
-  }, [items, defaultAspectRatio]);
+    return (items || []).map((img, idx) => {
+      const base = {
+        ...img,
+        id: img.id || `img-${idx}`,
+      } as any;
+      if (showAspectRatio) {
+        base.aspectRatio = (img as any).aspectRatio || defaultAspectRatio;
+      } else {
+        // ne pas exposer de ratio par image
+        delete base.aspectRatio;
+      }
+      return base as T;
+    });
+  }, [items, defaultAspectRatio, showAspectRatio]);
 
   const updateItem = (index: number, payload: Partial<T>) => {
     const next = normalizedItems.map((img, i) => (i === index ? { ...img, ...payload } : img));
@@ -62,6 +76,7 @@ export default function ImageListEditor<T extends ImageItemData>({
   };
 
   const addItem = () => {
+    if (maxItems && normalizedItems.length >= maxItems) return;
     const next: T = {
       id: `img-${Date.now()}`,
       src: '',
@@ -125,14 +140,16 @@ export default function ImageListEditor<T extends ImageItemData>({
               </SortableContext>
             </DndContext>
           )}
-          <button
-            type="button"
-            onClick={addItem}
-            className="w-full px-2 py-2 text-xs border border-dashed border-gray-300 rounded text-gray-500 hover:text-gray-700 hover:border-gray-400 hover:bg-gray-50 transition-colors"
-          >
-            <Plus className="h-3 w-3 inline mr-1" />
-            Ajouter une image
-          </button>
+          {(!maxItems || normalizedItems.length < maxItems) && (
+            <button
+              type="button"
+              onClick={addItem}
+              className="w-full px-2 py-2 text-xs border border-dashed border-gray-300 rounded text-gray-500 hover:text-gray-700 hover:border-gray-400 hover:bg-gray-50 transition-colors"
+            >
+              <Plus className="h-3 w-3 inline mr-1" />
+              Ajouter une image
+            </button>
+          )}
         </div>
       </div>
     );
@@ -142,9 +159,11 @@ export default function ImageListEditor<T extends ImageItemData>({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <Label className="text-sm font-medium text-gray-700">{label}</Label>
-        <Button type="button" size="sm" variant="outline" onClick={addItem}>
-          <Plus className="h-4 w-4 mr-2" /> Ajouter
-        </Button>
+        {(!maxItems || normalizedItems.length < maxItems) && (
+          <Button type="button" size="sm" variant="outline" onClick={addItem}>
+            <Plus className="h-4 w-4 mr-2" /> Ajouter
+          </Button>
+        )}
       </div>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
