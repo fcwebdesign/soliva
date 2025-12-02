@@ -239,14 +239,20 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
     return blockType;
   };
 
+  // Liste des blocs qui utilisent GSAP ScrollTrigger avec pin: true
+  // Pour ces blocs, on applique l'animation uniquement sur les enfants (pas le wrapper)
+  // pour éviter les conflits avec le pin qui contrôle le wrapper
+  const PINNED_BLOCKS = [
+    'pinned-section',
+    'pinned-grid-demo',
+    'pinned-grid-explorations',
+    'sticky-sections-codrops',
+  ];
+
   // Helper pour wrapper un bloc avec ScrollAnimated si nécessaire
   const wrapWithAnimation = (blockElement: React.ReactElement, blockType: string) => {
     // Désactiver les animations si demandé (iframe)
     if (disableScrollAnimations) {
-      return blockElement;
-    }
-    // Exclure le bloc pinned-section des animations globales (conflict pin/spacer)
-    if (blockType === 'pinned-section') {
       return blockElement;
     }
     const scrollAnimations = fullContent?.metadata?.scrollAnimations;
@@ -264,6 +270,25 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
     }
 
     const animationBlockType = getAnimationBlockType(blockType);
+    const isPinnedBlock = PINNED_BLOCKS.includes(blockType);
+
+    // Pour les blocs avec pin, on applique l'animation uniquement sur les enfants
+    // pour éviter les conflits avec le ScrollTrigger du pin qui contrôle le wrapper
+    if (isPinnedBlock) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('📌 [BlockRenderer] Bloc avec pin - animation sur enfants uniquement:', blockType);
+      }
+      return (
+        <ScrollAnimated
+          key={blockElement.key || blockType}
+          blockType={animationBlockType}
+          content={fullContent}
+          animateChildrenOnly={true}
+        >
+          {blockElement}
+        </ScrollAnimated>
+      );
+    }
 
     return (
       <ScrollAnimated

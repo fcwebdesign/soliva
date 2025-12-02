@@ -165,12 +165,25 @@ function cleanupScrollTriggers(reason: string, immediate: boolean = false) {
           console.error('🧹 [ScrollTriggerCleanup] Erreur double sécurité:', e);
         }
       } else {
-        // Méthode normale
+        // Méthode normale : ne tuer que les triggers dont l'élément n'est plus dans le DOM.
+        // Cela évite de supprimer les nouveaux ScrollTriggers fraîchement créés sur la page actuelle
+        // (ex: retour sur une page avec pin GSAP).
         let killed = 0;
         triggers.forEach((trigger, index) => {
           try {
-            trigger.kill(true);
-            killed++;
+            const triggerElement = trigger.vars?.trigger || trigger.trigger;
+            const isElement = triggerElement instanceof Element;
+            const isInDOM = isElement ? document.body?.contains(triggerElement as Element) : true;
+            
+            // Si l'élément n'est plus présent (page précédente), on tue le trigger
+            const shouldKill = !isInDOM || !triggerElement;
+            
+            if (shouldKill) {
+              trigger.kill(true);
+              killed++;
+            } else if (process.env.NODE_ENV === 'development') {
+              console.log(`  ⏭️ Trigger ${index + 1} conservé (élément encore dans le DOM)`);
+            }
           } catch (e) {
             console.error(`  ❌ Trigger ${index + 1} erreur:`, e);
           }
@@ -184,4 +197,3 @@ function cleanupScrollTriggers(reason: string, immediate: boolean = false) {
     console.error('🧹 [ScrollTriggerCleanup] ERREUR CRITIQUE:', e);
   }
 }
-

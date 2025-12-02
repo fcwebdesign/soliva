@@ -55,15 +55,37 @@ export default function PinnedGridExplorationsBlock({ data }: { data: PinnedGrid
     const pinEl = pinRef.current;
     const gridEl = gridRef.current;
 
+    // Nettoyer d'éventuels restes d'un précédent pin (pin-spacer ou triggers)
+    try {
+      const parent = pinEl.parentElement;
+      if (parent?.classList.contains('pin-spacer')) {
+        parent.parentElement?.insertBefore(pinEl, parent);
+        parent.parentElement?.removeChild(parent);
+      }
+      ScrollTrigger.getAll().forEach((trigger) => {
+        const target = (trigger as any).vars?.trigger || (trigger as any).trigger;
+        if (target === pinEl || target === gridEl || (target instanceof Element && target.contains(pinEl))) {
+          trigger.kill(true);
+        }
+      });
+    } catch (e) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('❌ [PinnedGridExplorationsBlock] Erreur cleanup pré-pin:', e);
+      }
+    }
+
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         defaults: { ease: 'none' },
         scrollTrigger: {
           trigger: gridEl,
           start: 'center center',
-          end: `+=${clampedDuration}%`,
+          end: () => `+=${(clampedDuration / 100) * window.innerHeight}`,
           pin: pinEl, // pin du parent de la grille
           scrub: 0.5,
+          refreshPriority: 1, // Priorité élevée pour le refresh
+          anticipatePin: 0.5,
+          invalidateOnRefresh: true,
         },
       });
 
@@ -87,7 +109,24 @@ export default function PinnedGridExplorationsBlock({ data }: { data: PinnedGrid
       );
     }, pinEl);
 
-    return () => ctx.revert();
+    // Refresh ScrollTrigger après un court délai pour s'assurer que le DOM est prêt
+    const refreshTimeout = setTimeout(() => {
+      try {
+        ScrollTrigger.refresh();
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🔄 [PinnedGridExplorationsBlock] ScrollTrigger.refresh() appelé après montage');
+        }
+      } catch (e) {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('❌ [PinnedGridExplorationsBlock] Erreur refresh ScrollTrigger:', e);
+        }
+      }
+    }, 100);
+
+    return () => {
+      clearTimeout(refreshTimeout);
+      ctx.revert();
+    };
   }, [clampedDuration]);
 
   return (
@@ -96,7 +135,7 @@ export default function PinnedGridExplorationsBlock({ data }: { data: PinnedGrid
       data-block-type="pinned-grid-explorations"
       data-block-theme="auto"
       {...(debugId ? { 'data-block-id': debugId } : {})}
-      style={{ marginTop: 'var(--section)' }}
+      style={{ marginTop: 'var(--section)', overflowX: 'hidden' }}
       className="relative"
     >
       <div
@@ -104,11 +143,13 @@ export default function PinnedGridExplorationsBlock({ data }: { data: PinnedGrid
       className="relative overflow-hidden"
       style={{
           padding: '48px 0 56px',
-          width: '100vw',
-          marginLeft: 'calc(50% - 50vw)',
-          marginRight: 'calc(50% - 50vw)',
+          width: '100%',
+          maxWidth: '100%',
+          marginLeft: 0,
+          marginRight: 0,
           background: 'radial-gradient(circle at 20% 20%, #0b1224, #080c16 60%, #060910)',
           color: '#e2e8f0',
+          boxSizing: 'border-box',
         }}
       >
         <div

@@ -9,6 +9,8 @@ interface ScrollAnimatedProps {
   className?: string;
   content?: any;
   enabled?: boolean;
+  /** Si true, applique l'animation uniquement sur les enfants, pas sur le wrapper (utile pour les blocs avec pin) */
+  animateChildrenOnly?: boolean;
 }
 
 /**
@@ -21,7 +23,8 @@ export const ScrollAnimated: React.FC<ScrollAnimatedProps> = ({
   animationConfig,
   className = '',
   content,
-  enabled = true
+  enabled = true,
+  animateChildrenOnly = false
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -29,7 +32,8 @@ export const ScrollAnimated: React.FC<ScrollAnimatedProps> = ({
     config: animationConfig,
     blockType,
     enabled,
-    content
+    content,
+    animateChildrenOnly
   });
 
   return (

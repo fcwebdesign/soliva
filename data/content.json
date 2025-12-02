@@ -558,10 +558,10 @@
     "scrollAnimations": {
       "enabled": true,
       "global": {
-        "type": "fade-in-up",
+        "type": "rotate-in",
         "duration": 1,
         "delay": 0,
-        "stagger": 0,
+        "stagger": 0.15,
         "easing": "power4.out",
         "threshold": 0.3
       },
@@ -575,7 +575,7 @@
           "threshold": 0.3
         },
         "LogosBlock": {
-          "type": "fade-in-up",
+          "type": "blur-in",
           "duration": 1,
           "delay": 0,
           "stagger": 0,
@@ -648,6 +648,22 @@
         },
         "PageIntroBlock": {
           "type": "blur-in",
+          "duration": 1,
+          "delay": 0,
+          "stagger": 0,
+          "easing": "power4.out",
+          "threshold": 0.3
+        },
+        "PinnedGridExplorationsBlock": {
+          "type": "rotate-in",
+          "duration": 1,
+          "delay": 0,
+          "stagger": 0,
+          "easing": "power4.out",
+          "threshold": 0.3
+        },
+        "PinnedGridDemoBlock": {
+          "type": "none",
           "duration": 1,
           "delay": 0,
           "stagger": 0,
@@ -834,6 +850,48 @@
           }
         ],
         "hidden": false
+      },
+      {
+        "id": "pinned-grid-demo-1764655702117",
+        "type": "pinned-grid-demo",
+        "data": {
+          "title": "Explorations",
+          "kicker": "",
+          "description": "",
+          "colors": [
+            "#0f172a",
+            "#1e293b",
+            "#334155",
+            "#475569",
+            "#64748b",
+            "#94a3b8",
+            "#cbd5e1"
+          ],
+          "duration": 250
+        },
+        "hidden": false
+      },
+      {
+        "id": "pinned-grid-explorations-1764655662265",
+        "type": "pinned-grid-explorations",
+        "duration": 150,
+        "colors": [
+          "#0f172a",
+          "#1e293b",
+          "#334155",
+          "#475569",
+          "#64748b",
+          "#94a3b8",
+          "#cbd5e1"
+        ],
+        "images": [
+          {
+            "id": "slot-0",
+            "src": "/uploads/1764655668906-3127ab34.webp",
+            "alt": ""
+          }
+        ],
+        "hidden": true
       },
       {
         "id": "contact-1763705096762",
