@@ -26,8 +26,9 @@ interface ScrollSliderData {
 }
 
 const normalizeSlides = (raw: SlideEditorItem[] | undefined) => {
-  // Limiter le fallback à un seul slide pour éviter de précharger 7 slides
-  const source = raw && raw.length > 0 ? raw : [FALLBACK_SLIDES[0]];
+  // Respecter un tableau vide si l'utilisateur a supprimé tous les slides.
+  // Fallback uniquement si aucune valeur n'est fournie (undefined/null).
+  const source = Array.isArray(raw) ? raw : [FALLBACK_SLIDES[0]];
   return source.map((item, idx) => {
     if (typeof item === 'string') {
       return {

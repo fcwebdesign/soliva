@@ -67,8 +67,10 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
 
   const slides = useMemo(() => {
     // Limiter le fallback à un seul slide pour garder la preview cohérente
+    // Respecter un tableau vide (l'utilisateur a pu supprimer tous les slides). Fallback uniquement si undefined.
+    const hasSlidesArray = Array.isArray(blockData?.slides);
     const source =
-      Array.isArray(blockData?.slides) && blockData.slides.length > 0 ? blockData.slides : [FALLBACK_SLIDES[0]];
+      hasSlidesArray ? (blockData?.slides as SlideInput[]) : [FALLBACK_SLIDES[0]];
     return source
       .map((item, idx) => {
         // Respecter le flag hidden pour l'oeil dans l'éditeur
