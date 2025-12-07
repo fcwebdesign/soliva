@@ -9,6 +9,7 @@ import { GripVertical, ChevronDown, ChevronRight, ImagePlus, Trash2, Eye, EyeOff
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { toast } from 'sonner';
 
 type SlideEditorItem = {
   id?: string;
@@ -385,7 +386,7 @@ export default function ScrollSliderEditor({
 
   const removeSlide = (id: string) => {
     if (slides.length <= 1) {
-      alert('Au moins un slide est requis.');
+      toast.warning('Au moins un slide est requis.');
       return;
     }
     const next = slides.filter((slide) => slide.id !== id);
