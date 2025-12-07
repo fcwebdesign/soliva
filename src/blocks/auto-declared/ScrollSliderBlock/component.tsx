@@ -271,12 +271,15 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
     }, sliderEl);
 
     // Débloquer l'update du slider dès qu'un vrai input utilisateur survient
+    const hasWindow = typeof window !== 'undefined';
     const markUserScrolled = () => {
       hasUserScrolled = true;
     };
-    window.addEventListener('wheel', markUserScrolled, { passive: true });
-    window.addEventListener('touchmove', markUserScrolled, { passive: true });
-    window.addEventListener('keydown', markUserScrolled, { passive: true });
+    if (hasWindow) {
+      window.addEventListener('wheel', markUserScrolled, { passive: true });
+      window.addEventListener('touchmove', markUserScrolled, { passive: true });
+      window.addEventListener('keydown', markUserScrolled, { passive: true });
+    }
 
     const refreshTimeout = setTimeout(() => {
       try {
@@ -291,9 +294,11 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
     return () => {
       clearTimeout(refreshTimeout);
       ctx.revert();
-      window.removeEventListener('wheel', markUserScrolled);
-      window.removeEventListener('touchmove', markUserScrolled);
-      window.removeEventListener('keydown', markUserScrolled);
+      if (hasWindow) {
+        window.removeEventListener('wheel', markUserScrolled);
+        window.removeEventListener('touchmove', markUserScrolled);
+        window.removeEventListener('keydown', markUserScrolled);
+      }
     };
   }, [slides, previewIndex]);
 
