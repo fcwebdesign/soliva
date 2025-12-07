@@ -26,16 +26,82 @@ export default function PreviewIframePage() {
       // if (event.origin !== window.location.origin) return;
 
       const { type, payload } = event.data;
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[Iframe] message reçu', { type, payload });
+      }
 
       switch (type) {
         case 'UPDATE_PREVIEW':
           setPreviewData(payload.previewData);
-          setBlocks(payload.blocks || []);
+          // Reset previewIndex à 0 pour les scroll-slider afin d'ouvrir sur le premier slide
+          setBlocks(
+            (payload.blocks || []).map((b: any) => {
+              if (b.type !== 'scroll-slider') return b;
+
+              const baseData = b.data || {};
+              const slidesFromBlock = baseData.slides ?? b.slides;
+              const nextPreviewIndex =
+                typeof b.previewIndex === 'number'
+                  ? b.previewIndex
+                  : typeof baseData.previewIndex === 'number'
+                  ? baseData.previewIndex
+                  : 0;
+
+              return {
+                ...b,
+                // Conserver aussi les slides à la racine pour compat
+                slides: slidesFromBlock,
+                previewIndex: nextPreviewIndex,
+                previewVersion: b.previewVersion || baseData.previewVersion || 0,
+                data: {
+                  ...baseData,
+                  slides: slidesFromBlock,
+                  previewIndex: nextPreviewIndex,
+                  previewVersion: b.previewVersion || baseData.previewVersion || 0,
+                },
+              };
+            })
+          );
           setPaletteCss(payload.paletteCss || '');
           // Mettre à jour le highlight si fourni
           if (payload.highlightBlockId) {
             setHighlightBlockId(payload.highlightBlockId);
           }
+          break;
+        
+        case 'SCROLL_SLIDER_PREVIEW':
+          // Mettre à jour le previewIndex du bloc ciblé puis forcer un petit scrollTrigger refresh
+          setBlocks((prev) =>
+            prev.map((b) =>
+              b.id === payload.blockId
+                ? { 
+                    ...b, 
+                    previewIndex: payload.previewIndex, 
+                    previewVersion: Date.now(),
+                    data: { 
+                      ...(b.data || {}), 
+                      slides: (b.data?.slides ?? b.slides), 
+                      previewIndex: payload.previewIndex, 
+                      previewVersion: Date.now() 
+                    },
+                    // Garder aussi les slides à la racine pour compat
+                    slides: b.data?.slides ?? b.slides,
+                  }
+                : b
+            )
+          );
+          if (process.env.NODE_ENV !== 'production') {
+            console.log('[Iframe] SCROLL_SLIDER_PREVIEW appliqué', { blockId: payload.blockId, previewIndex: payload.previewIndex });
+          }
+          requestAnimationFrame(() => {
+            try {
+              if (typeof ScrollTrigger !== 'undefined' && ScrollTrigger.refresh) {
+                ScrollTrigger.refresh();
+              }
+            } catch (_) {
+              // ignore
+            }
+          });
           break;
         
         case 'HIGHLIGHT_BLOCK':
@@ -427,4 +493,3 @@ export default function PreviewIframePage() {
     </TemplateProvider>
   );
 }
-
