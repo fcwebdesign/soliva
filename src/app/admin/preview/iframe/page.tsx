@@ -56,6 +56,12 @@ export default function PreviewIframePage() {
                   : typeof b.showProgressBar === 'boolean'
                   ? b.showProgressBar
                   : true;
+              const showText =
+                typeof baseData.showText === 'boolean'
+                  ? baseData.showText
+                  : typeof b.showText === 'boolean'
+                  ? b.showText
+                  : true;
 
               const shouldKeepPrev = prevBlock && prevVersion > incomingVersion;
               const incomingPreviewIndex =
@@ -92,6 +98,7 @@ export default function PreviewIframePage() {
                 previewVersion: nextVersion,
                 showIndicators,
                 showProgressBar,
+                showText,
                 data: {
                   ...baseData,
                   slides: slidesFromBlock,
@@ -99,6 +106,7 @@ export default function PreviewIframePage() {
                   previewVersion: nextVersion,
                   showIndicators,
                   showProgressBar,
+                  showText,
                 },
               };
             })
@@ -128,6 +136,12 @@ export default function PreviewIframePage() {
                   : typeof b.showProgressBar === 'boolean'
                   ? b.showProgressBar
                   : true;
+              const flagText =
+                typeof (b.data as any)?.showText === 'boolean'
+                  ? (b.data as any).showText
+                  : typeof b.showText === 'boolean'
+                  ? b.showText
+                  : true;
 
               const nextVersion = payload.previewVersion || Date.now();
 
@@ -142,11 +156,13 @@ export default function PreviewIframePage() {
                   previewVersion: nextVersion,
                   showIndicators: flagIndicators,
                   showProgressBar: flagProgress,
+                  showText: flagText,
                 },
                 // Garder aussi les slides à la racine pour compat
                 slides: b.data?.slides ?? b.slides,
                 showIndicators: flagIndicators,
                 showProgressBar: flagProgress,
+                showText: flagText,
               };
             })
           );

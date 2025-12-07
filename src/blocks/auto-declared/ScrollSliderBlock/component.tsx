@@ -114,7 +114,7 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
     if (
       !sliderRef.current ||
       !imagesRef.current ||
-      !titleRef.current ||
+      (showText && !titleRef.current) ||
       (showIndicators && !indicesRef.current) ||
       (showProgressBar && !progressRef.current)
     ) {
@@ -122,7 +122,7 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
     }
     const sliderEl = sliderRef.current;
     const imagesEl = imagesRef.current;
-    const titleEl = titleRef.current;
+    const titleEl = showText ? titleRef.current : null;
     const indicesEl = showIndicators ? indicesRef.current : null;
     const progressEl = showProgressBar ? progressRef.current : null;
 
@@ -201,6 +201,7 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
       };
 
       const animateTitle = (index: number) => {
+        if (!showText || !titleEl) return;
         currentSplit?.revert();
         titleEl.innerHTML = '';
         const heading = document.createElement('h2');
@@ -333,7 +334,7 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
       clearTimeout(refreshTimeout);
       ctx.revert();
     };
-  }, [slides, previewIndex, showIndicators, showProgressBar]);
+  }, [slides, previewIndex, showIndicators, showProgressBar, showText]);
 
   if (!slides || slides.length === 0) return null;
 
