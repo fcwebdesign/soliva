@@ -34,30 +34,55 @@ export default function PreviewIframePage() {
         case 'UPDATE_PREVIEW':
           setPreviewData(payload.previewData);
           // Reset previewIndex à 0 pour les scroll-slider afin d'ouvrir sur le premier slide
-          setBlocks(
+          setBlocks((prev) =>
             (payload.blocks || []).map((b: any) => {
               if (b.type !== 'scroll-slider') return b;
 
+              const prevBlock = prev.find((p) => p.id === b.id);
+              const prevVersion = prevBlock?.previewVersion || prevBlock?.data?.previewVersion || 0;
+
               const baseData = b.data || {};
+              const incomingVersion = b.previewVersion || baseData.previewVersion || 0;
               const slidesFromBlock = baseData.slides ?? b.slides;
-              const nextPreviewIndex =
+
+              const shouldKeepPrev = prevBlock && prevVersion > incomingVersion;
+              const incomingPreviewIndex =
                 typeof b.previewIndex === 'number'
                   ? b.previewIndex
                   : typeof baseData.previewIndex === 'number'
                   ? baseData.previewIndex
                   : 0;
+              const nextPreviewIndex = shouldKeepPrev
+                ? prevBlock?.previewIndex ?? prevBlock?.data?.previewIndex ?? incomingPreviewIndex
+                : incomingPreviewIndex;
+
+              const nextVersion = Math.max(incomingVersion, prevVersion);
+
+              if (process.env.NODE_ENV !== 'production') {
+                console.log('[Iframe][UPDATE_PREVIEW][scroll-slider]', {
+                  blockId: b.id,
+                  slides: slidesFromBlock?.length || 0,
+                  incomingPreviewIndex,
+                  prevPreviewIndex: prevBlock?.previewIndex ?? prevBlock?.data?.previewIndex,
+                  chosenPreviewIndex: nextPreviewIndex,
+                  incomingVersion,
+                  prevVersion,
+                  chosenVersion: nextVersion,
+                  keptPrev: shouldKeepPrev,
+                });
+              }
 
               return {
                 ...b,
                 // Conserver aussi les slides à la racine pour compat
                 slides: slidesFromBlock,
                 previewIndex: nextPreviewIndex,
-                previewVersion: b.previewVersion || baseData.previewVersion || 0,
+                previewVersion: nextVersion,
                 data: {
                   ...baseData,
                   slides: slidesFromBlock,
                   previewIndex: nextPreviewIndex,
-                  previewVersion: b.previewVersion || baseData.previewVersion || 0,
+                  previewVersion: nextVersion,
                 },
               };
             })
@@ -77,12 +102,12 @@ export default function PreviewIframePage() {
                 ? { 
                     ...b, 
                     previewIndex: payload.previewIndex, 
-                    previewVersion: Date.now(),
+                    previewVersion: payload.previewVersion || Date.now(),
                     data: { 
                       ...(b.data || {}), 
                       slides: (b.data?.slides ?? b.slides), 
                       previewIndex: payload.previewIndex, 
-                      previewVersion: Date.now() 
+                      previewVersion: payload.previewVersion || Date.now() 
                     },
                     // Garder aussi les slides à la racine pour compat
                     slides: b.data?.slides ?? b.slides,
@@ -90,6 +115,13 @@ export default function PreviewIframePage() {
                 : b
             )
           );
+          if (process.env.NODE_ENV !== 'production') {
+            console.log('[Iframe][SCROLL_SLIDER_PREVIEW]', {
+              blockId: payload.blockId,
+              previewIndex: payload.previewIndex,
+              previewVersion: payload.previewVersion,
+            });
+          }
           if (process.env.NODE_ENV !== 'production') {
             console.log('[Iframe] SCROLL_SLIDER_PREVIEW appliqué', { blockId: payload.blockId, previewIndex: payload.previewIndex });
           }

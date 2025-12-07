@@ -251,8 +251,9 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
             return;
           }
 
-          gsap.set(progressEl, { scaleY: self.progress });
-          const current = Math.min(slides.length - 1, Math.floor(self.progress * slides.length));
+      gsap.set(progressEl, { scaleY: self.progress });
+          const segments = Math.max(1, slides.length - 1);
+          const current = Math.min(slides.length - 1, Math.round(self.progress * segments));
           if (current !== activeSlide && current < slides.length) {
             activeSlide = current;
             animateSlide(activeSlide);
@@ -262,7 +263,9 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
 
       // Positionner la preview directement sur le slide sélectionné en admin
       if (slides.length > 0) {
-        const targetProgress = slides.length > 1 ? previewIndex / slides.length : 0;
+        const segments = Math.max(1, slides.length - 1);
+        // Utiliser segments (n-1) pour éviter les erreurs d'arrondi qui laissent sur le slide précédent
+        const targetProgress = slides.length > 1 ? previewIndex / segments : 0;
         try {
           trigger.progress(targetProgress, false);
           activeSlide = previewIndex;

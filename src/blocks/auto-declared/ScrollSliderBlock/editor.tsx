@@ -337,15 +337,15 @@ export default function ScrollSliderEditor({
   const clampPreviewIndex = (next: SlideEditorItem[], desired?: number) =>
     Math.max(0, Math.min(next.length - 1, desired ?? 0));
 
-  const sendPreviewMessage = (index: number) => {
+  const sendPreviewMessage = (index: number, version?: number) => {
     try {
       const iframe = document.querySelector('iframe');
       if (iframe?.contentWindow) {
         iframe.contentWindow.postMessage(
-          { type: 'SCROLL_SLIDER_PREVIEW', payload: { blockId: blockId || (data as any)?.id, previewIndex: index } },
+          { type: 'SCROLL_SLIDER_PREVIEW', payload: { blockId: blockId || (data as any)?.id, previewIndex: index, previewVersion: version || Date.now() } },
           '*'
         );
-        console.log('[ScrollSliderEditor] postMessage SCROLL_SLIDER_PREVIEW', { index });
+        console.log('[ScrollSliderEditor] postMessage SCROLL_SLIDER_PREVIEW', { index, version });
       }
     } catch (e) {
       console.error('ScrollSliderEditor: erreur postMessage preview', e);
@@ -355,23 +355,25 @@ export default function ScrollSliderEditor({
   const updateSlides = (next: SlideEditorItem[], nextPreview?: number) => {
     try {
       const preview = clampPreviewIndex(next, nextPreview ?? previewIndexState);
-      console.log('[ScrollSliderEditor] updateSlides', { previewIndex: preview, nextLength: next.length });
+      const version = Date.now();
+      console.log('[ScrollSliderEditor] updateSlides', { previewIndex: preview, nextLength: next.length, version, blockId: blockId || (data as any)?.id });
       setPreviewIndexState(preview);
-      onChange({ ...data, slides: next, previewIndex: preview });
+      onChange({ ...data, slides: next, previewIndex: preview, previewVersion: version });
       notifyContentUpdate();
-      sendPreviewMessage(preview);
+      sendPreviewMessage(preview, version);
     } catch (err) {
       console.error('ScrollSliderEditor: erreur updateSlides', err);
     }
   };
   const setPreviewIndex = (index: number) => {
     try {
-      console.log('[ScrollSliderEditor] setPreviewIndex', { index });
+      const version = Date.now();
+      console.log('[ScrollSliderEditor] setPreviewIndex', { index, version, blockId: blockId || (data as any)?.id });
       setPreviewIndexState(index);
-      onChange({ ...data, slides, previewIndex: index });
+      onChange({ ...data, slides, previewIndex: index, previewVersion: version });
       notifyContentUpdate();
 
-      sendPreviewMessage(index);
+      sendPreviewMessage(index, version);
   } catch (err) {
     console.error('ScrollSliderEditor: erreur setPreviewIndex', err);
   }
