@@ -337,25 +337,7 @@ export default function ScrollSliderEditor({
   const clampPreviewIndex = (next: SlideEditorItem[], desired?: number) =>
     Math.max(0, Math.min(next.length - 1, desired ?? 0));
 
-  const updateSlides = (next: SlideEditorItem[], nextPreview?: number) => {
-    try {
-      const preview = clampPreviewIndex(next, nextPreview ?? previewIndexState);
-      console.log('[ScrollSliderEditor] updateSlides', { previewIndex: preview, nextLength: next.length });
-      setPreviewIndexState(preview);
-      onChange({ ...data, slides: next, previewIndex: preview });
-      notifyContentUpdate();
-    } catch (err) {
-      console.error('ScrollSliderEditor: erreur updateSlides', err);
-    }
-  };
-const setPreviewIndex = (index: number) => {
-  try {
-    console.log('[ScrollSliderEditor] setPreviewIndex', { index });
-    setPreviewIndexState(index);
-    onChange({ ...data, slides, previewIndex: index });
-    notifyContentUpdate();
-
-    // Informer l'iframe de preview immédiatement (pas besoin d'attendre le refresh)
+  const sendPreviewMessage = (index: number) => {
     try {
       const iframe = document.querySelector('iframe');
       if (iframe?.contentWindow) {
@@ -368,6 +350,28 @@ const setPreviewIndex = (index: number) => {
     } catch (e) {
       console.error('ScrollSliderEditor: erreur postMessage preview', e);
     }
+  };
+
+  const updateSlides = (next: SlideEditorItem[], nextPreview?: number) => {
+    try {
+      const preview = clampPreviewIndex(next, nextPreview ?? previewIndexState);
+      console.log('[ScrollSliderEditor] updateSlides', { previewIndex: preview, nextLength: next.length });
+      setPreviewIndexState(preview);
+      onChange({ ...data, slides: next, previewIndex: preview });
+      notifyContentUpdate();
+      sendPreviewMessage(preview);
+    } catch (err) {
+      console.error('ScrollSliderEditor: erreur updateSlides', err);
+    }
+  };
+  const setPreviewIndex = (index: number) => {
+    try {
+      console.log('[ScrollSliderEditor] setPreviewIndex', { index });
+      setPreviewIndexState(index);
+      onChange({ ...data, slides, previewIndex: index });
+      notifyContentUpdate();
+
+      sendPreviewMessage(index);
   } catch (err) {
     console.error('ScrollSliderEditor: erreur setPreviewIndex', err);
   }
