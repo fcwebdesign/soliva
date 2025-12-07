@@ -66,11 +66,9 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
   const debugId = (data as any).id || (blockData as any).id;
 
   const slides = useMemo(() => {
-    // Limiter le fallback à un seul slide pour garder la preview cohérente
-    // Respecter un tableau vide (l'utilisateur a pu supprimer tous les slides). Fallback uniquement si undefined.
-    const hasSlidesArray = Array.isArray(blockData?.slides);
+    // Minimum 1 slide : fallback si liste absente ou vide
     const source =
-      hasSlidesArray ? (blockData?.slides as SlideInput[]) : [FALLBACK_SLIDES[0]];
+      Array.isArray(blockData?.slides) && blockData.slides.length > 0 ? blockData.slides : [FALLBACK_SLIDES[0]];
     return source
       .map((item, idx) => {
         // Respecter le flag hidden pour l'oeil dans l'éditeur

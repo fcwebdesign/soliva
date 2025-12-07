@@ -26,9 +26,8 @@ interface ScrollSliderData {
 }
 
 const normalizeSlides = (raw: SlideEditorItem[] | undefined) => {
-  // Respecter un tableau vide si l'utilisateur a supprimé tous les slides.
-  // Fallback uniquement si aucune valeur n'est fournie (undefined/null).
-  const source = Array.isArray(raw) ? raw : [FALLBACK_SLIDES[0]];
+  // Minimum 1 slide : fallback si liste vide/absente
+  const source = raw && raw.length > 0 ? raw : [FALLBACK_SLIDES[0]];
   return source.map((item, idx) => {
     if (typeof item === 'string') {
       return {
@@ -385,6 +384,10 @@ export default function ScrollSliderEditor({
   };
 
   const removeSlide = (id: string) => {
+    if (slides.length <= 1) {
+      alert('Au moins un slide est requis.');
+      return;
+    }
     const next = slides.filter((slide) => slide.id !== id);
     const nextPreview = clampPreviewIndex(next, previewIndexState);
     updateSlides(next, nextPreview);
