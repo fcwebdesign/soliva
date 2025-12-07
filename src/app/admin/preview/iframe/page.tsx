@@ -44,6 +44,8 @@ export default function PreviewIframePage() {
               const baseData = b.data || {};
               const incomingVersion = b.previewVersion || baseData.previewVersion || 0;
               const slidesFromBlock = baseData.slides ?? b.slides;
+              const showIndicators = baseData.showIndicators !== false;
+              const showProgressBar = baseData.showProgressBar !== false;
 
               const shouldKeepPrev = prevBlock && prevVersion > incomingVersion;
               const incomingPreviewIndex =
@@ -78,11 +80,15 @@ export default function PreviewIframePage() {
                 slides: slidesFromBlock,
                 previewIndex: nextPreviewIndex,
                 previewVersion: nextVersion,
+                showIndicators,
+                showProgressBar,
                 data: {
                   ...baseData,
                   slides: slidesFromBlock,
                   previewIndex: nextPreviewIndex,
                   previewVersion: nextVersion,
+                  showIndicators,
+                  showProgressBar,
                 },
               };
             })
@@ -107,10 +113,14 @@ export default function PreviewIframePage() {
                       ...(b.data || {}), 
                       slides: (b.data?.slides ?? b.slides), 
                       previewIndex: payload.previewIndex, 
-                      previewVersion: payload.previewVersion || Date.now() 
+                      previewVersion: payload.previewVersion || Date.now(),
+                      showIndicators: b.data?.showIndicators ?? b.showIndicators,
+                      showProgressBar: b.data?.showProgressBar ?? b.showProgressBar,
                     },
                     // Garder aussi les slides à la racine pour compat
                     slides: b.data?.slides ?? b.slides,
+                    showIndicators: b.data?.showIndicators ?? b.showIndicators,
+                    showProgressBar: b.data?.showProgressBar ?? b.showProgressBar,
                   }
                 : b
             )
