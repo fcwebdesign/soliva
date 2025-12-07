@@ -272,13 +272,24 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
 
     // Débloquer l'update du slider dès qu'un vrai input utilisateur survient
     const hasWindow = typeof window !== 'undefined';
+    // En SSR/preview statique, on ne peut pas écouter les events → on ne bloque pas le slider
+    if (!hasWindow) {
+      hasUserScrolled = true;
+    }
+
     const markUserScrolled = () => {
       hasUserScrolled = true;
     };
+
     if (hasWindow) {
-      window.addEventListener('wheel', markUserScrolled, { passive: true });
-      window.addEventListener('touchmove', markUserScrolled, { passive: true });
-      window.addEventListener('keydown', markUserScrolled, { passive: true });
+      try {
+        window.addEventListener('wheel', markUserScrolled, { passive: true });
+        window.addEventListener('touchmove', markUserScrolled, { passive: true });
+        window.addEventListener('keydown', markUserScrolled, { passive: true });
+      } catch (e) {
+        // ignore si l'environnement ne supporte pas ces événements
+        hasUserScrolled = true;
+      }
     }
 
     const refreshTimeout = setTimeout(() => {
@@ -295,9 +306,13 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
       clearTimeout(refreshTimeout);
       ctx.revert();
       if (hasWindow) {
-        window.removeEventListener('wheel', markUserScrolled);
-        window.removeEventListener('touchmove', markUserScrolled);
-        window.removeEventListener('keydown', markUserScrolled);
+        try {
+          window.removeEventListener('wheel', markUserScrolled);
+          window.removeEventListener('touchmove', markUserScrolled);
+          window.removeEventListener('keydown', markUserScrolled);
+        } catch (_) {
+          // ignore
+        }
       }
     };
   }, [slides, previewIndex]);
