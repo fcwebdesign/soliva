@@ -44,8 +44,18 @@ export default function PreviewIframePage() {
               const baseData = b.data || {};
               const incomingVersion = b.previewVersion || baseData.previewVersion || 0;
               const slidesFromBlock = baseData.slides ?? b.slides;
-              const showIndicators = baseData.showIndicators !== false;
-              const showProgressBar = baseData.showProgressBar !== false;
+              const showIndicators =
+                typeof baseData.showIndicators === 'boolean'
+                  ? baseData.showIndicators
+                  : typeof b.showIndicators === 'boolean'
+                  ? b.showIndicators
+                  : true;
+              const showProgressBar =
+                typeof baseData.showProgressBar === 'boolean'
+                  ? baseData.showProgressBar
+                  : typeof b.showProgressBar === 'boolean'
+                  ? b.showProgressBar
+                  : true;
 
               const shouldKeepPrev = prevBlock && prevVersion > incomingVersion;
               const incomingPreviewIndex =
@@ -103,27 +113,42 @@ export default function PreviewIframePage() {
         case 'SCROLL_SLIDER_PREVIEW':
           // Mettre à jour le previewIndex du bloc ciblé puis forcer un petit scrollTrigger refresh
           setBlocks((prev) =>
-            prev.map((b) =>
-              b.id === payload.blockId
-                ? { 
-                    ...b, 
-                    previewIndex: payload.previewIndex, 
-                    previewVersion: payload.previewVersion || Date.now(),
-                    data: { 
-                      ...(b.data || {}), 
-                      slides: (b.data?.slides ?? b.slides), 
-                      previewIndex: payload.previewIndex, 
-                      previewVersion: payload.previewVersion || Date.now(),
-                      showIndicators: b.data?.showIndicators ?? b.showIndicators,
-                      showProgressBar: b.data?.showProgressBar ?? b.showProgressBar,
-                    },
-                    // Garder aussi les slides à la racine pour compat
-                    slides: b.data?.slides ?? b.slides,
-                    showIndicators: b.data?.showIndicators ?? b.showIndicators,
-                    showProgressBar: b.data?.showProgressBar ?? b.showProgressBar,
-                  }
-                : b
-            )
+            prev.map((b) => {
+              if (b.id !== payload.blockId) return b;
+
+              const flagIndicators =
+                typeof (b.data as any)?.showIndicators === 'boolean'
+                  ? (b.data as any).showIndicators
+                  : typeof b.showIndicators === 'boolean'
+                  ? b.showIndicators
+                  : true;
+              const flagProgress =
+                typeof (b.data as any)?.showProgressBar === 'boolean'
+                  ? (b.data as any).showProgressBar
+                  : typeof b.showProgressBar === 'boolean'
+                  ? b.showProgressBar
+                  : true;
+
+              const nextVersion = payload.previewVersion || Date.now();
+
+              return {
+                ...b,
+                previewIndex: payload.previewIndex,
+                previewVersion: nextVersion,
+                data: {
+                  ...(b.data || {}),
+                  slides: b.data?.slides ?? b.slides,
+                  previewIndex: payload.previewIndex,
+                  previewVersion: nextVersion,
+                  showIndicators: flagIndicators,
+                  showProgressBar: flagProgress,
+                },
+                // Garder aussi les slides à la racine pour compat
+                slides: b.data?.slides ?? b.slides,
+                showIndicators: flagIndicators,
+                showProgressBar: flagProgress,
+              };
+            })
           );
           if (process.env.NODE_ENV !== 'production') {
             console.log('[Iframe][SCROLL_SLIDER_PREVIEW]', {
