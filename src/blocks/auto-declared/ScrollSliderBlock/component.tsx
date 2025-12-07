@@ -94,10 +94,13 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
     ? Math.max(0, Math.min(slides.length - 1, blockData.previewIndex))
     : 0;
   if (process.env.NODE_ENV !== 'production') {
-    console.log('[ScrollSliderBlock] previewIndex applied', { previewIndex, slides: slides.length, blockData });
+    console.log('[ScrollSliderBlock] previewIndex applied', { previewIndex, slides: slides.length, blockId: debugId });
   }
 
   useLayoutEffect(() => {
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[ScrollSliderBlock] useLayoutEffect init', { slidesCount: slides.length, previewIndex, blockId: debugId });
+    }
     if (!sliderRef.current || !imagesRef.current || !titleRef.current || !indicesRef.current || !progressRef.current) {
       return () => {};
     }
