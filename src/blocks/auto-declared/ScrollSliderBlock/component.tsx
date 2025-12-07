@@ -329,7 +329,7 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
       clearTimeout(refreshTimeout);
       ctx.revert();
     };
-  }, [slides, previewIndex]);
+  }, [slides, previewIndex, showIndicators, showProgressBar]);
 
   if (!slides || slides.length === 0) return null;
 
