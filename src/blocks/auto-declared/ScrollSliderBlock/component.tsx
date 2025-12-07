@@ -71,6 +71,8 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
       Array.isArray(blockData?.slides) && blockData.slides.length > 0 ? blockData.slides : [FALLBACK_SLIDES[0]];
     return source
       .map((item, idx) => {
+        // Respecter le flag hidden pour l'oeil dans l'éditeur
+        if ((item as any)?.hidden) return null;
         if (typeof item === 'string') {
           return {
             id: `slide-${idx}`,
