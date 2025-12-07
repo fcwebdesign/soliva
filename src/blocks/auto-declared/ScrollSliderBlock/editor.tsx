@@ -334,15 +334,20 @@ export default function ScrollSliderEditor({
     }
   };
 
-const updateSlides = (next: SlideEditorItem[]) => {
-  try {
-    console.log('[ScrollSliderEditor] updateSlides', { previewIndex: previewIndexState, nextLength: next.length });
-    onChange({ ...data, slides: next, previewIndex: previewIndexState });
-    notifyContentUpdate();
-  } catch (err) {
-    console.error('ScrollSliderEditor: erreur updateSlides', err);
-  }
-};
+  const clampPreviewIndex = (next: SlideEditorItem[], desired?: number) =>
+    Math.max(0, Math.min(next.length - 1, desired ?? 0));
+
+  const updateSlides = (next: SlideEditorItem[], nextPreview?: number) => {
+    try {
+      const preview = clampPreviewIndex(next, nextPreview ?? previewIndexState);
+      console.log('[ScrollSliderEditor] updateSlides', { previewIndex: preview, nextLength: next.length });
+      setPreviewIndexState(preview);
+      onChange({ ...data, slides: next, previewIndex: preview });
+      notifyContentUpdate();
+    } catch (err) {
+      console.error('ScrollSliderEditor: erreur updateSlides', err);
+    }
+  };
 const setPreviewIndex = (index: number) => {
   try {
     console.log('[ScrollSliderEditor] setPreviewIndex', { index });
@@ -367,21 +372,15 @@ const setPreviewIndex = (index: number) => {
     console.error('ScrollSliderEditor: erreur setPreviewIndex', err);
   }
 };
-  const clampPreviewIndex = (next: SlideEditorItem[], desired?: number) =>
-    Math.max(0, Math.min(next.length - 1, desired ?? 0));
-
   const updateSlide = (id: string, patch: Partial<SlideEditorItem>) => {
     const next = slides.map((slide) => (slide.id === id ? { ...slide, ...patch } : slide));
-    updateSlides(next);
-    const nextIndex = clampPreviewIndex(next, previewIndexState);
-    setPreviewIndexState(nextIndex);
+    updateSlides(next, previewIndexState);
   };
 
   const removeSlide = (id: string) => {
     const next = slides.filter((slide) => slide.id !== id);
     const nextPreview = clampPreviewIndex(next, previewIndexState);
-    updateSlides(next);
-    setPreviewIndexState(nextPreview);
+    updateSlides(next, nextPreview);
     if (openSlideId === id) {
       setOpenSlideId(next[nextPreview]?.id || next[0]?.id || null);
     }
@@ -394,8 +393,7 @@ const setPreviewIndex = (index: number) => {
       image: { src: '', alt: '', aspectRatio: '16:9' } as ImageData,
     };
     const next = [...slides, newSlide];
-    updateSlides(next);
-    setPreviewIndexState(next.length - 1);
+    updateSlides(next, next.length - 1);
     setOpenSlideId(newSlide.id || null);
   };
 
@@ -416,8 +414,7 @@ const setPreviewIndex = (index: number) => {
         image: { src: result.url, alt: '', aspectRatio: '16:9' } as ImageData,
       };
       const next = [...slides, newSlide];
-      updateSlides(next);
-      setPreviewIndexState(next.length - 1);
+      updateSlides(next, next.length - 1);
       setOpenSlideId(newSlide.id || null);
     } catch (error) {
       console.error('Erreur upload:', error);
@@ -446,9 +443,8 @@ const setPreviewIndex = (index: number) => {
         image: { src: url, alt: '', aspectRatio: '16:9' } as ImageData,
       }));
       const next = [...slides, ...newSlides];
-      updateSlides(next);
       const firstNewIndex = slides.length;
-      setPreviewIndexState(firstNewIndex);
+      updateSlides(next, firstNewIndex);
       if (newSlides[0]) setOpenSlideId(newSlides[0].id || null);
     } catch (error) {
       console.error('Erreur upload multiple:', error);
@@ -471,8 +467,7 @@ const setPreviewIndex = (index: number) => {
       const newIndex = slides.findIndex((slide) => slide.id === over.id);
       if (oldIndex !== -1 && newIndex !== -1) {
         const newSlides = arrayMove(slides, oldIndex, newIndex);
-        updateSlides(newSlides);
-        setPreviewIndexState(clampPreviewIndex(newSlides, previewIndexState));
+        updateSlides(newSlides, clampPreviewIndex(newSlides, previewIndexState));
       }
     }
   };
