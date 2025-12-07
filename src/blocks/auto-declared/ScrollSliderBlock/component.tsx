@@ -65,7 +65,9 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
   const debugId = (data as any).id || (blockData as any).id;
 
   const slides = useMemo(() => {
-    const source = Array.isArray(blockData?.slides) && blockData.slides.length > 0 ? blockData.slides : FALLBACK_SLIDES;
+    // Limiter le fallback à un seul slide pour garder la preview cohérente
+    const source =
+      Array.isArray(blockData?.slides) && blockData.slides.length > 0 ? blockData.slides : [FALLBACK_SLIDES[0]];
     return source
       .map((item, idx) => {
         if (typeof item === 'string') {
@@ -128,8 +130,6 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
       let activeSlide = Math.max(0, previewIndex);
       let currentSplit: any = null;
       let initialized = false;
-      let locked = true;
-      let trigger: ScrollTrigger | null = null;
 
       const renderIndicators = () => {
         indicesEl.innerHTML = '';
@@ -231,7 +231,7 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
 
       gsap.set(progressEl, { scaleY: 0 });
 
-      trigger = ScrollTrigger.create({
+      const trigger = ScrollTrigger.create({
         trigger: sliderEl,
         start: 'top top',
         end: () => `+=${Math.max(1, slides.length) * window.innerHeight}`,
@@ -247,10 +247,6 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
             initialized = true;
             return;
           }
-          // Bloqué tant qu'on n'a pas déverrouillé via une interaction utilisateur
-          if (locked) {
-            return;
-          }
 
           gsap.set(progressEl, { scaleY: self.progress });
           const current = Math.min(slides.length - 1, Math.floor(self.progress * slides.length));
@@ -262,73 +258,37 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
       });
 
       // Positionner la preview directement sur le slide sélectionné en admin
-      if (slides.length > 0 && trigger) {
+      if (slides.length > 0) {
         const targetProgress = slides.length > 1 ? previewIndex / slides.length : 0;
         try {
           trigger.progress(targetProgress, false);
-          gsap.set(progressEl, { scaleY: targetProgress });
           activeSlide = previewIndex;
           animateSlide(activeSlide);
-          // On désactive le trigger tant qu'il n'y a pas eu d'interaction utilisateur
-          trigger.disable();
-        } catch (_) {
-          // ignore
-        }
-      }
-
-      // Déverrouiller le scroll du slider dès une interaction utilisateur
-      const hasWindow = typeof window !== 'undefined';
-      const unlock = () => {
-        if (!locked && trigger?.enabled()) return;
-        locked = false;
-        try {
-          trigger?.enable();
-          ScrollTrigger.refresh();
-        } catch (_) {
-          // ignore
-        }
-      };
-
-      if (hasWindow) {
-        try {
-          sliderEl.addEventListener('wheel', unlock, { passive: true });
-          sliderEl.addEventListener('touchstart', unlock, { passive: true });
-          sliderEl.addEventListener('keydown', unlock, { passive: true });
-        } catch (_) {
-          locked = false;
-          trigger?.enable();
-        }
-      } else {
-        // Pas de window => on ne bloque pas
-        locked = false;
-        trigger?.enable();
-      }
-
-      const refreshTimeout = setTimeout(() => {
-        try {
-          ScrollTrigger.refresh();
         } catch (e) {
-          if (process.env.NODE_ENV === 'development') {
-            console.error('❌ [ScrollSliderBlock] Erreur refresh ScrollTrigger:', e);
-          }
+          // ignorer
         }
-      }, 120);
+      }
 
       return () => {
-        clearTimeout(refreshTimeout);
-        trigger?.kill();
+        trigger.kill();
         currentSplit?.revert();
-        if (hasWindow) {
-          try {
-            sliderEl.removeEventListener('wheel', unlock);
-            sliderEl.removeEventListener('touchstart', unlock);
-            sliderEl.removeEventListener('keydown', unlock);
-          } catch (_) {
-            // ignore
-          }
-        }
       };
     }, sliderEl);
+
+    const refreshTimeout = setTimeout(() => {
+      try {
+        ScrollTrigger.refresh();
+      } catch (e) {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('❌ [ScrollSliderBlock] Erreur refresh ScrollTrigger:', e);
+        }
+      }
+    }, 120);
+
+    return () => {
+      clearTimeout(refreshTimeout);
+      ctx.revert();
+    };
   }, [slides, previewIndex]);
 
   if (!slides || slides.length === 0) return null;
