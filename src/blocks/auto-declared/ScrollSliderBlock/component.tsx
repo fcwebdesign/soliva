@@ -100,12 +100,12 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
   const showProgressBar = blockData?.showProgressBar !== false;
   desiredIndexRef.current = previewIndex;
   if (process.env.NODE_ENV !== 'production') {
-    console.log('[ScrollSliderBlock] previewIndex applied', { previewIndex, slides: slides.length, blockId: debugId });
+    console.log('[ScrollSliderBlock] previewIndex applied', { previewIndex, slides: slides.length, blockId: debugId, showIndicators, showProgressBar });
   }
 
   useLayoutEffect(() => {
     if (process.env.NODE_ENV !== 'production') {
-      console.log('[ScrollSliderBlock] useLayoutEffect init', { slidesCount: slides.length, previewIndex, blockId: debugId });
+      console.log('[ScrollSliderBlock] useLayoutEffect init', { slidesCount: slides.length, previewIndex, blockId: debugId, showIndicators, showProgressBar });
     }
     if (
       !sliderRef.current ||

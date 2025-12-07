@@ -498,6 +498,7 @@ export default function ScrollSliderEditor({
             id="showIndicators"
             checked={data.showIndicators !== false}
             onCheckedChange={(checked) => {
+              console.log('[ScrollSliderEditor] toggle showIndicators', { checked, blockId: blockId || (data as any)?.id });
               onChange({ ...data, showIndicators: checked });
               notifyContentUpdate();
             }}
@@ -510,6 +511,7 @@ export default function ScrollSliderEditor({
             id="showProgressBar"
             checked={data.showProgressBar !== false}
             onCheckedChange={(checked) => {
+              console.log('[ScrollSliderEditor] toggle showProgressBar', { checked, blockId: blockId || (data as any)?.id });
               onChange({ ...data, showProgressBar: checked });
               notifyContentUpdate();
             }}
