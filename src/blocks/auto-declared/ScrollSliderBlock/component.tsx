@@ -96,6 +96,8 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
   const previewIndex = typeof blockData?.previewIndex === 'number'
     ? Math.max(0, Math.min(slides.length - 1, blockData.previewIndex))
     : 0;
+  const showIndicators = blockData?.showIndicators !== false;
+  const showProgressBar = blockData?.showProgressBar !== false;
   desiredIndexRef.current = previewIndex;
   if (process.env.NODE_ENV !== 'production') {
     console.log('[ScrollSliderBlock] previewIndex applied', { previewIndex, slides: slides.length, blockId: debugId });
@@ -105,14 +107,20 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
     if (process.env.NODE_ENV !== 'production') {
       console.log('[ScrollSliderBlock] useLayoutEffect init', { slidesCount: slides.length, previewIndex, blockId: debugId });
     }
-    if (!sliderRef.current || !imagesRef.current || !titleRef.current || !indicesRef.current || !progressRef.current) {
+    if (
+      !sliderRef.current ||
+      !imagesRef.current ||
+      !titleRef.current ||
+      (showIndicators && !indicesRef.current) ||
+      (showProgressBar && !progressRef.current)
+    ) {
       return () => {};
     }
     const sliderEl = sliderRef.current;
     const imagesEl = imagesRef.current;
     const titleEl = titleRef.current;
-    const indicesEl = indicesRef.current;
-    const progressEl = progressRef.current;
+    const indicesEl = showIndicators ? indicesRef.current : null;
+    const progressEl = showProgressBar ? progressRef.current : null;
 
       // Nettoyage d'un éventuel ancien pin (pin-spacer + triggers)
     try {
@@ -141,6 +149,7 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
       let triggerRef: ScrollTrigger | null = null;
 
       const renderIndicators = () => {
+        if (!indicesEl) return;
         indicesEl.innerHTML = '';
         slides.forEach((_, index) => {
           const indexNum = (index + 1).toString().padStart(2, '0');
@@ -171,6 +180,7 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
       };
 
       const animateIndicators = (index: number) => {
+        if (!indicesEl) return;
         const indicators = indicesEl.querySelectorAll('p');
         indicators.forEach((indicator, i) => {
           const marker = indicator.querySelector('.scroll-slider__marker');
@@ -238,7 +248,9 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
       renderIndicators();
       animateSlide(Math.max(0, previewIndex));
 
-      gsap.set(progressEl, { scaleY: 0 });
+      if (progressEl) {
+        gsap.set(progressEl, { scaleY: 0 });
+      }
 
       const setProgressToIndex = (index: number) => {
         if (!triggerRef) return;
@@ -248,7 +260,9 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
           triggerRef.progress(targetProgress, false);
           activeSlide = index;
           desiredIndexRef.current = index;
-          gsap.set(progressEl, { scaleY: triggerRef.progress() });
+          if (progressEl) {
+            gsap.set(progressEl, { scaleY: triggerRef.progress() });
+          }
           animateSlide(index);
         } catch (e) {
           // silent
@@ -272,7 +286,9 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
             return;
           }
 
-          gsap.set(progressEl, { scaleY: self.progress });
+          if (progressEl) {
+            gsap.set(progressEl, { scaleY: self.progress });
+          }
           const segments = Math.max(1, slides.length - 1);
           const current = Math.min(slides.length - 1, Math.round(self.progress * segments));
           if (current !== activeSlide && current < slides.length) {
@@ -330,12 +346,16 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
 
         <div ref={titleRef} className="scroll-slider__title" />
 
-        <div className="scroll-slider__indicator">
-          <div ref={indicesRef} className="scroll-slider__indices" aria-hidden="true" />
-          <div className="scroll-slider__progress-bar" aria-hidden="true">
-            <div ref={progressRef} className="scroll-slider__progress" />
+        {(showIndicators || showProgressBar) && (
+          <div className="scroll-slider__indicator">
+            {showIndicators && <div ref={indicesRef} className="scroll-slider__indices" aria-hidden="true" />}
+            {showProgressBar && (
+              <div className="scroll-slider__progress-bar" aria-hidden="true">
+                <div ref={progressRef} className="scroll-slider__progress" />
+              </div>
+            )}
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

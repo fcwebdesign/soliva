@@ -10,6 +10,7 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { toast } from 'sonner';
+import { Switch } from '@/components/ui/switch';
 
 type SlideEditorItem = {
   id?: string;
@@ -24,6 +25,8 @@ type SlideEditorItem = {
 interface ScrollSliderData {
   slides?: SlideEditorItem[];
   previewIndex?: number;
+  showIndicators?: boolean;
+  showProgressBar?: boolean;
 }
 
 const normalizeSlides = (raw: SlideEditorItem[] | undefined) => {
@@ -489,6 +492,33 @@ export default function ScrollSliderEditor({
       onClick={(e) => e.stopPropagation()}
       onPointerDown={(e) => e.stopPropagation()}
     >
+      <div className="flex flex-wrap items-center gap-4">
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="showIndicators"
+            checked={data.showIndicators !== false}
+            onCheckedChange={(checked) => {
+              onChange({ ...data, showIndicators: checked });
+              notifyContentUpdate();
+            }}
+            className="h-4 w-7 [&>span]:h-3 [&>span]:w-3 [&>span]:data-[state=checked]:translate-x-3"
+          />
+          <label htmlFor="showIndicators" className="text-[10px] font-medium">Numéros</label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="showProgressBar"
+            checked={data.showProgressBar !== false}
+            onCheckedChange={(checked) => {
+              onChange({ ...data, showProgressBar: checked });
+              notifyContentUpdate();
+            }}
+            className="h-4 w-7 [&>span]:h-3 [&>span]:w-3 [&>span]:data-[state=checked]:translate-x-3"
+          />
+          <label htmlFor="showProgressBar" className="text-[10px] font-medium">Barre de scroll</label>
+        </div>
+      </div>
+
       <div className="flex items-center justify-between">
         <label className="block text-[10px] text-gray-400">Slides</label>
         <div className="flex gap-1">
