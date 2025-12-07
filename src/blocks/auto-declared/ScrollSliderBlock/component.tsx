@@ -127,7 +127,7 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
     const ctx = gsap.context(() => {
       let activeSlide = Math.max(0, previewIndex);
       let currentSplit: any = null;
-      let hasUserScrolled = false;
+      let initialized = false;
 
       const renderIndicators = () => {
         indicesEl.innerHTML = '';
@@ -240,8 +240,11 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
         refreshPriority: 1,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          // Tant que l'utilisateur n'a pas réellement scrollé, on fige le slider sur l'index de preview
-          if (!hasUserScrolled) return;
+          // Ignorer le premier onUpdate déclenché lors de l'init pour ne pas sauter de slide
+          if (!initialized) {
+            initialized = true;
+            return;
+          }
 
           gsap.set(progressEl, { scaleY: self.progress });
           const current = Math.min(slides.length - 1, Math.floor(self.progress * slides.length));
@@ -270,28 +273,6 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
       };
     }, sliderEl);
 
-    // Débloquer l'update du slider dès qu'un vrai input utilisateur survient
-    const hasWindow = typeof window !== 'undefined';
-    // En SSR/preview statique, on ne peut pas écouter les events → on ne bloque pas le slider
-    if (!hasWindow) {
-      hasUserScrolled = true;
-    }
-
-    const markUserScrolled = () => {
-      hasUserScrolled = true;
-    };
-
-    if (hasWindow) {
-      try {
-        window.addEventListener('wheel', markUserScrolled, { passive: true });
-        window.addEventListener('touchmove', markUserScrolled, { passive: true });
-        window.addEventListener('keydown', markUserScrolled, { passive: true });
-      } catch (e) {
-        // ignore si l'environnement ne supporte pas ces événements
-        hasUserScrolled = true;
-      }
-    }
-
     const refreshTimeout = setTimeout(() => {
       try {
         ScrollTrigger.refresh();
@@ -305,15 +286,6 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
     return () => {
       clearTimeout(refreshTimeout);
       ctx.revert();
-      if (hasWindow) {
-        try {
-          window.removeEventListener('wheel', markUserScrolled);
-          window.removeEventListener('touchmove', markUserScrolled);
-          window.removeEventListener('keydown', markUserScrolled);
-        } catch (_) {
-          // ignore
-        }
-      }
     };
   }, [slides, previewIndex]);
 
