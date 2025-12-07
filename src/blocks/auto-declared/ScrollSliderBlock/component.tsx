@@ -62,6 +62,7 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
   const titleRef = useRef<HTMLDivElement | null>(null);
   const indicesRef = useRef<HTMLDivElement | null>(null);
   const progressRef = useRef<HTMLDivElement | null>(null);
+  const desiredIndexRef = useRef<number>(0);
   const debugId = (data as any).id || (blockData as any).id;
 
   const slides = useMemo(() => {
@@ -93,6 +94,7 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
   const previewIndex = typeof blockData?.previewIndex === 'number'
     ? Math.max(0, Math.min(slides.length - 1, blockData.previewIndex))
     : 0;
+  desiredIndexRef.current = previewIndex;
   if (process.env.NODE_ENV !== 'production') {
     console.log('[ScrollSliderBlock] previewIndex applied', { previewIndex, slides: slides.length, blockId: debugId });
   }
@@ -131,8 +133,10 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
 
     const ctx = gsap.context(() => {
       let activeSlide = Math.max(0, previewIndex);
+      desiredIndexRef.current = activeSlide;
       let currentSplit: any = null;
       let initialized = false;
+      let triggerRef: ScrollTrigger | null = null;
 
       const renderIndicators = () => {
         indicesEl.innerHTML = '';
@@ -234,6 +238,21 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
 
       gsap.set(progressEl, { scaleY: 0 });
 
+      const setProgressToIndex = (index: number) => {
+        if (!triggerRef) return;
+        const segments = Math.max(1, slides.length - 1);
+        const targetProgress = slides.length > 1 ? index / segments : 0;
+        try {
+          triggerRef.progress(targetProgress, false);
+          activeSlide = index;
+          desiredIndexRef.current = index;
+          gsap.set(progressEl, { scaleY: triggerRef.progress() });
+          animateSlide(index);
+        } catch (e) {
+          // silent
+        }
+      };
+
       const trigger = ScrollTrigger.create({
         trigger: sliderEl,
         start: 'top top',
@@ -251,28 +270,25 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
             return;
           }
 
-      gsap.set(progressEl, { scaleY: self.progress });
+          gsap.set(progressEl, { scaleY: self.progress });
           const segments = Math.max(1, slides.length - 1);
           const current = Math.min(slides.length - 1, Math.round(self.progress * segments));
           if (current !== activeSlide && current < slides.length) {
             activeSlide = current;
+            desiredIndexRef.current = current;
             animateSlide(activeSlide);
           }
         },
+        onRefresh: () => {
+          // Réappliquer l'index souhaité après un refresh ScrollTrigger
+          setProgressToIndex(desiredIndexRef.current);
+        },
       });
+      triggerRef = trigger;
 
       // Positionner la preview directement sur le slide sélectionné en admin
       if (slides.length > 0) {
-        const segments = Math.max(1, slides.length - 1);
-        // Utiliser segments (n-1) pour éviter les erreurs d'arrondi qui laissent sur le slide précédent
-        const targetProgress = slides.length > 1 ? previewIndex / segments : 0;
-        try {
-          trigger.progress(targetProgress, false);
-          activeSlide = previewIndex;
-          animateSlide(activeSlide);
-        } catch (e) {
-          // ignorer
-        }
+        setProgressToIndex(previewIndex);
       }
 
       return () => {
