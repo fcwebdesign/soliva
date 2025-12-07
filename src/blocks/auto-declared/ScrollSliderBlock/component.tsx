@@ -21,6 +21,9 @@ type SlideInput =
 interface ScrollSliderData {
   slides?: SlideInput[];
   previewIndex?: number; // index sélectionné dans l'admin pour la prévisualisation
+  showIndicators?: boolean;
+  showProgressBar?: boolean;
+  showText?: boolean;
 }
 
 export const FALLBACK_SLIDES: SlideInput[] = [
@@ -98,14 +101,15 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
     : 0;
   const showIndicators = blockData?.showIndicators !== false;
   const showProgressBar = blockData?.showProgressBar !== false;
+  const showText = blockData?.showText !== false;
   desiredIndexRef.current = previewIndex;
   if (process.env.NODE_ENV !== 'production') {
-    console.log('[ScrollSliderBlock] previewIndex applied', { previewIndex, slides: slides.length, blockId: debugId, showIndicators, showProgressBar });
+    console.log('[ScrollSliderBlock] previewIndex applied', { previewIndex, slides: slides.length, blockId: debugId, showIndicators, showProgressBar, showText });
   }
 
   useLayoutEffect(() => {
     if (process.env.NODE_ENV !== 'production') {
-      console.log('[ScrollSliderBlock] useLayoutEffect init', { slidesCount: slides.length, previewIndex, blockId: debugId, showIndicators, showProgressBar });
+      console.log('[ScrollSliderBlock] useLayoutEffect init', { slidesCount: slides.length, previewIndex, blockId: debugId, showIndicators, showProgressBar, showText });
     }
     if (
       !sliderRef.current ||
@@ -344,7 +348,7 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
       <div ref={sliderRef} className="scroll-slider__pin">
         <div ref={imagesRef} className="scroll-slider__images" aria-hidden="true" />
 
-        <div ref={titleRef} className="scroll-slider__title" />
+        {showText && <div ref={titleRef} className="scroll-slider__title" />}
 
         {(showIndicators || showProgressBar) && (
           <div className="scroll-slider__indicator">

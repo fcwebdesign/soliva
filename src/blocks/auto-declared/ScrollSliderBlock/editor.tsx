@@ -27,6 +27,7 @@ interface ScrollSliderData {
   previewIndex?: number;
   showIndicators?: boolean;
   showProgressBar?: boolean;
+  showText?: boolean;
 }
 
 const normalizeSlides = (raw: SlideEditorItem[] | undefined) => {
@@ -518,6 +519,19 @@ export default function ScrollSliderEditor({
             className="h-4 w-7 [&>span]:h-3 [&>span]:w-3 [&>span]:data-[state=checked]:translate-x-3"
           />
           <label htmlFor="showProgressBar" className="text-[10px] font-medium">Barre de scroll</label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="showText"
+            checked={data.showText !== false}
+            onCheckedChange={(checked) => {
+              console.log('[ScrollSliderEditor] toggle showText', { checked, blockId: blockId || (data as any)?.id });
+              onChange({ ...data, showText: checked });
+              notifyContentUpdate();
+            }}
+            className="h-4 w-7 [&>span]:h-3 [&>span]:w-3 [&>span]:data-[state=checked]:translate-x-3"
+          />
+          <label htmlFor="showText" className="text-[10px] font-medium">Texte</label>
         </div>
       </div>
 
