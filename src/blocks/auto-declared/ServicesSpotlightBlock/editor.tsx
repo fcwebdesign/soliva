@@ -184,7 +184,7 @@ export default function ServicesSpotlightEditor({
                 <div className={compact ? 'p-2 space-y-2' : 'p-3 space-y-3'}>
                   <ImageEditorField
                     label="Image"
-                    value={{
+                    image={{
                       src: item.image?.src || '',
                       alt: item.image?.alt || '',
                       aspectRatio: item.image?.aspectRatio || '16:9',
