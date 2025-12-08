@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Textarea } from '../../../components/ui/textarea';
 import { Switch } from '../../../components/ui/switch';
 import { Button } from '../../../components/ui/button';
-import { Plus, Trash2, ArrowUp, ArrowDown, ChevronDown, ChevronRight } from 'lucide-react';
-import { ImageEditorField } from '../components';
+import { Plus, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
+import { ImageListEditor } from '../components';
+import type { ImageItemData } from '../components';
 import { toast } from 'sonner';
 
 type SpotlightItem = {
@@ -42,11 +43,21 @@ export default function ServicesSpotlightEditor({
   compact?: boolean;
 }) {
   const [items, setItems] = useState<SpotlightItem[]>(data.items && data.items.length ? data.items : FALLBACK_ITEMS);
-  const [openId, setOpenId] = useState<string | null>(null);
 
   useEffect(() => {
     setItems(data.items && data.items.length ? data.items : FALLBACK_ITEMS);
   }, [data.items]);
+
+  const imageItems: ImageItemData[] = useMemo(
+    () =>
+      items.map((item, idx) => ({
+        id: item.id || `spot-${idx}`,
+        src: item.image?.src || '',
+        alt: item.image?.alt || item.title || '',
+        aspectRatio: item.image?.aspectRatio || '16:9',
+      })),
+    [items]
+  );
 
   const updateItems = (next: SpotlightItem[]) => {
     setItems(next);
@@ -89,6 +100,19 @@ export default function ServicesSpotlightEditor({
     updateItems(next);
   };
 
+  const syncImages = (nextImages: ImageItemData[]) => {
+    const next = nextImages.map((img, idx) => {
+      const existingById = items.find((it, i) => (it.id || `spot-${i}`) === img.id);
+      const base = existingById || items[idx] || { title: `Item ${idx + 1}`, indicator: '[ Indicator ]' };
+      return {
+        ...base,
+        id: img.id || base.id || `spot-${idx}`,
+        image: { src: img.src, alt: img.alt, aspectRatio: img.aspectRatio },
+      };
+    });
+    updateItems(next);
+  };
+
   const labelClass = compact ? 'block text-[10px] text-gray-400 mb-1' : 'block text-sm font-medium text-gray-700';
   const inputClass = compact
     ? 'w-full px-2 py-1.5 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors'
@@ -113,117 +137,58 @@ export default function ServicesSpotlightEditor({
         )}
       </div>
 
-      <div className="space-y-2">
-        {items.map((item, index) => {
-          const isOpen = openId === (item.id || `spot-${index}`);
-          const itemId = item.id || `spot-${index}`;
-          return (
-            <div key={itemId} className="border border-gray-200 rounded bg-white">
-              <div
-                role="button"
-                tabIndex={0}
-                className={`w-full flex items-center gap-2 ${compact ? 'py-2 px-2' : 'py-3 px-3'} text-left hover:bg-gray-50 transition-colors`}
-                onClick={() => setOpenId(isOpen ? null : itemId)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    setOpenId(isOpen ? null : itemId);
-                  }
-                }}
-              >
-                {isOpen ? (
-                  <ChevronDown className="w-3 h-3 text-gray-500" />
-                ) : (
-                  <ChevronRight className="w-3 h-3 text-gray-500" />
-                )}
-                <div className="flex items-center gap-2 flex-1 min-w-0">
-                  <div className="w-8 h-8 border border-gray-200 rounded bg-gray-50 overflow-hidden flex items-center justify-center flex-shrink-0">
-                    {item.image?.src ? (
-                      <img src={item.image.src} alt={item.image.alt || item.title || ''} className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="text-[10px] text-gray-400">Img</span>
-                    )}
-                  </div>
-                  <span className="text-[13px] text-gray-900 truncate">{item.title || `Item ${index + 1}`}</span>
-                </div>
+      <div className="space-y-3">
+        {items.map((item, index) => (
+          <div
+            key={item.id || index}
+            className={compact ? 'border border-gray-200 rounded p-2 space-y-2' : 'border border-gray-200 rounded p-3 space-y-3'}
+          >
+            <div className="flex items-center gap-2 text-[11px] text-gray-500">
+              <span>Item {index + 1}</span>
+              <div className="ml-auto flex items-center gap-2">
                 {compact ? (
-                  <div className="flex items-center gap-2 text-[11px] text-gray-500">
-                    <button type="button" onClick={(e) => { e.stopPropagation(); moveItem(index, 'up'); }}>↑</button>
-                    <button type="button" onClick={(e) => { e.stopPropagation(); moveItem(index, 'down'); }}>↓</button>
-                    <button
-                      type="button"
-                      onClick={(e) => { e.stopPropagation(); removeItem(index); }}
-                      className="text-red-500"
-                    >
-                      Suppr
-                    </button>
-                  </div>
+                  <>
+                    <button type="button" onClick={() => moveItem(index, 'up')} className="text-gray-500 hover:text-gray-800">↑</button>
+                    <button type="button" onClick={() => moveItem(index, 'down')} className="text-gray-500 hover:text-gray-800">↓</button>
+                    <button type="button" onClick={() => removeItem(index)} className="text-red-500 hover:text-red-600">Suppr</button>
+                  </>
                 ) : (
-                  <div className="flex items-center gap-1">
-                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={(e) => { e.stopPropagation(); moveItem(index, 'up'); }}>
+                  <>
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => moveItem(index, 'up')}>
                       <ArrowUp className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={(e) => { e.stopPropagation(); moveItem(index, 'down'); }}>
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => moveItem(index, 'down')}>
                       <ArrowDown className="w-4 h-4" />
                     </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-7 w-7 text-red-500 hover:text-red-600"
-                      onClick={(e) => { e.stopPropagation(); removeItem(index); }}
-                    >
+                    <Button variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:text-red-600" onClick={() => removeItem(index)}>
                       <Trash2 className="w-4 h-4" />
                     </Button>
-                  </div>
+                  </>
                 )}
               </div>
-
-              {isOpen && (
-                <div className={compact ? 'p-2 space-y-2' : 'p-3 space-y-3'}>
-                  <ImageEditorField
-                    label="Image"
-                    image={{
-                      src: item.image?.src || '',
-                      alt: item.image?.alt || '',
-                      aspectRatio: item.image?.aspectRatio || '16:9',
-                    }}
-                    onChange={(img) =>
-                      updateItemField(index, 'image', {
-                        src: img.src,
-                        alt: img.alt,
-                        aspectRatio: img.aspectRatio,
-                      })
-                    }
-                    compact={compact}
-                    showAltText
-                    showAspectRatio
-                    thumbnailSize={compact ? 8 : 12}
-                  />
-
-                  <div className="grid gap-2">
-                    <label className={labelClass}>Titre</label>
-                    <input
-                      className={inputClass}
-                      value={item.title}
-                      onChange={(e) => updateItemField(index, 'title', e.target.value)}
-                      placeholder="Camera Work"
-                    />
-                  </div>
-
-                  <div className="grid gap-2">
-                    <label className={labelClass}>Indicateur</label>
-                    <input
-                      className={inputClass}
-                      value={item.indicator || ''}
-                      onChange={(e) => updateItemField(index, 'indicator', e.target.value)}
-                      placeholder="[ Framing ]"
-                    />
-                  </div>
-                </div>
-              )}
             </div>
-          );
-        })}
+
+            <div className="grid gap-2">
+              <label className={labelClass}>Titre</label>
+              <input
+                className={inputClass}
+                value={item.title}
+                onChange={(e) => updateItemField(index, 'title', e.target.value)}
+                placeholder="Camera Work"
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <label className={labelClass}>Indicateur</label>
+              <input
+                className={inputClass}
+                value={item.indicator || ''}
+                onChange={(e) => updateItemField(index, 'indicator', e.target.value)}
+                placeholder="[ Framing ]"
+              />
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -262,6 +227,15 @@ export default function ServicesSpotlightEditor({
           <label htmlFor="showIndicator" className="text-[10px] font-medium">Afficher l'indicateur</label>
         </div>
 
+        <ImageListEditor
+          label="Images (ordre = items)"
+          compact
+          items={imageItems}
+          onChange={syncImages}
+          defaultAspectRatio="16:9"
+          altPlaceholder="Texte alternatif"
+        />
+
         <ItemsList />
       </div>
     );
@@ -299,6 +273,14 @@ export default function ServicesSpotlightEditor({
         />
         <Label htmlFor="showIndicator" className="text-[10px] font-medium">Afficher l'indicateur</Label>
       </div>
+
+      <ImageListEditor
+        label="Images (ordre = items)"
+        items={imageItems}
+        onChange={syncImages}
+        defaultAspectRatio="16:9"
+        altPlaceholder="Texte alternatif"
+      />
 
       <ItemsList />
     </div>
