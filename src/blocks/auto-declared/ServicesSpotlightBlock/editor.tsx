@@ -1,21 +1,24 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Textarea } from '../../../components/ui/textarea';
 import { Switch } from '../../../components/ui/switch';
 import { Button } from '../../../components/ui/button';
-import { Plus, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
-import { ImageListEditor } from '../components';
-import type { ImageItemData } from '../components';
+import { Plus, Trash2, ArrowUp, ArrowDown, ChevronDown, ChevronRight, GripVertical, Eye, EyeOff } from 'lucide-react';
+import { ImageEditorField } from '../components';
 import { toast } from 'sonner';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 type SpotlightItem = {
   id?: string;
   title: string;
   indicator?: string;
   image?: { src?: string; alt?: string; aspectRatio?: string };
+  hidden?: boolean;
 };
 
 interface ServicesSpotlightData {
@@ -33,6 +36,193 @@ const FALLBACK_ITEMS: SpotlightItem[] = [
   { title: 'Film Editing', indicator: '[ Sequence ]', image: { src: '/blocks/services-spotlight/spotlight-4.jpg', alt: 'Film editing' } },
 ];
 
+function SortableItem({
+  item,
+  index,
+  isOpen,
+  onToggle,
+  onUpdate,
+  onRemove,
+  onMove,
+  compact,
+}: {
+  item: SpotlightItem;
+  index: number;
+  isOpen: boolean;
+  onToggle: () => void;
+  onUpdate: (updates: Partial<SpotlightItem>) => void;
+  onRemove: () => void;
+  onMove: (from: number, to: number) => void;
+  compact: boolean;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: item.id || `spot-${index}` });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.6 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="border border-gray-200 rounded bg-white">
+      <div
+        role="button"
+        tabIndex={0}
+        className={`w-full flex items-center gap-2 ${compact ? 'py-2 px-2' : 'py-3 px-3'} text-left hover:bg-gray-50 transition-colors`}
+        onClick={onToggle}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onToggle();
+          }
+        }}
+        {...attributes}
+        {...listeners}
+      >
+        {isOpen ? <ChevronDown className="w-3 h-3 text-gray-500" /> : <ChevronRight className="w-3 h-3 text-gray-500" />}
+        <GripVertical className="w-3 h-3 text-gray-400 flex-shrink-0" />
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          <div className="w-8 h-8 border border-gray-200 rounded bg-gray-50 overflow-hidden flex items-center justify-center flex-shrink-0">
+            {item.image?.src ? (
+              <img src={item.image.src} alt={item.image.alt || item.title || ''} className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-[10px] text-gray-400">Img</span>
+            )}
+          </div>
+          <span className="text-[13px] text-gray-900 truncate">{item.title || `Item ${index + 1}`}</span>
+          <span className="text-[11px] text-gray-500 truncate">{item.indicator || ''}</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onUpdate({ hidden: !item.hidden });
+            }}
+            className="p-1"
+            title={item.hidden ? 'Afficher' : 'Masquer'}
+          >
+            {item.hidden ? <EyeOff className="w-3 h-3 text-gray-400 hover:text-blue-500" /> : <Eye className="w-3 h-3 text-gray-400 hover:text-blue-500" />}
+          </button>
+          {compact ? (
+            <>
+              <button
+                className="p-1 text-gray-500 hover:text-gray-800"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onMove(index, index - 1);
+                }}
+              >
+                ↑
+              </button>
+              <button
+                className="p-1 text-gray-500 hover:text-gray-800"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onMove(index, index + 1);
+                }}
+              >
+                ↓
+              </button>
+            </>
+          ) : (
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onMove(index, index - 1);
+                }}
+              >
+                <ArrowUp className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onMove(index, index + 1);
+                }}
+              >
+                <ArrowDown className="w-4 h-4" />
+              </Button>
+            </>
+          )}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove();
+            }}
+            className="p-1"
+            title="Supprimer"
+          >
+            <Trash2 className="w-3 h-3 text-red-500 hover:text-red-600" />
+          </button>
+        </div>
+      </div>
+
+      {isOpen && (
+        <div className={compact ? 'p-2 space-y-2' : 'p-3 space-y-3'}>
+          <ImageEditorField
+            label="Image"
+            image={{
+              src: item.image?.src || '',
+              alt: item.image?.alt || '',
+              aspectRatio: item.image?.aspectRatio || '16:9',
+            }}
+            onChange={(img) =>
+              onUpdate({
+                image: { src: img.src, alt: img.alt, aspectRatio: img.aspectRatio },
+              })
+            }
+            compact={compact}
+            showAltText
+            showAspectRatio
+            thumbnailSize={compact ? 8 : 12}
+          />
+
+          <div className="grid gap-2">
+            <label className={compact ? 'block text-[10px] text-gray-400 mb-1' : 'block text-sm font-medium text-gray-700'}>Titre</label>
+            <input
+              className={
+                compact
+                  ? 'w-full px-2 py-1.5 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors'
+                  : 'block-input'
+              }
+              value={item.title}
+              onChange={(e) => onUpdate({ title: e.target.value })}
+              placeholder="Camera Work"
+            />
+          </div>
+
+          <div className="grid gap-2">
+            <label className={compact ? 'block text-[10px] text-gray-400 mb-1' : 'block text-sm font-medium text-gray-700'}>Indicateur</label>
+            <input
+              className={
+                compact
+                  ? 'w-full px-2 py-1.5 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors'
+                  : 'block-input'
+              }
+              value={item.indicator || ''}
+              onChange={(e) => onUpdate({ indicator: e.target.value })}
+              placeholder="[ Framing ]"
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function ServicesSpotlightEditor({
   data,
   onChange,
@@ -43,25 +233,32 @@ export default function ServicesSpotlightEditor({
   compact?: boolean;
 }) {
   const [items, setItems] = useState<SpotlightItem[]>(data.items && data.items.length ? data.items : FALLBACK_ITEMS);
+  const [openId, setOpenId] = useState<string | null>(null);
 
   useEffect(() => {
     setItems(data.items && data.items.length ? data.items : FALLBACK_ITEMS);
   }, [data.items]);
 
-  const imageItems: ImageItemData[] = useMemo(
-    () =>
-      items.map((item, idx) => ({
-        id: item.id || `spot-${idx}`,
-        src: item.image?.src || '',
-        alt: item.image?.alt || item.title || '',
-        aspectRatio: item.image?.aspectRatio || '16:9',
-      })),
-    [items]
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { delay: 120, tolerance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
   const updateItems = (next: SpotlightItem[]) => {
     setItems(next);
     onChange({ ...data, items: next });
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = items.findIndex((item, idx) => (item.id || `spot-${idx}`) === active.id);
+      const newIndex = items.findIndex((item, idx) => (item.id || `spot-${idx}`) === over.id);
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const reordered = arrayMove(items, oldIndex, newIndex);
+        updateItems(reordered);
+      }
+    }
   };
 
   const addItem = () => {
@@ -86,30 +283,14 @@ export default function ServicesSpotlightEditor({
     updateItems(next);
   };
 
-  const moveItem = (index: number, direction: 'up' | 'down') => {
-    const target = direction === 'up' ? index - 1 : index + 1;
-    if (target < 0 || target >= items.length) return;
-    const next = [...items];
-    const [current] = next.splice(index, 1);
-    next.splice(target, 0, current);
+  const moveItem = (from: number, to: number) => {
+    if (to < 0 || to >= items.length) return;
+    const next = arrayMove(items, from, to);
     updateItems(next);
   };
 
-  const updateItemField = (index: number, field: keyof SpotlightItem, value: any) => {
-    const next = items.map((item, i) => (i === index ? { ...item, [field]: value } : item));
-    updateItems(next);
-  };
-
-  const syncImages = (nextImages: ImageItemData[]) => {
-    const next = nextImages.map((img, idx) => {
-      const existingById = items.find((it, i) => (it.id || `spot-${i}`) === img.id);
-      const base = existingById || items[idx] || { title: `Item ${idx + 1}`, indicator: '[ Indicator ]' };
-      return {
-        ...base,
-        id: img.id || base.id || `spot-${idx}`,
-        image: { src: img.src, alt: img.alt, aspectRatio: img.aspectRatio },
-      };
-    });
+  const updateItem = (index: number, updates: Partial<SpotlightItem>) => {
+    const next = items.map((item, i) => (i === index ? { ...item, ...updates } : item));
     updateItems(next);
   };
 
@@ -137,59 +318,28 @@ export default function ServicesSpotlightEditor({
         )}
       </div>
 
-      <div className="space-y-3">
-        {items.map((item, index) => (
-          <div
-            key={item.id || index}
-            className={compact ? 'border border-gray-200 rounded p-2 space-y-2' : 'border border-gray-200 rounded p-3 space-y-3'}
-          >
-            <div className="flex items-center gap-2 text-[11px] text-gray-500">
-              <span>Item {index + 1}</span>
-              <div className="ml-auto flex items-center gap-2">
-                {compact ? (
-                  <>
-                    <button type="button" onClick={() => moveItem(index, 'up')} className="text-gray-500 hover:text-gray-800">↑</button>
-                    <button type="button" onClick={() => moveItem(index, 'down')} className="text-gray-500 hover:text-gray-800">↓</button>
-                    <button type="button" onClick={() => removeItem(index)} className="text-red-500 hover:text-red-600">Suppr</button>
-                  </>
-                ) : (
-                  <>
-                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => moveItem(index, 'up')}>
-                      <ArrowUp className="w-4 h-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => moveItem(index, 'down')}>
-                      <ArrowDown className="w-4 h-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:text-red-600" onClick={() => removeItem(index)}>
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </>
-                )}
-              </div>
-            </div>
-
-            <div className="grid gap-2">
-              <label className={labelClass}>Titre</label>
-              <input
-                className={inputClass}
-                value={item.title}
-                onChange={(e) => updateItemField(index, 'title', e.target.value)}
-                placeholder="Camera Work"
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext
+          items={items.map((item, idx) => item.id || `spot-${idx}`)}
+          strategy={verticalListSortingStrategy}
+        >
+          <div className="space-y-2">
+            {items.map((item, index) => (
+              <SortableItem
+                key={item.id || index}
+                item={item}
+                index={index}
+                compact={compact}
+                isOpen={openId === (item.id || `spot-${index}`)}
+                onToggle={() => setOpenId(openId === (item.id || `spot-${index}`) ? null : item.id || `spot-${index}`)}
+                onUpdate={(updates) => updateItem(index, updates)}
+                onRemove={() => removeItem(index)}
+                onMove={moveItem}
               />
-            </div>
-
-            <div className="grid gap-2">
-              <label className={labelClass}>Indicateur</label>
-              <input
-                className={inputClass}
-                value={item.indicator || ''}
-                onChange={(e) => updateItemField(index, 'indicator', e.target.value)}
-                placeholder="[ Framing ]"
-              />
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </SortableContext>
+      </DndContext>
     </div>
   );
 
@@ -226,15 +376,6 @@ export default function ServicesSpotlightEditor({
           />
           <label htmlFor="showIndicator" className="text-[10px] font-medium">Afficher l'indicateur</label>
         </div>
-
-        <ImageListEditor
-          label="Images (ordre = items)"
-          compact
-          items={imageItems}
-          onChange={syncImages}
-          defaultAspectRatio="16:9"
-          altPlaceholder="Texte alternatif"
-        />
 
         <ItemsList />
       </div>
@@ -273,14 +414,6 @@ export default function ServicesSpotlightEditor({
         />
         <Label htmlFor="showIndicator" className="text-[10px] font-medium">Afficher l'indicateur</Label>
       </div>
-
-      <ImageListEditor
-        label="Images (ordre = items)"
-        items={imageItems}
-        onChange={syncImages}
-        defaultAspectRatio="16:9"
-        altPlaceholder="Texte alternatif"
-      />
 
       <ItemsList />
     </div>
