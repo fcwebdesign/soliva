@@ -43,7 +43,6 @@ function SortableItem({
   onToggle,
   onUpdate,
   onRemove,
-  onMove,
   compact,
 }: {
   item: SpotlightItem;
@@ -52,7 +51,6 @@ function SortableItem({
   onToggle: () => void;
   onUpdate: (updates: Partial<SpotlightItem>) => void;
   onRemove: () => void;
-  onMove: (from: number, to: number) => void;
   compact: boolean;
 }) {
   const {
@@ -75,7 +73,7 @@ function SortableItem({
       <div
         role="button"
         tabIndex={0}
-        className={`w-full flex items-center gap-2 ${compact ? 'py-2 px-2' : 'py-3 px-3'} text-left hover:bg-gray-50 transition-colors`}
+        className={`group w-full flex items-center gap-2 ${compact ? 'py-2 px-2' : 'py-3 px-3'} text-left hover:bg-gray-50 transition-colors`}
         onClick={onToggle}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -99,7 +97,7 @@ function SortableItem({
           <span className="text-[13px] text-gray-900 truncate">{item.title || `Item ${index + 1}`}</span>
           <span className="text-[11px] text-gray-500 truncate">{item.indicator || ''}</span>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -110,53 +108,6 @@ function SortableItem({
           >
             {item.hidden ? <EyeOff className="w-3 h-3 text-gray-400 hover:text-blue-500" /> : <Eye className="w-3 h-3 text-gray-400 hover:text-blue-500" />}
           </button>
-          {compact ? (
-            <>
-              <button
-                className="p-1 text-gray-500 hover:text-gray-800"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onMove(index, index - 1);
-                }}
-              >
-                ↑
-              </button>
-              <button
-                className="p-1 text-gray-500 hover:text-gray-800"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onMove(index, index + 1);
-                }}
-              >
-                ↓
-              </button>
-            </>
-          ) : (
-            <>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onMove(index, index - 1);
-                }}
-              >
-                <ArrowUp className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onMove(index, index + 1);
-                }}
-              >
-                <ArrowDown className="w-4 h-4" />
-              </Button>
-            </>
-          )}
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -283,12 +234,6 @@ export default function ServicesSpotlightEditor({
     updateItems(next);
   };
 
-  const moveItem = (from: number, to: number) => {
-    if (to < 0 || to >= items.length) return;
-    const next = arrayMove(items, from, to);
-    updateItems(next);
-  };
-
   const updateItem = (index: number, updates: Partial<SpotlightItem>) => {
     const next = items.map((item, i) => (i === index ? { ...item, ...updates } : item));
     updateItems(next);
@@ -334,7 +279,6 @@ export default function ServicesSpotlightEditor({
                 onToggle={() => setOpenId(openId === (item.id || `spot-${index}`) ? null : item.id || `spot-${index}`)}
                 onUpdate={(updates) => updateItem(index, updates)}
                 onRemove={() => removeItem(index)}
-                onMove={moveItem}
               />
             ))}
           </div>
