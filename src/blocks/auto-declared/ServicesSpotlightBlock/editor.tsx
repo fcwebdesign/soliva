@@ -1,24 +1,23 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Textarea } from '../../../components/ui/textarea';
 import { Switch } from '../../../components/ui/switch';
 import { Button } from '../../../components/ui/button';
-import { Plus, Trash2, ArrowUp, ArrowDown, ChevronDown, ChevronRight, GripVertical, Eye, EyeOff, ImagePlus, Edit3 } from 'lucide-react';
+import { Plus, Trash2, ChevronDown, ChevronRight, GripVertical, Eye, EyeOff, ImagePlus, Edit3 } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import MediaUploader from '../../../app/admin/components/MediaUploader';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 type SpotlightItem = {
   id?: string;
   title: string;
   indicator?: string;
-  image?: { src?: string; alt?: string; aspectRatio?: string };
+  image?: { src?: string; alt?: string };
   hidden?: boolean;
 };
 
@@ -58,14 +57,8 @@ function SortableItem({
   labelClass: string;
   inputClass: string;
 }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: item.id || `spot-${index}` });
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id || `spot-${index}` });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -73,13 +66,35 @@ function SortableItem({
     opacity: isDragging ? 0.6 : 1,
   };
 
+  const triggerUpload = () => fileInputRef.current?.click();
+
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('/api/admin/upload', { method: 'POST', body: formData });
+      if (!response.ok) throw new Error('Upload failed');
+      const result = await response.json();
+      onUpdate({ image: { ...(item.image || {}), src: result.url } });
+    } catch (err) {
+      console.error('Upload error:', err);
+      alert('Erreur lors de l’upload.');
+    } finally {
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
   return (
     <div ref={setNodeRef} style={style} className="border border-gray-200 rounded bg-white">
       <div
+        className={`group flex items-center gap-2 ${compact ? 'py-2 px-2' : 'py-3 px-3'} cursor-pointer hover:bg-gray-50 transition-colors`}
+        onClick={onToggle}
         role="button"
         tabIndex={0}
-        className={`group w-full flex items-center gap-2 ${compact ? 'py-2 px-2' : 'py-3 px-3'} text-left hover:bg-gray-50 transition-colors`}
-        onClick={onToggle}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
@@ -91,37 +106,105 @@ function SortableItem({
       >
         {isOpen ? <ChevronDown className="w-3 h-3 text-gray-500" /> : <ChevronRight className="w-3 h-3 text-gray-500" />}
         <GripVertical className="w-3 h-3 text-gray-400 flex-shrink-0" />
-        <div className="flex items-center gap-2 flex-1 min-w-0">
-          <div className="w-8 h-8 border border-gray-200 rounded bg-gray-50 overflow-hidden flex items-center justify-center flex-shrink-0 relative">
-            {item.image?.src ? (
-              <img src={item.image.src} alt={item.image.alt || item.title || ''} className="w-full h-full object-cover" />
-            ) : (
-              <span className="text-[10px] text-gray-400">Img</span>
-            )}
+
+        {item.image?.src ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <div
+                className="w-8 h-8 border border-gray-200 rounded flex items-center justify-center bg-gray-50 flex-shrink-0 relative overflow-hidden cursor-pointer hover:border-blue-400 transition-colors"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <img src={item.image.src} alt={item.image.alt || item.title || ''} className="w-full h-full object-cover" />
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48 shadow-none border rounded">
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  triggerUpload();
+                }}
+                className="text-[13px] text-gray-700 hover:text-gray-900"
+              >
+                <ImagePlus className="w-3 h-3 mr-2" />
+                Remplacer
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggle();
+                }}
+                className="text-[13px] text-gray-700 hover:text-gray-900"
+              >
+                <Edit3 className="w-3 h-3 mr-2" />
+                Modifier
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRemove();
+                }}
+                className="text-[13px] text-red-600 focus:text-red-600"
+              >
+                <Trash2 className="w-3 h-3 mr-2" />
+                Supprimer
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <div
+            className="w-8 h-8 border border-gray-200 rounded flex items-center justify-center bg-gray-50 flex-shrink-0 relative overflow-hidden cursor-pointer hover:border-blue-400 transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              triggerUpload();
+            }}
+          >
+            <span className="text-[10px] text-gray-400">+</span>
           </div>
-          <span className="text-[13px] text-gray-900 truncate">{item.title || `Item ${index + 1}`}</span>
-          <span className="text-[11px] text-gray-500 truncate">{item.indicator || ''}</span>
+        )}
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFileSelect}
+          onClick={(e) => e.stopPropagation()}
+          className="hidden"
+        />
+
+        <div className="flex-1 min-w-0">
+          <div className="text-[11px] text-gray-900 truncate font-medium">
+            {item.title || `Item ${index + 1}`}
+          </div>
+          <div className="text-[10px] text-gray-500 truncate">
+            {item.indicator || ''}
+          </div>
         </div>
+
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             onClick={(e) => {
               e.stopPropagation();
               onUpdate({ hidden: !item.hidden });
             }}
-            className="p-1"
+            className="cursor-pointer flex-shrink-0 p-0.5"
             title={item.hidden ? 'Afficher' : 'Masquer'}
           >
-            {item.hidden ? <EyeOff className="w-3 h-3 text-gray-400 hover:text-blue-500" /> : <Eye className="w-3 h-3 text-gray-400 hover:text-blue-500" />}
+            {item.hidden ? (
+              <EyeOff className="w-3 h-3 text-gray-400 hover:text-blue-500" />
+            ) : (
+              <Eye className="w-3 h-3 text-gray-400 hover:text-blue-500" />
+            )}
           </button>
+
           <button
             onClick={(e) => {
               e.stopPropagation();
               onRemove();
             }}
-            className="p-1"
+            className="cursor-pointer flex-shrink-0 p-0.5"
             title="Supprimer"
           >
-            <Trash2 className="w-3 h-3 text-red-500 hover:text-red-600" />
+            <Trash2 className="w-3 h-3 text-gray-400 hover:text-red-500" />
           </button>
         </div>
       </div>
@@ -130,27 +213,32 @@ function SortableItem({
         <div className={compact ? 'p-2 space-y-2' : 'p-3 space-y-3'}>
           <div className="grid gap-2">
             <label className={labelClass}>Image</label>
-            <MediaUploader
-              value={item.image?.src || ''}
-              onChange={(url) => onUpdate({ image: { ...(item.image || {}), src: url } })}
-              compact
-            />
-            <input
-              className={inputClass}
-              value={item.image?.alt || ''}
-              onChange={(e) => onUpdate({ image: { ...(item.image || {}), alt: e.target.value } })}
-              placeholder="Texte alternatif"
-            />
+            <div className="flex items-center gap-2">
+              <div
+                className="w-12 h-12 border border-gray-200 rounded flex items-center justify-center bg-gray-50 flex-shrink-0 relative overflow-hidden cursor-pointer hover:border-blue-400 transition-colors"
+                onClick={triggerUpload}
+              >
+                {item.image?.src ? (
+                  <img src={item.image.src} alt={item.image.alt || ''} className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-[10px] text-gray-400">+</span>
+                )}
+              </div>
+              <div className="flex-1 space-y-2">
+                <Input
+                  value={item.image?.alt || ''}
+                  onChange={(e) => onUpdate({ image: { ...(item.image || {}), alt: e.target.value } })}
+                  placeholder="Texte alternatif"
+                  className={compact ? inputClass : undefined}
+                />
+              </div>
+            </div>
           </div>
 
           <div className="grid gap-2">
-            <label className={compact ? 'block text-[10px] text-gray-400 mb-1' : 'block text-sm font-medium text-gray-700'}>Titre</label>
+            <label className={labelClass}>Titre</label>
             <input
-              className={
-                compact
-                  ? 'w-full px-2 py-1.5 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors'
-                  : 'block-input'
-              }
+              className={inputClass}
               value={item.title}
               onChange={(e) => onUpdate({ title: e.target.value })}
               placeholder="Camera Work"
@@ -158,13 +246,9 @@ function SortableItem({
           </div>
 
           <div className="grid gap-2">
-            <label className={compact ? 'block text-[10px] text-gray-400 mb-1' : 'block text-sm font-medium text-gray-700'}>Indicateur</label>
+            <label className={labelClass}>Indicateur</label>
             <input
-              className={
-                compact
-                  ? 'w-full px-2 py-1.5 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors'
-                  : 'block-input'
-              }
+              className={inputClass}
               value={item.indicator || ''}
               onChange={(e) => onUpdate({ indicator: e.target.value })}
               placeholder="[ Framing ]"
@@ -266,10 +350,7 @@ export default function ServicesSpotlightEditor({
       </div>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext
-          items={items.map((item, idx) => item.id || `spot-${idx}`)}
-          strategy={verticalListSortingStrategy}
-        >
+        <SortableContext items={items.map((item, idx) => item.id || `spot-${idx}`)} strategy={verticalListSortingStrategy}>
           <div className="space-y-2">
             {items.map((item, index) => (
               <SortableItem
@@ -281,6 +362,8 @@ export default function ServicesSpotlightEditor({
                 onToggle={() => setOpenId(openId === (item.id || `spot-${index}`) ? null : item.id || `spot-${index}`)}
                 onUpdate={(updates) => updateItem(index, updates)}
                 onRemove={() => removeItem(index)}
+                labelClass={labelClass}
+                inputClass={inputClass}
               />
             ))}
           </div>
