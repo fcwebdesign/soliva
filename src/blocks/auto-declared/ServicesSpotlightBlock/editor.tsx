@@ -7,8 +7,7 @@ import { Textarea } from '../../../components/ui/textarea';
 import { Switch } from '../../../components/ui/switch';
 import { Button } from '../../../components/ui/button';
 import { Plus, Trash2, ArrowUp, ArrowDown, ChevronDown, ChevronRight } from 'lucide-react';
-import { ImageListEditor } from '../components';
-import type { ImageItemData } from '../components';
+import { ImageEditorField } from '../components';
 import { toast } from 'sonner';
 
 type SpotlightItem = {
@@ -48,17 +47,6 @@ export default function ServicesSpotlightEditor({
   useEffect(() => {
     setItems(data.items && data.items.length ? data.items : FALLBACK_ITEMS);
   }, [data.items]);
-
-  const imageItems: ImageItemData[] = useMemo(
-    () =>
-      items.map((item, idx) => ({
-        id: item.id || `spot-${idx}`,
-        src: item.image?.src || '',
-        alt: item.image?.alt || item.title || '',
-        aspectRatio: item.image?.aspectRatio || '16:9',
-      })),
-    [items]
-  );
 
   const updateItems = (next: SpotlightItem[]) => {
     setItems(next);
@@ -101,19 +89,6 @@ export default function ServicesSpotlightEditor({
     updateItems(next);
   };
 
-  const syncImages = (nextImages: ImageItemData[]) => {
-    const next = nextImages.map((img, idx) => {
-      const existingById = items.find((it, i) => (it.id || `spot-${i}`) === img.id);
-      const base = existingById || items[idx] || { title: `Item ${idx + 1}`, indicator: '[ Indicator ]' };
-      return {
-        ...base,
-        id: img.id || base.id || `spot-${idx}`,
-        image: { src: img.src, alt: img.alt, aspectRatio: img.aspectRatio },
-      };
-    });
-    updateItems(next);
-  };
-
   const labelClass = compact ? 'block text-[10px] text-gray-400 mb-1' : 'block text-sm font-medium text-gray-700';
   const inputClass = compact
     ? 'w-full px-2 py-1.5 text-[13px] leading-normal font-normal border border-gray-200 rounded focus:border-blue-400 focus:outline-none transition-colors'
@@ -144,7 +119,7 @@ export default function ServicesSpotlightEditor({
           return (
             <div
               key={item.id || index}
-              className="border border-gray-200 rounded"
+              className="border border-gray-200 rounded bg-white"
             >
               <button
                 type="button"
@@ -156,7 +131,16 @@ export default function ServicesSpotlightEditor({
                 ) : (
                   <ChevronRight className="w-3 h-3 text-gray-500" />
                 )}
-                <span className="text-[13px] text-gray-900 truncate flex-1">{item.title || `Item ${index + 1}`}</span>
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                  <div className="w-8 h-8 border border-gray-200 rounded bg-gray-50 overflow-hidden flex items-center justify-center flex-shrink-0">
+                    {item.image?.src ? (
+                      <img src={item.image.src} alt={item.image.alt || item.title || ''} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-[10px] text-gray-400">Img</span>
+                    )}
+                  </div>
+                  <span className="text-[13px] text-gray-900 truncate">{item.title || `Item ${index + 1}`}</span>
+                </div>
                 {compact ? (
                   <div className="flex items-center gap-2 text-[11px] text-gray-500">
                     <button type="button" onClick={(e) => { e.stopPropagation(); moveItem(index, 'up'); }}>↑</button>
@@ -191,6 +175,25 @@ export default function ServicesSpotlightEditor({
 
               {isOpen && (
                 <div className={compact ? 'p-2 space-y-2' : 'p-3 space-y-3'}>
+                  <ImageEditorField
+                    label="Image"
+                    value={{
+                      src: item.image?.src || '',
+                      alt: item.image?.alt || '',
+                      aspectRatio: item.image?.aspectRatio || '16:9',
+                    }}
+                    onChange={(img) =>
+                      updateItemField(index, 'image', {
+                        src: img.src,
+                        alt: img.alt,
+                        aspectRatio: img.aspectRatio,
+                      })
+                    }
+                    compact={compact}
+                    altPlaceholder="Texte alternatif"
+                    defaultAspectRatio="16:9"
+                  />
+
                   <div className="grid gap-2">
                     <label className={labelClass}>Titre</label>
                     <input
@@ -253,15 +256,6 @@ export default function ServicesSpotlightEditor({
           <label htmlFor="showIndicator" className="text-[10px] font-medium">Afficher l'indicateur</label>
         </div>
 
-        <ImageListEditor
-          label="Images (ordre = items)"
-          compact
-          items={imageItems}
-          onChange={syncImages}
-          defaultAspectRatio="16:9"
-          altPlaceholder="Texte alternatif"
-        />
-
         <ItemsList />
       </div>
     );
@@ -299,14 +293,6 @@ export default function ServicesSpotlightEditor({
         />
         <Label htmlFor="showIndicator" className="text-[10px] font-medium">Afficher l'indicateur</Label>
       </div>
-
-      <ImageListEditor
-        label="Images (ordre = items)"
-        items={imageItems}
-        onChange={syncImages}
-        defaultAspectRatio="16:9"
-        altPlaceholder="Texte alternatif"
-      />
 
       <ItemsList />
     </div>
