@@ -121,10 +121,17 @@ export default function ServicesSpotlightEditor({
               key={item.id || index}
               className="border border-gray-200 rounded bg-white"
             >
-              <button
-                type="button"
+              <div
+                role="button"
+                tabIndex={0}
                 className={`w-full flex items-center gap-2 ${compact ? 'py-2 px-2' : 'py-3 px-3'} text-left hover:bg-gray-50 transition-colors`}
                 onClick={() => setOpenId(isOpen ? null : item.id || `spot-${index}`)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setOpenId(isOpen ? null : item.id || `spot-${index}`);
+                  }
+                }}
               >
                 {isOpen ? (
                   <ChevronDown className="w-3 h-3 text-gray-500" />
@@ -171,7 +178,7 @@ export default function ServicesSpotlightEditor({
                     </Button>
                   </div>
                 )}
-              </button>
+              </div>
 
               {isOpen && (
                 <div className={compact ? 'p-2 space-y-2' : 'p-3 space-y-3'}>
