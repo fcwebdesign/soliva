@@ -197,8 +197,9 @@ export default function ServicesSpotlightEditor({
                       })
                     }
                     compact={compact}
-                    altPlaceholder="Texte alternatif"
-                    defaultAspectRatio="16:9"
+                    showAltText
+                    showAspectRatio
+                    thumbnailSize={compact ? 8 : 12}
                   />
 
                   <div className="grid gap-2">
