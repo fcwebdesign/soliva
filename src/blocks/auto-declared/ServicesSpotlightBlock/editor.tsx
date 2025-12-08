@@ -177,7 +177,7 @@ function SortableItem({
             image={{
               src: item.image?.src || '',
               alt: item.image?.alt || '',
-              aspectRatio: item.image?.aspectRatio || '16:9',
+              aspectRatio: item.image?.aspectRatio || 'auto',
             }}
             onChange={(img) =>
               onUpdate({
@@ -186,7 +186,7 @@ function SortableItem({
             }
             compact={compact}
             showAltText
-            showAspectRatio
+            showAspectRatio={false}
             thumbnailSize={compact ? 8 : 12}
           />
 
