@@ -6,7 +6,7 @@ import { Label } from '../../../components/ui/label';
 import { Textarea } from '../../../components/ui/textarea';
 import { Switch } from '../../../components/ui/switch';
 import { Button } from '../../../components/ui/button';
-import { Plus, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
+import { Plus, Trash2, ArrowUp, ArrowDown, ChevronDown, ChevronRight } from 'lucide-react';
 import { ImageListEditor } from '../components';
 import type { ImageItemData } from '../components';
 import { toast } from 'sonner';
@@ -43,6 +43,7 @@ export default function ServicesSpotlightEditor({
   compact?: boolean;
 }) {
   const [items, setItems] = useState<SpotlightItem[]>(data.items && data.items.length ? data.items : FALLBACK_ITEMS);
+  const [openId, setOpenId] = useState<string | null>(null);
 
   useEffect(() => {
     setItems(data.items && data.items.length ? data.items : FALLBACK_ITEMS);
@@ -137,58 +138,83 @@ export default function ServicesSpotlightEditor({
         )}
       </div>
 
-      <div className="space-y-3">
-        {items.map((item, index) => (
-          <div
-            key={item.id || index}
-            className={compact ? 'border border-gray-200 rounded p-2 space-y-2' : 'border border-gray-200 rounded p-3 space-y-3'}
-          >
-            <div className="flex items-center gap-2 text-[11px] text-gray-500">
-              <span>Item {index + 1}</span>
-              <div className="ml-auto flex items-center gap-2">
-                {compact ? (
-                  <>
-                    <button type="button" onClick={() => moveItem(index, 'up')} className="text-gray-500 hover:text-gray-800">↑</button>
-                    <button type="button" onClick={() => moveItem(index, 'down')} className="text-gray-500 hover:text-gray-800">↓</button>
-                    <button type="button" onClick={() => removeItem(index)} className="text-red-500 hover:text-red-600">Suppr</button>
-                  </>
+      <div className="space-y-2">
+        {items.map((item, index) => {
+          const isOpen = openId === (item.id || `spot-${index}`);
+          return (
+            <div
+              key={item.id || index}
+              className="border border-gray-200 rounded"
+            >
+              <button
+                type="button"
+                className={`w-full flex items-center gap-2 ${compact ? 'py-2 px-2' : 'py-3 px-3'} text-left hover:bg-gray-50 transition-colors`}
+                onClick={() => setOpenId(isOpen ? null : item.id || `spot-${index}`)}
+              >
+                {isOpen ? (
+                  <ChevronDown className="w-3 h-3 text-gray-500" />
                 ) : (
-                  <>
-                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => moveItem(index, 'up')}>
+                  <ChevronRight className="w-3 h-3 text-gray-500" />
+                )}
+                <span className="text-[13px] text-gray-900 truncate flex-1">{item.title || `Item ${index + 1}`}</span>
+                {compact ? (
+                  <div className="flex items-center gap-2 text-[11px] text-gray-500">
+                    <button type="button" onClick={(e) => { e.stopPropagation(); moveItem(index, 'up'); }}>↑</button>
+                    <button type="button" onClick={(e) => { e.stopPropagation(); moveItem(index, 'down'); }}>↓</button>
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); removeItem(index); }}
+                      className="text-red-500"
+                    >
+                      Suppr
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1">
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={(e) => { e.stopPropagation(); moveItem(index, 'up'); }}>
                       <ArrowUp className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => moveItem(index, 'down')}>
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={(e) => { e.stopPropagation(); moveItem(index, 'down'); }}>
                       <ArrowDown className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:text-red-600" onClick={() => removeItem(index)}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 text-red-500 hover:text-red-600"
+                      onClick={(e) => { e.stopPropagation(); removeItem(index); }}
+                    >
                       <Trash2 className="w-4 h-4" />
                     </Button>
-                  </>
+                  </div>
                 )}
-              </div>
-            </div>
+              </button>
 
-            <div className="grid gap-2">
-              <label className={labelClass}>Titre</label>
-              <input
-                className={inputClass}
-                value={item.title}
-                onChange={(e) => updateItemField(index, 'title', e.target.value)}
-                placeholder="Camera Work"
-              />
-            </div>
+              {isOpen && (
+                <div className={compact ? 'p-2 space-y-2' : 'p-3 space-y-3'}>
+                  <div className="grid gap-2">
+                    <label className={labelClass}>Titre</label>
+                    <input
+                      className={inputClass}
+                      value={item.title}
+                      onChange={(e) => updateItemField(index, 'title', e.target.value)}
+                      placeholder="Camera Work"
+                    />
+                  </div>
 
-            <div className="grid gap-2">
-              <label className={labelClass}>Indicateur</label>
-              <input
-                className={inputClass}
-                value={item.indicator || ''}
-                onChange={(e) => updateItemField(index, 'indicator', e.target.value)}
-                placeholder="[ Framing ]"
-              />
+                  <div className="grid gap-2">
+                    <label className={labelClass}>Indicateur</label>
+                    <input
+                      className={inputClass}
+                      value={item.indicator || ''}
+                      onChange={(e) => updateItemField(index, 'indicator', e.target.value)}
+                      placeholder="[ Framing ]"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
