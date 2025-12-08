@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Textarea } from '../../../components/ui/textarea';
@@ -116,20 +116,18 @@ export default function ServicesSpotlightEditor({
       <div className="space-y-2">
         {items.map((item, index) => {
           const isOpen = openId === (item.id || `spot-${index}`);
+          const itemId = item.id || `spot-${index}`;
           return (
-            <div
-              key={item.id || index}
-              className="border border-gray-200 rounded bg-white"
-            >
+            <div key={itemId} className="border border-gray-200 rounded bg-white">
               <div
                 role="button"
                 tabIndex={0}
                 className={`w-full flex items-center gap-2 ${compact ? 'py-2 px-2' : 'py-3 px-3'} text-left hover:bg-gray-50 transition-colors`}
-                onClick={() => setOpenId(isOpen ? null : item.id || `spot-${index}`)}
+                onClick={() => setOpenId(isOpen ? null : itemId)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    setOpenId(isOpen ? null : item.id || `spot-${index}`);
+                    setOpenId(isOpen ? null : itemId);
                   }
                 }}
               >
