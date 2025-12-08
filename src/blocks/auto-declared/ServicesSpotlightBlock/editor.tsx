@@ -6,12 +6,13 @@ import { Label } from '../../../components/ui/label';
 import { Textarea } from '../../../components/ui/textarea';
 import { Switch } from '../../../components/ui/switch';
 import { Button } from '../../../components/ui/button';
-import { Plus, Trash2, ArrowUp, ArrowDown, ChevronDown, ChevronRight, GripVertical, Eye, EyeOff } from 'lucide-react';
-import { ImageEditorField } from '../components';
+import { Plus, Trash2, ArrowUp, ArrowDown, ChevronDown, ChevronRight, GripVertical, Eye, EyeOff, ImagePlus, Edit3 } from 'lucide-react';
 import { toast } from 'sonner';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import MediaUploader from '../../../app/admin/components/MediaUploader';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 type SpotlightItem = {
   id?: string;
@@ -44,6 +45,8 @@ function SortableItem({
   onUpdate,
   onRemove,
   compact,
+  labelClass,
+  inputClass,
 }: {
   item: SpotlightItem;
   index: number;
@@ -52,6 +55,8 @@ function SortableItem({
   onUpdate: (updates: Partial<SpotlightItem>) => void;
   onRemove: () => void;
   compact: boolean;
+  labelClass: string;
+  inputClass: string;
 }) {
   const {
     attributes,
@@ -87,7 +92,7 @@ function SortableItem({
         {isOpen ? <ChevronDown className="w-3 h-3 text-gray-500" /> : <ChevronRight className="w-3 h-3 text-gray-500" />}
         <GripVertical className="w-3 h-3 text-gray-400 flex-shrink-0" />
         <div className="flex items-center gap-2 flex-1 min-w-0">
-          <div className="w-8 h-8 border border-gray-200 rounded bg-gray-50 overflow-hidden flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 border border-gray-200 rounded bg-gray-50 overflow-hidden flex items-center justify-center flex-shrink-0 relative">
             {item.image?.src ? (
               <img src={item.image.src} alt={item.image.alt || item.title || ''} className="w-full h-full object-cover" />
             ) : (
@@ -123,23 +128,20 @@ function SortableItem({
 
       {isOpen && (
         <div className={compact ? 'p-2 space-y-2' : 'p-3 space-y-3'}>
-          <ImageEditorField
-            label="Image"
-            image={{
-              src: item.image?.src || '',
-              alt: item.image?.alt || '',
-              aspectRatio: item.image?.aspectRatio || 'auto',
-            }}
-            onChange={(img) =>
-              onUpdate({
-                image: { src: img.src, alt: img.alt, aspectRatio: img.aspectRatio },
-              })
-            }
-            compact={compact}
-            showAltText
-            showAspectRatio={false}
-            thumbnailSize={compact ? 8 : 12}
-          />
+          <div className="grid gap-2">
+            <label className={labelClass}>Image</label>
+            <MediaUploader
+              value={item.image?.src || ''}
+              onChange={(url) => onUpdate({ image: { ...(item.image || {}), src: url } })}
+              compact
+            />
+            <input
+              className={inputClass}
+              value={item.image?.alt || ''}
+              onChange={(e) => onUpdate({ image: { ...(item.image || {}), alt: e.target.value } })}
+              placeholder="Texte alternatif"
+            />
+          </div>
 
           <div className="grid gap-2">
             <label className={compact ? 'block text-[10px] text-gray-400 mb-1' : 'block text-sm font-medium text-gray-700'}>Titre</label>
