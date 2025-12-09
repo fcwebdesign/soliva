@@ -61,12 +61,12 @@ export function usePageTransitions() {
     // Toujours SPA pour l'interne (on ignore target _blank hérité par erreur)
     if (isInternal && !withMod) {
       e.preventDefault();
-      
+
       // Utiliser le verrouillage global
       if (isTransitionInProgress()) {
         return;
       }
-      
+
       if (href.startsWith("#")) {
         document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
       } else {

@@ -869,7 +869,7 @@
           ],
           "duration": 250
         },
-        "hidden": false
+        "hidden": true
       },
       {
         "id": "pinned-grid-explorations-1764655662265",
@@ -946,6 +946,79 @@
         ],
         "theme": "auto",
         "hidden": false
+      },
+      {
+        "id": "scroll-slider-1765145420783",
+        "type": "scroll-slider",
+        "slides": [
+          {
+            "id": "slide-0",
+            "title": "Under the soft hum of streetlights she watches the world ripple through glass, her calm expression mirrored in the fragments of drifting light.",
+            "image": {
+              "src": "/blocks/scroll-slider/slider_img_1.jpg",
+              "alt": "Slide 1",
+              "aspectRatio": "16:9"
+            },
+            "hidden": false
+          },
+          {
+            "id": "slide-1765145438083-0",
+            "title": "Nouveau slide",
+            "image": {
+              "src": "/uploads/1765145437409-c21ad799.webp",
+              "alt": "",
+              "aspectRatio": "16:9"
+            },
+            "hidden": false
+          },
+          {
+            "id": "slide-1765145438083-1",
+            "title": "Nouveau slide",
+            "image": {
+              "src": "/uploads/1765145437406-1c2e5ccb.webp",
+              "alt": "",
+              "aspectRatio": "16:9"
+            },
+            "hidden": false
+          },
+          {
+            "id": "slide-1765145438083-2",
+            "title": "Nouveau slide",
+            "image": {
+              "src": "/uploads/1765145437413-83e8acb4.webp",
+              "alt": "",
+              "aspectRatio": "16:9"
+            },
+            "hidden": false
+          },
+          {
+            "id": "slide-1765145438083-3",
+            "title": "Nouveau slide",
+            "image": {
+              "src": "/uploads/1765145437392-d61fb876.webp",
+              "alt": "",
+              "aspectRatio": "16:9"
+            },
+            "hidden": false
+          },
+          {
+            "id": "slide-1765145438083-4",
+            "title": "Nouveau slide",
+            "image": {
+              "src": "/uploads/1765145437387-0cdc9e83.webp",
+              "alt": "",
+              "aspectRatio": "16:9"
+            },
+            "hidden": false
+          }
+        ],
+        "previewIndex": 4,
+        "previewVersion": 1765145447767,
+        "showProgressBar": false,
+        "showText": false,
+        "showIndicators": false,
+        "hidden": false,
+        "showOverlay": false
       }
     ],
     "title": "Studio pearl",
@@ -1387,80 +1460,121 @@
             "hidden": false
           },
           {
+            "id": "services-spotlight-v2-1765251610246",
+            "type": "services-spotlight-v2",
+            "title": "Spotlight",
+            "kicker": "What we do",
+            "indicatorLabel": "Specialization",
+            "showIndicator": true,
+            "headingVariant": "medium",
+            "itemHeadingVariant": "large",
+            "theme": "auto",
+            "items": [
+              {
+                "id": "service-1",
+                "title": "Camera",
+                "indicator": "[ Framing ]",
+                "image": {
+                  "src": "/blocks/services-spotlight/spotlight-1.jpg",
+                  "alt": "Camera work"
+                },
+                "link": "/lisa"
+              },
+              {
+                "id": "service-2",
+                "title": "Visual",
+                "indicator": "[ Vision ]",
+                "image": {
+                  "src": "/blocks/services-spotlight/spotlight-2.jpg",
+                  "alt": "Visual direction"
+                }
+              },
+              {
+                "id": "service-3",
+                "title": "Sound",
+                "indicator": "[ Resonance ]",
+                "image": {
+                  "src": "/blocks/services-spotlight/spotlight-3.jpg",
+                  "alt": "Sound design"
+                }
+              },
+              {
+                "id": "service-4",
+                "title": "Films",
+                "indicator": "[ Sequence ]",
+                "image": {
+                  "src": "/blocks/services-spotlight/spotlight-4.jpg",
+                  "alt": "Film editing"
+                },
+                "link": "/about-us"
+              }
+            ],
+            "hidden": false
+          },
+          {
             "id": "testimonial-1762855180740",
             "type": "testimonial",
-            "data": {
-              "testimonial": "Un témoignage client très positif sur votre travail...",
-              "author": "Nom du client",
-              "company": "Nom de l'entreprise",
-              "role": "Fonction",
-              "avatar": {
-                "src": "/uploads/1762949776498-b2e64419.webp",
-                "alt": ""
-              },
-              "rating": 0,
-              "theme": "auto",
-              "title": "Ils nous font confiance",
-              "items": [
-                {
-                  "id": "testimonial-1762950141217",
-                  "testimonial": "Un témoignage client très positif sur votre travail...",
-                  "author": "Nom du client",
-                  "company": "Nom de l'entreprise",
-                  "role": "Fonction",
-                  "avatar": {
-                    "src": "",
-                    "alt": ""
-                  },
-                  "rating": 5
-                },
-                {
-                  "id": "testimonial-1762950152842",
-                  "testimonial": "Un témoignage client très positif sur votre travail...",
-                  "author": "Nom du client",
-                  "company": "Nom de l'entreprise",
-                  "role": "Fonction",
-                  "avatar": {
-                    "src": "",
-                    "alt": ""
-                  },
-                  "rating": 5
-                },
-                {
-                  "id": "testimonial-1762950185913",
-                  "testimonial": "Un témoignage client très positif sur votre travail...",
-                  "author": "Nom du client",
-                  "company": "Nom de l'entreprise",
-                  "role": "Fonction",
-                  "avatar": {
-                    "src": "",
-                    "alt": ""
-                  },
-                  "rating": 5
-                },
-                {
-                  "id": "testimonial-1762950187994",
-                  "testimonial": "Un témoignage client très positif sur votre travail...",
-                  "author": "Nom du client",
-                  "company": "Nom de l'entreprise",
-                  "role": "Fonction",
-                  "avatar": {
-                    "src": "",
-                    "alt": ""
-                  },
-                  "rating": 5
-                }
-              ]
-            },
-            "author": "Jean dupont",
-            "company": "FC",
-            "role": "Directeur marketing",
+            "testimonial": "Un témoignage client très positif sur votre travail...",
+            "author": "Nom du client",
+            "company": "Nom de l'entreprise",
+            "role": "Fonction",
             "avatar": {
-              "src": "/uploads/1762855200589-1bacb4ca.webp",
+              "src": "/uploads/1762949776498-b2e64419.webp",
               "alt": ""
             },
-            "rating": 2,
-            "testimonial": "super site !",
+            "rating": 0,
+            "theme": "auto",
+            "title": "Ils nous font confiance",
+            "items": [
+              {
+                "id": "testimonial-1762950141217",
+                "testimonial": "Un témoignage client très positif sur votre travail...",
+                "author": "Nom du client",
+                "company": "Nom de l'entreprise",
+                "role": "Fonction",
+                "avatar": {
+                  "src": "/uploads/1765199425394-4c488d8e.webp",
+                  "alt": ""
+                },
+                "rating": 5
+              },
+              {
+                "id": "testimonial-1762950152842",
+                "testimonial": "Un témoignage client très positif sur votre travail...",
+                "author": "Nom du client",
+                "company": "Nom de l'entreprise",
+                "role": "Fonction",
+                "avatar": {
+                  "src": "/uploads/1765199431204-bfb0dd2a.webp",
+                  "alt": ""
+                },
+                "rating": 5
+              },
+              {
+                "id": "testimonial-1762950185913",
+                "testimonial": "Un témoignage client très positif sur votre travail...",
+                "author": "Nom du client",
+                "company": "Nom de l'entreprise",
+                "role": "Fonction",
+                "avatar": {
+                  "src": "/uploads/1765199436739-8f6a6c04.webp",
+                  "alt": ""
+                },
+                "rating": 5
+              },
+              {
+                "id": "testimonial-1762950187994",
+                "testimonial": "Un témoignage client très positif sur votre travail...",
+                "author": "Nom du client",
+                "company": "Nom de l'entreprise",
+                "role": "Fonction",
+                "avatar": {
+                  "src": "",
+                  "alt": ""
+                },
+                "rating": 5
+              }
+            ],
             "hidden": false
           },
           {
@@ -1657,7 +1771,48 @@
             "gap": "large",
             "alignment": "top",
             "theme": "auto",
-            "hidden": false
+            "hidden": false,
+            "data": {
+              "id": "three-columns-1764323772147",
+              "type": "three-columns",
+              "title": "",
+              "leftColumn": [
+                {
+                  "id": "h2-1764323777597",
+                  "type": "h2",
+                  "content": "Accélérez, mesurez, marquez",
+                  "hidden": false
+                }
+              ],
+              "middleColumn": [
+                {
+                  "id": "image-middleColumn-1764324011190-2ol0c1z3y",
+                  "type": "image",
+                  "images": [
+                    {
+                      "id": "image-1764324093218",
+                      "src": "/uploads/1764324093142-56e2bd9e.webp",
+                      "alt": "",
+                      "aspectRatio": "1:1"
+                    }
+                  ],
+                  "hidden": false
+                }
+              ],
+              "rightColumn": [
+                {
+                  "id": "content-1764324107145",
+                  "type": "content",
+                  "content": "<p>Soliva conçoit des sites sur-mesure en Next.js, rapides à charger et faciles à gérer. Nous optimisons la performance, les Core Web Vitals et le SEO, avec des animations GSAP maîtrisées et une IA utile intégrée au CMS pour gagner du temps au quotidien. Parler de votre projet ou obtenir un devis rapide.</p>",
+                  "width": "small"
+                }
+              ],
+              "layout": "left-middle-right",
+              "gap": "large",
+              "alignment": "top",
+              "theme": "auto",
+              "hidden": false
+            }
           },
           {
             "id": "four-columns-1764073920374",
@@ -1724,7 +1879,74 @@
             "gap": "medium",
             "alignment": "top",
             "theme": "auto",
-            "hidden": false
+            "hidden": false,
+            "data": {
+              "id": "four-columns-1764073920374",
+              "type": "four-columns",
+              "title": "Quatre colonnes",
+              "column1": [
+                {
+                  "id": "image-column1-1764073943150-cksl2i57f",
+                  "type": "image",
+                  "images": [
+                    {
+                      "id": "image-1764073946343",
+                      "src": "/uploads/1764073949616-45b76ce3.webp",
+                      "alt": ""
+                    }
+                  ]
+                }
+              ],
+              "column2": [
+                {
+                  "id": "image-column2-1764322629533-6txsjwwsj",
+                  "type": "image",
+                  "images": [
+                    {
+                      "id": "image-1764322631078",
+                      "src": "/uploads/1764322635762-bb779dd3.webp",
+                      "alt": ""
+                    }
+                  ]
+                },
+                {
+                  "id": "content-1764324323971",
+                  "type": "content",
+                  "content": "<p>Soliva, creative studio. Digital &amp; brand strategy. Nous concevons des sites Next.js rapides, stables et faciles à maintenir, optimisés pour la performance et les Core Web Vitals, avec un SEO mesurable. Animation GSAP soignée, IA utile intégrée au CMS, délais clairs et budget maîtrisé. Parler de votre projet | Obtenir un devis rapide | Voir des réalisations</p>"
+                }
+              ],
+              "column3": [
+                {
+                  "id": "image-column3-1764324306064-kbsipi0s6",
+                  "type": "image",
+                  "images": [
+                    {
+                      "id": "image-1764324310722",
+                      "src": "/uploads/1764324315489-48da7420.webp",
+                      "alt": ""
+                    }
+                  ]
+                }
+              ],
+              "column4": [
+                {
+                  "id": "image-column4-1764073980857-87w6rn9q1",
+                  "type": "image",
+                  "images": [
+                    {
+                      "id": "image-1764073982531",
+                      "src": "/uploads/1764073986297-b99fece7.webp",
+                      "alt": ""
+                    }
+                  ]
+                }
+              ],
+              "layout": "four-columns",
+              "gap": "medium",
+              "alignment": "top",
+              "theme": "auto",
+              "hidden": false
+            }
           },
           {
             "id": "hover-clients-1764266215816",
@@ -2287,6 +2509,82 @@
               "alignment": "top",
               "theme": "auto"
             }
+          },
+          {
+            "id": "two-columns-1765254442983",
+            "type": "two-columns",
+            "title": "Our Core Offerings",
+            "leftColumn": [
+              {
+                "id": "image-leftColumn-1765254471098-yn0on7p0y",
+                "type": "image",
+                "images": [
+                  {
+                    "id": "image-1765254472338",
+                    "src": "/uploads/1765254479871-26785a74.webp",
+                    "alt": "",
+                    "aspectRatio": "1:1"
+                  }
+                ]
+              }
+            ],
+            "rightColumn": [
+              {
+                "id": "h2-1765254571008",
+                "type": "h2",
+                "content": "We are a proud exclusive Salesforce Partner"
+              },
+              {
+                "id": "content-1765254494386",
+                "type": "content",
+                "content": "<p>At DYNACAP, we partner exclusively with Salesforce because we believe&nbsp;it's the best platform for enabling the most ambitious transformations. Being&nbsp;dedicated&nbsp;to Salesforce since our founding days, it’s more than&nbsp;just a CRM platform to&nbsp;us – it’s a partnership we live and breathe to deliver true commercial excellence.</p>",
+                "width": "small"
+              }
+            ],
+            "layout": "left-right",
+            "gap": "large",
+            "alignment": "top",
+            "theme": "auto",
+            "hidden": false,
+            "data": {
+              "id": "two-columns-1765254442983",
+              "type": "two-columns",
+              "title": "Our Core Offerings",
+              "leftColumn": [
+                {
+                  "id": "image-leftColumn-1765254471098-yn0on7p0y",
+                  "type": "image",
+                  "images": [
+                    {
+                      "id": "image-1765254472338",
+                      "src": "/uploads/1765254479871-26785a74.webp",
+                      "alt": "",
+                      "aspectRatio": "1:1"
+                    }
+                  ],
+                  "hidden": false
+                }
+              ],
+              "rightColumn": [
+                {
+                  "id": "h2-1765254571008",
+                  "type": "h2",
+                  "content": "We are a proud exclusive Salesforce Partner",
+                  "hidden": false
+                },
+                {
+                  "id": "content-1765254494386",
+                  "type": "content",
+                  "content": "<p>At DYNACAP, we partner exclusively with Salesforce because we believe&nbsp;it's the best platform for enabling the most ambitious transformations. Being&nbsp;dedicated&nbsp;to Salesforce since our founding days, it’s more than&nbsp;just a CRM platform to&nbsp;us – it’s a partnership we live and breathe to deliver true commercial excellence.</p>",
+                  "width": "small",
+                  "hidden": false
+                }
+              ],
+              "layout": "left-right",
+              "gap": "large",
+              "alignment": "top",
+              "theme": "auto"
+            }
           }
         ],
         "publishedAt": "2025-11-25T10:49:37.233Z"
@@ -2343,6 +2641,45 @@
             "columns": 2,
             "hidden": false,
             "displayMode": "list"
+          },
+          {
+            "id": "scroll-slider-1765137948469",
+            "type": "scroll-slider",
+            "slides": [
+              {
+                "id": "slide-0",
+                "title": "Under the soft hum of streetlights she watches the world ripple through glass, her calm expression mirrored in the fragments of drifting light.",
+                "image": {
+                  "src": "/blocks/scroll-slider/slider_img_1.jpg",
+                  "alt": "Slide 1",
+                  "aspectRatio": "16:9"
+                },
+                "hidden": false
+              },
+              {
+                "id": "slide-1765137953922-0",
+                "title": "Nouveau slide",
+                "image": {
+                  "src": "/uploads/1765137953716-36e9e184.webp",
+                  "alt": "",
+                  "aspectRatio": "16:9"
+                },
+                "hidden": false
+              },
+              {
+                "id": "slide-1765137963875-0",
+                "title": "Nouveau slide",
+                "image": {
+                  "src": "/uploads/1765137963711-7a3b216e.webp",
+                  "alt": "",
+                  "aspectRatio": "16:9"
+                },
+                "hidden": false
+              }
+            ],
+            "previewIndex": 2,
+            "previewVersion": 1765137992096,
+            "hidden": false
           },
           {
             "id": "two-images-1764320427194",
@@ -2423,6 +2760,32 @@
               "alignment": "top",
               "theme": "auto"
             }
+          },
+          {
+            "id": "two-columns-1765137749920",
+            "type": "two-columns",
+            "data": {
+              "title": "",
+              "leftColumn": [],
+              "rightColumn": [],
+              "layout": "left-right",
+              "gap": "medium",
+              "alignment": "top",
+              "theme": "auto"
+            },
+            "hidden": false
+          },
+          {
+            "id": "image-1765137765665",
+            "type": "image",
+            "images": [
+              {
+                "id": "image-1765137765685",
+                "src": "",
+                "alt": ""
+              }
+            ],
+            "hidden": false
           }
         ],
         "publishedAt": "2025-11-25T10:55:21.466Z"

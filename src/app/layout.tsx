@@ -98,6 +98,9 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           <style id="spacing-vars">{spacingVarsCSS(spacingConfig)}</style>
           </head>
           <body className={`${isPreviewRoute && adminTemplateKey === 'pearl' ? '' : 'site'} layout-${content.metadata?.layout || 'standard'} ${isDraftMode ? 'preview-mode' : ''}`}>
+            {/* Curtain element for Safari/Firefox transitions */}
+            <div id="curtain" className="fixed inset-0 bg-black z-50 pointer-events-none opacity-0 transition-opacity duration-300"></div>
+
             <Preloader />
             <TransitionGuard />
             <ScrollRestoration />
@@ -140,6 +143,9 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           <style id="spacing-vars">{spacingVarsCSS(spacingConfig)}</style>
         </head>
         <body className={`${templateKey === 'pearl' ? '' : 'site'} layout-${content.metadata?.layout || 'standard'} ${isDraftMode ? 'preview-mode' : ''}`}>
+          {/* Curtain element for Safari/Firefox transitions */}
+          <div id="curtain" className="fixed inset-0 bg-black z-50 pointer-events-none opacity-0 transition-opacity duration-300"></div>
+
           {/* Preloader */}
           <Preloader />
           <TransitionGuard />

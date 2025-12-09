@@ -28,6 +28,7 @@ interface ScrollSliderData {
   showIndicators?: boolean;
   showProgressBar?: boolean;
   showText?: boolean;
+  showOverlay?: boolean;
 }
 
 const normalizeSlides = (raw: SlideEditorItem[] | undefined) => {
@@ -533,7 +534,22 @@ export default function ScrollSliderEditor({
           />
           <label htmlFor="showText" className="text-[10px] font-medium">Texte</label>
         </div>
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="showOverlay"
+            checked={data.showOverlay !== false}
+            onCheckedChange={(checked) => {
+              onChange({ ...data, showOverlay: checked });
+              notifyContentUpdate();
+            }}
+            className="h-4 w-7 [&>span]:h-3 [&>span]:w-3 [&>span]:data-[state=checked]:translate-x-3"
+          />
+          <label htmlFor="showOverlay" className="text-[10px] font-medium">Fond sombre</label>
+        </div>
       </div>
+      <p className="text-[10px] text-gray-500">
+        Active ou désactive le fond sombre indépendamment des autres options.
+      </p>
 
       <div className="flex items-center justify-between">
         <label className="block text-[10px] text-gray-400">Slides</label>

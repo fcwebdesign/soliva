@@ -27,6 +27,8 @@ interface ServicesSpotlightData {
   indicatorLabel?: string;
   items?: SpotlightItem[];
   showIndicator?: boolean;
+  headingVariant?: 'small' | 'medium' | 'large';
+  itemHeadingVariant?: 'small' | 'medium' | 'large';
 }
 
 const FALLBACK_ITEMS: SpotlightItem[] = [
@@ -59,6 +61,28 @@ function SortableItem({
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id || `spot-${index}` });
+  const [localTitle, setLocalTitle] = useState(item.title);
+  const [localIndicator, setLocalIndicator] = useState(item.indicator || '');
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    setLocalTitle(item.title);
+    setLocalIndicator(item.indicator || '');
+  }, [item.title, item.indicator]);
+
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
+
+  const scheduleUpdate = (nextTitle: string, nextIndicator: string) => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      onUpdate({ title: nextTitle, indicator: nextIndicator });
+      debounceRef.current = null;
+    }, 200);
+  };
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -210,48 +234,42 @@ function SortableItem({
       </div>
 
       {isOpen && (
-        <div className={compact ? 'p-2 space-y-2' : 'p-3 space-y-3'}>
-          <div className="grid gap-2">
-            <label className={labelClass}>Image</label>
-            <div className="flex items-center gap-2">
-              <div
-                className="w-12 h-12 border border-gray-200 rounded flex items-center justify-center bg-gray-50 flex-shrink-0 relative overflow-hidden cursor-pointer hover:border-blue-400 transition-colors"
-                onClick={triggerUpload}
-              >
-                {item.image?.src ? (
-                  <img src={item.image.src} alt={item.image.alt || ''} className="w-full h-full object-cover" />
-                ) : (
-                  <span className="text-[10px] text-gray-400">+</span>
-                )}
-              </div>
-              <div className="flex-1 space-y-2">
-                <Input
-                  value={item.image?.alt || ''}
-                  onChange={(e) => onUpdate({ image: { ...(item.image || {}), alt: e.target.value } })}
-                  placeholder="Texte alternatif"
-                  className={compact ? inputClass : undefined}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="grid gap-2">
-            <label className={labelClass}>Titre</label>
+        <div className="px-2 pb-2 pt-1 space-y-2 bg-gray-50 border-t border-gray-200">
+          <div className="grid gap-1">
+            <label className="block text-[10px] text-gray-400 mb-0.5">Titre</label>
             <input
               className={inputClass}
-              value={item.title}
-              onChange={(e) => onUpdate({ title: e.target.value })}
+              value={localTitle}
+              onChange={(e) => {
+                const val = e.target.value;
+                setLocalTitle(val);
+                scheduleUpdate(val, localIndicator);
+              }}
               placeholder="Camera Work"
             />
           </div>
 
-          <div className="grid gap-2">
-            <label className={labelClass}>Indicateur</label>
+          <div className="grid gap-1">
+            <label className="block text-[10px] text-gray-400 mb-0.5">Indicateur</label>
             <input
               className={inputClass}
-              value={item.indicator || ''}
-              onChange={(e) => onUpdate({ indicator: e.target.value })}
+              value={localIndicator}
+              onChange={(e) => {
+                const val = e.target.value;
+                setLocalIndicator(val);
+                scheduleUpdate(localTitle, val);
+              }}
               placeholder="[ Framing ]"
+            />
+          </div>
+
+          <div className="grid gap-1">
+            <label className="block text-[10px] text-gray-400 mb-0.5">Texte alternatif</label>
+            <input
+              className={inputClass}
+              value={item.image?.alt || ''}
+              onChange={(e) => onUpdate({ image: { ...(item.image || {}), alt: e.target.value } })}
+              placeholder="Texte alternatif"
             />
           </div>
         </div>
@@ -334,19 +352,9 @@ export default function ServicesSpotlightEditor({
     : 'block-input';
 
   const ItemsList = () => (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <Label className={compact ? 'text-[11px] font-medium' : 'text-sm font-medium'}>Items</Label>
-        {compact ? (
-          <button type="button" className="text-[12px] text-blue-600 hover:underline" onClick={addItem}>
-            + Ajouter
-          </button>
-        ) : (
-          <Button variant="outline" size="sm" onClick={addItem} className="h-8 px-2 text-xs">
-            <Plus className="w-3 h-3 mr-1" />
-            Ajouter
-          </Button>
-        )}
+    <div className="space-y-2">
+      <div className={compact ? 'text-[11px] font-medium text-gray-700' : 'text-sm font-medium text-gray-800'}>
+        Items ({items.length})
       </div>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -369,6 +377,14 @@ export default function ServicesSpotlightEditor({
           </div>
         </SortableContext>
       </DndContext>
+
+      <button
+        type="button"
+        onClick={addItem}
+        className="w-full border border-dashed border-gray-300 rounded px-3 py-2 text-[13px] text-gray-600 bg-gray-50 hover:border-blue-400 hover:text-blue-600 transition-colors"
+      >
+        + Ajouter un item
+      </button>
     </div>
   );
 
@@ -376,24 +392,27 @@ export default function ServicesSpotlightEditor({
     return (
       <div className="space-y-3" onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
         <div>
-          <label className={labelClass}>Kicker</label>
-          <input
-            className={inputClass}
-            value={data.kicker ?? '[ Discover ]'}
-            onChange={(e) => onChange({ ...data, kicker: e.target.value })}
-            placeholder="[ Discover ]"
-          />
-        </div>
-
-        <div>
           <label className={labelClass}>Titre</label>
           <textarea
             className={textareaClass}
             rows={3}
-            value={data.title ?? 'Inside The Studio'}
+            value={data.title ?? 'Services'}
             onChange={(e) => onChange({ ...data, title: e.target.value })}
-            placeholder="Inside The Studio"
+            placeholder="Services"
           />
+        </div>
+
+        <div>
+          <label className={labelClass}>Taille des items</label>
+          <select
+            className={inputClass}
+            value={data.itemHeadingVariant || 'medium'}
+            onChange={(e) => onChange({ ...data, itemHeadingVariant: e.target.value as 'small' | 'medium' | 'large' })}
+          >
+            <option value="small">Small</option>
+            <option value="medium">Medium</option>
+            <option value="large">Large</option>
+          </select>
         </div>
 
         <div className="flex items-center gap-2">
@@ -414,24 +433,28 @@ export default function ServicesSpotlightEditor({
   return (
     <div className="space-y-6" onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
       <div className="grid gap-3">
-        <Label htmlFor="kicker">Kicker</Label>
-        <Input
-          id="kicker"
-          value={data.kicker ?? '[ Discover ]'}
-          onChange={(e) => onChange({ ...data, kicker: e.target.value })}
-          placeholder="[ Discover ]"
+        <Label htmlFor="title">Titre</Label>
+        <Textarea
+          id="title"
+          value={data.title ?? 'Services'}
+          onChange={(e) => onChange({ ...data, title: e.target.value })}
+          placeholder="Services"
+          rows={2}
         />
       </div>
 
       <div className="grid gap-3">
-        <Label htmlFor="title">Titre</Label>
-        <Textarea
-          id="title"
-          value={data.title ?? 'Inside The Studio'}
-          onChange={(e) => onChange({ ...data, title: e.target.value })}
-          placeholder="Inside The Studio"
-          rows={2}
-        />
+        <Label htmlFor="itemHeadingVariant">Taille des items</Label>
+        <select
+          id="itemHeadingVariant"
+          className="block-input"
+          value={data.itemHeadingVariant || 'medium'}
+          onChange={(e) => onChange({ ...data, itemHeadingVariant: e.target.value as 'small' | 'medium' | 'large' })}
+        >
+          <option value="small">Small</option>
+          <option value="medium">Medium</option>
+          <option value="large">Large</option>
+        </select>
       </div>
 
       <div className="flex items-center gap-2">

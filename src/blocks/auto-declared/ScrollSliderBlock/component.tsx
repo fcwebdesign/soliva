@@ -24,6 +24,7 @@ interface ScrollSliderData {
   showIndicators?: boolean;
   showProgressBar?: boolean;
   showText?: boolean;
+   showOverlay?: boolean;
 }
 
 export const FALLBACK_SLIDES: SlideInput[] = [
@@ -67,6 +68,7 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
   const progressRef = useRef<HTMLDivElement | null>(null);
   const desiredIndexRef = useRef<number>(0);
   const debugId = (data as any).id || (blockData as any).id;
+  const initializedRef = useRef<boolean>(false);
 
   const slides = useMemo(() => {
     // Minimum 1 slide : fallback si liste absente ou vide
@@ -96,20 +98,38 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
       .filter(Boolean) as { id?: string; title: string; src: string; alt?: string }[];
   }, [blockData?.slides]);
 
-  const previewIndex = typeof blockData?.previewIndex === 'number'
+  // Déterminer si on est en mode admin/preview
+  const isInIframe = typeof window !== 'undefined' && window.self !== window.top;
+  const hasPreviewParams = typeof window !== 'undefined' &&
+    (new URLSearchParams(window.location.search).has('preview') ||
+     window.location.pathname.includes('/admin/preview'));
+
+  // Mode admin uniquement pour l'iframe ou /admin/preview
+  const isAdminMode = isInIframe || hasPreviewParams;
+
+  // En admin, utiliser previewIndex pour montrer le slide sélectionné
+  // En front, toujours commencer par le slide 0
+  const startIndex = isAdminMode && typeof blockData?.previewIndex === 'number'
     ? Math.max(0, Math.min(slides.length - 1, blockData.previewIndex))
     : 0;
+
   const showIndicators = blockData?.showIndicators !== false;
   const showProgressBar = blockData?.showProgressBar !== false;
   const showText = blockData?.showText !== false;
-  desiredIndexRef.current = previewIndex;
-  if (process.env.NODE_ENV !== 'production') {
-    console.log('[ScrollSliderBlock] previewIndex applied', { previewIndex, slides: slides.length, blockId: debugId, showIndicators, showProgressBar, showText });
-  }
+  // showOverlay doit être true si l'utilisateur a coché "Fond sombre"
+  // On priorise la valeur portée par data (admin) puis data.data, sinon fallback true
+  const rawShowOverlay = (data as any)?.showOverlay ?? (data as any)?.data?.showOverlay ?? blockData?.showOverlay;
+  const showOverlay = rawShowOverlay !== false &&
+                     rawShowOverlay !== 'false' &&
+                     rawShowOverlay !== 0 &&
+                     rawShowOverlay !== '0';
+  desiredIndexRef.current = startIndex;
+  const hideOverlay = showOverlay === false;
 
   useLayoutEffect(() => {
-    if (process.env.NODE_ENV !== 'production') {
-      console.log('[ScrollSliderBlock] useLayoutEffect init', { slidesCount: slides.length, previewIndex, blockId: debugId, showIndicators, showProgressBar, showText });
+    // Protection contre les multiples initialisations
+    if (initializedRef.current) {
+      return () => {};
     }
     if (
       !sliderRef.current ||
@@ -146,7 +166,7 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
     }
 
     const ctx = gsap.context(() => {
-      let activeSlide = Math.max(0, previewIndex);
+      let activeSlide = Math.max(0, startIndex);
       desiredIndexRef.current = activeSlide;
       let currentSplit: any = null;
       let initialized = false;
@@ -202,6 +222,7 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
 
       const animateTitle = (index: number) => {
         if (!showText || !titleEl) return;
+
         currentSplit?.revert();
         titleEl.innerHTML = '';
         const heading = document.createElement('h2');
@@ -251,7 +272,12 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
       };
 
       renderIndicators();
-      animateSlide(Math.max(0, previewIndex));
+
+      // Nettoyer les images existantes avant d'animer le slide initial
+      const existingImages = imagesEl.querySelectorAll('img');
+      existingImages.forEach(img => imagesEl.removeChild(img));
+
+      animateSlide(Math.max(0, startIndex));
 
       if (progressEl) {
         gsap.set(progressEl, { scaleY: 0 });
@@ -262,17 +288,21 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
         const segments = Math.max(1, slides.length - 1);
         const targetProgress = slides.length > 1 ? index / segments : 0;
         try {
-          triggerRef.progress(targetProgress, false);
-          activeSlide = index;
-          desiredIndexRef.current = index;
-          if (progressEl) {
-            gsap.set(progressEl, { scaleY: triggerRef.progress() });
+          // Ne pas forcer le progress si on est déjà sur la bonne slide
+          if (activeSlide !== index) {
+            triggerRef.progress(targetProgress, false);
+            activeSlide = index;
+            desiredIndexRef.current = index;
+            if (progressEl) {
+              gsap.set(progressEl, { scaleY: triggerRef.progress() });
+            }
+            animateSlide(index);
           }
-          animateSlide(index);
         } catch (e) {
           // silent
         }
       };
+
 
       const trigger = ScrollTrigger.create({
         trigger: sliderEl,
@@ -284,8 +314,15 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
         anticipatePin: 0.5,
         refreshPriority: 1,
         invalidateOnRefresh: true,
+        onStart: () => {
+          // Nettoyer puis forcer le slide initial
+          const existingImages = imagesEl.querySelectorAll('img');
+          existingImages.forEach(img => imagesEl.removeChild(img));
+          activeSlide = startIndex;
+          animateSlide(startIndex);
+          if (progressEl) gsap.set(progressEl, { scaleY: 0 });
+        },
         onUpdate: (self) => {
-          // Ignorer le premier onUpdate déclenché lors de l'init pour ne pas sauter de slide
           if (!initialized) {
             initialized = true;
             return;
@@ -294,8 +331,7 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
           if (progressEl) {
             gsap.set(progressEl, { scaleY: self.progress });
           }
-          const segments = Math.max(1, slides.length - 1);
-          const current = Math.min(slides.length - 1, Math.round(self.progress * segments));
+          const current = Math.min(slides.length - 1, Math.floor(self.progress * slides.length));
           if (current !== activeSlide && current < slides.length) {
             activeSlide = current;
             desiredIndexRef.current = current;
@@ -303,16 +339,17 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
           }
         },
         onRefresh: () => {
-          // Réappliquer l'index souhaité après un refresh ScrollTrigger
           setProgressToIndex(desiredIndexRef.current);
         },
       });
       triggerRef = trigger;
 
-      // Positionner la preview directement sur le slide sélectionné en admin
-      if (slides.length > 0) {
-        setProgressToIndex(previewIndex);
-      }
+
+      // Marquer comme initialisé
+      initializedRef.current = true;
+
+      // Pour la preview, on anime directement la slide souhaitée sans forcer le ScrollTrigger
+      // Cela évite les conflits lors du premier scroll de l'utilisateur
 
       return () => {
         trigger.kill();
@@ -333,8 +370,10 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
     return () => {
       clearTimeout(refreshTimeout);
       ctx.revert();
+      // Reset le flag lors du cleanup
+      initializedRef.current = false;
     };
-  }, [slides, previewIndex, showIndicators, showProgressBar, showText]);
+  }, [slides.length, startIndex, showIndicators, showProgressBar, showText]);
 
   if (!slides || slides.length === 0) return null;
 
@@ -347,7 +386,11 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
       style={{ marginTop: 'var(--section)' }}
     >
       <div ref={sliderRef} className="scroll-slider__pin">
-        <div ref={imagesRef} className="scroll-slider__images" aria-hidden="true" />
+        <div
+          ref={imagesRef}
+          className={`scroll-slider__images${hideOverlay ? ' no-overlay' : ''}`}
+          aria-hidden="true"
+        />
 
         {showText && <div ref={titleRef} className="scroll-slider__title" />}
 

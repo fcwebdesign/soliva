@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import TransitionLink from '@/components/TransitionLink';
 import gsap from 'gsap';
 import { useContentUpdate, fetchContentWithNoCache } from '@/hooks/useContentUpdate';
 import { getTypographyConfig, getTypographyClasses, getCustomColor, defaultTypography } from '@/utils/typography';
@@ -11,15 +12,17 @@ type SpotlightItem = {
   title: string;
   indicator?: string;
   image?: { src?: string; alt?: string };
+  hidden?: boolean;
+  link?: string;
 };
 
 interface ServicesSpotlightData {
   title?: string;
-  kicker?: string;
   indicatorLabel?: string;
   items?: SpotlightItem[];
   showIndicator?: boolean;
   itemHeadingVariant?: 'small' | 'medium' | 'large';
+  theme?: 'light' | 'dark' | 'auto';
 }
 
 const FALLBACK_ITEMS: SpotlightItem[] = [
@@ -29,7 +32,7 @@ const FALLBACK_ITEMS: SpotlightItem[] = [
   { title: 'Film Editing', indicator: '[ Sequence ]', image: { src: '/blocks/services-spotlight/spotlight-4.jpg', alt: 'Film editing' } },
 ];
 
-export default function ServicesSpotlightBlock({ data }: { data: ServicesSpotlightData | any }) {
+export default function ServicesSpotlightBlockV2({ data }: { data: ServicesSpotlightData | any }) {
   const blockData = useMemo(() => (data as any)?.data || data || {}, [data]);
   const items: SpotlightItem[] = useMemo(() => {
     const source = Array.isArray(blockData?.items) && blockData.items.length > 0 ? blockData.items : FALLBACK_ITEMS;
@@ -39,8 +42,10 @@ export default function ServicesSpotlightBlock({ data }: { data: ServicesSpotlig
         title: item.title || `Item ${idx + 1}`,
         indicator: item.indicator || item.title || `Item ${idx + 1}`,
         image: item.image || {},
+        hidden: item.hidden || false,
+        link: item.link,
       }))
-      .filter((item) => item.title);
+      .filter((item) => !item.hidden && item.title);
   }, [blockData?.items]);
 
   const [activeIndex, setActiveIndex] = useState(0);
@@ -165,21 +170,21 @@ export default function ServicesSpotlightBlock({ data }: { data: ServicesSpotlig
       gsap.to(indicatorEl, {
         y: targetY,
         duration: 0.4,
-        ease: 'power2.out',
+          ease: 'power2.out',
       });
     };
 
     updateIndicator();
     window.addEventListener('resize', updateIndicator);
     return () => window.removeEventListener('resize', updateIndicator);
-  }, [activeIndex, items.length]);
+  }, [activeIndex, items.length, blockData?.showIndicator]);
 
   const headline = blockData?.title || 'Nos services';
   const indicatorLabel = blockData?.indicatorLabel || '[ Discover ]';
   const showIndicator = blockData?.showIndicator !== false;
 
   return (
-    <section className="services-block" data-block-type="services-spotlight">
+    <section className="services-block" data-block-type="services-spotlight-v2" data-block-theme={blockData?.theme || 'auto'}>
       <div className="services-block__container" ref={containerRef}>
         <div className="services-block__heading-wrapper">
           <h3
@@ -189,37 +194,61 @@ export default function ServicesSpotlightBlock({ data }: { data: ServicesSpotlig
           >
             {headline}
           </h3>
-        </div>
+      </div>
 
         <div className="services-block__list" ref={listRef}>
-          {items.map((item, index) => (
-            <div
-              key={item.id || index}
-              ref={(el) => (itemRefs.current[index] = el)}
-              className={`services-block__item ${activeIndex === index ? 'is-active' : ''}`}
-              onMouseEnter={() => setActiveIndex(index)}
-              onFocus={() => setActiveIndex(index)}
-              onClick={() => setActiveIndex(index)}
-              tabIndex={0}
-            >
-              <div className="services-block__image-wrapper">
-                {item?.image?.src ? (
-                  <img src={item.image.src} alt={item.image.alt || item.title} className="services-block__image" />
-                ) : (
-                  <div className="services-block__image placeholder" />
-                )}
+          {items.map((item, index) => {
+            const ItemContent = (
+              <>
+                <div className="services-block__image-wrapper">
+                  {item?.image?.src ? (
+                    <img src={item.image.src} alt={item.image.alt || item.title} className="services-block__image" />
+                  ) : (
+                    <div className="services-block__image placeholder" />
+                  )}
+                </div>
+                <div className="services-block__name">
+                  <h3
+                    className={itemHeadingClasses}
+                    style={{ color: itemHeadingColor }}
+                    data-block-type={itemHeadingType}
+                  >
+                    {item.title}
+                  </h3>
+                </div>
+              </>
+            );
+
+            const itemElement = item.link ? (
+              <TransitionLink
+                href={item.link}
+                className={`services-block__item ${activeIndex === index ? 'is-active' : ''} services-block__item-link`}
+                onMouseEnter={() => setActiveIndex(index)}
+                onFocus={() => setActiveIndex(index)}
+              >
+                {ItemContent}
+              </TransitionLink>
+            ) : (
+              <div
+                className={`services-block__item ${activeIndex === index ? 'is-active' : ''}`}
+                onMouseEnter={() => setActiveIndex(index)}
+                onFocus={() => setActiveIndex(index)}
+                onClick={() => setActiveIndex(index)}
+                tabIndex={0}
+              >
+                {ItemContent}
               </div>
-              <div className="services-block__name">
-                <h3
-                  className={itemHeadingClasses}
-                  style={{ color: itemHeadingColor }}
-                  data-block-type={itemHeadingType}
-                >
-                  {item.title}
-                </h3>
+            );
+
+            return (
+              <div
+                key={item.id || index}
+                ref={(el) => (itemRefs.current[index] = el)}
+              >
+                {itemElement}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {showIndicator && (

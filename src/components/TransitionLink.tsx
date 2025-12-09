@@ -26,7 +26,7 @@ export default function TransitionLink({
     if (onClick) {
       onClick(e);
     }
-    
+
     // Appliquer les transitions pour les liens internes
     handleLinkClick(href, e);
   };

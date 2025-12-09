@@ -32,6 +32,7 @@ import './PinnedGridDemoBlock';
 import './PinnedGridExplorationsBlock';
 import './ScrollSliderBlock';
 import './ServicesSpotlightBlock';
+import './ServicesSpotlightBlockV2';
 
 // Pour ajouter un nouveau bloc :
 // 1. Créer un dossier src/blocks/auto-declared/MonBloc/

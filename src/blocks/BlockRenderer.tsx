@@ -247,6 +247,7 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
     'pinned-grid-demo',
     'pinned-grid-explorations',
     'sticky-sections-codrops',
+    'scroll-slider',
   ];
 
   // Helper pour wrapper un bloc avec ScrollAnimated si nécessaire
