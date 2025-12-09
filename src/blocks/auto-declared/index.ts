@@ -31,7 +31,6 @@ import './PinnedSectionBlock';
 import './PinnedGridDemoBlock';
 import './PinnedGridExplorationsBlock';
 import './ScrollSliderBlock';
-import './ServicesSpotlightBlock';
 import './ServicesSpotlightBlockV2';
 
 // Pour ajouter un nouveau bloc :
