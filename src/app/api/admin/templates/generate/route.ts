@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
-import { writeFileSync, mkdirSync, existsSync, readdirSync, readFileSync } from 'fs';
+import { writeFileSync, mkdirSync, existsSync, readdirSync, readFileSync, cpSync, renameSync } from 'fs';
 import { join } from 'path';
 import { aiTemplateNaming } from '@/lib/ai-template-naming';
+import { SEED_DATA } from '@/lib/content';
 
 export async function POST(request: Request) {
   try {
     const templateData = await request.json();
-    const { name, category, useAI, description, autonomous, styles, blocks, pages, apply, register } = templateData;
+    const { name, category, useAI, description, autonomous, styles, blocks, pages, apply, register, cloneFrom } = templateData;
     const shouldRegister = register !== false; // par défaut: on enregistre (Effica-like)
     const autonomousFlag = autonomous !== false; // par défaut autonome
     
@@ -74,6 +75,89 @@ export async function POST(request: Request) {
     // Créer le dossier du template
     const templateDir = join(process.cwd(), 'src', 'templates', templateName);
     mkdirSync(templateDir, { recursive: true });
+
+    // CLONAGE DIRECT D'UN TEMPLATE EXISTANT (ex: pearl)
+    let clonedFromExisting = false;
+    if (cloneFrom) {
+      const sourceDir = join(process.cwd(), 'src', 'templates', cloneFrom);
+      const sourceDataDir = join(process.cwd(), 'data', 'templates', cloneFrom);
+      if (existsSync(sourceDir)) {
+        // Copier le code complet
+        cpSync(sourceDir, templateDir, { recursive: true });
+
+        // Renommer le client
+        const oldClient = join(templateDir, `${cloneFrom}-client.tsx`);
+        const newClient = join(templateDir, `${templateName}-client.tsx`);
+        if (existsSync(oldClient)) {
+          renameSync(oldClient, newClient);
+        }
+
+        // Harmoniser le nom du composant exporté
+        if (existsSync(newClient)) {
+          try {
+            let clientSrc = readFileSync(newClient, 'utf-8');
+            const compOld = cloneFrom.charAt(0).toUpperCase() + cloneFrom.slice(1).replace(/-/g, '');
+            const compNew = templateName.charAt(0).toUpperCase() + templateName.slice(1).replace(/-/g, '');
+            clientSrc = clientSrc.replace(new RegExp(`function\\s+${compOld}Client`, 'g'), `function ${compNew}Client`);
+            clientSrc = clientSrc.replace(new RegExp(`export default function ${compOld}Client`, 'g'), `export default function ${compNew}Client`);
+            writeFileSync(newClient, clientSrc, 'utf-8');
+          } catch (e) {
+            console.warn('⚠️ Harmonisation du client cloné échouée:', e);
+          }
+        }
+
+        // Adapter le scope CSS
+        const cssPath = join(templateDir, `${cloneFrom}.css`);
+        if (existsSync(cssPath)) {
+          try {
+            let css = readFileSync(cssPath, 'utf-8');
+            const sourceClass = `.template-${cloneFrom}`;
+            const targetClass = `.template-${templateName}`;
+            const isSelector = `:is(${sourceClass}, ${targetClass})`;
+            css = css.replace(new RegExp(`\\${sourceClass}`, 'g'), isSelector);
+            writeFileSync(cssPath, css, 'utf-8');
+            const newCssPath = join(templateDir, `${templateName}.css`);
+            if (!existsSync(newCssPath)) {
+              writeFileSync(newCssPath, css, 'utf-8');
+            }
+          } catch (e) {
+            console.warn('⚠️ Adaptation CSS cloné échouée:', e);
+          }
+        }
+
+        clonedFromExisting = true;
+        console.log(`✅ Template cloné depuis "${cloneFrom}" → ${templateName}`);
+      }
+
+      // Copier le contenu (version live prioritaire)
+      const targetDataDir = join(process.cwd(), 'data', 'templates', templateName);
+      mkdirSync(targetDataDir, { recursive: true });
+      const sourceContentPath = join(process.cwd(), 'data', 'templates', cloneFrom, 'content.json');
+      const liveContentPath = join(process.cwd(), 'data', 'content.json');
+      let contentSource: string | null = null;
+      try {
+        if (existsSync(liveContentPath)) {
+          const live = JSON.parse(readFileSync(liveContentPath, 'utf-8'));
+          if (live._template === cloneFrom) {
+            contentSource = liveContentPath;
+          }
+        }
+      } catch {
+        // ignore
+      }
+      if (!contentSource && existsSync(sourceContentPath)) {
+        contentSource = sourceContentPath;
+      }
+      if (contentSource) {
+        try {
+          const clonedContent = JSON.parse(readFileSync(contentSource, 'utf-8'));
+          clonedContent._template = templateName;
+          writeFileSync(join(targetDataDir, 'content.json'), JSON.stringify(clonedContent, null, 2));
+        } catch (e) {
+          console.warn('⚠️ Copie du contenu cloné échouée:', e);
+        }
+      }
+    }
 
     // Composant Header du template (basé sur navModel)
     const headerComponent = `"use client";
@@ -326,12 +410,14 @@ export default function {COMP}Client() {
 }`
       .replace(/{COMP}/g, templateName.charAt(0).toUpperCase() + templateName.slice(1).replace(/-/g, ''));
 
-    // Écrire les fichiers générés
-    const componentsDir = join(templateDir, 'components');
-    mkdirSync(componentsDir, { recursive: true });
-    writeFileSync(join(componentsDir, `Header.tsx`), headerComponent);
-    writeFileSync(join(componentsDir, `Footer.tsx`), footerComponent);
-    writeFileSync(join(templateDir, `${templateName}-client.tsx`), clientComponent);
+    // Écrire les fichiers générés (sauf si clonage déjà effectué)
+    if (!clonedFromExisting) {
+      const componentsDir = join(templateDir, 'components');
+      mkdirSync(componentsDir, { recursive: true });
+      writeFileSync(join(componentsDir, `Header.tsx`), headerComponent);
+      writeFileSync(join(componentsDir, `Footer.tsx`), footerComponent);
+      writeFileSync(join(templateDir, `${templateName}-client.tsx`), clientComponent);
+    }
 
     // Enregistrement du template dans le registre/renderer (par défaut oui, sauf register:false)
     try {
@@ -413,7 +499,64 @@ export default function {COMP}Client() {
       mkdirSync(dataTemplatesDir, { recursive: true });
     }
 
+    // Créer le dossier du template dans data/templates et le fichier content.json basé sur le seed
+    const dataTemplateDir = join(dataTemplatesDir, templateName);
+    if (!existsSync(dataTemplateDir)) {
+      mkdirSync(dataTemplateDir, { recursive: true });
+    }
+
+    const seededContent = {
+      ...SEED_DATA,
+      _template: templateName,
+      metadata: {
+        ...SEED_DATA.metadata,
+        title: `Site ${templateName}`,
+        description: `Description du site ${templateName}`,
+      },
+      nav: {
+        ...SEED_DATA.nav,
+        logo: templateName,
+      },
+      home: {
+        ...(SEED_DATA.home as any),
+        title: `Accueil ${templateName}`,
+        description: `Page d'accueil du template ${templateName}`,
+        hero: {
+          ...(SEED_DATA.home as any)?.hero,
+          title: `Bienvenue sur ${templateName}`,
+          subtitle: `Template ${templateName} généré avec l'IA`,
+          cta: 'Découvrir',
+        },
+        blocks: [],
+      },
+      studio: {
+        ...(SEED_DATA.studio as any),
+        title: `Studio ${templateName}`,
+        description: `Page studio du template ${templateName}`,
+        blocks: [],
+      },
+      work: {
+        ...(SEED_DATA.work as any),
+        title: `Projets ${templateName}`,
+        description: `Page projets du template ${templateName}`,
+        blocks: [],
+      },
+      contact: {
+        ...(SEED_DATA.contact as any),
+        title: `Contact ${templateName}`,
+        description: `Page contact du template ${templateName}`,
+        blocks: [],
+      },
+      blog: {
+        ...(SEED_DATA.blog as any),
+        title: `Blog ${templateName}`,
+        description: `Page blog du template ${templateName}`,
+        blocks: [],
+      },
+    };
+
     writeFileSync(join(dataTemplatesDir, `${templateName}.json`), JSON.stringify(templateConfig, null, 2));
+    writeFileSync(join(dataTemplateDir, 'content.json'), JSON.stringify(seededContent, null, 2));
 
     console.log(`✅ Template "${templateName}" généré avec succès`);
 

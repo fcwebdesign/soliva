@@ -38,6 +38,7 @@ export default function TemplateManagerPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [cloneName, setCloneName] = useState<string>('pearl-clone');
 
   useEffect(() => {
     loadTemplates();
@@ -91,9 +92,11 @@ export default function TemplateManagerPage() {
           autonomous: true,
           styles: {
             primaryColor: '#3B82F6',
-            secondaryColor: '#1E40AF',
-            fontFamily: 'Inter'
+          secondaryColor: '#1E40AF',
+          fontFamily: 'Inter'
           },
+          // Clonage Pearl retiré ici (utiliser le bouton dédié plus bas)
+          cloneFrom: undefined,
           blocks: [
             { type: 'hero', content: 'Hero section' },
             { type: 'services', content: 'Services section' },
@@ -144,6 +147,43 @@ export default function TemplateManagerPage() {
       toast.error('Erreur lors de l\'application du template');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const clonePearlTemplate = async () => {
+    const name = cloneName.trim();
+    if (!name) {
+      toast.error('Choisissez un nom pour le clone');
+      return;
+    }
+    setIsGenerating(true);
+    try {
+      const response = await fetch('/api/admin/templates/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          category: 'starter',
+          useAI: false,
+          description: `Clone Pearl (${name})`,
+          autonomous: true,
+          register: true,
+          apply: false,
+          cloneFrom: 'pearl'
+        })
+      });
+      if (response.ok) {
+        const result = await response.json();
+        toast.success(`Template "${result.templateName}" cloné depuis Pearl`);
+        await loadTemplates();
+      } else {
+        throw new Error('Erreur lors du clonage');
+      }
+    } catch (error) {
+      console.error('Erreur clonage:', error);
+      toast.error('Clonage Pearl impossible');
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -219,6 +259,35 @@ export default function TemplateManagerPage() {
             >
               {isGenerating ? 'Génération...' : '🚀 Générer'}
             </button>
+          </div>
+
+          {/* Clonage direct Pearl */}
+          <div className="mt-6 border-t pt-6">
+            <h3 className="text-lg font-semibold mb-3">✨ Cloner Pearl instantanément</h3>
+            <div className="flex flex-col sm:flex-row gap-4 items-end">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nom du clone
+                </label>
+                <input
+                  type="text"
+                  value={cloneName}
+                  onChange={(e) => setCloneName(e.target.value)}
+                  placeholder="ex: pearl-clone"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                />
+              </div>
+              <button
+                onClick={clonePearlTemplate}
+                disabled={isGenerating || !cloneName.trim()}
+                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
+              >
+                {isGenerating ? 'Clonage...' : 'Dupliquer Pearl'}
+              </button>
+            </div>
+            <p className="text-sm text-gray-500 mt-2">
+              Copie code + contenu Pearl, enregistre le template et le rend disponible dans la liste. Applique ensuite pour l’activer.
+            </p>
           </div>
         </div>
 

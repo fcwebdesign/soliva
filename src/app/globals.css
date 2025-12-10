@@ -338,7 +338,7 @@ strong {
   font-weight: 600 !important;
 }
 
-.site {
+.template-soliva .site {
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: var(--fg);
   max-width: var(--max-width);
@@ -437,14 +437,14 @@ body.admin-page,
   object-fit: contain !important;
 }
 
-.site img {
+.template-soliva .site img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 8px;
 }
 
-.site h1 {
+.template-soliva .site h1 {
   font-size: 4.25rem;
   font-weight: 600;
   letter-spacing: -0.1rem;
@@ -452,13 +452,13 @@ body.admin-page,
 }
 
 /* .site h2 ne s'applique pas aux H2 des blocs auto-déclarés (avec data-block-type="h2") */
-.site h2:not([data-block-type="h2"]) {
+.template-soliva .site h2:not([data-block-type="h2"]) {
   font-weight: 700;
   letter-spacing: -0.04rem;
   line-height: 1.125;
   -webkit-font-smoothing: antialiased;
 }
-.site .studio-header {
+.template-soliva .site .studio-header {
   font-size: clamp(1rem, 0.2518rem + 2.3944vw, 3.125rem);
   font-weight: 700;
   letter-spacing: -0.04rem;
@@ -466,11 +466,11 @@ body.admin-page,
   -webkit-font-smoothing: antialiased;
 }
 
-.site .work-header {
+.template-soliva .site .work-header {
   font-size: clamp(1rem, 0.2518rem + 2.3944vw, 3.125rem);
 }
 
-.site p {
+.template-soliva .site p {
   display: block;
   color: var(--fg);
   font-size: 1rem;
@@ -479,7 +479,7 @@ body.admin-page,
   margin-bottom: 1rem;
 }
 
-.site a {
+.template-soliva .site a {
   display: block;
   text-decoration: none;
   color: var(--fg);
@@ -488,7 +488,7 @@ body.admin-page,
   line-height: 1;
 }
 
-.site .nav {
+.template-soliva .site .nav {
   position: fixed;
   top: 0;
   left: 0;
@@ -504,14 +504,14 @@ body.admin-page,
   color: var(--text);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
-.site .nav-logo {
+.template-soliva .site .nav-logo {
   display: flex;
   align-items: flex-start;
   font-size: 2rem;
   font-weight: 600;
   margin-top: -10px;
 }
-.site .nav-logo a {
+.template-soliva .site .nav-logo a {
   display: flex;
   align-items: center;
   gap: 0.25rem;
@@ -520,7 +520,7 @@ body.admin-page,
   margin-bottom: 0 !important;
   line-height: 1.1;
 }
-.site .logo-dot {
+.template-soliva .site .logo-dot {
   display: inline-block;
   width: 19px;
   height: 19px;
@@ -528,7 +528,7 @@ body.admin-page,
   border-radius: 50%;
   margin: -1px 2px;
 }
-.site .nav-items a {
+.template-soliva .site .nav-items a {
   font-weight: 600;
   position: relative;
   transition: all 0.3s ease;
@@ -537,19 +537,19 @@ body.admin-page,
   line-height: 1.1;
 }
 
-.site .nav-items a:hover {
+.template-soliva .site .nav-items a:hover {
   transform: translateX(1rem);
 }
 
-.site .nav-items a.active {
+.template-soliva .site .nav-items a.active {
   transform: translateX(1rem);
 }
 
-.site .nav-items:hover a.active:not(:hover) {
+.template-soliva .site .nav-items:hover a.active:not(:hover) {
   transform: translateX(0);
 }
 
-.site .nav-items a::before {
+.template-soliva .site .nav-items a::before {
   content: '';
   position: absolute;
   left: 0;
@@ -564,20 +564,20 @@ body.admin-page,
   margin-left: -1rem;
 }
 
-.site .nav-items a:hover::before {
+.template-soliva .site .nav-items a:hover::before {
   background-color: var(--fg);
 }
 
-.site .nav-items a.active::before {
+.template-soliva .site .nav-items a.active::before {
   background-color: var(--fg);
 }
 
-.site .nav-items:hover a.active:not(:hover)::before {
+.template-soliva .site .nav-items:hover a.active:not(:hover)::before {
   background-color: transparent;
 }
 /* Style pour le "o" dans "soliva" - cible spécifiquement la lettre "o" */
-.site .styled-word .letter:nth-child(2),
-.site .styled-word .letter-mask:nth-child(2) > div {
+.template-soliva .site .styled-word .letter:nth-child(2),
+.template-soliva .site .styled-word .letter-mask:nth-child(2) > div {
   width: 0.75em;
   height: 0.75em;
   background-color: var(--fg);
@@ -589,17 +589,17 @@ body.admin-page,
   transform: translateY(0.1em);   /* ✅ ajuste manuellement si besoin */
 }
 
-.site .nav .col:nth-child(1) {
+.template-soliva .site .nav .col:nth-child(1) {
   flex: 1;
 }
 
-.site .nav .col:nth-child(2) {
+.template-soliva .site .nav .col:nth-child(2) {
   flex: 1.5;
   display: flex;
   justify-content: space-between;
 }
 
-.site .nav-copy {
+.template-soliva .site .nav-copy {
   display: flex;
   align-items: flex-start;
   gap: 1rem;

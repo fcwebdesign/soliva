@@ -12,85 +12,16 @@ export const TEMPLATES: Record<string, TemplateMeta> = {
     name: 'Soliva Original',
     description: 'Template original Soliva avec design personnalisé'
   },
-  'starter': {
-    key: 'starter',
-    autonomous: true,
-    name: 'Starter Example',
-    description: 'Exemple de template avec Shell unique et routing client'
-  },
-  'praxis': {
-    key: 'praxis',
-    autonomous: true,
-    name: 'Praxis',
-    description: 'Template corporate léger avec en-tête dédié'
-  },'effica': {
-    key: 'effica',
-    autonomous: true,
-    name: 'effica',
-    description: 'Template généré automatiquement'
-  },  'debug-test': {
-    key: 'debug-test',
-    autonomous: true,
-    name: 'debug-test',
-    description: 'Template généré automatiquement'
-  },
-    'conversionflow': {
-    key: 'conversionflow',
-    autonomous: true,
-    name: 'conversionflow',
-    description: 'Template généré automatiquement'
-  },
-    'salescore': {
-    key: 'salescore',
-    autonomous: true,
-    name: 'salescore',
-    description: 'Template généré automatiquement'
-  },
-    'omnis': {
-    key: 'omnis',
-    autonomous: true,
-    name: 'omnis',
-    description: 'Template généré automatiquement'
-  },
-    'designhub': {
-    key: 'designhub',
-    autonomous: true,
-    name: 'designhub',
-    description: 'Template généré automatiquement'
-  },  'minimalflow': {
-    key: 'minimalflow',
-    autonomous: true,
-    name: 'minimalflow',
-    description: 'Template généré automatiquement'
-  },
-    'talentify': {
-    key: 'talentify',
-    autonomous: true,
-    name: 'talentify',
-    description: 'Template généré automatiquement'
-  },
-    'artboard': {
-    key: 'artboard',
-    autonomous: true,
-    name: 'artboard',
-    description: 'Template généré automatiquement'
-  },
-    'pixend': {
-    key: 'pixend',
-    autonomous: true,
-    name: 'pixend',
-    description: 'Template généré automatiquement'
-  },
-    'limitless': {
-    key: 'limitless',
-    autonomous: true,
-    name: 'limitless',
-    description: 'Template généré automatiquement'
-  },
-    'pearl': {
+  'pearl': {
     key: 'pearl',
     autonomous: true,
     name: 'pearl',
+    description: 'Template généré automatiquement'
+  },
+  'Starter-Kit': {
+    key: 'Starter-Kit',
+    autonomous: true,
+    name: 'Starter-Kit',
     description: 'Template généré automatiquement'
   },
   // Autres templates futurs...

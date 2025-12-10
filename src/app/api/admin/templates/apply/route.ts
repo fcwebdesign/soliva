@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
+import { SEED_DATA } from '@/lib/content';
 
 export async function POST(request: Request) {
   try {
@@ -23,67 +24,80 @@ export async function POST(request: Request) {
     writeFileSync(backupPath, JSON.stringify(currentContent, null, 2));
     
     // Essayer de charger le contenu du template sélectionné
-    const templateContentPath = join(process.cwd(), 'data', 'templates', templateId, 'content.json');
+    const templateDir = join(process.cwd(), 'data', 'templates', templateId);
+    const templateContentPath = join(templateDir, 'content.json');
     let newContent;
     
     if (existsSync(templateContentPath)) {
       // Charger le contenu spécifique du template (avec les modifications sauvegardées)
       console.log(`📁 Chargement du contenu sauvegardé du template "${templateId}"`);
-      newContent = JSON.parse(readFileSync(templateContentPath, 'utf8'));
-      // S'assurer que le _template est défini
-      newContent._template = templateId;
+      const savedContent = JSON.parse(readFileSync(templateContentPath, 'utf8'));
+      // ✅ Fusionner avec le seed pour garantir la conformité au schéma actuel
+      newContent = {
+        ...SEED_DATA,
+        ...savedContent,
+        _template: templateId,
+        nav: {
+          ...SEED_DATA.nav,
+          ...(savedContent?.nav || {}),
+          logo: templateId,
+        },
+      };
+      writeFileSync(templateContentPath, JSON.stringify(newContent, null, 2));
     } else {
       // Créer un contenu de base pour le nouveau template
       console.log(`🆕 Création d'un contenu de base pour le template "${templateId}"`);
       newContent = {
+        ...SEED_DATA,
         _template: templateId,
         metadata: {
-          title: `Site ${templateId}`,
-          description: `Description du site ${templateId}`
-        },
-        site: {
+          ...SEED_DATA.metadata,
           title: `Site ${templateId}`,
           description: `Description du site ${templateId}`,
-          logo: ''
         },
         nav: {
+          ...SEED_DATA.nav,
           logo: templateId,
-          items: ['home', 'work', 'studio', 'contact', 'blog']
         },
         home: {
+          ...SEED_DATA.home,
           title: `Accueil ${templateId}`,
           description: `Page d'accueil du template ${templateId}`,
           hero: {
+            ...(SEED_DATA.home as any)?.hero,
             title: `Bienvenue sur ${templateId}`,
             subtitle: `Template ${templateId} généré avec l'IA`,
-            cta: 'Découvrir'
+            cta: 'Découvrir',
           },
-          blocks: []
+          blocks: [],
         },
         studio: {
+          ...SEED_DATA.studio,
           title: `Studio ${templateId}`,
           description: `Page studio du template ${templateId}`,
-          blocks: []
+          blocks: [],
         },
         work: {
+          ...SEED_DATA.work,
           title: `Projets ${templateId}`,
           description: `Page projets du template ${templateId}`,
-          blocks: []
+          blocks: [],
         },
         contact: {
+          ...SEED_DATA.contact,
           title: `Contact ${templateId}`,
           description: `Page contact du template ${templateId}`,
-          blocks: []
+          blocks: [],
         },
         blog: {
+          ...SEED_DATA.blog,
           title: `Blog ${templateId}`,
           description: `Page blog du template ${templateId}`,
-          blocks: []
-        }
+          blocks: [],
+        },
       };
       
       // Créer le dossier du template et sauvegarder le contenu de base
-      const templateDir = join(process.cwd(), 'data', 'templates', templateId);
       if (!existsSync(templateDir)) {
         mkdirSync(templateDir, { recursive: true });
       }

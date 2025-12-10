@@ -8,7 +8,6 @@ import type { BlockComponent } from './types';
 // import Image from './defaults/Image';
 
 // Starter template
-import ServicesStarter from '../templates/starter/blocks/Services';
 
 export type BlockRegistry = Record<string, BlockComponent>;
 
@@ -19,8 +18,4 @@ export const defaultRegistry: BlockRegistry = {
 
 export const registries: Record<string, BlockRegistry> = {
   default: defaultRegistry,
-  'starter': {
-    ...defaultRegistry,
-    services: ServicesStarter as BlockComponent,
-  },
 };

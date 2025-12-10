@@ -21,7 +21,8 @@ export async function GET() {
         console.log(`📁 [API Content] Lecture depuis le template "${currentTemplate}"`);
         try {
           const templateContent = JSON.parse(readFileSync(templateContentPath, 'utf-8'));
-          content = templateContent;
+          // Forcer la clé _template depuis la config active pour éviter les retours incohérents
+          content = { ...templateContent, _template: currentTemplate };
           console.log(`✅ [API Content] Contenu du template "${currentTemplate}" chargé avec succès`);
         } catch (error) {
           console.warn(`⚠️ [API Content] Erreur lecture template "${currentTemplate}", fallback sur content.json:`, error);

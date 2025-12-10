@@ -61,7 +61,10 @@ export async function loadTemplateMetadata(): Promise<any> {
     const templateContentPath = join(process.cwd(), 'data', 'templates', currentTemplate, 'content.json');
     if (existsSync(templateContentPath)) {
       const templateFileContent = readFileSync(templateContentPath, 'utf-8');
-      content = JSON.parse(templateFileContent);
+      const templateData = JSON.parse(templateFileContent);
+      // Forcer la clé active pour éviter qu'un ancien _template perturbe la détection
+      templateData._template = currentTemplate;
+      content = templateData;
       activeFilePath = templateContentPath;
     }
   }

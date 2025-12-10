@@ -29,9 +29,11 @@ const TemplateManager = ({ onTemplateChange }: TemplateManagerProps): React.JSX.
   const loadTemplates = async (): Promise<void> => {
     try {
       const response = await fetch('/api/admin/templates');
+      let fetchedTemplates: Template[] = [];
       if (response.ok) {
         const data = await response.json();
-        setTemplates(data.templates);
+        fetchedTemplates = data.templates || [];
+        setTemplates(fetchedTemplates);
       }
 
       // Déterminer le template appliqué actuellement
@@ -41,8 +43,9 @@ const TemplateManager = ({ onTemplateChange }: TemplateManagerProps): React.JSX.
           const siteContent = await contentRes.json();
           const activeKey = siteContent?._template as string | undefined;
           if (activeKey) {
-            const active = (await response.json?.())?.templates?.find?.((t: any) => t.id === activeKey) ||
-                           templates.find(t => t.id === activeKey);
+            const active =
+              fetchedTemplates.find((t) => (t.id || t.key) === activeKey) ||
+              templates.find((t) => (t.id || t.key) === activeKey);
             if (active) setCurrentTemplate(active as any);
           } else {
             setCurrentTemplate(null);
@@ -77,12 +80,21 @@ const TemplateManager = ({ onTemplateChange }: TemplateManagerProps): React.JSX.
       });
 
       if (response.ok) {
-        const data = await response.json();
+        await response.json();
         const template = templates.find(t => t.id === templateId);
         if (template) {
           setCurrentTemplate(template);
         }
-        onTemplateChange(data.content);
+        // Rafraîchir le contenu actif pour mettre à jour l'état du template courant
+        try {
+          const contentRes = await fetch('/api/content', { cache: 'no-store' });
+          if (contentRes.ok) {
+            const nextContent = await contentRes.json();
+            onTemplateChange(nextContent);
+          }
+        } catch {
+          // ignore
+        }
         toast.success('Template appliqué avec succès ! Visitez la page d\'accueil pour voir le nouveau design.');
       } else {
         throw new Error('Erreur lors de l\'application du template');
