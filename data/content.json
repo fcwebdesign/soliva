@@ -527,7 +527,7 @@
       "work": "Image",
       "blog": "Coffee"
     },
-    "colorPalette": "nature",
+    "colorPalette": "rose-pastel",
     "customPalettes": [
       {
         "id": "phare-élégant-havrais",
@@ -746,7 +746,7 @@
     "hero": {
       "title": "About us."
     },
-    "content": "<img src=\"/uploads/1763705071367-c45d1097.webp\" alt=\"\" />\n<img src=\"/uploads/1764163849225-604fe89b.webp\" alt=\"\" />\n<img src=\"/uploads/1764163854153-08f84573.webp\" alt=\"\" />",
+    "content": "<p>Soliva conçoit des sites Next.js rapides à charger, faciles à maintenir et optimisés pour les Core Web Vitals. Nous intégrons une IA utile directement dans votre CMS pour accélérer la production de contenus, et des micro-interactions GSAP qui renforcent l’identité sans alourdir la page. Résultat mesurable: meilleures perfs, meilleur SEO, délais clairs et budget cadré.</p>\n<img src=\"/uploads/1763705071367-c45d1097.webp\" alt=\"\" />\n<img src=\"/uploads/1764163849225-604fe89b.webp\" alt=\"\" />\n<img src=\"/uploads/1764163854153-08f84573.webp\" alt=\"\" />",
     "blocks": [
       {
         "id": "hero-floating-gallery-1764185477070",
@@ -757,13 +757,6 @@
         "theme": "auto",
         "transparentHeader": true,
         "images": [
-          {
-            "id": "floating-1764187730543-0.4104768924110638",
-            "src": "/uploads/1764187728879-7bf196fb.webp",
-            "alt": "",
-            "aspectRatio": "4:5",
-            "hidden": false
-          },
           {
             "id": "floating-1764187730543-0.4220345188427853",
             "src": "/uploads/1764187729459-6fdd4f16.webp",
@@ -825,6 +818,149 @@
           "enabled": true,
           "speed": 0.35
         }
+      },
+      {
+        "id": "sticky-cards-1765324494013",
+        "type": "sticky-cards",
+        "theme": "auto",
+        "cards": [
+          {
+            "id": "card-2",
+            "index": "02",
+            "title": "Materials",
+            "image": {
+              "src": "/uploads/1765324543747-e574bd3a.webp",
+              "alt": "Materials",
+              "aspectRatio": "5:4"
+            },
+            "copyTitle": "(About the state)",
+            "description": "From soft gradients to hard edges, our design language draws from real-world materials—elevating interfaces that feel both digital and tangible.",
+            "aspectRatio": "5:4",
+            "hidden": false
+          },
+          {
+            "id": "card-4",
+            "index": "04",
+            "title": "Character",
+            "image": {
+              "src": "/uploads/1765324555773-8368748b.webp",
+              "alt": "Character",
+              "aspectRatio": "5:4"
+            },
+            "copyTitle": "(About the state)",
+            "description": "Interfaces should have personality. We embed small moments of play and irregularity to bring warmth, charm, and a human feel to the digital.",
+            "aspectRatio": "5:4"
+          },
+          {
+            "id": "card-3",
+            "index": "03",
+            "title": "Precision",
+            "image": {
+              "src": "/uploads/1765324549384-89a9ec52.webp",
+              "alt": "Precision",
+              "aspectRatio": "5:4"
+            },
+            "copyTitle": "(About the state)",
+            "description": "Details matter. We work with intention—aligning pixels, calibrating contrast, and obsessing over every edge until it just feels right.",
+            "aspectRatio": "5:4"
+          },
+          {
+            "id": "card-1",
+            "index": "01",
+            "title": "Modularity",
+            "image": {
+              "src": "/uploads/1765324511639-94c7e7c9.webp",
+              "alt": "Modularity",
+              "aspectRatio": "5:4"
+            },
+            "copyTitle": "(About the state)",
+            "description": "Soliva conçoit des sites Next.js rapides à charger, faciles à maintenir et optimisés pour les Core Web Vitals. Nous intégrons une IA utile directement dans votre CMS pour accélérer la production de contenus, et des micro-interactions GSAP qui renforcent l’identité sans alourdir la page. Résultat mesurable: meilleures perfs, meilleur SEO, délais clairs et budget cadré.",
+            "aspectRatio": "5:4"
+          }
+        ],
+        "subtitle": "Surtitre",
+        "title": "Sticky Cards",
+        "hidden": false
+      },
+      {
+        "id": "content-1765325695777",
+        "type": "content",
+        "content": "<p>Soliva conçoit des sites Next.js rapides à charger, faciles à maintenir et optimisés pour les Core Web Vitals. Nous intégrons une IA utile directement dans votre CMS pour accélérer la production de contenus, et des micro-interactions GSAP qui renforcent l’identité sans alourdir la page. Résultat mesurable: meilleures perfs, meilleur SEO, délais clairs et budget cadré.</p>",
+        "hidden": false
+      },
+      {
+        "id": "collaborations-grid-1765314556969",
+        "type": "collaborations-grid",
+        "title": "Allies in creation",
+        "subtitle": "[ selected collaborations ]",
+        "items": [
+          {
+            "id": "ally-1",
+            "label": "Blackline Studio",
+            "link": "/",
+            "featured": true,
+            "colSpan": 3,
+            "rowSpan": 2
+          },
+          {
+            "id": "ally-2",
+            "label": "North Axis",
+            "link": "/work",
+            "colSpan": 2,
+            "rowSpan": 1,
+            "hidden": false
+          },
+          {
+            "id": "ally-6",
+            "label": "Ferrotype",
+            "link": "/work"
+          },
+          {
+            "id": "ally-3",
+            "label": "Vanta Works",
+            "link": "/studio",
+            "featured": false
+          },
+          {
+            "id": "ally-4",
+            "label": "Oblique Films",
+            "link": "/blog"
+          },
+          {
+            "id": "ally-5",
+            "label": "Hollow Syndicate",
+            "link": "/contact",
+            "colSpan": 1,
+            "rowSpan": 1
+          },
+          {
+            "id": "ally-7",
+            "label": "Glasshaus",
+            "link": "/work"
+          },
+          {
+            "id": "ally-8",
+            "label": "Orbit Division",
+            "link": "/work",
+            "hidden": true
+          },
+          {
+            "id": "ally-1765318721723",
+            "label": "Nouveau partenaire",
+            "link": "",
+            "featured": false,
+            "hidden": false
+          }
+        ],
+        "hidden": false
+      },
+      {
+        "id": "sticky-cards-1765293435470",
+        "type": "sticky-cards",
+        "data": {
+          "theme": "dark"
+        },
+        "hidden": true
       },
       {
         "id": "image-1763705064111",
@@ -962,20 +1098,20 @@
             "hidden": false
           },
           {
-            "id": "slide-1765145438083-0",
+            "id": "slide-1765145438083-4",
             "title": "Nouveau slide",
             "image": {
-              "src": "/uploads/1765145437409-c21ad799.webp",
+              "src": "/uploads/1765145437387-0cdc9e83.webp",
               "alt": "",
               "aspectRatio": "16:9"
             },
             "hidden": false
           },
           {
-            "id": "slide-1765145438083-1",
+            "id": "slide-1765145438083-0",
             "title": "Nouveau slide",
             "image": {
-              "src": "/uploads/1765145437406-1c2e5ccb.webp",
+              "src": "/uploads/1765145437409-c21ad799.webp",
               "alt": "",
               "aspectRatio": "16:9"
             },
@@ -1002,23 +1138,107 @@
             "hidden": false
           },
           {
-            "id": "slide-1765145438083-4",
+            "id": "slide-1765145438083-1",
             "title": "Nouveau slide",
             "image": {
-              "src": "/uploads/1765145437387-0cdc9e83.webp",
+              "src": "/uploads/1765145437406-1c2e5ccb.webp",
               "alt": "",
               "aspectRatio": "16:9"
             },
             "hidden": false
           }
         ],
-        "previewIndex": 4,
-        "previewVersion": 1765145447767,
-        "showProgressBar": false,
-        "showText": false,
-        "showIndicators": false,
+        "previewIndex": 1,
+        "previewVersion": 1765360782948,
+        "showProgressBar": true,
+        "showText": true,
+        "showIndicators": true,
         "hidden": false,
-        "showOverlay": false
+        "showOverlay": true
+      },
+      {
+        "id": "template-guidelines-1765302292318",
+        "type": "template-guidelines",
+        "theme": "auto",
+        "layout": "split",
+        "title": "Guidelines",
+        "subtitle": "Sous titre",
+        "description": "Hello je suis une description",
+        "ctaText": "Call to action",
+        "ctaHref": "/showcase",
+        "image": {
+          "src": "/uploads/1765303284598-7761672a.webp",
+          "alt": "",
+          "aspectRatio": "16:9"
+        },
+        "details": [
+          {
+            "id": "detail-1765302362072-0",
+            "title": "",
+            "summary": "",
+            "content": "",
+            "alt": "2022-CACHAREL-COFFRETS-ZOOM-V01-HD",
+            "aspectRatio": "1:1",
+            "image": {
+              "src": "/uploads/1765303384070-06713e5b.webp",
+              "alt": "2022-CACHAREL-COFFRETS-ZOOM-V01-HD",
+              "aspectRatio": "1:1"
+            },
+            "hidden": false
+          },
+          {
+            "id": "detail-1765302297827-0",
+            "title": "baca-3",
+            "summary": "",
+            "content": "",
+            "alt": "baca-3",
+            "aspectRatio": "16:9",
+            "image": {
+              "src": "/uploads/1765302757880-b8270c82.webp",
+              "alt": "baca-3",
+              "aspectRatio": "16:9"
+            },
+            "hidden": false
+          }
+        ],
+        "hidden": false
+      },
+      {
+        "id": "gallery-grid-1765360800529",
+        "type": "gallery-grid",
+        "images": [
+          {
+            "id": "image-1765360807646",
+            "src": "/uploads/1765360807289-99299c3a.webp",
+            "alt": "",
+            "title": "",
+            "description": "",
+            "category": ""
+          }
+        ],
+        "layout": "grid-3",
+        "gap": "medium",
+        "showFilters": true,
+        "showTitles": true,
+        "showDescriptions": true,
+        "enableLightbox": true,
+        "enableDownload": true,
+        "theme": "auto",
+        "hidden": false
+      },
+      {
+        "id": "faq-1765360819294",
+        "type": "faq",
+        "title": "",
+        "items": [
+          {
+            "id": "faq-1765360822029",
+            "question": "Question Heading",
+            "answer": "<p>Detailed answer explaining the question with proper formatting support.</p>"
+          }
+        ],
+        "theme": "auto",
+        "hidden": false
       }
     ],
     "title": "Studio pearl",

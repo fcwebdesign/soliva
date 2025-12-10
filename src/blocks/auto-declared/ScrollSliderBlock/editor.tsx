@@ -343,12 +343,22 @@ export default function ScrollSliderEditor({
   const clampPreviewIndex = (next: SlideEditorItem[], desired?: number) =>
     Math.max(0, Math.min(next.length - 1, desired ?? 0));
 
-  const sendPreviewMessage = (index: number, version?: number) => {
+  const sendPreviewMessage = (index: number, version?: number, slidesPayload?: SlideEditorItem[]) => {
     try {
-      const iframe = document.querySelector('iframe');
+      const iframe =
+        (document.getElementById('preview-iframe') as HTMLIFrameElement | null) ||
+        (document.querySelector('iframe') as HTMLIFrameElement | null);
       if (iframe?.contentWindow) {
         iframe.contentWindow.postMessage(
-          { type: 'SCROLL_SLIDER_PREVIEW', payload: { blockId: blockId || (data as any)?.id, previewIndex: index, previewVersion: version || Date.now() } },
+          {
+            type: 'SCROLL_SLIDER_PREVIEW',
+            payload: {
+              blockId: blockId || (data as any)?.id || (data as any)?.data?.id,
+              previewIndex: index,
+              previewVersion: version || Date.now(),
+              slides: slidesPayload,
+            },
+          },
           '*'
         );
         console.log('[ScrollSliderEditor] postMessage SCROLL_SLIDER_PREVIEW', { index, version });
@@ -366,7 +376,7 @@ export default function ScrollSliderEditor({
       setPreviewIndexState(preview);
       onChange({ ...data, slides: next, previewIndex: preview, previewVersion: version });
       notifyContentUpdate();
-      sendPreviewMessage(preview, version);
+      sendPreviewMessage(preview, version, next);
     } catch (err) {
       console.error('ScrollSliderEditor: erreur updateSlides', err);
     }

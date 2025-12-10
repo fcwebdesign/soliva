@@ -248,6 +248,7 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
     'pinned-grid-explorations',
     'sticky-sections-codrops',
     'scroll-slider',
+    'sticky-cards',
   ];
 
   // Helper pour wrapper un bloc avec ScrollAnimated si nécessaire
@@ -272,6 +273,16 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
 
     const animationBlockType = getAnimationBlockType(blockType);
     const isPinnedBlock = PINNED_BLOCKS.includes(blockType);
+
+    // Blocs avec animations GSAP natives : désactiver l'animation automatique
+    // car ils gèrent déjà leurs propres animations ScrollTrigger
+    const BLOCKS_WITH_NATIVE_ANIMATIONS = ['sticky-cards'];
+    if (BLOCKS_WITH_NATIVE_ANIMATIONS.includes(blockType)) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🎬 [BlockRenderer] Bloc avec animations natives - animation automatique désactivée:', blockType);
+      }
+      return blockElement;
+    }
 
     // Pour les blocs avec pin, on applique l'animation uniquement sur les enfants
     // pour éviter les conflits avec le ScrollTrigger du pin qui contrôle le wrapper

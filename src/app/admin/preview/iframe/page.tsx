@@ -119,10 +119,15 @@ export default function PreviewIframePage() {
           break;
         
         case 'SCROLL_SLIDER_PREVIEW':
-          // Mettre à jour le previewIndex du bloc ciblé puis forcer un petit scrollTrigger refresh
+          // Mettre à jour le previewIndex du bloc ciblé, appliquer les slides si fournis, puis refresh ScrollTrigger
           setBlocks((prev) =>
             prev.map((b) => {
-              if (b.id !== payload.blockId) return b;
+              const sameBlock =
+                b.id === payload.blockId ||
+                (b as any)?.data?.id === payload.blockId;
+              if (!sameBlock) return b;
+
+              const nextSlides = payload.slides || b.data?.slides || b.slides;
 
               const flagIndicators =
                 typeof (b.data as any)?.showIndicators === 'boolean'
@@ -151,7 +156,7 @@ export default function PreviewIframePage() {
                 previewVersion: nextVersion,
                 data: {
                   ...(b.data || {}),
-                  slides: b.data?.slides ?? b.slides,
+                  slides: nextSlides,
                   previewIndex: payload.previewIndex,
                   previewVersion: nextVersion,
                   showIndicators: flagIndicators,
@@ -159,7 +164,7 @@ export default function PreviewIframePage() {
                   showText: flagText,
                 },
                 // Garder aussi les slides à la racine pour compat
-                slides: b.data?.slides ?? b.slides,
+                slides: nextSlides,
                 showIndicators: flagIndicators,
                 showProgressBar: flagProgress,
                 showText: flagText,
@@ -171,6 +176,8 @@ export default function PreviewIframePage() {
               blockId: payload.blockId,
               previewIndex: payload.previewIndex,
               previewVersion: payload.previewVersion,
+              hasSlides: !!payload.slides,
+              slidesLength: payload.slides?.length,
             });
           }
           if (process.env.NODE_ENV !== 'production') {

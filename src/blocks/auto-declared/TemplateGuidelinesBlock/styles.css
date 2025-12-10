@@ -1,0 +1,105 @@
+.template-guidelines {
+  margin: var(--section, 96px) auto;
+  padding: clamp(24px, 4vw, 48px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  background: #fff;
+  color: #0f172a;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.05);
+}
+
+/* Palette (front uniquement) : applique les tokens uniquement hors admin pour éviter les conflits de contraste */
+body:not(.admin-page) .template-guidelines {
+  background: var(--card, #fff);
+  color: var(--foreground, #0f172a);
+  border-color: var(--border, rgba(0, 0, 0, 0.08));
+}
+
+.template-guidelines__inner {
+  display: grid;
+  gap: var(--gap, 28px);
+}
+
+.template-guidelines--split .template-guidelines__inner {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  align-items: center;
+}
+
+.tg-subtitle {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 12px;
+  color: #64748b;
+  margin: 0 0 8px;
+}
+
+body:not(.admin-page) .tg-subtitle {
+  color: var(--muted-foreground, #64748b);
+}
+
+.tg-title {
+  margin: 0 0 12px;
+}
+
+.tg-description {
+  margin: 0 0 20px;
+  color: #475569;
+  line-height: 1.6;
+}
+
+body:not(.admin-page) .tg-description {
+  color: var(--muted-foreground, #475569);
+}
+
+.tg-cta {
+  display: inline-block;
+  padding: clamp(12px, 1.5vw, 16px) clamp(18px, 3vw, 24px);
+  border-radius: 6px;
+  background: #0f172a;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: clamp(14px, 1.6vw, 16px);
+  transition: opacity 0.2s ease;
+}
+
+body:not(.admin-page) .tg-cta {
+  background: var(--foreground, #0f172a);
+  color: var(--background, #fff);
+}
+
+.tg-cta:hover {
+  opacity: 0.9;
+}
+
+.template-guidelines__media {
+  position: relative;
+}
+
+.tg-image {
+  border-radius: 14px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  position: relative;
+}
+
+body:not(.admin-page) .tg-image {
+  background: var(--muted, rgba(0, 0, 0, 0.04));
+  border-color: var(--border, rgba(0, 0, 0, 0.08));
+}
+
+.tg-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tg-image--placeholder {
+  min-height: 220px;
+  display: grid;
+  place-items: center;
+  color: var(--tg-muted, #475569);
+  font-size: 14px;
+}

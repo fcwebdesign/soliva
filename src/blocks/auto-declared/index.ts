@@ -31,11 +31,14 @@ import './PinnedSectionBlock';
 import './PinnedGridDemoBlock';
 import './PinnedGridExplorationsBlock';
 import './ScrollSliderBlock';
+import './StickyCardsBlock';
 import './ServicesSpotlightBlockV2';
+import './TemplateGuidelinesBlock';
+import './AlliesInCreationBlock';
 
 // Pour ajouter un nouveau bloc :
 // 1. Créer un dossier src/blocks/auto-declared/MonBloc/
 // 2. Exécuter: npm run generate-blocks
 // 3. C'est tout !
 
-// 26 blocs auto-déclarés disponibles
+// 27 blocs auto-déclarés disponibles
