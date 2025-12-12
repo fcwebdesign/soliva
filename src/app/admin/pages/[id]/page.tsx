@@ -289,7 +289,8 @@ export default function PageEdit() {
       };
       
       // 4. Récupérer le contenu complet pour mettre à jour la section pages
-      const contentResponse = await fetch('/api/content');
+      // Utiliser /api/content/metadata pour les métadonnées
+      const contentResponse = await fetch('/api/content/metadata');
       const fullContent = await contentResponse.json();
       
       // 5. Mettre à jour la page dans la liste des pages

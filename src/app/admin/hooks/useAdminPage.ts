@@ -71,6 +71,76 @@ export const useAdminPage = () => {
     fetchContent();
   }, []);
 
+  // ✅ CRITIQUE : Écouter les mises à jour de contenu (depuis les autres pages admin)
+  useEffect(() => {
+    let lastUpdateTime = 0;
+    
+    const handleContentUpdate = (event: CustomEvent) => {
+      const now = Date.now();
+      
+      // Éviter les rechargements trop fréquents (debounce de 500ms)
+      if (now - lastUpdateTime < 500) {
+        return;
+      }
+      lastUpdateTime = now;
+      
+      // Si la mise à jour concerne work (projets), recharger le contenu
+      if (event.detail?.work) {
+        fetchContent();
+      }
+      // Si la mise à jour concerne d'autres sections, mettre à jour localement
+      else if (event.detail) {
+        setContent((prevContent) => {
+          if (!prevContent) return prevContent;
+          const updatedContent: any = { ...prevContent };
+          if (event.detail.nav) updatedContent.nav = event.detail.nav;
+          if (event.detail.footer) updatedContent.footer = event.detail.footer;
+          if (event.detail.pages) updatedContent.pages = event.detail.pages;
+          if (event.detail.metadata) updatedContent.metadata = event.detail.metadata;
+          return updatedContent as Content;
+        });
+        setOriginalContent((prevContent) => {
+          if (!prevContent) return prevContent;
+          const updatedContent: any = { ...prevContent };
+          if (event.detail.nav) updatedContent.nav = event.detail.nav;
+          if (event.detail.footer) updatedContent.footer = event.detail.footer;
+          if (event.detail.pages) updatedContent.pages = event.detail.pages;
+          if (event.detail.metadata) updatedContent.metadata = event.detail.metadata;
+          return updatedContent as Content;
+        });
+      }
+    };
+
+    // Écouter aussi les changements de localStorage (fallback)
+    const handleStorageChange = () => {
+      const lastUpdate = localStorage.getItem('content-updated');
+      if (lastUpdate) {
+        const updateTime = parseInt(lastUpdate, 10);
+        const timeDiff = Date.now() - updateTime;
+        const timeSinceLastReload = Date.now() - lastUpdateTime;
+        // Recharger seulement si la mise à jour est récente (dans les 5 dernières secondes)
+        // et qu'on n'a pas déjà rechargé récemment
+        if (timeDiff < 5000 && timeSinceLastReload > 1000) {
+          lastUpdateTime = Date.now();
+          fetchContent();
+        }
+      }
+    };
+
+    // Vérifier périodiquement si le contenu a été mis à jour (fallback)
+    const intervalId = setInterval(handleStorageChange, 2000);
+
+    window.addEventListener('content-updated', handleContentUpdate as EventListener);
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('content-updated', handleContentUpdate as EventListener);
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(intervalId);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Pas de dépendances pour éviter les boucles - fetchContent est stable
+
   // Ajouter la classe admin-page au body
   useEffect(() => {
     document.body.classList.add('admin-page');

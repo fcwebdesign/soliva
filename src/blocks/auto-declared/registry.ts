@@ -1,6 +1,8 @@
 // Système de blocs auto-déclarés HMR-safe
 import React from 'react';
 import { z } from 'zod';
+import ProjectsBlockStarterKit from '@/templates/Starter-Kit/blocks/ProjectsBlock';
+import PageIntroBlockStarterKit from '@/templates/Starter-Kit/blocks/PageIntroBlock';
 
 // Types améliorés
 export type BlockType = string;
@@ -68,11 +70,11 @@ export function registerAutoBlock<T>(mod: BlockModule<T>) {
 // };
 
 const TEMPLATE_OVERRIDES: Record<string, Record<string, React.ComponentType<any>>> = {
-  // Ajoutez vos surcharges ici
-  // Exemple :
-  // starter: {
-  //   'services': ServicesStarter, // importé en haut du fichier
-  // },
+  // Surcharges spécifiques aux templates
+  'Starter-Kit': {
+    projects: ProjectsBlockStarterKit,
+    'page-intro': PageIntroBlockStarterKit,
+  },
 };
 
 // Fonctions de récupération

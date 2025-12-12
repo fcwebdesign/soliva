@@ -8,12 +8,14 @@ interface ContentData {
   content: string;
   theme?: 'light' | 'dark' | 'auto';
   width?: 'full' | 'small' | 'medium' | 'large';
+  descriptionSize?: 'h1' | 'h2' | 'h3' | 'h4' | 'p';
 }
 
 export default function ContentBlock({ data }: { data: ContentData | any }) {
   // Extraire les données
   const blockData = (data as any).data || data;
   const content = blockData.content || (data as any).content;
+  const descriptionSize = blockData.descriptionSize || (data as any).descriptionSize || 'p';
   const [fullContent, setFullContent] = useState<any>(null);
   
   // Charger le contenu pour accéder à la typographie
@@ -53,9 +55,21 @@ export default function ContentBlock({ data }: { data: ContentData | any }) {
     return fullContent ? getTypographyConfig(fullContent) : {};
   }, [fullContent]);
   
-  // Classes typographiques pour p (sans la couleur pour la gérer via style)
-  const pClasses = useMemo(() => {
-    const classes = getTypographyClasses('p', typoConfig, defaultTypography.p);
+  const descriptionTypographyKey = useMemo(() => {
+    const allowed = new Set(['h1', 'h2', 'h3', 'h4', 'p']);
+    return allowed.has(descriptionSize as any) ? (descriptionSize as any) : 'p';
+  }, [descriptionSize]);
+
+  // Classes typographiques (sans la couleur pour la gérer via style)
+  const textClasses = useMemo(() => {
+    const defaults: any = {
+      h1: defaultTypography.h1,
+      h2: defaultTypography.h2,
+      h3: defaultTypography.h3,
+      h4: defaultTypography.h4,
+      p: defaultTypography.p,
+    };
+    const classes = getTypographyClasses(descriptionTypographyKey as any, typoConfig, defaults[descriptionTypographyKey] || defaultTypography.p);
     // Retirer uniquement les classes de couleur Tailwind
     return classes
       .replace(/\btext-(gray|black|white|red|blue|green|yellow|purple|pink|indigo|orange)-\d+\b/g, '')
@@ -63,15 +77,15 @@ export default function ContentBlock({ data }: { data: ContentData | any }) {
       .replace(/\btext-foreground\b/g, '')
       .replace(/\s+/g, ' ')
       .trim();
-  }, [typoConfig]);
+  }, [typoConfig, descriptionTypographyKey]);
   
   // Couleur pour p : hex personnalisée ou var(--foreground) pour s'adapter aux palettes
-  const pColor = useMemo(() => {
-    const customColor = getCustomColor('p', typoConfig);
+  const textColor = useMemo(() => {
+    const customColor = getCustomColor(descriptionTypographyKey as any, typoConfig) || getCustomColor('p', typoConfig);
     if (customColor) return customColor;
     // Toujours utiliser var(--foreground) pour s'adapter aux palettes
     return 'var(--foreground)';
-  }, [typoConfig]);
+  }, [typoConfig, descriptionTypographyKey]);
 
   const widthClass = (() => {
     switch (blockData.width) {
@@ -100,8 +114,8 @@ export default function ContentBlock({ data }: { data: ContentData | any }) {
       data-block-theme={blockData.theme || (data as any).theme || 'auto'}
     >
       <div 
-        className={`prose prose-lg custom-lists ${pClasses} ${widthClass}`}
-        style={{ color: pColor }}
+        className={`prose prose-lg custom-lists ${textClasses} ${widthClass}`}
+        style={{ color: textColor }}
         dangerouslySetInnerHTML={{ __html: content }}
       />
     </div>

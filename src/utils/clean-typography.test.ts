@@ -65,5 +65,27 @@ const cleanedRecursive = cleanTypographyRecursive(corruptedObject);
 console.log('✅ Nettoyage récursif metadata.typography:', !('_template' in (cleanedRecursive as any).metadata.typography) ? 'PASS' : 'FAIL');
 console.log('✅ Nettoyage récursif reveal.typography:', !('metadata' in (cleanedRecursive as any).metadata.reveal.typography) ? 'PASS' : 'FAIL');
 
-console.log('\n✅ Tous les tests terminés !');
+// Test 6: Typography avec polices primaire/secondaire
+console.log('\n🧪 Test 6: Typography avec polices primaire/secondaire');
+const typographyWithFonts = {
+  h1: { fontSize: 'text-xl' },
+  fonts: {
+    primary: { mode: 'google', family: 'Inter', weights: '400;700' },
+    secondary: { mode: 'custom', family: 'MyFont', cssUrl: 'https://example.com/font.css' },
+  },
+};
+console.log('✅ isValidTypography (fonts):', isValidTypography(typographyWithFonts) === true ? 'PASS' : 'FAIL');
+const cleanedFonts = cleanTypography(typographyWithFonts);
+console.log('✅ cleanTypography conserve les fonts:', cleanedFonts.fonts?.primary?.mode === 'google' && cleanedFonts.fonts?.secondary?.mode === 'custom' ? 'PASS' : 'FAIL');
 
+// Test 7: Typography avec font primary/secondary par élément
+console.log('\n🧪 Test 7: Typography per-element font');
+const typographyWithFontFlag = {
+  h1: { fontSize: 'text-xl', font: 'primary' },
+  p: { fontSize: 'text-base', font: 'secondary' },
+};
+console.log('✅ isValidTypography (font flags):', isValidTypography(typographyWithFontFlag) === true ? 'PASS' : 'FAIL');
+const cleanedWithFontFlag = cleanTypography(typographyWithFontFlag);
+console.log('✅ cleanTypography conserve font flags:', cleanedWithFontFlag.h1?.font === 'primary' && cleanedWithFontFlag.p?.font === 'secondary' ? 'PASS' : 'FAIL');
+
+console.log('\n✅ Tous les tests terminés !');

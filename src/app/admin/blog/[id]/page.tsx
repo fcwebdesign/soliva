@@ -250,7 +250,8 @@ export default function BlogArticleEdit() {
       } as Article;
       
       // 4. Récupérer le contenu complet pour mettre à jour la section blog
-      const contentResponse = await fetch('/api/content');
+      // Utiliser /api/content/metadata pour les métadonnées
+      const contentResponse = await fetch('/api/content/metadata');
       const fullContent = await contentResponse.json();
       
       // 5. Mettre à jour l'article dans la liste des articles

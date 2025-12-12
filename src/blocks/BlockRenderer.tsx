@@ -7,7 +7,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 import ScrollAnimated from '@/components/ScrollAnimated';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { getTypographyConfig, getTypographyClasses, getCustomColor, defaultTypography } from '@/utils/typography';
+import { getTypographyConfig, getTypographyClasses, getCustomColor, defaultTypography, applyTypographyFonts } from '@/utils/typography';
 import { fetchContentWithNoCache, useContentUpdate } from '@/hooks/useContentUpdate';
 // Charger les blocs auto-déclarés et accéder au registre scalable
 import './auto-declared';
@@ -258,6 +258,14 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
       return blockElement;
     }
     const scrollAnimations = fullContent?.metadata?.scrollAnimations;
+    const defaultConfig = {
+      type: 'fade-in-up',
+      duration: 1,
+      delay: 0,
+      stagger: 0,
+      easing: 'power3.out',
+      threshold: 0.2,
+    };
     
     if (process.env.NODE_ENV === 'development') {
       console.log('🎬 [BlockRenderer] wrapWithAnimation pour bloc', blockType, {
@@ -267,7 +275,9 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
       });
     }
     
-    if (!scrollAnimations?.enabled) {
+    const enabled = scrollAnimations?.enabled ?? true;
+
+    if (!enabled) {
       return blockElement;
     }
 
@@ -295,6 +305,11 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
           key={blockElement.key || blockType}
           blockType={animationBlockType}
           content={fullContent}
+          animationConfig={
+            scrollAnimations?.blocks?.[animationBlockType] ||
+            scrollAnimations?.global ||
+            defaultConfig
+          }
           animateChildrenOnly={true}
         >
           {blockElement}
@@ -307,6 +322,11 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
         key={blockElement.key || blockType}
         blockType={animationBlockType}
         content={fullContent}
+        animationConfig={
+          scrollAnimations?.blocks?.[animationBlockType] ||
+          scrollAnimations?.global ||
+          defaultConfig
+        }
       >
         {blockElement}
       </ScrollAnimated>
@@ -385,6 +405,11 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
     }
     return config;
   }, [fullContent]);
+
+  // Charger les polices globales dès que la typo est disponible
+  useEffect(() => {
+    applyTypographyFonts(typoConfig);
+  }, [typoConfig]);
   
   const headingClasses = useMemo(() => {
     const safeTypoConfig = typoConfig?.h1 ? { h1: typoConfig.h1 } : {};

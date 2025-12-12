@@ -23,6 +23,16 @@ const SETTINGS = [
   { id: 'backup', label: 'Sauvegarde', path: null, icon: '💾' },
 ];
 
+const slugify = (value: string): string => {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+};
+
 interface Project {
   id: string;
   title: string;
@@ -56,15 +66,32 @@ export default function WorkProjectEdit() {
 
   // Écouter les mises à jour de contenu (depuis le visual editor ou autres sources)
   useEffect(() => {
-    const handleContentUpdate = () => {
-      // Recharger le contenu pour synchroniser avec les modifications du visual editor
-      fetchContent();
+    let isSaving = false; // Flag pour éviter de recharger pendant la sauvegarde
+    
+    const handleContentUpdate = (event: CustomEvent) => {
+      // ✅ CRITIQUE : Ne pas recharger si c'est nous qui venons de sauvegarder
+      // (pour éviter de perdre le projet actuel et créer un nouveau projet)
+      if (isSaving) {
+        return;
+      }
+      
+      // Recharger seulement si la mise à jour concerne un autre projet
+      const updatedProjectId = event.detail?.work?.adminProjects?.find((p: any) => 
+        p.id === projectId || p.slug === projectId
+      );
+      
+      if (!updatedProjectId) {
+        fetchContent();
+      }
     };
 
-    window.addEventListener('content-updated', handleContentUpdate);
+    window.addEventListener('content-updated', handleContentUpdate as EventListener);
     
     // Écouter aussi les changements de localStorage
     const handleStorageChange = (e: StorageEvent) => {
+      if (isSaving) {
+        return;
+      }
       if (e.key === 'content-updated' || e.key?.includes('updated')) {
         fetchContent();
       }
@@ -73,6 +100,8 @@ export default function WorkProjectEdit() {
 
     // Vérifier périodiquement si le contenu a été mis à jour (fallback)
     const intervalId = setInterval(() => {
+      if (isSaving) return; // Ignorer pendant la sauvegarde
+      
       const lastUpdate = localStorage.getItem('content-updated');
       if (lastUpdate) {
         // Recharger seulement si on détecte une mise à jour récente (dans les 5 dernières secondes)
@@ -83,12 +112,18 @@ export default function WorkProjectEdit() {
       }
     }, 2000);
 
+    // Exposer le flag pour la sauvegarde
+    (window as any).__workPageIsSaving = (saving: boolean) => {
+      isSaving = saving;
+    };
+
     return () => {
-      window.removeEventListener('content-updated', handleContentUpdate);
+      window.removeEventListener('content-updated', handleContentUpdate as EventListener);
       window.removeEventListener('storage', handleStorageChange);
       clearInterval(intervalId);
+      delete (window as any).__workPageIsSaving;
     };
-  }, []);
+  }, [projectId]);
 
   // Ajouter la classe admin-page au body
   useEffect(() => {
@@ -113,10 +148,16 @@ export default function WorkProjectEdit() {
       setContent(data);
       
       // Trouver le projet par ID (priorité) ou par slug (fallback)
-      let foundProject = data.work?.adminProjects?.find((p: Project) => p.id === projectId);
-      // Fallback : chercher par slug si pas trouvé par id
+      // ✅ CRITIQUE : Chercher aussi par slug en priorité si projectId ressemble à un slug
+      let foundProject = data.work?.adminProjects?.find((p: Project) => 
+        p.id === projectId || p.slug === projectId
+      );
+      
+      // Si toujours pas trouvé, chercher par slug ou id de manière plus large
       if (!foundProject) {
-        foundProject = data.work?.adminProjects?.find((p: Project) => p.slug === projectId);
+        foundProject = data.work?.adminProjects?.find((p: Project) => 
+          (p.slug && p.slug === projectId) || (p.id && p.id === projectId)
+        );
       }
       if (foundProject) {
         // S'assurer que le projet a un id
@@ -253,7 +294,9 @@ export default function WorkProjectEdit() {
       };
       
       // 4. Récupérer le contenu complet pour mettre à jour la section work
-      const contentResponse = await fetch('/api/content');
+      // Utiliser /api/content/metadata pour les métadonnées
+      // Pour le projet complet, utiliser /api/content/project/[slug] si nécessaire
+      const contentResponse = await fetch('/api/content/metadata');
       const fullContent = await contentResponse.json();
       
       // 5. Mettre à jour le projet dans la liste des projets
@@ -372,31 +415,23 @@ export default function WorkProjectEdit() {
         return tempDiv.innerHTML;
       };
       
+      // ✅ CRITIQUE : Préserver un slug propre (priorité à l'input, sinon généré depuis le titre)
+      const userSlug = projectToSave.slug ? slugify(projectToSave.slug) : '';
+      const titleSlug = projectToSave.title ? slugify(projectToSave.title) : '';
+      const projectSlug = userSlug || titleSlug || slugify(projectId) || slugify(projectToSave.id || '') || `project-${Date.now()}`;
+      
       // Nettoyer le contenu du projet
       // IMPORTANT : Préserver les blocs pour la synchronisation avec le visual editor
       const cleanedProject = {
         ...projectToSave,
+        slug: projectSlug, // Garantir qu'un slug existe (priorité au slug existant, puis projectId de l'URL)
         content: cleanProjectContent(finalContent),
         blocks: projectToSave.blocks // Préserver les blocs (utilisés par le visual editor)
       };
       
-      console.log('💾 Projet à sauvegarder:', {
-        id: cleanedProject.id,
-        title: cleanedProject.title,
-        status: cleanedProject.status,
-        publishedAt: cleanedProject.publishedAt,
-        contentLength: cleanedProject.content?.length || 0,
-        contentPreview: cleanedProject.content?.substring(0, 100),
-        hasBlocks: !!cleanedProject.blocks,
-        blocksCount: cleanedProject.blocks?.length || 0
-      });
-      
       // Mettre à jour le projet dans le contenu
       const newContent = { ...content };
       const projectIndex = newContent.work.adminProjects.findIndex((p: Project) => p.id === projectId);
-      
-      console.log('💾 Sauvegarde projet:', { projectId, cleanedProject, projectIndex });
-      console.log('💾 Contenu avant sauvegarde:', JSON.stringify(newContent.work.adminProjects, null, 2));
       
       if (projectIndex >= 0) {
         newContent.work.adminProjects[projectIndex] = cleanedProject;
@@ -410,11 +445,11 @@ export default function WorkProjectEdit() {
       }
       
       // Trouver le projet dans la liste projects
-      const projectInFrontend = newContent.work.projects.find((p: any) => p.slug === cleanedProject.slug);
+      const projectInFrontend = newContent.work.projects.find((p: any) => p.slug === projectSlug);
       
       if (projectInFrontend) {
         // Mettre à jour le projet existant
-        const projectFrontendIndex = newContent.work.projects.findIndex((p: any) => p.slug === cleanedProject.slug);
+        const projectFrontendIndex = newContent.work.projects.findIndex((p: any) => p.slug === projectSlug);
         newContent.work.projects[projectFrontendIndex] = {
           ...projectInFrontend,
           title: cleanedProject.title,
@@ -427,6 +462,7 @@ export default function WorkProjectEdit() {
           featured: cleanedProject.featured,
           status: cleanedProject.status,
           publishedAt: cleanedProject.publishedAt,
+          slug: projectSlug, // Toujours inclure le slug
           image: (cleanedProject as any).image,
           alt: (cleanedProject as any).alt
         } as any;
@@ -443,26 +479,11 @@ export default function WorkProjectEdit() {
           featured: cleanedProject.featured,
           status: cleanedProject.status,
           publishedAt: cleanedProject.publishedAt,
-          slug: cleanedProject.slug,
+          slug: projectSlug, // Toujours inclure le slug (requis par le schéma)
           image: (cleanedProject as any).image,
           alt: (cleanedProject as any).alt
         } as any);
       }
-      
-      console.log('💾 Contenu après sauvegarde:', JSON.stringify(newContent.work.adminProjects, null, 2));
-      console.log('💾 Structure envoyée:', {
-        hasContent: !!newContent,
-        allKeys: Object.keys(newContent),
-        workKeys: Object.keys(newContent.work || {}),
-        adminProjectsCount: newContent.work?.adminProjects?.length || 0,
-        projectsCount: newContent.work?.projects?.length || 0,
-        hasHome: !!newContent.home,
-        hasContact: !!newContent.contact,
-        hasStudio: !!newContent.studio,
-        hasBlog: !!newContent.blog,
-        hasNav: !!newContent.nav,
-        hasMetadata: !!newContent.metadata
-      });
       
       // Sauvegarder
       const response = await fetch('/api/admin/content', {
@@ -483,8 +504,27 @@ export default function WorkProjectEdit() {
         throw new Error(`Erreur ${response.status}: ${errorData.error || response.statusText}`);
       }
 
+      // ✅ CRITIQUE : Mettre à jour l'état local immédiatement après la sauvegarde
+      // pour que l'interface se mette à jour sans avoir besoin de rafraîchir
+      setContent(newContent);
+      setProject(cleanedProject);
       setSaveStatus('success');
       setHasUnsavedChanges(false);
+      
+      // 🔀 Si on était sur /admin/work/new (ou un ID différent), rediriger vers l'URL du projet pour éviter la recréation
+      // Fallback sur l'id si jamais le slug est vide (sécurité)
+      if ((projectId === 'new' || projectId !== cleanedProject.slug) && (cleanedProject.slug || cleanedProject.id)) {
+        router.replace(`/admin/work/${cleanedProject.slug || cleanedProject.id}`);
+      }
+      
+      // ✅ CRITIQUE : Marquer qu'on est en train de sauvegarder pour éviter le rechargement
+      if (typeof window !== 'undefined' && (window as any).__workPageIsSaving) {
+        (window as any).__workPageIsSaving(true);
+      }
+      
+      // ✅ CRITIQUE : Ne PAS mettre à jour l'URL pour éviter les redirections
+      // L'URL reste sur le projectId actuel, même si le slug a changé
+      // Cela évite les rechargements et les problèmes de synchronisation
       
       // Notifier le front pour mise à jour live des blocs projets
       try {
@@ -497,8 +537,15 @@ export default function WorkProjectEdit() {
           // Déclencher un changement de storage pour forcer le rechargement
           localStorage.setItem('content-updated', String(Date.now()));
         }
-      } catch {
+      } catch (error) {
         // ignore
+      } finally {
+        // ✅ CRITIQUE : Réinitialiser le flag après un court délai pour permettre la notification
+        setTimeout(() => {
+          if (typeof window !== 'undefined' && (window as any).__workPageIsSaving) {
+            (window as any).__workPageIsSaving(false);
+          }
+        }, 1000);
       }
       
       // Toast de succès

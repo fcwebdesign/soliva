@@ -70,7 +70,8 @@ export default function PageClient() {
 
   const fetchContent = async () => {
     try {
-      const response = await fetch('/api/content');
+      // Utiliser /api/content/metadata au lieu de /api/content (plus léger)
+      const response = await fetch('/api/content/metadata');
       const data = await response.json();
       const foundPage = data.pages?.pages?.find((p: any) => p.slug === slug || p.id === slug);
       setPageData(foundPage);

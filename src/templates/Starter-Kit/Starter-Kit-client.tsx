@@ -9,11 +9,10 @@ import WorkPearl from './components/Work';
 import BlogPearl from './components/Blog';
 import { useRevealAnimation } from '@/animations/reveal/hooks/useRevealAnimation';
 import RevealAnimation from '@/animations/reveal/RevealAnimationOriginal';
-import { getTypographyConfig, getTypographyClasses, getCustomColor, defaultTypography } from '@/utils/typography';
+import { getTypographyConfig, getTypographyClasses, getCustomColor, defaultTypography, applyTypographyFonts } from '@/utils/typography';
 import { resolvePaletteFromContent } from '@/utils/palette-resolver';
 import { resolvePalette } from '@/utils/palette';
 import '@/animations/reveal/reveal-original.css';
-import './pearl.css';
 
 export default function StarterKitClient() {
   const [metadata, setMetadata] = useState<any>(null); // Métadonnées uniquement (< 100 Ko)
@@ -56,6 +55,11 @@ export default function StarterKitClient() {
   const h1CustomColor = useMemo(() => getCustomColor('h1', typoConfig), [typoConfig]);
   const h1SingleCustomColor = useMemo(() => getCustomColor('h1Single', typoConfig), [typoConfig]);
   const pCustomColor = useMemo(() => getCustomColor('p', typoConfig), [typoConfig]);
+
+  // Appliquer les polices globales dès que la typo change
+  useEffect(() => {
+    applyTypographyFonts(typoConfig);
+  }, [typoConfig]);
   
   // Calculer la config dynamiquement - mémoriser uniquement sur les changements de reveal
   const revealConfig = useMemo(() => {

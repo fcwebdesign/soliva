@@ -661,6 +661,7 @@ export default function TwoColumnsBlockEditor({ data, onChange, compact = false,
                   <SelectItem value="small">Petit</SelectItem>
                   <SelectItem value="medium">Moyen</SelectItem>
                   <SelectItem value="large">Grand</SelectItem>
+                  <SelectItem value="xlarge">Très grand</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -711,15 +712,16 @@ export default function TwoColumnsBlockEditor({ data, onChange, compact = false,
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent side="bottom" align="end">
-                      <SelectItem value="inherit">Hériter</SelectItem>
-                      <SelectItem value="none">Aucun</SelectItem>
-                      <SelectItem value="small">Petit</SelectItem>
-                      <SelectItem value="medium">Moyen</SelectItem>
-                      <SelectItem value="large">Grand</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
+                    <SelectItem value="inherit">Hériter</SelectItem>
+                    <SelectItem value="none">Aucun</SelectItem>
+                    <SelectItem value="small">Petit</SelectItem>
+                    <SelectItem value="medium">Moyen</SelectItem>
+                    <SelectItem value="large">Grand</SelectItem>
+                    <SelectItem value="xlarge">Très grand</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
               {openColumn === 'left' && (
                 <DndContext
                   sensors={sensors}
@@ -785,15 +787,16 @@ export default function TwoColumnsBlockEditor({ data, onChange, compact = false,
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent side="bottom" align="end">
-                      <SelectItem value="inherit">Hériter</SelectItem>
-                      <SelectItem value="none">Aucun</SelectItem>
-                      <SelectItem value="small">Petit</SelectItem>
-                      <SelectItem value="medium">Moyen</SelectItem>
-                      <SelectItem value="large">Grand</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
+                    <SelectItem value="inherit">Hériter</SelectItem>
+                    <SelectItem value="none">Aucun</SelectItem>
+                    <SelectItem value="small">Petit</SelectItem>
+                    <SelectItem value="medium">Moyen</SelectItem>
+                    <SelectItem value="large">Grand</SelectItem>
+                    <SelectItem value="xlarge">Très grand</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
               {openColumn === 'right' && (
                 <DndContext
                   sensors={sensors}

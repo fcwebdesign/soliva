@@ -38,7 +38,8 @@ export default function ThreeColumnsBlock({ data }: { data: ThreeColumnsData }) 
   const gapClasses = {
     small: 'gap-4',
     medium: 'gap-6',
-    large: 'gap-8'
+    large: 'gap-8',
+    xlarge: 'gap-[var(--gap-xl)]',
   };
 
   const alignmentClasses = {
@@ -54,11 +55,12 @@ export default function ThreeColumnsBlock({ data }: { data: ThreeColumnsData }) 
   };
   const layoutClass = layoutClasses[layout] || 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
   const alignmentClass = alignmentClasses[alignment] || 'items-start';
-  const columnGapValue = gap === 'small' ? 'var(--gap-sm)' : gap === 'large' ? 'var(--gap-lg)' : 'var(--gap)';
-  const rowGapFor = (val: 'inherit' | 'none' | 'small' | 'medium' | 'large') => {
+  const columnGapValue = gap === 'small' ? 'var(--gap-sm)' : gap === 'large' ? 'var(--gap-lg)' : gap === 'xlarge' ? 'var(--gap-xl)' : 'var(--gap)';
+  const rowGapFor = (val: 'inherit' | 'none' | 'small' | 'medium' | 'large' | 'xlarge') => {
     if (val === 'none') return '0px';
     if (val === 'small') return 'var(--gap-sm)';
     if (val === 'large') return 'var(--gap-lg)';
+    if (val === 'xlarge') return 'var(--gap-xl)';
     if (val === 'medium') return 'var(--gap)';
     return '1.5rem';
   };

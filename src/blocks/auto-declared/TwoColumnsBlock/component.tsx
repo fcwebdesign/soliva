@@ -55,11 +55,12 @@ export default function TwoColumnsBlock({ data }: { data: TwoColumnsData }) {
   };
   const layoutClass = layoutClasses[layout] || 'grid-cols-1 md:grid-cols-2';
   const alignmentClass = alignmentClasses[alignment] || 'items-start';
-  const columnGapValue = gap === 'small' ? 'var(--gap-sm)' : gap === 'large' ? 'var(--gap-lg)' : 'var(--gap)';
-  const rowGapFor = (val: 'inherit' | 'none' | 'small' | 'medium' | 'large') => {
+  const columnGapValue = gap === 'small' ? 'var(--gap-sm)' : gap === 'large' ? 'var(--gap-lg)' : gap === 'xlarge' ? 'var(--gap-xl)' : 'var(--gap)';
+  const rowGapFor = (val: 'inherit' | 'none' | 'small' | 'medium' | 'large' | 'xlarge') => {
     if (val === 'none') return '0px';
     if (val === 'small') return 'var(--gap-sm)';
     if (val === 'large') return 'var(--gap-lg)';
+    if (val === 'xlarge') return 'var(--gap-xl)';
     if (val === 'medium') return 'var(--gap)';
     return '1.5rem'; // valeur par défaut si inherit
   };
@@ -72,14 +73,14 @@ export default function TwoColumnsBlock({ data }: { data: TwoColumnsData }) {
   }
 
   // Fonction optimisée pour rendre les sous-blocs
-  const renderSubBlock = (subBlock: any) => {
+  const renderSubBlock = (subBlock: any, index: number) => {
     // Wrapper pour ajouter data-block-id (nécessaire pour le scroll dans l'admin preview)
     const wrapWithBlockId = (element: React.ReactElement) => {
-      if (!subBlock.id) return element;
+      const key = subBlock.id || `${subBlock.type || 'block'}-${index}`;
       return (
         <div
-          key={subBlock.id}
-          data-block-id={subBlock.id}
+          key={key}
+          data-block-id={subBlock.id || key}
           data-block-type={subBlock.type}
           className="relative"
           style={{ scrollMarginTop: '96px' }}
@@ -173,19 +174,19 @@ export default function TwoColumnsBlock({ data }: { data: TwoColumnsData }) {
         {layout === 'right-left' ? (
           <>
             <div className="flex flex-col" style={{ rowGap: rightRowGapValue }}>
-              {rightColumn.filter((block: any) => !block.hidden).map(renderSubBlock)}
+              {rightColumn.filter((block: any) => !block.hidden).map((block: any, idx: number) => renderSubBlock(block, idx))}
             </div>
             <div className="flex flex-col" style={{ rowGap: leftRowGapValue }}>
-              {leftColumn.filter((block: any) => !block.hidden).map(renderSubBlock)}
+              {leftColumn.filter((block: any) => !block.hidden).map((block: any, idx: number) => renderSubBlock(block, idx))}
             </div>
           </>
         ) : (
           <>
             <div className="flex flex-col" style={{ rowGap: leftRowGapValue }}>
-              {leftColumn.filter((block: any) => !block.hidden).map(renderSubBlock)}
+              {leftColumn.filter((block: any) => !block.hidden).map((block: any, idx: number) => renderSubBlock(block, idx))}
             </div>
             <div className="flex flex-col" style={{ rowGap: rightRowGapValue }}>
-              {rightColumn.filter((block: any) => !block.hidden).map(renderSubBlock)}
+              {rightColumn.filter((block: any) => !block.hidden).map((block: any, idx: number) => renderSubBlock(block, idx))}
             </div>
           </>
         )}

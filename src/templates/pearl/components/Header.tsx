@@ -24,14 +24,12 @@ export default function HeaderPearl({ nav, pages, variant = 'classic', layout = 
   
   // Récupérer les styles typographiques pour la navigation (sans la couleur, on utilise la palette)
   const typoConfig = getTypographyConfig(fullContent || {});
-  const navConfig = typoConfig.nav || {};
-  // Classes typographiques SANS la couleur (on utilise la palette pour les couleurs)
-  const navTypographyClasses = [
-    navConfig.fontSize || defaultTypography.nav.fontSize,
-    navConfig.fontWeight || defaultTypography.nav.fontWeight,
-    navConfig.lineHeight || defaultTypography.nav.lineHeight,
-    navConfig.tracking || defaultTypography.nav.tracking,
-  ].filter(Boolean).join(' ');
+  const navClassesRaw = getTypographyClasses('nav', typoConfig, defaultTypography.nav);
+  // Retirer uniquement les classes de couleur pour laisser la palette décider
+  const navTypographyClasses = navClassesRaw
+    .replace(/\btext-[^\s]+/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 
   // Composants réutilisables
   // Utilisation de la palette : text-foreground au lieu de text-gray-900

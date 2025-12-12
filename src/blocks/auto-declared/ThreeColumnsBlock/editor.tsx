@@ -21,10 +21,10 @@ interface ThreeColumnsData {
   middleColumn?: any[];
   rightColumn?: any[];
   layout?: 'left-middle-right' | 'stacked-mobile' | 'stacked-tablet';
-  gap?: 'small' | 'medium' | 'large';
-  leftRowGap?: 'inherit' | 'none' | 'small' | 'medium' | 'large';
-  middleRowGap?: 'inherit' | 'none' | 'small' | 'medium' | 'large';
-  rightRowGap?: 'inherit' | 'none' | 'small' | 'medium' | 'large';
+  gap?: 'small' | 'medium' | 'large' | 'xlarge';
+  leftRowGap?: 'inherit' | 'none' | 'small' | 'medium' | 'large' | 'xlarge';
+  middleRowGap?: 'inherit' | 'none' | 'small' | 'medium' | 'large' | 'xlarge';
+  rightRowGap?: 'inherit' | 'none' | 'small' | 'medium' | 'large' | 'xlarge';
   alignment?: 'top' | 'center' | 'bottom';
   theme?: 'light' | 'dark' | 'auto';
 }
@@ -674,6 +674,7 @@ export default function ThreeColumnsBlockEditor({
                   <SelectItem value="small">Petit</SelectItem>
                   <SelectItem value="medium">Moyen</SelectItem>
                   <SelectItem value="large">Grand</SelectItem>
+                  <SelectItem value="xlarge">Très grand</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -717,13 +718,14 @@ export default function ThreeColumnsBlockEditor({
                     </SelectTrigger>
                     <SelectContent side="bottom" align="end">
                       <SelectItem value="inherit">Hériter</SelectItem>
-                      <SelectItem value="none">Aucun</SelectItem>
-                      <SelectItem value="small">Petit</SelectItem>
-                      <SelectItem value="medium">Moyen</SelectItem>
-                      <SelectItem value="large">Grand</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                    <SelectItem value="none">Aucun</SelectItem>
+                    <SelectItem value="small">Petit</SelectItem>
+                    <SelectItem value="medium">Moyen</SelectItem>
+                    <SelectItem value="large">Grand</SelectItem>
+                    <SelectItem value="xlarge">Très grand</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               )}
               {openColumn === 'left' && (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'leftColumn')}>
@@ -778,13 +780,14 @@ export default function ThreeColumnsBlockEditor({
                     </SelectTrigger>
                     <SelectContent side="bottom" align="end">
                       <SelectItem value="inherit">Hériter</SelectItem>
-                      <SelectItem value="none">Aucun</SelectItem>
-                      <SelectItem value="small">Petit</SelectItem>
-                      <SelectItem value="medium">Moyen</SelectItem>
-                      <SelectItem value="large">Grand</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                    <SelectItem value="none">Aucun</SelectItem>
+                    <SelectItem value="small">Petit</SelectItem>
+                    <SelectItem value="medium">Moyen</SelectItem>
+                    <SelectItem value="large">Grand</SelectItem>
+                    <SelectItem value="xlarge">Très grand</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               )}
               {openColumn === 'middle' && (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'middleColumn')}>
@@ -839,13 +842,14 @@ export default function ThreeColumnsBlockEditor({
                     </SelectTrigger>
                     <SelectContent side="bottom" align="end">
                       <SelectItem value="inherit">Hériter</SelectItem>
-                      <SelectItem value="none">Aucun</SelectItem>
-                      <SelectItem value="small">Petit</SelectItem>
-                      <SelectItem value="medium">Moyen</SelectItem>
-                      <SelectItem value="large">Grand</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                    <SelectItem value="none">Aucun</SelectItem>
+                    <SelectItem value="small">Petit</SelectItem>
+                    <SelectItem value="medium">Moyen</SelectItem>
+                    <SelectItem value="large">Grand</SelectItem>
+                    <SelectItem value="xlarge">Très grand</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               )}
               {openColumn === 'right' && (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'rightColumn')}>
