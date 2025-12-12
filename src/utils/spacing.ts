@@ -8,8 +8,9 @@ export interface SpacingConfig {
     sm?: string;
     md?: string;
     lg?: string;
+    xl?: string;
   };
-  defaultGap?: 'sm' | 'md' | 'lg';
+  defaultGap?: 'sm' | 'md' | 'lg' | 'xl';
 }
 
 export const defaultSpacing: SpacingConfig = {
@@ -18,6 +19,7 @@ export const defaultSpacing: SpacingConfig = {
     sm: '0.5rem',
     md: '1rem',
     lg: '1.5rem',
+    xl: '4rem',
   },
   defaultGap: 'md',
 };
@@ -57,6 +59,7 @@ export function getSpacingConfig(content: any): SpacingConfig {
       sm: spacing.gap?.sm || defaultSpacing.gap!.sm,
       md: spacing.gap?.md || defaultSpacing.gap!.md,
       lg: spacing.gap?.lg || defaultSpacing.gap!.lg,
+      xl: spacing.gap?.xl || defaultSpacing.gap!.xl,
     },
     defaultGap: spacing.defaultGap || defaultSpacing.defaultGap,
   };
@@ -66,7 +69,8 @@ export function spacingVarsCSS(config: SpacingConfig): string {
   const gapSm = config.gap?.sm || defaultSpacing.gap!.sm!;
   const gapMd = config.gap?.md || defaultSpacing.gap!.md!;
   const gapLg = config.gap?.lg || defaultSpacing.gap!.lg!;
+  const gapXl = config.gap?.xl || defaultSpacing.gap!.xl!;
   const chosen = config.defaultGap || 'md';
-  const chosenValue = chosen === 'sm' ? gapSm : chosen === 'lg' ? gapLg : gapMd;
-  return `:root{--section:${config.sectionY || defaultSpacing.sectionY};--gap-sm:${gapSm};--gap-md:${gapMd};--gap-lg:${gapLg};--gap:${chosenValue};}`;
+  const chosenValue = chosen === 'sm' ? gapSm : chosen === 'lg' ? gapLg : chosen === 'xl' ? gapXl : gapMd;
+  return `:root{--section:${config.sectionY || defaultSpacing.sectionY};--gap-sm:${gapSm};--gap-md:${gapMd};--gap-lg:${gapLg};--gap-xl:${gapXl};--gap:${chosenValue};}`;
 }

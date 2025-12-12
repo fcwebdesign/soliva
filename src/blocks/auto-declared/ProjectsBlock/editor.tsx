@@ -103,11 +103,14 @@ export default function ProjectsBlockEditor({ data, onChange, compact = false }:
         const content = await response.json();
         
         // Récupérer les projets publiés depuis adminProjects ou projects
+        const adminProjects = Array.isArray(content.work?.adminProjects) ? content.work.adminProjects : [];
+        const publicProjects = Array.isArray(content.work?.projects) ? content.work.projects : [];
+
         let projects: Project[] = [];
         
-        if (content.work?.adminProjects) {
+        if (adminProjects.length > 0) {
           // Priorité aux projets de l'admin (avec blocs)
-          projects = content.work.adminProjects
+          projects = adminProjects
             .filter((p: any) => p.status === 'published')
             .map((p: any, index: number) => ({
               id: p.id || p.slug || `project-${index}`,
@@ -116,9 +119,9 @@ export default function ProjectsBlockEditor({ data, onChange, compact = false }:
               status: p.status,
               featured: p.featured
             }));
-        } else if (content.work?.projects) {
+        } else if (publicProjects.length > 0) {
           // Fallback vers les projets publics
-          projects = content.work.projects.map((p: any, index: number) => ({
+          projects = publicProjects.map((p: any, index: number) => ({
             id: p.id || p.slug || `project-${index}`,
             title: p.title,
             category: p.category,

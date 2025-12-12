@@ -24,6 +24,7 @@ export default function AdminPreviewPage() {
   const searchParams = useSearchParams();
   // Par défaut on cible studio (contient des blocs) pour éviter une preview vide
   const pageKey = searchParams.get('page') || 'studio';
+  const projectParam = searchParams.get('project');
   const [adminContent, setAdminContent] = useState<any>(null);
 
   // Refs pour scroller vers un bloc dans l'éditeur et la preview
@@ -35,9 +36,11 @@ export default function AdminPreviewPage() {
   const [previewData, setPreviewData] = useState<any>(null);
   const [blocks, setBlocks] = useState<any[]>([]);
   const [initialPageData, setInitialPageData] = useState<any>(null);
+  const [projectId, setProjectId] = useState<string | null>(projectParam);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [pageOptions, setPageOptions] = useState<Array<{ value: string; label: string }>>([]);
+  const [projectOptions, setProjectOptions] = useState<Array<{ value: string; label: string }>>([]);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [hoverBlockId, setHoverBlockId] = useState<string | null>(null);
   const [hiddenBlockIds, setHiddenBlockIds] = useState<Set<string>>(new Set());
@@ -58,6 +61,11 @@ export default function AdminPreviewPage() {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   const [isBlockSheetOpen, setIsBlockSheetOpen] = useState(false);
   const templateKey = previewData?._template || initialPageData?._template || adminContent?._template || 'soliva';
+
+  // Synchroniser l'état projet avec l'URL
+  useEffect(() => {
+    setProjectId(projectParam);
+  }, [projectParam]);
 
   // Assurer les blocs hero en première position (et unique)
   const normalizeHeroFloating = (list: any[]) => {
@@ -358,28 +366,99 @@ export default function AdminPreviewPage() {
         const data = await res.json();
         setAdminContent(data);
 
-        // Trouver la page demandée
+        // Options projets (adminProjects sinon fallback projects)
+        const adminProjects = data?.work?.adminProjects || [];
+        const simpleProjects = (!adminProjects.length && data?.work?.projects) ? data.work.projects : [];
+        const projectSource = adminProjects.length ? adminProjects : simpleProjects;
+        // S'assurer que tous les projets ont un id (créer si manquant)
+        const projectsWithIds = projectSource.map((p: any, idx: number) => {
+          if (!p.id) {
+            // Créer un id basé sur le slug ou un index
+            p.id = p.slug || `project-${idx}`;
+          }
+          return p;
+        });
+        const projectOpts: Array<{ value: string; label: string }> = projectsWithIds.map((p: any) => ({
+          value: p.id, // TOUJOURS utiliser l'id pour la synchronisation
+          label: p.title || p.slug || p.id || 'Projet sans titre'
+        }));
+        setProjectOptions(projectOpts);
+
+        // Trouver la page demandée (ou un projet si projectId est défini)
         let pageData = null;
-        if (['home', 'contact', 'studio', 'work', 'blog'].includes(pageKey)) {
-          pageData = (data as any)[pageKey];
-        } else if (data.pages?.pages) {
-          // Chercher dans les pages custom par slug, id ou titre
-          pageData = data.pages.pages.find((p: any) => 
-            p.slug === pageKey || 
-            p.id === pageKey || 
-            p.title?.toLowerCase() === pageKey.toLowerCase()
-          );
+        let selectedProject = null;
+
+        if (projectId) {
+          // Chercher d'abord par id (priorité), puis par slug (fallback)
+          selectedProject = adminProjects.find((p: any) => {
+            // S'assurer que le projet a un id
+            if (!p.id) p.id = p.slug || `project-${adminProjects.indexOf(p)}`;
+            return p.id === projectId;
+          });
+          if (!selectedProject && simpleProjects.length) {
+            selectedProject = simpleProjects.find((p: any, idx: number) => {
+              // S'assurer que le projet a un id
+              if (!p.id) p.id = p.slug || `project-${idx}`;
+              return p.id === projectId;
+            });
+          }
+          // Fallback : chercher par slug si pas trouvé par id
+          if (!selectedProject) {
+            selectedProject = adminProjects.find((p: any) => p.slug === projectId);
+            if (!selectedProject && simpleProjects.length) {
+              selectedProject = simpleProjects.find((p: any) => p.slug === projectId);
+            }
+          }
+          if (!selectedProject) {
+            throw new Error(`Projet "${projectId}" introuvable`);
+          }
+          // S'assurer que le projet sélectionné a un id
+          if (!selectedProject.id) {
+            selectedProject.id = selectedProject.slug || projectId;
+          }
+          pageData = selectedProject;
+        } else {
+          if (['home', 'contact', 'studio', 'work', 'blog'].includes(pageKey)) {
+            pageData = (data as any)[pageKey];
+          } else if (data.pages?.pages) {
+            // Chercher dans les pages custom par slug, id ou titre
+            pageData = data.pages.pages.find((p: any) => 
+              p.slug === pageKey || 
+              p.id === pageKey || 
+              p.title?.toLowerCase() === pageKey.toLowerCase()
+            );
+          }
         }
 
         if (!pageData) {
           console.warn('[Preview] Pages disponibles:', data.pages?.pages?.map((p: any) => ({ id: p.id, slug: p.slug, title: p.title })));
-          throw new Error(`Page "${pageKey}" introuvable`);
+          throw new Error(projectId ? `Projet "${projectId}" introuvable` : `Page "${pageKey}" introuvable`);
         }
 
         const nextTemplate = (data as any)._template || 'soliva';
         const pageBlocks = Array.isArray(pageData.blocks) ? pageData.blocks : [];
+        const withFallbackBlocks = (() => {
+          if (projectId && pageBlocks.length === 0) {
+            const title = pageData.title || pageData.slug || 'Projet';
+            const desc = (pageData as any).description || (pageData as any).excerpt || pageData.content || '';
+            return [{
+              id: 'block-1',
+              type: 'page-intro',
+              data: {
+                title,
+                description: desc,
+                layout: 'default',
+                descriptionSize: 'small',
+                parallax: false,
+                parallaxSpeed: 0.25,
+              },
+              theme: 'auto'
+            }];
+          }
+          return pageBlocks;
+        })();
         
-        const normalizedBlocks = normalizeBlocks(pageBlocks);
+        const normalizedBlocks = normalizeBlocks(withFallbackBlocks);
         
         // Restaurer l'état hiddenBlockIds à partir de la propriété hidden des blocs
         const restoredHiddenIds = new Set<string>();
@@ -454,7 +533,7 @@ export default function AdminPreviewPage() {
       }
     };
     load();
-  }, [pageKey]);
+  }, [pageKey, projectId]);
 
   const handlePageChange = (nextPage: string) => {
     // Fermer l'inspecteur et nettoyer la sélection avant navigation
@@ -463,7 +542,26 @@ export default function AdminPreviewPage() {
     setInspectorColumn(null);
     setSelectedBlockId(null);
     setHoverBlockId(null);
+    setProjectId(null);
     router.push(`/admin/preview?page=${nextPage}`);
+  };
+
+  const handleProjectChange = (nextProject: string) => {
+    // Fermer l'inspecteur et nettoyer la sélection avant navigation
+    setInspectorMode(false);
+    setInspectorBlockId(null);
+    setInspectorColumn(null);
+    setSelectedBlockId(null);
+    setHoverBlockId(null);
+
+    if (!nextProject) {
+      setProjectId(null);
+      router.push(`/admin/preview?page=${pageKey}`);
+    } else {
+      setProjectId(nextProject);
+      // URL propre : seulement le projet, sans le paramètre page
+      router.push(`/admin/preview?project=${encodeURIComponent(nextProject)}`);
+    }
   };
 
   const scrollToBlock = (blockId: string, alignToTop: boolean = false) => {
@@ -741,16 +839,70 @@ export default function AdminPreviewPage() {
         }
       }).filter(html => html && typeof html === 'string' && html.trim() !== '').join('\n');
       
-        // Mettre à jour la page dans le contenu
-        if (['home', 'contact', 'studio', 'work', 'blog'].includes(pageKey)) {
-          newContent[pageKey] = {
-            ...newContent[pageKey],
-            blocks: persistedBlocks,
-            content: htmlContent || newContent[pageKey].content, // Garder l'ancien content si pas de HTML généré
-          };
-        } else if (newContent.pages?.pages) {
-          // Pour les pages custom
-          const pageIndex = newContent.pages.pages.findIndex((p: any) => 
+      // Mettre à jour la page ou le projet dans le contenu
+      if (projectId) {
+        const work = newContent.work || {};
+        const adminProjects = work.adminProjects || [];
+        const simpleProjects = (!adminProjects.length && work.projects) ? work.projects : [];
+
+        if (adminProjects.length) {
+          // Chercher par id en priorité
+          let projIndex = adminProjects.findIndex((p: any) => {
+            if (!p.id) p.id = p.slug || `project-${adminProjects.indexOf(p)}`;
+            return p.id === projectId;
+          });
+          // Fallback : chercher par slug
+          if (projIndex === -1) {
+            projIndex = adminProjects.findIndex((p: any) => p.slug === projectId);
+          }
+          if (projIndex !== -1) {
+            const target = adminProjects[projIndex];
+            // S'assurer que le projet a un id avant sauvegarde
+            if (!target.id) target.id = target.slug || projectId;
+            adminProjects[projIndex] = {
+              ...target,
+              blocks: persistedBlocks,
+              content: htmlContent || target.content
+            };
+            newContent.work = { ...work, adminProjects };
+          } else {
+            throw new Error(`Projet "${projectId}" introuvable pour la sauvegarde`);
+          }
+        } else if (simpleProjects.length) {
+          // Chercher par id en priorité
+          let projIndex = simpleProjects.findIndex((p: any, idx: number) => {
+            if (!p.id) p.id = p.slug || `project-${idx}`;
+            return p.id === projectId;
+          });
+          // Fallback : chercher par slug
+          if (projIndex === -1) {
+            projIndex = simpleProjects.findIndex((p: any) => p.slug === projectId);
+          }
+          if (projIndex !== -1) {
+            const target = simpleProjects[projIndex];
+            // S'assurer que le projet a un id avant sauvegarde
+            if (!target.id) target.id = target.slug || projectId;
+            simpleProjects[projIndex] = {
+              ...target,
+              blocks: persistedBlocks,
+              content: htmlContent || target.content
+            };
+            newContent.work = { ...work, projects: simpleProjects };
+          } else {
+            throw new Error(`Projet "${projectId}" introuvable pour la sauvegarde`);
+          }
+        } else {
+          throw new Error('Aucun projet disponible pour la sauvegarde');
+        }
+      } else if (['home', 'contact', 'studio', 'work', 'blog'].includes(pageKey)) {
+        newContent[pageKey] = {
+          ...newContent[pageKey],
+          blocks: persistedBlocks,
+          content: htmlContent || newContent[pageKey].content, // Garder l'ancien content si pas de HTML généré
+        };
+      } else if (newContent.pages?.pages) {
+        // Pour les pages custom
+        const pageIndex = newContent.pages.pages.findIndex((p: any) => 
           p.slug === pageKey || p.id === pageKey || p.title?.toLowerCase() === pageKey.toLowerCase()
         );
         if (pageIndex !== -1) {
@@ -781,8 +933,27 @@ export default function AdminPreviewPage() {
       // Mettre à jour le contenu local
       setAdminContent(newContent);
       
+      // Notifier les autres composants (admin du projet individuel, etc.) de la mise à jour
+      try {
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('content-updated', {
+            detail: {
+              projectId,
+              pageKey,
+              work: newContent.work
+            }
+          }));
+          // Déclencher un changement de storage pour forcer le rechargement
+          localStorage.setItem('content-updated', String(Date.now()));
+        }
+      } catch {
+        // ignore
+      }
+      
       toast.success('Page sauvegardée avec succès', {
-        description: `Les modifications de "${pageKey}" ont été enregistrées`
+        description: projectId
+          ? `Les modifications du projet "${projectId}" ont été enregistrées`
+          : `Les modifications de "${pageKey}" ont été enregistrées`
       });
       
       // Réinitialiser le statut après 2 secondes
@@ -823,6 +994,21 @@ export default function AdminPreviewPage() {
               ))}
             </select>
           </div>
+          {projectOptions.length > 0 && (
+            <div className="flex items-center gap-2">
+              <span className="text-gray-600">Projet</span>
+              <select
+                className="border border-gray-200 rounded px-2 py-1 text-sm text-gray-700 bg-white"
+                value={projectId || ''}
+                onChange={(e) => handleProjectChange(e.target.value)}
+              >
+                <option value="">Page Work (aucun projet ciblé)</option>
+                {projectOptions.map((o) => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </select>
+            </div>
+          )}
           <div className="flex items-center gap-2 text-gray-600">
             <span>Template</span>
             <span className="px-2 py-1 text-sm rounded border border-gray-200 bg-gray-50">{templateKey || 'soliva'}</span>
@@ -1035,13 +1221,13 @@ export default function AdminPreviewPage() {
                 if (!block) {
                   console.log('🔍 Bloc non trouvé dans racine, recherche dans colonnes...');
                   for (const parentBlock of blocks) {
-                    if (!['two-columns', 'three-columns', 'four-columns'].includes(parentBlock.type)) {
+                    if (!['two-columns', 'two-columns-13', 'three-columns', 'four-columns'].includes(parentBlock.type)) {
                       continue;
                     }
 
                     const blockData = parentBlock.data || parentBlock;
                     const columnKeys =
-                      parentBlock.type === 'two-columns'
+                      parentBlock.type === 'two-columns' || parentBlock.type === 'two-columns-13'
                         ? ['leftColumn', 'rightColumn']
                         : parentBlock.type === 'three-columns'
                         ? ['leftColumn', 'middleColumn', 'rightColumn']
@@ -1084,7 +1270,7 @@ export default function AdminPreviewPage() {
                   console.log('🔍 Bloc introuvable:', inspectorBlockId);
                   console.log('📦 Blocs racine:', blocks.map(b => b.id));
                   console.log('📋 Blocs dans colonnes:', blocks
-                    .filter(b => ['two-columns', 'three-columns', 'four-columns'].includes(b.type))
+                    .filter(b => ['two-columns', 'two-columns-13', 'three-columns', 'four-columns'].includes(b.type))
                     .map(b => {
                       const data = b.data || b;
                       return {
@@ -1108,13 +1294,13 @@ export default function AdminPreviewPage() {
                 
                 // Déterminer quelle colonne ouvrir pour l'éditeur compact
                 let initialOpenColumn: any = null;
-                if (blockParent?.type === 'two-columns' && blockColumn) {
+                if ((blockParent?.type === 'two-columns' || blockParent?.type === 'two-columns-13') && blockColumn) {
                   initialOpenColumn = blockColumn === 'leftColumn' ? 'left' : 'right';
                 } else if (blockParent?.type === 'three-columns' && blockColumn) {
                   initialOpenColumn = blockColumn === 'leftColumn' ? 'left' : blockColumn === 'middleColumn' ? 'middle' : 'right';
                 } else if (blockParent?.type === 'four-columns' && blockColumn) {
                   initialOpenColumn = blockColumn; // column1..column4
-                } else if (block.type === 'two-columns' && inspectorColumn) {
+                } else if ((block.type === 'two-columns' || block.type === 'two-columns-13') && inspectorColumn) {
                   initialOpenColumn = inspectorColumn === 'leftColumn' ? 'left' : 'right';
                 }
                 
@@ -1211,7 +1397,7 @@ export default function AdminPreviewPage() {
           {/* Iframe pour la preview isolée (responsive correct) */}
           <iframe
             ref={previewIframeRef}
-            src={`/admin/preview/iframe?page=${pageKey}`}
+            src={`/admin/preview/iframe?page=${pageKey}${projectId ? `&project=${encodeURIComponent(projectId)}` : ''}`}
             className="flex-1 w-full border-0"
             style={{ minHeight: '600px' }}
             title="Preview"

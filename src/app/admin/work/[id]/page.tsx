@@ -54,6 +54,42 @@ export default function WorkProjectEdit() {
     fetchContent();
   }, []);
 
+  // Écouter les mises à jour de contenu (depuis le visual editor ou autres sources)
+  useEffect(() => {
+    const handleContentUpdate = () => {
+      // Recharger le contenu pour synchroniser avec les modifications du visual editor
+      fetchContent();
+    };
+
+    window.addEventListener('content-updated', handleContentUpdate);
+    
+    // Écouter aussi les changements de localStorage
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'content-updated' || e.key?.includes('updated')) {
+        fetchContent();
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+
+    // Vérifier périodiquement si le contenu a été mis à jour (fallback)
+    const intervalId = setInterval(() => {
+      const lastUpdate = localStorage.getItem('content-updated');
+      if (lastUpdate) {
+        // Recharger seulement si on détecte une mise à jour récente (dans les 5 dernières secondes)
+        const updateTime = parseInt(lastUpdate, 10);
+        if (Date.now() - updateTime < 5000) {
+          fetchContent();
+        }
+      }
+    }, 2000);
+
+    return () => {
+      window.removeEventListener('content-updated', handleContentUpdate);
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(intervalId);
+    };
+  }, []);
+
   // Ajouter la classe admin-page au body
   useEffect(() => {
     document.body.classList.add('admin-page');
@@ -76,9 +112,17 @@ export default function WorkProjectEdit() {
       const data = await response.json();
       setContent(data);
       
-      // Trouver le projet par ID
-      const foundProject = data.work?.adminProjects?.find((p: Project) => p.id === projectId);
+      // Trouver le projet par ID (priorité) ou par slug (fallback)
+      let foundProject = data.work?.adminProjects?.find((p: Project) => p.id === projectId);
+      // Fallback : chercher par slug si pas trouvé par id
+      if (!foundProject) {
+        foundProject = data.work?.adminProjects?.find((p: Project) => p.slug === projectId);
+      }
       if (foundProject) {
+        // S'assurer que le projet a un id
+        if (!foundProject.id) {
+          foundProject.id = foundProject.slug || projectId;
+        }
         setProject(foundProject);
       } else {
         // Créer un nouveau projet si pas trouvé
@@ -329,9 +373,11 @@ export default function WorkProjectEdit() {
       };
       
       // Nettoyer le contenu du projet
+      // IMPORTANT : Préserver les blocs pour la synchronisation avec le visual editor
       const cleanedProject = {
         ...projectToSave,
-        content: cleanProjectContent(finalContent)
+        content: cleanProjectContent(finalContent),
+        blocks: projectToSave.blocks // Préserver les blocs (utilisés par le visual editor)
       };
       
       console.log('💾 Projet à sauvegarder:', {

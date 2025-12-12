@@ -7,7 +7,7 @@ interface SpacingSectionProps {
   updateField: (path: string, value: any) => void;
 }
 
-type SizeKey = 'sm' | 'md' | 'lg';
+type SizeKey = 'sm' | 'md' | 'lg' | 'xl';
 
 const SpacingSection: React.FC<SpacingSectionProps> = ({ localData, updateField }) => {
   const [mode, setMode] = useState<'auto'|'custom'>('custom');
@@ -16,6 +16,7 @@ const SpacingSection: React.FC<SpacingSectionProps> = ({ localData, updateField 
   const [gapSm, setGapSm] = useState<string>(defaultSpacing.gap?.sm || '0.5rem');
   const [gapMd, setGapMd] = useState<string>(defaultSpacing.gap?.md || '1rem');
   const [gapLg, setGapLg] = useState<string>(defaultSpacing.gap?.lg || '1.5rem');
+  const [gapXl, setGapXl] = useState<string>('4rem');
   const [defaultGap, setDefaultGap] = useState<SizeKey>(defaultSpacing.defaultGap || 'md');
 
   // Constructeur clamp (min / fluide / max) pour le mode "custom"
@@ -47,10 +48,11 @@ const SpacingSection: React.FC<SpacingSectionProps> = ({ localData, updateField 
     if (spacing.gap?.sm) setGapSm(spacing.gap.sm);
     if (spacing.gap?.md) setGapMd(spacing.gap.md);
     if (spacing.gap?.lg) setGapLg(spacing.gap.lg);
+    if (spacing.gap?.xl) setGapXl(spacing.gap.xl);
     if (spacing.defaultGap) setDefaultGap(spacing.defaultGap);
   }, [localData?.metadata?.spacing]);
 
-  const save = (updates?: Partial<{ sectionY: string; gapSm: string; gapMd: string; gapLg: string; defaultGap: SizeKey; mode: 'auto'|'custom'; autoTarget: number }>) => {
+  const save = (updates?: Partial<{ sectionY: string; gapSm: string; gapMd: string; gapLg: string; gapXl: string; defaultGap: SizeKey; mode: 'auto'|'custom'; autoTarget: number }>) => {
     const nextMode = updates?.mode ?? mode;
     const next: any = {
       mode: nextMode,
@@ -58,6 +60,7 @@ const SpacingSection: React.FC<SpacingSectionProps> = ({ localData, updateField 
         sm: updates?.gapSm ?? gapSm,
         md: updates?.gapMd ?? gapMd,
         lg: updates?.gapLg ?? gapLg,
+        xl: updates?.gapXl ?? gapXl,
       },
       defaultGap: updates?.defaultGap ?? defaultGap,
     };
@@ -158,13 +161,14 @@ const SpacingSection: React.FC<SpacingSectionProps> = ({ localData, updateField 
           <option value="sm">Petit (sm)</option>
           <option value="md">Moyen (md)</option>
           <option value="lg">Grand (lg)</option>
+          <option value="xl">Très grand (xl)</option>
         </select>
         <p className="text-xs text-gray-500 mt-1">Valeur exposée comme <code>var(--gap)</code>.</p>
       </div>
 
       <div>
         <h3 className="text-sm font-medium mb-2">Tailles de gap</h3>
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid md:grid-cols-4 gap-4">
           <div>
             <label className="block text-xs text-gray-600 mb-1">Gap sm</label>
             <input
@@ -193,6 +197,16 @@ const SpacingSection: React.FC<SpacingSectionProps> = ({ localData, updateField 
               value={gapLg}
               onChange={(e) => setGapLg(e.target.value)}
               onBlur={(e) => save({ gapLg: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Gap xl (Très grand)</label>
+            <input
+              className="w-full border rounded-md px-3 py-2"
+              placeholder="ex: 64px ou 4rem"
+              value={gapXl}
+              onChange={(e) => setGapXl(e.target.value)}
+              onBlur={(e) => save({ gapXl: e.target.value })}
             />
           </div>
         </div>

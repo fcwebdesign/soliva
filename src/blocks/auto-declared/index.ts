@@ -22,6 +22,7 @@ import './ServicesBlock';
 import './TestimonialBlock';
 import './ThreeColumnsBlock';
 import './TwoColumnsBlock';
+import './TwoColumns13Block';
 import './TwoImagesBlock';
 import './MouseImageGalleryBlock';
 import './InfiniteTextScrollBlock';

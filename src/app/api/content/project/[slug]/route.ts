@@ -44,18 +44,24 @@ export async function GET(
       );
     }
     
-    console.log(`✅ API Project: Projet "${slug}" chargé`);
+    console.log(`✅ API Project: Projet "${slug}" chargé`, {
+      hasBlocks: !!project.blocks,
+      blocksCount: project.blocks?.length || 0,
+      hasContent: !!project.content
+    });
     
     return NextResponse.json({
       project: {
         ...project,
-        // Contenu complet inclus
+        // Contenu complet inclus (blocs, content, etc.)
       }
     }, {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=300', // Cache 5min pour le contenu
+        'Cache-Control': 'no-cache, no-store, must-revalidate', // Pas de cache pour avoir les dernières modifications
+        'Pragma': 'no-cache',
+        'Expires': '0'
       }
     });
   } catch (error) {

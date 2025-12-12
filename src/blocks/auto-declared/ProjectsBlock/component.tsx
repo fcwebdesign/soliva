@@ -59,11 +59,14 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
         setFullContent(content);
         
         // Récupérer les projets publiés depuis adminProjects ou projects
+        const adminProjects = Array.isArray(content.work?.adminProjects) ? content.work.adminProjects : [];
+        const publicProjects = Array.isArray(content.work?.projects) ? content.work.projects : [];
+
         let projects: Project[] = [];
-        
-        if (content.work?.adminProjects) {
+
+        if (adminProjects.length > 0) {
           // Priorité aux projets de l'admin (avec blocs)
-          projects = content.work.adminProjects
+          projects = adminProjects
             .filter((p: any) => p.status === 'published' || !p.status)
             .map((p: any, index: number) => ({
               id: p.id || p.slug || `project-${index}`,
@@ -77,9 +80,9 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
               status: p.status,
               featured: p.featured
             }));
-        } else if (content.work?.projects) {
+        } else if (publicProjects.length > 0) {
           // Fallback vers les projets publics
-          projects = content.work.projects.map((p: any, index: number) => ({
+          projects = publicProjects.map((p: any, index: number) => ({
             id: p.id || p.slug || `project-${index}`,
             title: p.title,
             description: p.description,
@@ -126,10 +129,13 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
         const content = await response.json();
         setFullContent(content);
         
+        const adminProjects = Array.isArray(content.work?.adminProjects) ? content.work.adminProjects : [];
+        const publicProjects = Array.isArray(content.work?.projects) ? content.work.projects : [];
+
         let projects: Project[] = [];
         
-        if (content.work?.adminProjects) {
-          projects = content.work.adminProjects
+        if (adminProjects.length > 0) {
+          projects = adminProjects
             .filter((p: any) => p.status === 'published' || !p.status)
             .map((p: any, index: number) => ({
               id: p.id || p.slug || `project-${index}`,
@@ -143,8 +149,8 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
               status: p.status,
               featured: p.featured
             }));
-        } else if (content.work?.projects) {
-          projects = content.work.projects.map((p: any, index: number) => ({
+        } else if (publicProjects.length > 0) {
+          projects = publicProjects.map((p: any, index: number) => ({
             id: p.id || p.slug || `project-${index}`,
             title: p.title,
             description: p.description,
@@ -367,49 +373,51 @@ export default function ProjectsBlock({ data }: { data: ProjectsData | any }) {
     <section className="projects-section" data-block-type="projects" data-block-theme={blockData.theme || (data as any).theme || 'auto'}>
       <div>
         {/* Titre de la section et navigation du carousel */}
-        <div className="mb-12 flex justify-between items-center">
-          {title && (
-            <h2 
-              className={h2Classes}
-              style={h2CustomColor ? { color: h2CustomColor } : { color: 'var(--foreground)' }}
-              data-block-type="h2"
-            >
-              {title}
-            </h2>
-          )}
-          
-          {/* Navigation - sur la même ligne que le titre */}
-          {needsNavigation && displayMode !== 'grid' && (
-            <div className="flex space-x-2">
-              <button
-                onClick={() => emblaApi?.scrollPrev()}
-                className={`w-[42px] h-[42px] rounded-full transition-all duration-300 flex items-center justify-center font-semibold ${
-                  !canPrev ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
-                }`}
-                style={{
-                  backgroundColor: !canPrev ? 'var(--muted)' : 'var(--primary)',
-                  color: !canPrev ? 'var(--muted-foreground)' : 'var(--primary-foreground)',
-                  border: !canPrev ? '1px solid var(--border)' : 'none'
-                }}
+        {(title || (needsNavigation && displayMode !== 'grid')) && (
+          <div className="mb-12 flex justify-between items-center">
+            {title && (
+              <h2 
+                className={h2Classes}
+                style={h2CustomColor ? { color: h2CustomColor } : { color: 'var(--foreground)' }}
+                data-block-type="h2"
               >
-                ←
-              </button>
-              <button
-                onClick={() => emblaApi?.scrollNext()}
-                className={`w-[42px] h-[42px] rounded-full transition-all duration-300 flex items-center justify-center font-semibold ${
-                  !canNext ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
-                }`}
-                style={{
-                  backgroundColor: !canNext ? 'var(--muted)' : 'var(--primary)',
-                  color: !canNext ? 'var(--muted-foreground)' : 'var(--primary-foreground)',
-                  border: !canNext ? '1px solid var(--border)' : 'none'
-                }}
-              >
-                →
-              </button>
-            </div>
-          )}
-        </div>
+                {title}
+              </h2>
+            )}
+            
+            {/* Navigation - sur la même ligne que le titre */}
+            {needsNavigation && displayMode !== 'grid' && (
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => emblaApi?.scrollPrev()}
+                  className={`w-[42px] h-[42px] rounded-full transition-all duration-300 flex items-center justify-center font-semibold ${
+                    !canPrev ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
+                  }`}
+                  style={{
+                    backgroundColor: !canPrev ? 'var(--muted)' : 'var(--primary)',
+                    color: !canPrev ? 'var(--muted-foreground)' : 'var(--primary-foreground)',
+                    border: !canPrev ? '1px solid var(--border)' : 'none'
+                  }}
+                >
+                  ←
+                </button>
+                <button
+                  onClick={() => emblaApi?.scrollNext()}
+                  className={`w-[42px] h-[42px] rounded-full transition-all duration-300 flex items-center justify-center font-semibold ${
+                    !canNext ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
+                  }`}
+                  style={{
+                    backgroundColor: !canNext ? 'var(--muted)' : 'var(--primary)',
+                    color: !canNext ? 'var(--muted-foreground)' : 'var(--primary-foreground)',
+                    border: !canNext ? '1px solid var(--border)' : 'none'
+                  }}
+                >
+                  →
+                </button>
+              </div>
+            )}
+          </div>
+        )}
         
         {/* Grille des projets ou carousel Embla */}
         {displayMode === 'grid' ? (
