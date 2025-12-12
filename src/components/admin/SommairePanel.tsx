@@ -154,7 +154,8 @@ interface SommairePanelProps {
   onDuplicateBlock?: (blockId: string) => void;
   onReorderBlocks?: (newBlocks: any[]) => void;
   onAddBlock?: (blockType: string) => void;
-  renderAction?: (section: Section) => React.ReactNode;
+  renderAction?: (section: Section, isHidden?: boolean, onDeleteBlock?: (id: string) => void) => React.ReactNode;
+  hiddenBlockIds?: Set<string>;
 }
 
 // Composant pour les éléments sortables - garde le design original

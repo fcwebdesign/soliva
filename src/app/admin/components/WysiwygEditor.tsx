@@ -11,7 +11,7 @@ interface WysiwygEditorProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-  onAISuggestion?: ((params: any) => Promise<void>) | null;
+  onAISuggestion?: ((params: any) => Promise<void> | void) | null;
   isLoadingAI?: boolean;
   compact?: boolean;
 }
@@ -296,7 +296,7 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ value, onChange, placehol
           <EditorContent editor={editor} className="[&_.ProseMirror]:p-2 [&_.ProseMirror]:text-[13px] [&_.ProseMirror]:leading-normal [&_.ProseMirror_p]:text-[13px] [&_.ProseMirror_p]:leading-normal [&_.ProseMirror_p]:font-normal" />
         </div>
         <LinkDialog
-          open={linkDialogOpen}
+          isOpen={linkDialogOpen}
           onClose={() => setLinkDialogOpen(false)}
           onSave={handleLinkSave}
           initialHref={editor.getAttributes('link').href || ''}

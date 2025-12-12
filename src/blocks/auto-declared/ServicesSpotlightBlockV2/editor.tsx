@@ -15,7 +15,7 @@ import MediaUploader from '../../../app/admin/components/MediaUploader';
 
 interface SpotlightItem {
   id?: string;
-  title: string;
+  title?: string;
   indicator?: string;
   image?: {
     src?: string;
@@ -33,6 +33,10 @@ interface ServicesSpotlightData {
   itemHeadingVariant?: 'small' | 'medium' | 'large';
   theme?: 'light' | 'dark' | 'auto';
   items?: SpotlightItem[];
+  backgroundColor?: string;
+  textColor?: string;
+  mutedColor?: string;
+  accentColor?: string;
 }
 
 function SortableItemWithPages({

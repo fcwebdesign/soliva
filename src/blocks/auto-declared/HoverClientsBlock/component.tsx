@@ -9,7 +9,7 @@ import './styles.css';
 
 interface HoverClientItem {
   id?: string;
-  name: string;
+  name?: string;
   image?: {
     src?: string;
     alt?: string;

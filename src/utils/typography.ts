@@ -18,7 +18,7 @@ export interface TypographyConfig {
     lineHeight?: string;
     color?: string;
     tracking?: string;
-    font?: 'primary' | 'secondary';
+    font?: string;
   };
   h2?: {
     fontSize?: string;
@@ -26,7 +26,7 @@ export interface TypographyConfig {
     lineHeight?: string;
     color?: string;
     tracking?: string;
-    font?: 'primary' | 'secondary';
+    font?: string;
   };
   h3?: {
     fontSize?: string;
@@ -34,7 +34,7 @@ export interface TypographyConfig {
     lineHeight?: string;
     color?: string;
     tracking?: string;
-    font?: 'primary' | 'secondary';
+    font?: string;
   };
   h4?: {
     fontSize?: string;
@@ -42,7 +42,7 @@ export interface TypographyConfig {
     lineHeight?: string;
     color?: string;
     tracking?: string;
-    font?: 'primary' | 'secondary';
+    font?: string;
   };
   h1Single?: {
     fontSize?: string;
@@ -50,7 +50,7 @@ export interface TypographyConfig {
     lineHeight?: string;
     color?: string;
     tracking?: string;
-    font?: 'primary' | 'secondary';
+    font?: string;
   };
   p?: {
     fontSize?: string;
@@ -58,7 +58,7 @@ export interface TypographyConfig {
     lineHeight?: string;
     color?: string;
     tracking?: string;
-    font?: 'primary' | 'secondary';
+    font?: string;
   };
   nav?: {
     fontSize?: string;
@@ -66,7 +66,7 @@ export interface TypographyConfig {
     lineHeight?: string;
     color?: string;
     tracking?: string;
-    font?: 'primary' | 'secondary';
+    font?: string;
   };
   footer?: {
     fontSize?: string;
@@ -74,7 +74,7 @@ export interface TypographyConfig {
     lineHeight?: string;
     color?: string;
     tracking?: string;
-    font?: 'primary' | 'secondary';
+    font?: string;
   };
   kicker?: {
     fontSize?: string;
@@ -82,7 +82,7 @@ export interface TypographyConfig {
     lineHeight?: string;
     color?: string;
     tracking?: string;
-    font?: 'primary' | 'secondary';
+    font?: string;
   };
   fonts?: {
     primary?: TypographyFontSettings;
@@ -109,7 +109,7 @@ export function getTypographyClasses(
     lineHeight: string;
     color: string;
     tracking: string;
-    font?: 'primary' | 'secondary';
+    font?: string;
   }
 ): string {
   const elementConfig = config[element] || {};

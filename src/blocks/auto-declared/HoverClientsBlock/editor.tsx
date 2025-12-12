@@ -15,7 +15,7 @@ import MediaUploader from '../../../app/admin/components/MediaUploader';
 
 interface HoverClientItem {
   id?: string;
-  name: string;
+  name?: string;
   image?: {
     src?: string;
     alt?: string;

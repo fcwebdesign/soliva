@@ -623,7 +623,7 @@ export default function BlockRenderer({ blocks, content: contentProp, withDebugI
           const wrapped = wrapWithAnimation(blockElement, block.type);
           // Cas particulier : pinned-section ne supporte pas d'être rewrapé (ScrollTrigger pin-spacer)
           if (withDebugIds) {
-            if (block.type === 'pinned-section') {
+            if ((block as any).type === 'pinned-section') {
               return React.cloneElement(wrapped as any, {
                 key: block.id,
                 'data-block-id': block.id,

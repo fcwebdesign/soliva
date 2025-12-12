@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { ImagePlus, Trash2 } from 'lucide-react';
 import { useImageUpload } from './hooks/useImageUpload';
-import { AspectRatioSelect, AspectRatioValue } from './AspectRatioSelect';
+import AspectRatioSelect, { AspectRatioValue } from './AspectRatioSelect';
 import type { ImageData } from './ReusableImage';
 
 interface ImageEditorFieldProps {
@@ -266,4 +266,3 @@ export default function ImageEditorField({
     </div>
   );
 }
-

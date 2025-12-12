@@ -6,6 +6,7 @@ import Image from 'next/image';
 interface MediaUploaderProps {
   currentUrl?: string;
   onUpload: (url: string) => void;
+  compact?: boolean;
 }
 
 export default function MediaUploader({ currentUrl, onUpload }: MediaUploaderProps) {

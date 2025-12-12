@@ -61,7 +61,7 @@ export const FALLBACK_SLIDES: SlideInput[] = [
 
 export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | any }) {
   const blockData = useMemo(() => (data as any).data || data, [data]);
-  const sliderRef = useRef<HTMLElement | null>(null);
+  const sliderRef = useRef<HTMLDivElement | null>(null);
   const imagesRef = useRef<HTMLDivElement | null>(null);
   const titleRef = useRef<HTMLDivElement | null>(null);
   const indicesRef = useRef<HTMLDivElement | null>(null);
@@ -290,11 +290,11 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
         try {
           // Ne pas forcer le progress si on est déjà sur la bonne slide
           if (activeSlide !== index) {
-            triggerRef.progress(targetProgress, false);
+            (triggerRef as any).progress(targetProgress, false);
             activeSlide = index;
             desiredIndexRef.current = index;
             if (progressEl) {
-              gsap.set(progressEl, { scaleY: triggerRef.progress() });
+              gsap.set(progressEl, { scaleY: (triggerRef as any).progress() });
             }
             animateSlide(index);
           }
@@ -314,7 +314,7 @@ export default function ScrollSliderBlock({ data }: { data: ScrollSliderData | a
         anticipatePin: 0.5,
         refreshPriority: 1,
         invalidateOnRefresh: true,
-        onStart: () => {
+        onEnter: () => {
           // Nettoyer puis forcer le slide initial
           const existingImages = imagesEl.querySelectorAll('img');
           existingImages.forEach(img => imagesEl.removeChild(img));

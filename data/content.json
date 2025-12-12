@@ -513,6 +513,118 @@
             "alignment": "top",
             "theme": "auto",
             "hidden": false
+          },
+          {
+            "id": "services-spotlight-v2-1765569736769",
+            "type": "services-spotlight-v2",
+            "title": "Services",
+            "indicatorLabel": "Specialization",
+            "showIndicator": true,
+            "headingVariant": "medium",
+            "itemHeadingVariant": "medium",
+            "theme": "auto",
+            "items": [
+              {
+                "id": "service-2",
+                "title": "Visual Direction",
+                "indicator": "[ Vision ]",
+                "image": {
+                  "src": "/blocks/services-spotlight/spotlight-2.jpg",
+                  "alt": "Visual direction"
+                }
+              },
+              {
+                "id": "service-1",
+                "title": "Camera Work",
+                "indicator": "[ Framing ]",
+                "image": {
+                  "src": "/blocks/services-spotlight/spotlight-1.jpg",
+                  "alt": "Camera work"
+                }
+              },
+              {
+                "id": "service-3",
+                "title": "Sound Design",
+                "indicator": "[ Resonance ]",
+                "image": {
+                  "src": "/blocks/services-spotlight/spotlight-3.jpg",
+                  "alt": "Sound design"
+                }
+              },
+              {
+                "id": "service-4",
+                "title": "Film Editing",
+                "indicator": "[ Sequence ]",
+                "image": {
+                  "src": "/blocks/services-spotlight/spotlight-4.jpg",
+                  "alt": "Film editing"
+                }
+              }
+            ],
+            "hidden": false
+          },
+          {
+            "id": "gallery-grid-1765576345218",
+            "type": "gallery-grid",
+            "images": [
+              {
+                "id": "image-1765576356619-0",
+                "src": "/uploads/1765576354343-eb4e316a.webp",
+                "alt": "",
+                "title": "",
+                "description": "",
+                "category": ""
+              },
+              {
+                "id": "image-1765576356619-1",
+                "src": "/uploads/1765576354324-f35bb6cb.webp",
+                "alt": "",
+                "title": "",
+                "description": "",
+                "category": ""
+              },
+              {
+                "id": "image-1765576356619-2",
+                "src": "/uploads/1765576354329-eb14b6c8.webp",
+                "alt": "",
+                "title": "",
+                "description": "",
+                "category": ""
+              },
+              {
+                "id": "image-1765576356619-3",
+                "src": "/uploads/1765576354335-9be32ed7.webp",
+                "alt": "",
+                "title": "",
+                "description": "",
+                "category": ""
+              },
+              {
+                "id": "image-1765576356619-4",
+                "src": "/uploads/1765576354327-60fb3c45.webp",
+                "alt": "",
+                "title": "",
+                "description": "",
+                "category": ""
+              },
+              {
+                "id": "image-1765576356619-5",
+                "src": "/uploads/1765576354341-5232c61c.webp",
+                "alt": "",
+                "title": "",
+                "description": "",
+                "category": ""
+              }
+            ],
+            "layout": "grid-3",
+            "gap": "medium",
+            "showFilters": true,
+            "showTitles": true,
+            "showDescriptions": true,
+            "enableLightbox": true,
+            "enableDownload": true,
+            "theme": "auto",
+            "hidden": false
           }
         ],
         "image": "/uploads/1765542636682-33306838.webp"

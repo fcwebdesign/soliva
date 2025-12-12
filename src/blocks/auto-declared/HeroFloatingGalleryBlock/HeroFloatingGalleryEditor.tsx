@@ -42,6 +42,10 @@ interface FloatingGalleryData {
   images?: FloatingImage[];
   theme?: 'light' | 'dark' | 'auto';
   transparentHeader?: boolean;
+  parallax?: {
+    enabled?: boolean;
+    speed?: number;
+  };
 }
 
 function SortableFloatingImage({

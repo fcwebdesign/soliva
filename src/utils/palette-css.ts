@@ -1,8 +1,7 @@
 import type { ResolvedPalette } from './palette';
 
 export const varsFromPalette = (p: ResolvedPalette) => {
-  // shadcn attend hsl(var(--token)) ; on pose des hex → OK via arbitrary bg-[var(--...)] ou
-  // on reste cohérent et met directement des hex dans les vars, Tailwind lira var() sans souci.
+  // shadcn attend hsl(var(--token)) ; on pose des hex directement dans les vars, Tailwind lit var() sans souci.
   return {
     // shadcn/ui tokens
     '--background':            p.background,
@@ -34,7 +33,6 @@ export const varsFromPalette = (p: ResolvedPalette) => {
     '--accent-legacy':         'var(--accent)',
   } as Record<string,string>;
 };
-
 
 
 

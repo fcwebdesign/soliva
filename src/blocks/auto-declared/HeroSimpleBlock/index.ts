@@ -6,7 +6,7 @@ registerAutoBlock({
   type: 'hero-simple',
   label: 'Hero fixé - Simple',
   icon: '🖼️',
-  category: 'hero',
+  category: 'layout',
   component: HeroSimpleBlock,
   editor: HeroSimpleEditor,
   description: 'Hero fixé : image fullscreen avec titre et sous-titre. Toujours en première position.',
@@ -27,4 +27,3 @@ registerAutoBlock({
     },
   },
 });
-

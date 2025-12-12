@@ -29,6 +29,7 @@ interface ScrollSliderData {
   showProgressBar?: boolean;
   showText?: boolean;
   showOverlay?: boolean;
+  previewVersion?: number;
 }
 
 const normalizeSlides = (raw: SlideEditorItem[] | undefined) => {
@@ -48,10 +49,10 @@ const normalizeSlides = (raw: SlideEditorItem[] | undefined) => {
       title: item.title || '',
       image: {
         src,
-        alt: item.image?.alt || item.alt || '',
-        aspectRatio: item.image?.aspectRatio || item.aspectRatio || '16:9',
+        alt: item.image?.alt || (item as any).alt || '',
+        aspectRatio: (item.image as any)?.aspectRatio || (item as any).aspectRatio || '16:9',
       } as ImageData,
-      hidden: item.hidden || false,
+      hidden: (item as any).hidden || false,
     };
   });
 };

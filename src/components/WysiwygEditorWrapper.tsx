@@ -9,7 +9,7 @@ interface WysiwygEditorWrapperProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-  onAISuggestion?: ((params: any) => Promise<void>) | null;
+  onAISuggestion?: ((params: any) => Promise<void> | void) | null;
   isLoadingAI?: boolean;
   compact?: boolean;
 }
@@ -33,4 +33,3 @@ export default function WysiwygEditorWrapper({
     />
   );
 }
-

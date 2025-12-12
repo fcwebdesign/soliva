@@ -23,6 +23,10 @@ interface ServicesSpotlightData {
   showIndicator?: boolean;
   itemHeadingVariant?: 'small' | 'medium' | 'large';
   theme?: 'light' | 'dark' | 'auto';
+  backgroundColor?: string;
+  textColor?: string;
+  mutedColor?: string;
+  accentColor?: string;
 }
 
 const FALLBACK_ITEMS: SpotlightItem[] = [
@@ -151,11 +155,13 @@ export default function ServicesSpotlightBlockV2({ data }: { data: ServicesSpotl
   }, [typoConfig]);
 
   useLayoutEffect(() => {
-    if (blockData?.showIndicator === false) return;
+    if (blockData?.showIndicator === false) {
+      return undefined;
+    }
     const indicatorEl = indicatorRef.current;
     const listEl = listRef.current;
     const containerEl = containerRef.current;
-    if (!indicatorEl || !listEl) return;
+    if (!indicatorEl || !listEl) return undefined;
 
     const updateIndicator = () => {
       const current = itemRefs.current[activeIndex];
@@ -243,7 +249,9 @@ export default function ServicesSpotlightBlockV2({ data }: { data: ServicesSpotl
             return (
               <div
                 key={item.id || index}
-                ref={(el) => (itemRefs.current[index] = el)}
+                ref={(el) => {
+                  itemRefs.current[index] = el;
+                }}
               >
                 {itemElement}
               </div>

@@ -356,7 +356,6 @@ const Footer: React.FC<FooterProps> = ({ content, fullContent }) => {
           end: `bottom top-=${stickyHeight}`, // Sur une distance égale à la hauteur du footer
           scrub: true,
           markers: true, // Pour debug - à retirer après
-          onStart: () => console.log('🚀 [StickyFooter] Animation démarrée'),
           onUpdate: (self) => console.log('🔄 [StickyFooter] Progress:', self.progress),
         }
       }

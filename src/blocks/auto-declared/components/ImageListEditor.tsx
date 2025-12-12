@@ -17,6 +17,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { SortableImageItem, ImageItemData, AspectRatioValue } from './';
+import { Label } from '@/components/ui/label';
 
 export interface ImageListEditorProps<T extends ImageItemData> {
   items: T[];

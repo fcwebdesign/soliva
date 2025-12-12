@@ -12,7 +12,8 @@ interface PageIntroData {
   theme?: 'light' | 'dark' | 'auto';
   layout?: 'default' | 'two-columns';
   isFirstHeading?: boolean;
-  descriptionSize?: 'small' | 'medium' | 'large';
+  // Accepte à la fois les alias (small/medium/large) et les clés de typo directes
+  descriptionSize?: 'small' | 'medium' | 'large' | 'h1' | 'h2' | 'h3' | 'h4' | 'p';
   parallax?: {
     enabled?: boolean;
     speed?: number;

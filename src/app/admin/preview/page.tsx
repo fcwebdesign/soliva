@@ -209,11 +209,11 @@ export default function AdminPreviewPage() {
     const scroller = previewPaneRef.current;
     if (!scroller) return;
     try {
-      const previousDefaults = ScrollTrigger.defaults();
-      ScrollTrigger.defaults({ scroller });
+      const previousDefaults = (ScrollTrigger as any).defaults ? (ScrollTrigger as any).defaults() : {};
+      (ScrollTrigger as any).defaults({ scroller });
       ScrollTrigger.refresh();
       return () => {
-        ScrollTrigger.defaults(previousDefaults || {});
+        (ScrollTrigger as any).defaults(previousDefaults || {});
         ScrollTrigger.refresh();
       };
     } catch (e) {
@@ -255,15 +255,7 @@ export default function AdminPreviewPage() {
       // Vérifier si on est dans une colonne
       // 1. Via inspectorColumn (déjà mis à jour quand on sélectionne une colonne)
       // 2. Via selectedBlockId/inspectorBlockId au format blockId:leftColumn ou blockId:rightColumn
-      let targetColumn:
-        | 'leftColumn'
-        | 'rightColumn'
-        | 'middleColumn'
-        | 'column1'
-        | 'column2'
-        | 'column3'
-        | 'column4'
-        | null = inspectorColumn;
+      let targetColumn: any = inspectorColumn;
       let parentLayoutBlockId: string | null = null;
       
       if (!targetColumn) {
@@ -1114,7 +1106,7 @@ export default function AdminPreviewPage() {
                         setPreviewData((prev) => prev ? { ...prev, blocks: normalizeBlocks(newBlocks) } : prev);
                       }}
                       hiddenBlockIds={hiddenBlockIds}
-                      renderAction={(section, isHidden = false, onDelete) => {
+                      renderAction={(section) => {
                         if (section.type === 'column') return null;
                         const blockIsHidden = hiddenBlockIds.has(section.id);
                         return (
@@ -1131,20 +1123,18 @@ export default function AdminPreviewPage() {
                             >
                               {blockIsHidden ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
                             </button>
-                            {onDelete && (
-                              <button
-                                type="button"
-                                aria-label="Supprimer"
-                                onClick={(e) => { 
-                                  e.stopPropagation(); 
-                                  onDelete(section.id); 
-                                }}
-                                className="opacity-0 group-hover:opacity-100 p-0.5 rounded text-gray-400 hover:text-red-500 hover:bg-gray-100 transition-all flex-shrink-0"
-                                title="Supprimer"
-                              >
-                                <Trash2 className="w-3 h-3" />
-                              </button>
-                            )}
+                            <button
+                              type="button"
+                              aria-label="Supprimer"
+                              onClick={(e) => { 
+                                e.stopPropagation(); 
+                                handleDeleteBlock(section.id); 
+                              }}
+                              className="opacity-0 group-hover:opacity-100 p-0.5 rounded text-gray-400 hover:text-red-500 hover:bg-gray-100 transition-all flex-shrink-0"
+                              title="Supprimer"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
                           </>
                         );
                       }}

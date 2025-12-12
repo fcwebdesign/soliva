@@ -119,6 +119,10 @@ export default function PageIntroBlock({ data }: { data: PageIntroData | any }) 
       .trim();
   }, [typoConfig]);
 
+  // Déterminer le titre et la description (priorité: custom > pageData.hero > pageData)
+  const title = customTitle || pageData?.hero?.title || pageData?.title || '';
+  const description = customDescription || pageData?.hero?.subtitle || pageData?.description || '';
+  
   // Parallax léger (scroll)
   useEffect(() => {
     const el = sectionRef.current;
@@ -177,10 +181,6 @@ export default function PageIntroBlock({ data }: { data: PageIntroData | any }) 
     if (customColor) return customColor;
     return 'var(--foreground)';
   }, [typoConfig, descriptionTypographyKey]);
-  
-  // Déterminer le titre et la description (priorité: custom > pageData.hero > pageData)
-  const title = customTitle || pageData?.hero?.title || pageData?.title || '';
-  const description = customDescription || pageData?.hero?.subtitle || pageData?.description || '';
   
   // Si rien à afficher, ne rien rendre
   if (!title && !description) {

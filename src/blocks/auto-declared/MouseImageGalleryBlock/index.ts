@@ -6,7 +6,7 @@ registerAutoBlock({
   type: 'mouse-image-gallery',
   label: 'Hero fixé - Mouse Image Gallery',
   icon: '🖱️',
-  category: 'hero',
+  category: 'layout',
   component: MouseImageGalleryBlock,
   editor: MouseImageGalleryEditor,
   description: 'Hero fixé : galerie qui suit la souris (inspirée Olivier Larose). Toujours en première position.',
