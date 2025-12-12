@@ -7,6 +7,9 @@
   /* Valeurs par défaut (fallback) - seront surchargées par ColorPaletteProvider */
   --background: #ffffff;
   --foreground: #0a0a0a;
+  /* Fallback polices (surchargées dynamiquement par typography) */
+  --font-primary: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  --font-secondary: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   --card: #ffffff;
   --card-foreground: #0a0a0a;
   --popover: #ffffff;
@@ -94,6 +97,15 @@
   --chart-5: oklch(0.769 0.188 70.08);
 }
 
+/* Classes utilitaires pour les polices primaires/secondaires (pilotées par metadata.typography.fonts) */
+.font-primary {
+  font-family: var(--font-primary), system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+.font-secondary {
+  font-family: var(--font-secondary), system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
 /* Thème sombre - EXCLURE L'ADMIN */
 body:not(.admin-page) [data-theme="dark"],
 html:not(.admin-page) [data-theme="dark"] {
@@ -170,6 +182,7 @@ body:not(.admin-page) section[data-block-type="hero-simple"]:first-of-type {
 
 /* Pas de padding pour les blocs imbriqués (ex: blocs dans Two/Three/Four Columns) */
 body:not(.admin-page) section[data-block-type] section[data-block-type] {
+  margin-top: 0 !important;
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }

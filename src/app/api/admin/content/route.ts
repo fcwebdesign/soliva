@@ -26,11 +26,26 @@ export async function GET() {
     console.error('❌ API: Erreur lors de la lecture du contenu:', error);
     console.error('❌ API: Stack trace:', error instanceof Error ? error.stack : 'Pas de stack trace');
     
+    // Extraire les détails de l'erreur de manière plus claire
+    let errorDetails = error instanceof Error ? error.message : 'Erreur inconnue';
+    let errorStack = error instanceof Error ? error.stack : undefined;
+    
+    // Si c'est une erreur de validation Zod, extraire les détails
+    if (error instanceof Error && error.message.includes('Content validation failed')) {
+      errorDetails = error.message;
+      console.error('❌ API: Erreur de validation Zod détectée:', errorDetails);
+    }
+    
+    // Toujours retourner les détails en développement, et aussi en production pour les erreurs de validation
+    const isDev = process.env.NODE_ENV === 'development';
+    const isValidationError = error instanceof Error && error.message.includes('Content validation failed');
+    
     return NextResponse.json(
       { 
         error: 'Erreur lors de la lecture du contenu',
-        details: error instanceof Error ? error.message : 'Erreur inconnue',
-        stack: error instanceof Error ? error.stack : undefined
+        details: errorDetails,
+        stack: (isDev || isValidationError) ? errorStack : undefined,
+        timestamp: new Date().toISOString()
       },
       { status: 500 }
     );

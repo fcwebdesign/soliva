@@ -2,16 +2,44 @@
 import React, { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import WysiwygEditor from '../../../components/WysiwygEditorWrapper';
+import { Slider } from '@/components/ui/slider';
+import { Switch } from '@/components/ui/switch';
 
 interface PageIntroData {
   title?: string;
   description?: string;
   layout?: 'default' | 'two-columns';
+  descriptionSize?: 'h1' | 'h2' | 'h3' | 'h4' | 'p';
+  parallax?: {
+    enabled?: boolean;
+    speed?: number;
+  };
 }
 
 export default function PageIntroBlockEditor({ data, onChange, compact = false, context }: { data: PageIntroData; onChange: (data: PageIntroData) => void; compact?: boolean; context?: any }) {
   const [isLoadingBlockAI, setIsLoadingBlockAI] = useState<string | null>(null);
-  const [openSelect, setOpenSelect] = useState(false);
+  const [layoutOpen, setLayoutOpen] = useState(false);
+  const [descSizeOpen, setDescSizeOpen] = useState(false);
+  const sizeOptions: Array<{ value: PageIntroData['descriptionSize']; label: string }> = [
+    { value: 'h4', label: 'Petit (h4)' },
+    { value: 'h3', label: 'Moyen (h3)' },
+    { value: 'h2', label: 'Large (h2)' },
+    { value: 'h1', label: 'XL (h1)' },
+    { value: 'p', label: 'Paragraphe (p)' },
+  ];
+
+  // Compatibilité avec les anciennes valeurs (small/medium/large/xl)
+  const normalizeSize = (val?: string): PageIntroData['descriptionSize'] => {
+    const map: Record<string, PageIntroData['descriptionSize']> = {
+      small: 'h4',
+      medium: 'h3',
+      large: 'h2',
+      xl: 'h1',
+    };
+    return (map[val || ''] || (val as any)) as PageIntroData['descriptionSize'];
+  };
+
+  const currentSize = normalizeSize(data.descriptionSize) || 'h3';
   
   // Pré-remplir le titre et la description si vides (seulement au montage initial)
   const [hasInitialized, setHasInitialized] = React.useState(false);
@@ -125,7 +153,27 @@ export default function PageIntroBlockEditor({ data, onChange, compact = false, 
           </div>
 
           <div>
-            <label className="block text-[10px] text-gray-400 mb-1">Description</label>
+            <div className="flex items-center justify-between gap-2 mb-1">
+              <label className="block text-[10px] text-gray-400">Description</label>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-gray-400">Taille</span>
+              <Select
+                  value={currentSize}
+                  onValueChange={(value) => onChange({ ...data, descriptionSize: value as PageIntroData['descriptionSize'] })}
+                  open={descSizeOpen}
+                  onOpenChange={setDescSizeOpen}
+                >
+                  <SelectTrigger className="h-auto px-2 py-1 text-[12px] leading-normal font-normal shadow-none rounded">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="shadow-none border rounded">
+                    {sizeOptions.map(opt => (
+                      <SelectItem key={opt.value} value={opt.value || 'h3'}>{opt.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
             <WysiwygEditor
               value={data.description || ''}
               onChange={(content: string) => onChange({ ...data, description: content })}
@@ -136,23 +184,51 @@ export default function PageIntroBlockEditor({ data, onChange, compact = false, 
             />
           </div>
 
-          <div>
-            <label className="block text-[10px] text-gray-400 mb-1">Layout</label>
-            <Select 
-              value={data.layout || 'default'} 
-              onValueChange={(value) => onChange({ ...data, layout: value as 'default' | 'two-columns' })}
-              open={openSelect}
-              onOpenChange={setOpenSelect}
-            >
-              <SelectTrigger className="w-full h-auto px-2 py-1.5 text-[13px] leading-normal font-normal shadow-none rounded">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="shadow-none border rounded">
-                <SelectItem value="default">Par défaut (adaptatif)</SelectItem>
-                <SelectItem value="two-columns">2 colonnes</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="space-y-2">
+            <div>
+              <label className="block text-[10px] text-gray-400 mb-1">Layout</label>
+              <Select 
+                value={data.layout || 'default'} 
+                onValueChange={(value) => onChange({ ...data, layout: value as 'default' | 'two-columns' })}
+                open={layoutOpen}
+                onOpenChange={setLayoutOpen}
+              >
+                <SelectTrigger className="w-full h-auto px-2 py-1.5 text-[13px] leading-normal font-normal shadow-none rounded">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="shadow-none border rounded">
+                  <SelectItem value="default">Par défaut (adaptatif)</SelectItem>
+                  <SelectItem value="two-columns">2 colonnes</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <label className="block text-[10px] text-gray-400 mb-1">Parallax (scroll)</label>
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={!!data.parallax?.enabled}
+                  onCheckedChange={(checked) => onChange({ ...data, parallax: { ...(data.parallax || {}), enabled: checked } })}
+                />
+                <div className="flex-1 -mx-2 px-2">
+                  <Slider
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    value={[data.parallax?.speed ?? 0.25]}
+                    onValueChange={(values) =>
+                      onChange({ ...data, parallax: { ...(data.parallax || {}), enabled: true, speed: values[0] } })
+                    }
+                    disabled={!data.parallax?.enabled}
+                  />
+                </div>
+                <span className="text-[11px] text-gray-500 text-right flex-shrink-0 w-12">
+                  {(data.parallax?.speed ?? 0.25).toFixed(2)}
+                </span>
+              </div>
+            </div>
           </div>
+
         </div>
       </div>
     );
@@ -160,7 +236,7 @@ export default function PageIntroBlockEditor({ data, onChange, compact = false, 
 
   // Version normale pour le BO classique
   return (
-    <div className="block-editor space-y-4">
+      <div className="block-editor space-y-4">
       <div className="text-sm text-gray-600 mb-3">
         <p className="mb-1">💡 Ce bloc affiche le titre et la description de la page.</p>
         <p className="text-xs">Si laissés vides, il utilisera automatiquement les métadonnées de la page.</p>
@@ -181,6 +257,22 @@ export default function PageIntroBlockEditor({ data, onChange, compact = false, 
 
       {/* Description */}
       <div>
+        <div className="flex items-center gap-3 mb-2">
+          <span className="text-xs text-gray-500">Taille</span>
+          <Select
+            value={currentSize}
+            onValueChange={(value) => onChange({ ...data, descriptionSize: value as PageIntroData['descriptionSize'] })}
+          >
+            <SelectTrigger className="w-48">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {sizeOptions.map(opt => (
+                <SelectItem key={opt.value} value={opt.value || 'h3'}>{opt.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <WysiwygEditor
           value={data.description || ''}
           onChange={(content: string) => onChange({ ...data, description: content })}
@@ -211,7 +303,37 @@ export default function PageIntroBlockEditor({ data, onChange, compact = false, 
           "Par défaut" : layout adaptatif selon le template (Pearl = 2 colonnes, autres = centré)
         </p>
       </div>
+
+      {/* Parallax (design aligné avec HeroFloatingGallery) */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Parallax (scroll)</label>
+        <div className="flex items-center gap-3 mt-1">
+          <Switch
+            checked={!!data.parallax?.enabled}
+            onCheckedChange={(checked) => onChange({ ...data, parallax: { ...(data.parallax || {}), enabled: checked } })}
+          />
+          <div className="flex-1 -mx-2 px-2">
+            <Slider
+              min={0}
+              max={1}
+              step={0.05}
+              value={[data.parallax?.speed ?? 0.25]}
+              onValueChange={(values) =>
+                onChange({ ...data, parallax: { ...(data.parallax || {}), enabled: true, speed: values[0] } })
+              }
+              disabled={!data.parallax?.enabled}
+            />
+          </div>
+          <span className="text-xs text-gray-500 w-12 text-right flex-shrink-0">
+            {(data.parallax?.speed ?? 0.25).toFixed(2)}
+          </span>
+        </div>
+      </div>
+
+      {/* Taille de la description (info) */}
+      <p className="text-xs text-gray-500">
+        Le rendu suit les styles typographiques configurés : h4 (petit), h3 (moyen), h2 (large), h1 (XL), p (paragraphe).
+      </p>
     </div>
   );
 }
-

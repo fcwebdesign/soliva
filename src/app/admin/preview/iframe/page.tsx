@@ -327,6 +327,7 @@ export default function PreviewIframePage() {
   // Charger les données initiales depuis les query params (fallback)
   useEffect(() => {
     const pageKey = searchParams.get('page') || 'studio';
+    const projectKey = searchParams.get('project');
     
     const loadInitialData = async () => {
       try {
@@ -336,7 +337,14 @@ export default function PreviewIframePage() {
         const data = await res.json();
         let pageData = null;
         
-        if (['home', 'contact', 'studio', 'work', 'blog'].includes(pageKey)) {
+        // Support projet ciblé
+        if (projectKey) {
+          const adminProjects = data?.work?.adminProjects || [];
+          const simpleProjects = (!adminProjects.length && data?.work?.projects) ? data.work.projects : [];
+          pageData =
+            adminProjects.find((p: any) => p.id === projectKey || p.slug === projectKey) ||
+            simpleProjects.find((p: any, idx: number) => p.id === projectKey || p.slug === projectKey || `project-${idx}` === projectKey);
+        } else if (['home', 'contact', 'studio', 'work', 'blog'].includes(pageKey)) {
           pageData = (data as any)[pageKey];
         } else if (data.pages?.pages) {
           pageData = data.pages.pages.find((p: any) => 
@@ -347,15 +355,35 @@ export default function PreviewIframePage() {
         if (pageData) {
           const templateKey = (data as any)._template || 'soliva';
           const pageBlocks = Array.isArray(pageData.blocks) ? pageData.blocks : [];
+          const withFallbackBlocks = (() => {
+            if (projectKey && pageBlocks.length === 0) {
+              const title = pageData.title || pageData.slug || 'Projet';
+              const desc = (pageData as any).description || (pageData as any).excerpt || pageData.content || '';
+              return [{
+                id: 'block-1',
+                type: 'page-intro',
+                data: {
+                  title,
+                  description: desc,
+                  layout: 'default',
+                  descriptionSize: 'small',
+                  parallax: false,
+                  parallaxSpeed: 0.25,
+                },
+                theme: 'auto'
+              }];
+            }
+            return pageBlocks;
+          })();
           const pageWithMeta = { 
             ...pageData, 
             _template: templateKey, 
-            blocks: pageBlocks, 
+            blocks: withFallbackBlocks, 
             metadata: data.metadata 
           };
           
           setPreviewData(pageWithMeta);
-          setBlocks(pageBlocks);
+          setBlocks(withFallbackBlocks);
           
           // Détecter le thème immédiatement après le chargement
           try {

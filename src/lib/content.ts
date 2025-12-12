@@ -227,7 +227,10 @@ function validateContentSchema(raw: unknown): ContentFromSchema {
     const issues = parsed.error.issues
       .map((i) => `${i.path.join('.') || '(root)'}: ${i.message}`)
       .join('; ');
-    throw new Error(`Content validation failed: ${issues}`);
+    const errorMessage = `Content validation failed: ${issues}`;
+    logger.error('❌ Erreur de validation Zod:', errorMessage);
+    logger.error('❌ Détails des erreurs:', JSON.stringify(parsed.error.issues, null, 2));
+    throw new Error(errorMessage);
   }
   return parsed.data;
 }
@@ -345,6 +348,24 @@ async function _readContentInternal(): Promise<Content> {
     }
     
     if (error instanceof Error) {
+      // Si c'est une erreur de validation Zod, logger les détails
+      if (error.message.includes('Content validation failed')) {
+        logger.error('❌ Erreur de validation Zod détectée:', error.message);
+        // Essayer de fusionner avec le seed pour réparer automatiquement
+        try {
+          logger.debug('🔄 Tentative de réparation automatique avec le seed...');
+          const rawContent = JSON.parse(await fs.readFile(DATA_FILE_PATH, 'utf-8'));
+          const mergedContent = { ...SEED_DATA, ...rawContent };
+          // Réessayer la validation
+          const validated = validateContentSchema(mergedContent);
+          await fs.writeFile(DATA_FILE_PATH, JSON.stringify(validated, null, 2), 'utf-8');
+          logger.info('✅ Fichier réparé automatiquement');
+          return validated as Content;
+        } catch (repairError) {
+          logger.error('❌ Échec de la réparation automatique:', repairError);
+          throw error; // Relancer l'erreur originale
+        }
+      }
       // Si c'est une erreur de validation, essayer de fusionner avec le seed
       if (error.message.includes('Pages manquantes') || error.message.includes('manquante')) {
         logger.debug('🔄 Erreur de validation, fusion avec le seed...');

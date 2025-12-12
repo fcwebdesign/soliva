@@ -2,6 +2,15 @@
  * Utilitaire pour appliquer les styles typographiques depuis le BO
  */
 
+export const SYSTEM_FONT_FALLBACK = "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif";
+
+export type TypographyFontSettings = {
+  mode?: 'system' | 'google' | 'custom';
+  family?: string;
+  weights?: string;
+  cssUrl?: string;
+};
+
 export interface TypographyConfig {
   h1?: {
     fontSize?: string;
@@ -9,6 +18,7 @@ export interface TypographyConfig {
     lineHeight?: string;
     color?: string;
     tracking?: string;
+    font?: 'primary' | 'secondary';
   };
   h2?: {
     fontSize?: string;
@@ -16,6 +26,7 @@ export interface TypographyConfig {
     lineHeight?: string;
     color?: string;
     tracking?: string;
+    font?: 'primary' | 'secondary';
   };
   h3?: {
     fontSize?: string;
@@ -23,6 +34,7 @@ export interface TypographyConfig {
     lineHeight?: string;
     color?: string;
     tracking?: string;
+    font?: 'primary' | 'secondary';
   };
   h4?: {
     fontSize?: string;
@@ -30,6 +42,7 @@ export interface TypographyConfig {
     lineHeight?: string;
     color?: string;
     tracking?: string;
+    font?: 'primary' | 'secondary';
   };
   h1Single?: {
     fontSize?: string;
@@ -37,6 +50,7 @@ export interface TypographyConfig {
     lineHeight?: string;
     color?: string;
     tracking?: string;
+    font?: 'primary' | 'secondary';
   };
   p?: {
     fontSize?: string;
@@ -44,6 +58,7 @@ export interface TypographyConfig {
     lineHeight?: string;
     color?: string;
     tracking?: string;
+    font?: 'primary' | 'secondary';
   };
   nav?: {
     fontSize?: string;
@@ -51,6 +66,7 @@ export interface TypographyConfig {
     lineHeight?: string;
     color?: string;
     tracking?: string;
+    font?: 'primary' | 'secondary';
   };
   footer?: {
     fontSize?: string;
@@ -58,6 +74,7 @@ export interface TypographyConfig {
     lineHeight?: string;
     color?: string;
     tracking?: string;
+    font?: 'primary' | 'secondary';
   };
   kicker?: {
     fontSize?: string;
@@ -65,6 +82,11 @@ export interface TypographyConfig {
     lineHeight?: string;
     color?: string;
     tracking?: string;
+    font?: 'primary' | 'secondary';
+  };
+  fonts?: {
+    primary?: TypographyFontSettings;
+    secondary?: TypographyFontSettings;
   };
 }
 
@@ -87,6 +109,7 @@ export function getTypographyClasses(
     lineHeight: string;
     color: string;
     tracking: string;
+    font?: 'primary' | 'secondary';
   }
 ): string {
   const elementConfig = config[element] || {};
@@ -109,6 +132,8 @@ export function getTypographyClasses(
   const colorValue = elementConfig.color || defaults.color;
   const isCustomColor = colorValue && colorValue.startsWith('#');
   const lineHeightValue = normalizeLineHeight(elementConfig.lineHeight) || normalizeLineHeight(defaults.lineHeight);
+  const fontChoice = (elementConfig as any).font || defaults.font || 'primary';
+  const fontClass = fontChoice === 'secondary' ? 'font-secondary' : 'font-primary';
   
   const classes = [
     elementConfig.fontSize || defaults.fontSize,
@@ -119,6 +144,7 @@ export function getTypographyClasses(
     // Sinon, on ajoute la classe Tailwind
     !isCustomColor ? colorValue : null,
     elementConfig.tracking || defaults.tracking,
+    fontClass,
   ].filter(Boolean).join(' ');
   
   return classes;
@@ -179,62 +205,136 @@ export const defaultTypography = {
     fontWeight: 'font-medium',
     lineHeight: 'leading-none',
     color: 'text-gray-900',
-    tracking: 'tracking-tighter'
+    tracking: 'tracking-tighter',
+    font: 'primary'
   },
   h2: {
     fontSize: 'text-fluid-4xl',
     fontWeight: 'font-semibold',
     lineHeight: 'leading-tight',
     color: 'text-gray-900',
-    tracking: 'tracking-tight'
+    tracking: 'tracking-tight',
+    font: 'primary'
   },
   h3: {
     fontSize: 'text-lg',
     fontWeight: 'font-semibold',
     lineHeight: 'leading-normal',
     color: 'text-gray-900',
-    tracking: 'tracking-normal'
+    tracking: 'tracking-normal',
+    font: 'primary'
   },
   h4: {
     fontSize: 'text-sm',
     fontWeight: 'font-normal',
     lineHeight: 'leading-relaxed',
     color: 'text-gray-600',
-    tracking: 'tracking-normal'
+    tracking: 'tracking-normal',
+    font: 'primary'
   },
   h1Single: {
     fontSize: 'text-fluid-10xl',
     fontWeight: 'font-medium',
     lineHeight: 'leading-none',
     color: 'text-gray-900',
-    tracking: 'tracking-tighter'
+    tracking: 'tracking-tighter',
+    font: 'primary'
   },
   p: {
     fontSize: 'text-base',
     fontWeight: 'font-normal',
     lineHeight: 'leading-relaxed',
     color: 'text-gray-700',
-    tracking: 'tracking-normal'
+    tracking: 'tracking-normal',
+    font: 'primary'
   },
   nav: {
     fontSize: 'text-sm',
     fontWeight: 'font-medium',
     lineHeight: 'leading-normal',
     color: 'text-gray-500',
-    tracking: 'tracking-normal'
+    tracking: 'tracking-normal',
+    font: 'primary'
   },
   footer: {
     fontSize: 'text-sm',
     fontWeight: 'font-normal',
     lineHeight: 'leading-relaxed',
     color: 'text-gray-600',
-    tracking: 'tracking-normal'
+    tracking: 'tracking-normal',
+    font: 'primary'
   },
   kicker: {
     fontSize: 'text-sm',
     fontWeight: 'font-medium',
     lineHeight: 'leading-normal',
     color: 'text-gray-500',
-    tracking: 'tracking-wider'
+    tracking: 'tracking-wider',
+    font: 'primary'
   }
+};
+
+const normalizeFontFamily = (family?: string) => family?.trim();
+
+const buildFontResource = (settings?: TypographyFontSettings) => {
+  const safeSettings = settings || {};
+  const mode = safeSettings.mode || 'system';
+  const family = normalizeFontFamily(safeSettings.family);
+  const weights = (safeSettings.weights || '400;600;700').trim();
+  const cssUrl = safeSettings.cssUrl?.trim();
+
+  if (mode === 'google' && family) {
+    const familyParam = family.replace(/\s+/g, '+');
+    const href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(familyParam)}:wght@${weights}&display=swap`;
+    return { href, fontFamily: `'${family}', ${SYSTEM_FONT_FALLBACK}` };
+  }
+
+  if (mode === 'custom' && family && cssUrl) {
+    return { href: cssUrl, fontFamily: `${family}` };
+  }
+
+  // mode système ou données incomplètes -> fallback
+  return { href: null as string | null, fontFamily: SYSTEM_FONT_FALLBACK };
+};
+
+const ensureFontLink = (id: string, href: string | null) => {
+  if (typeof document === 'undefined') return;
+  const existing = document.getElementById(id) as HTMLLinkElement | null;
+
+  if (!href) {
+    if (existing) existing.remove();
+    return;
+  }
+
+  if (existing) {
+    const currentHref = existing.getAttribute('href');
+    if (currentHref === href) return;
+    existing.href = href;
+    return;
+  }
+
+  const linkEl = document.createElement('link');
+  linkEl.id = id;
+  linkEl.rel = 'stylesheet';
+  linkEl.href = href;
+  document.head.appendChild(linkEl);
+};
+
+/**
+ * Applique les polices (CSS variables + @import) dans le front
+ */
+export const applyTypographyFonts = (config?: TypographyConfig) => {
+  if (typeof document === 'undefined') return;
+  const fonts = config?.fonts || {};
+
+  const primary = buildFontResource(fonts.primary);
+  const secondary = buildFontResource(fonts.secondary);
+
+  // CSS variables (fallback système par défaut)
+  document.documentElement.style.setProperty('--font-primary', primary.fontFamily || SYSTEM_FONT_FALLBACK);
+  document.documentElement.style.setProperty('--font-secondary', secondary.fontFamily || SYSTEM_FONT_FALLBACK);
+
+  // Charger les @import nécessaires
+  ensureFontLink('typo-font-primary', primary.href);
+  ensureFontLink('typo-font-secondary', secondary.href);
 };

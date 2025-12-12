@@ -13,7 +13,10 @@ registerAutoBlock({
   defaultData: {
     title: '',
     description: '',
-    layout: 'default'
+    layout: 'default',
+    parallax: {
+      enabled: false,
+      speed: 0.25
+    }
   }
 });
-

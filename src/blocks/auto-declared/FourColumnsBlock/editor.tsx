@@ -22,7 +22,7 @@ interface FourColumnsData {
   column3?: any[];
   column4?: any[];
   layout?: 'four-columns' | 'stacked-mobile' | 'stacked-tablet';
-  gap?: 'small' | 'medium' | 'large';
+  gap?: 'small' | 'medium' | 'large' | 'xlarge';
   alignment?: 'top' | 'center' | 'bottom';
   theme?: 'light' | 'dark' | 'auto';
 }
@@ -659,6 +659,7 @@ export default function FourColumnsBlockEditor({
                   <SelectItem value="small">Petit</SelectItem>
                   <SelectItem value="medium">Moyen</SelectItem>
                   <SelectItem value="large">Grand</SelectItem>
+                  <SelectItem value="xlarge">Très grand</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -702,13 +703,14 @@ export default function FourColumnsBlockEditor({
                     </SelectTrigger>
                     <SelectContent side="bottom" align="end">
                       <SelectItem value="inherit">Hériter</SelectItem>
-                      <SelectItem value="none">Aucun</SelectItem>
-                      <SelectItem value="small">Petit</SelectItem>
-                      <SelectItem value="medium">Moyen</SelectItem>
-                      <SelectItem value="large">Grand</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                    <SelectItem value="none">Aucun</SelectItem>
+                    <SelectItem value="small">Petit</SelectItem>
+                    <SelectItem value="medium">Moyen</SelectItem>
+                    <SelectItem value="large">Grand</SelectItem>
+                    <SelectItem value="xlarge">Très grand</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               )}
               {openColumn === 'column1' && (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'column1')}>
@@ -763,13 +765,14 @@ export default function FourColumnsBlockEditor({
                     </SelectTrigger>
                     <SelectContent side="bottom" align="end">
                       <SelectItem value="inherit">Hériter</SelectItem>
-                      <SelectItem value="none">Aucun</SelectItem>
-                      <SelectItem value="small">Petit</SelectItem>
-                      <SelectItem value="medium">Moyen</SelectItem>
-                      <SelectItem value="large">Grand</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                    <SelectItem value="none">Aucun</SelectItem>
+                    <SelectItem value="small">Petit</SelectItem>
+                    <SelectItem value="medium">Moyen</SelectItem>
+                    <SelectItem value="large">Grand</SelectItem>
+                    <SelectItem value="xlarge">Très grand</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               )}
               {openColumn === 'column2' && (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'column2')}>
@@ -824,13 +827,14 @@ export default function FourColumnsBlockEditor({
                     </SelectTrigger>
                     <SelectContent side="bottom" align="end">
                       <SelectItem value="inherit">Hériter</SelectItem>
-                      <SelectItem value="none">Aucun</SelectItem>
-                      <SelectItem value="small">Petit</SelectItem>
-                      <SelectItem value="medium">Moyen</SelectItem>
-                      <SelectItem value="large">Grand</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                    <SelectItem value="none">Aucun</SelectItem>
+                    <SelectItem value="small">Petit</SelectItem>
+                    <SelectItem value="medium">Moyen</SelectItem>
+                    <SelectItem value="large">Grand</SelectItem>
+                    <SelectItem value="xlarge">Très grand</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               )}
               {openColumn === 'column3' && (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'column3')}>
@@ -885,13 +889,14 @@ export default function FourColumnsBlockEditor({
                     </SelectTrigger>
                     <SelectContent side="bottom" align="end">
                       <SelectItem value="inherit">Hériter</SelectItem>
-                      <SelectItem value="none">Aucun</SelectItem>
-                      <SelectItem value="small">Petit</SelectItem>
-                      <SelectItem value="medium">Moyen</SelectItem>
-                      <SelectItem value="large">Grand</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                    <SelectItem value="none">Aucun</SelectItem>
+                    <SelectItem value="small">Petit</SelectItem>
+                    <SelectItem value="medium">Moyen</SelectItem>
+                    <SelectItem value="large">Grand</SelectItem>
+                    <SelectItem value="xlarge">Très grand</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               )}
               {openColumn === 'column4' && (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, 'column4')}>
