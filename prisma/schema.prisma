@@ -1,0 +1,188 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ContentStatus {
+  draft
+  published
+  archived
+}
+
+enum EntityType {
+  page
+  article
+  project
+  site
+}
+
+enum ProjectVisibility {
+  public
+  admin
+}
+
+model Site {
+  id           String   @id @default(cuid())
+  key          String   @unique
+  name         String
+  activeTheme  String?
+  metadata     Json     @default("{}")
+  typography   Json     @default("{}")
+  spacing      Json     @default("{}")
+  palettes     Json     @default("[]")
+  transitions  Json     @default("{}")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  pages        Page[]
+  articles     Article[]
+  projects     Project[]
+  navItems     NavigationItem[]
+  footer       Footer?
+  assets       Asset[]
+  revisions    Revision[]
+}
+
+model Page {
+  id          String        @id @default(cuid())
+  siteId      String
+  site        Site          @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  slug        String
+  title       String?
+  description String?
+  hero        Json          @default("{}")
+  blocks      Json          @default("[]")
+  seo         Json          @default("{}")
+  status      ContentStatus @default(draft)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([siteId, slug])
+  @@index([siteId, status])
+}
+
+model Article {
+  id          String        @id @default(cuid())
+  siteId      String
+  site        Site          @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  slug        String
+  title       String
+  excerpt     String?
+  coverImage  String?
+  content     String?
+  blocks      Json          @default("[]")
+  seo         Json          @default("{}")
+
+  status      ContentStatus @default(draft)
+  publishedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@unique([siteId, slug])
+  @@index([siteId, status, publishedAt(sort: Desc), id(sort: Desc)])
+}
+
+model Project {
+  id          String            @id @default(cuid())
+  siteId      String
+  site        Site              @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  slug        String
+  title       String
+  excerpt     String?
+  description String?
+  coverImage  String?
+  category    String?
+  featured    Boolean           @default(false)
+  visibility  ProjectVisibility @default(public)
+
+  content     String?
+  blocks      Json              @default("[]")
+  seo         Json              @default("{}")
+
+  status      ContentStatus     @default(draft)
+  publishedAt DateTime?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@unique([siteId, slug])
+  @@index([siteId, status, publishedAt(sort: Desc), id(sort: Desc)])
+  @@index([siteId, featured, publishedAt(sort: Desc)])
+  @@index([siteId, visibility, status, publishedAt(sort: Desc)])
+}
+
+model NavigationItem {
+  id         String   @id @default(cuid())
+  siteId     String
+  site       Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  label      String
+  url        String
+  orderIndex Int
+  isExternal Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([siteId, orderIndex])
+}
+
+model Footer {
+  id        String   @id @default(cuid())
+  siteId    String   @unique
+  site      Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  content   String?
+  socials   Json     @default("[]")
+  columns   Json     @default("[]")
+  updatedAt DateTime @updatedAt
+}
+
+model Asset {
+  id        String   @id @default(cuid())
+  siteId    String
+  site      Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  url       String
+  mimeType  String?
+  size      Int?
+  width     Int?
+  height    Int?
+  alt       String?
+  meta      Json     @default("{}")
+
+  createdAt DateTime @default(now())
+  @@index([siteId, createdAt(sort: Desc)])
+}
+
+model Revision {
+  id          String     @id @default(cuid())
+  siteId      String
+  site        Site       @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  entityType  EntityType
+  entityId    String?
+  snapshot    Json
+  note        String?
+  createdAt   DateTime   @default(now())
+
+  @@index([siteId, entityType, entityId, createdAt(sort: Desc)])
+}
+
+model MigrationRun {
+  id         String   @id @default(cuid())
+  siteKey    String
+  status     String
+  startedAt  DateTime @default(now())
+  finishedAt DateTime?
+  error      String?
+  records    Json?
+
+  @@index([siteKey, startedAt(sort: Desc)])
+}
