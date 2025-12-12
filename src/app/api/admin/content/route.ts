@@ -4,17 +4,73 @@ import { invalidateMetadataCache } from '@/lib/load-template-metadata';
 import type { Content } from '@/types/content';
 import { join } from 'path';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
+import getContentRepository from '@/content/getRepository';
+import type { ContentMode } from '@/content/store/types';
 
 export const runtime = "nodejs";
 
-export async function GET() {
+async function buildContentFromStore(siteKey: string) {
+  const repo = getContentRepository();
+
+  // metadata + globals
+  const meta = await repo.getMetadata(siteKey);
+  const navItems = await repo.getNavigation(siteKey);
+  const footer = await repo.getFooter(siteKey);
+
+  const mapNav = navItems.map((n: any) => n.url?.replace(/^\//, '') || '').filter(Boolean);
+
+  // pages clés
+  const home = await repo.getPageBySlug(siteKey, 'home');
+  const contact = await repo.getPageBySlug(siteKey, 'contact');
+  const studio = await repo.getPageBySlug(siteKey, 'studio');
+  const workPage = await repo.getPageBySlug(siteKey, 'work');
+  const blogPage = await repo.getPageBySlug(siteKey, 'blog');
+
+  // articles / projects
+  const articlesRes = await repo.listArticles(siteKey, { limit: 500, status: 'published' });
+  const projectsRes = await repo.listProjects(siteKey, { limit: 500, status: 'published', visibility: 'public' });
+  const adminProjectsRes = await repo.listProjects(siteKey, { limit: 500, status: 'published', visibility: 'admin' });
+
+  const content: any = {
+    metadata: meta?.metadata || {},
+    nav: {
+      logo: meta?.metadata?.title || siteKey,
+      items: mapNav,
+      location: meta?.metadata?.location || '',
+      pageLabels: {},
+    },
+    footer: footer || undefined,
+    home: home || {},
+    contact: contact || {},
+    studio: studio || {},
+    work: {
+      ...(workPage || {}),
+      projects: projectsRes.items,
+      adminProjects: adminProjectsRes.items,
+    },
+    blog: {
+      ...(blogPage || {}),
+      articles: articlesRes.items,
+    },
+    _template: meta?.activeTheme || siteKey,
+    typography: meta?.typography || meta?.metadata?.typography || {},
+    // garder compat typographie/spacing/palettes
+    ...meta,
+  };
+
+  return content;
+}
+
+export async function GET(req: NextRequest) {
   try {
-    console.log('🔄 API: Tentative de lecture du contenu...');
-    
-    const content = await readContent();
-    
-    console.log('✅ API: Contenu lu avec succès, taille:', JSON.stringify(content).length);
-    
+    const siteKey = req.nextUrl.searchParams.get('site') || 'soliva';
+    const mode = (process.env.CONTENT_MODE as ContentMode) || 'json';
+
+    // Si mode JSON, on garde l'ancien comportement (lecture fichier), sinon on reconstruit via repo (DB/dual)
+    const content = mode === 'json'
+      ? await readContent()
+      : await buildContentFromStore(siteKey);
+
     return NextResponse.json(content, {
       status: 200,
       headers: {
