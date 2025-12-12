@@ -71,6 +71,10 @@
   - [ ] `src/app/api/admin/content/route.ts`
   - [ ] Autres APIs admin si elles existent
 
+### En cours :
+- GET /api/admin/content branché sur ContentRepository (json/db selon CONTENT_MODE)
+- PUT /api/admin/content : écrit en DB si mode db/dual_write (et garde l'écriture fichier si mode json ou dual_write)
+
 ### Prochaine étape :
 
 Créer la structure complète selon `docs/migration-bdd/soliva-migration-bdd.md` section 4.

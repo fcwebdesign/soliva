@@ -6,6 +6,7 @@ import { join } from 'path';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import getContentRepository from '@/content/getRepository';
 import type { ContentMode } from '@/content/store/types';
+import { PrismaClient, ContentStatus, ProjectVisibility } from '@prisma/client';
 
 export const runtime = "nodejs";
 
@@ -120,55 +121,217 @@ export async function PUT(request: NextRequest) {
     }
 
     const content: Content = body.content;
-    const currentTemplate = content._template;
+    const currentTemplate = content._template || 'soliva';
+    const mode = (process.env.CONTENT_MODE as ContentMode) || 'json';
     
     console.log('🔄 API: Tentative d\'écriture du contenu...');
     console.log('📊 Taille du contenu:', JSON.stringify(content).length, 'caractères');
-    console.log('🎨 Template actuel:', currentTemplate);
-    
-    // NOUVELLE LOGIQUE : Sauvegarder selon le template
-    if (currentTemplate && currentTemplate !== 'soliva') {
-      // Pour les templates autres que soliva, sauvegarder dans le template spécifique
-      console.log(`📁 Sauvegarde dans le template "${currentTemplate}"`);
-      
-      const templateContentPath = join(process.cwd(), 'data', 'templates', currentTemplate, 'content.json');
-      const templateDir = join(process.cwd(), 'data', 'templates', currentTemplate);
-      
-      // Créer le dossier s'il n'existe pas
-      if (!existsSync(templateDir)) {
-        mkdirSync(templateDir, { recursive: true });
+    console.log('🎨 Template/Site actuel:', currentTemplate, 'mode:', mode);
+
+    // Helper conversion status
+    const toStatus = (s?: string) => (s && ContentStatus[s as keyof typeof ContentStatus]) || ContentStatus.published;
+
+    if (mode === 'json') {
+      // Comportement historique fichier
+      if (currentTemplate && currentTemplate !== 'soliva') {
+        console.log(`📁 Sauvegarde template "${currentTemplate}" (fichier)`);
+        const templateContentPath = join(process.cwd(), 'data', 'templates', currentTemplate, 'content.json');
+        const templateDir = join(process.cwd(), 'data', 'templates', currentTemplate);
+        if (!existsSync(templateDir)) mkdirSync(templateDir, { recursive: true });
+        await writeContent(content, { actor: 'admin-api' });
+        const validatedContent = await readContent();
+        writeFileSync(templateContentPath, JSON.stringify(validatedContent, null, 2));
+        await writeContent(content, { actor: 'admin-api' });
+      } else {
+        console.log('📁 Sauvegarde fichier content.json');
+        await writeContent(content, { actor: 'admin-api' });
       }
-      
-      // ✅ PROTECTION : Valider le contenu avant de sauvegarder
-      // writeContent() valide automatiquement, donc on sauvegarde d'abord dans content.json
-      // puis on copie le fichier validé vers le template
-      await writeContent(content, { actor: 'admin-api' });
-      
-      // Lire le contenu validé depuis content.json et le copier vers le template
-      const validatedContent = await readContent();
-      writeFileSync(templateContentPath, JSON.stringify(validatedContent, null, 2));
-      
-      // Aussi sauvegarder dans content.json pour l'affichage actuel
-      await writeContent(content, { actor: 'admin-api' });
-      
-      // ✅ OPTIMISATION : Invalider le cache des métadonnées après sauvegarde
       invalidateMetadataCache();
-      
-      console.log(`✅ Contenu sauvegardé dans le template "${currentTemplate}"`);
-      
-    } else {
-      // Pour soliva ou pas de template, sauvegarder normalement
-      console.log('📁 Sauvegarde dans content.json (template soliva ou par défaut)');
-      await writeContent(content, { actor: 'admin-api' });
-      
-      // ✅ OPTIMISATION : Invalider le cache des métadonnées après sauvegarde
-      invalidateMetadataCache();
-      
-      console.log('✅ Contenu écrit avec succès');
+      return NextResponse.json(content, { status: 200 });
     }
-    
-    // OPTIMISATION PERFORMANCE : Retourner directement le contenu sauvegardé
-    // au lieu de relire le fichier (évite de lire 475Mo à nouveau)
+
+    // Modes db / dual_write : écrire en base (et optionnellement fichier si dual_write)
+    const prisma = new PrismaClient();
+    const siteKey = currentTemplate;
+    try {
+      const site = await prisma.site.upsert({
+        where: { key: siteKey },
+        update: {
+          activeTheme: currentTemplate,
+          metadata: content.metadata || {},
+          typography: (content as any).typography || {},
+          spacing: (content as any).spacing || {},
+          palettes: (content as any).palettes || [],
+          transitions: (content as any).transitions || {},
+        },
+        create: {
+          key: siteKey,
+          name: siteKey,
+          activeTheme: currentTemplate,
+          metadata: content.metadata || {},
+          typography: (content as any).typography || {},
+          spacing: (content as any).spacing || {},
+          palettes: (content as any).palettes || [],
+          transitions: (content as any).transitions || {},
+        },
+      });
+
+      // Navigation
+      if (content.nav?.items) {
+        await prisma.navigationItem.deleteMany({ where: { siteId: site.id } });
+        const items = content.nav.items.map((i: any, idx: number) => ({
+          siteId: site.id,
+          label: content.nav?.pageLabels?.[i] || i,
+          url: i === 'home' ? '/' : `/${i}`,
+          orderIndex: idx,
+          isExternal: false,
+        }));
+        if (items.length) await prisma.navigationItem.createMany({ data: items });
+      }
+
+      // Footer
+      if (content.footer) {
+        await prisma.footer.upsert({
+          where: { siteId: site.id },
+          update: {
+            content: (content.footer as any).content || '',
+            socials: (content.footer as any).socials || [],
+            columns: (content.footer as any).columns || [],
+          },
+          create: {
+            siteId: site.id,
+            content: (content.footer as any).content || '',
+            socials: (content.footer as any).socials || [],
+            columns: (content.footer as any).columns || [],
+          },
+        });
+      }
+
+      // Pages clés
+      const corePages = ['home', 'contact', 'studio', 'work', 'blog'] as const;
+      for (const slug of corePages) {
+        const data = (content as any)[slug];
+        if (!data) continue;
+        await prisma.page.upsert({
+          where: { siteId_slug: { siteId: site.id, slug } },
+          update: {
+            title: data.title || '',
+            description: data.description || '',
+            hero: data.hero || {},
+            blocks: data.blocks || [],
+            seo: data.seo || {},
+            status: ContentStatus.published,
+          },
+          create: {
+            siteId: site.id,
+            slug,
+            title: data.title || '',
+            description: data.description || '',
+            hero: data.hero || {},
+            blocks: data.blocks || [],
+            seo: data.seo || {},
+            status: ContentStatus.published,
+          },
+        });
+      }
+
+      // Pages custom éventuelles
+      const customPages = (content as any).pages?.pages || [];
+      for (const p of customPages) {
+        const slug = p.slug || p.id;
+        if (!slug) continue;
+        await prisma.page.upsert({
+          where: { siteId_slug: { siteId: site.id, slug } },
+          update: {
+            title: p.title || '',
+            description: p.description || '',
+            hero: p.hero || {},
+            blocks: p.blocks || [],
+            seo: p.seo || {},
+            status: toStatus(p.status),
+          },
+          create: {
+            siteId: site.id,
+            slug,
+            title: p.title || '',
+            description: p.description || '',
+            hero: p.hero || {},
+            blocks: p.blocks || [],
+            seo: p.seo || {},
+            status: toStatus(p.status),
+          },
+        });
+      }
+
+      // Articles
+      const articles = (content.blog as any)?.articles || [];
+      await prisma.article.deleteMany({ where: { siteId: site.id } });
+      if (articles.length) {
+        await prisma.article.createMany({
+          data: articles.map((a: any) => ({
+            siteId: site.id,
+            slug: a.slug || a.id,
+            title: a.title || a.id || 'Article',
+            excerpt: a.excerpt || '',
+            coverImage: a.coverImage || '',
+            content: a.content || '',
+            blocks: a.blocks || [],
+            seo: a.seo || {},
+            status: toStatus(a.status),
+            publishedAt: a.publishedAt ? new Date(a.publishedAt) : null,
+          })),
+        });
+      }
+
+      // Projects public
+      const projects = (content.work as any)?.projects || [];
+      // Projects admin
+      const adminProjects = (content.work as any)?.adminProjects || [];
+      await prisma.project.deleteMany({ where: { siteId: site.id } });
+      const mapProjects = (arr: any[], visibility: ProjectVisibility) =>
+        arr.map((proj: any) => ({
+          siteId: site.id,
+          slug: proj.slug || proj.title?.toLowerCase().replace(/\s+/g, '-') || `proj-${Date.now()}`,
+          title: proj.title || '',
+          excerpt: proj.excerpt || '',
+          description: proj.description || '',
+          coverImage: proj.coverImage || proj.image || '',
+          category: proj.category || '',
+          featured: !!proj.featured,
+          visibility,
+          content: proj.content || '',
+          blocks: proj.blocks || [],
+          seo: proj.seo || {},
+          status: toStatus(proj.status),
+          publishedAt: proj.publishedAt ? new Date(proj.publishedAt) : null,
+        }));
+
+      const allProjects = [...mapProjects(projects, ProjectVisibility.public), ...mapProjects(adminProjects, ProjectVisibility.admin)];
+      if (allProjects.length) {
+        await prisma.project.createMany({ data: allProjects });
+      }
+
+      // Invalid cache
+      invalidateMetadataCache();
+
+      // dual_write : écrire aussi le fichier pour compat
+      if (mode === 'dual_write') {
+        if (currentTemplate && currentTemplate !== 'soliva') {
+          const templateContentPath = join(process.cwd(), 'data', 'templates', currentTemplate, 'content.json');
+          const templateDir = join(process.cwd(), 'data', 'templates', currentTemplate);
+          if (!existsSync(templateDir)) mkdirSync(templateDir, { recursive: true });
+          await writeContent(content, { actor: 'admin-api' });
+          const validatedContent = await readContent();
+          writeFileSync(templateContentPath, JSON.stringify(validatedContent, null, 2));
+          await writeContent(content, { actor: 'admin-api' });
+        } else {
+          await writeContent(content, { actor: 'admin-api' });
+        }
+      }
+    } finally {
+      await prisma.$disconnect();
+    }
+
     return NextResponse.json(content, {
       status: 200,
       headers: {
