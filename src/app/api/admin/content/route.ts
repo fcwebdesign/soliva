@@ -205,6 +205,10 @@ export async function PUT(request: NextRequest) {
         ? (content.work as any).filters
         : [];
     }
+    // Garantir que palettes est un tableau (sinon validation/fallback)
+    if (!(Array.isArray((content as any).palettes))) {
+      (content as any).palettes = [];
+    }
     
     console.log('🔄 API: Tentative d\'écriture du contenu...');
     console.log('📊 Taille du contenu:', JSON.stringify(content).length, 'caractères');
