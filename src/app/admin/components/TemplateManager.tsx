@@ -84,6 +84,7 @@ const TemplateManager = ({ onTemplateChange }: TemplateManagerProps): React.JSX.
         const template = templates.find(t => t.id === templateId);
         if (template) {
           setCurrentTemplate(template);
+          try { localStorage.setItem('admin-current-template', template.id || template.key || ''); } catch {}
         }
         // Rafraîchir le contenu actif pour mettre à jour l'état du template courant
         try {
@@ -91,6 +92,7 @@ const TemplateManager = ({ onTemplateChange }: TemplateManagerProps): React.JSX.
           if (contentRes.ok) {
             const nextContent = await contentRes.json();
             onTemplateChange(nextContent);
+            try { localStorage.setItem('admin-current-template', nextContent._template || templateId); } catch {}
           }
         } catch {
           // ignore

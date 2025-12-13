@@ -8,6 +8,7 @@ export const useAdminPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { confirm } = useConfirmDialog();
+  const [siteKey, setSiteKey] = useState<string>('soliva');
   
   // State pour le modal de génération d'articles
   const [showArticleGenerator, setShowArticleGenerator] = useState(false);
@@ -281,6 +282,41 @@ export const useAdminPage = () => {
     
     try {
       setLoading(true);
+      // Résoudre la clé template/site active (paramètre ?template= sinon _template du contenu public)
+      let tpl = 'soliva';
+      if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem('admin-current-template');
+        if (stored) tpl = stored;
+      }
+      if (typeof window !== 'undefined') {
+        const urlTpl = new URLSearchParams(window.location.search).get('template');
+        if (urlTpl) {
+          tpl = urlTpl;
+          try { localStorage.setItem('admin-current-template', tpl); } catch {}
+        }
+      }
+      if (!tpl) {
+        try {
+          const resTpl = await fetch('/api/content', { cache: 'no-store' });
+          if (resTpl.ok) {
+            const dataTpl = await resTpl.json();
+            tpl = dataTpl?._template || 'soliva';
+            try { localStorage.setItem('admin-current-template', tpl); } catch {}
+          }
+        } catch {
+          tpl = 'soliva';
+        }
+      }
+      setSiteKey(tpl);
+      // S'assurer que l'URL porte le template courant pour conserver le contexte
+      if (typeof window !== 'undefined' && tpl) {
+        const url = new URL(window.location.href);
+        if (!url.searchParams.get('template')) {
+          url.searchParams.set('template', tpl);
+          window.history.replaceState(null, '', url.toString());
+        }
+      }
+      
       // Utiliser un timeout pour éviter un chargement infini si l'API ne répond pas
       controller = new AbortController();
       timeout = setTimeout(() => {
@@ -289,9 +325,9 @@ export const useAdminPage = () => {
         }
       }, 10000); // 10s
       
-      const response = await fetch('/api/admin/content', { 
-        cache: 'no-store', 
-        signal: controller.signal 
+      const response = await fetch(`/api/admin/content?site=${encodeURIComponent(tpl)}`, {
+        cache: 'no-store',
+        signal: controller.signal
       });
       
       // Nettoyer le timeout si la requête réussit
@@ -416,7 +452,8 @@ export const useAdminPage = () => {
         // Créer un AbortController pour pouvoir annuler si nécessaire
         controller = new AbortController();
         
-        response = await fetch('/api/admin/content', {
+        const siteParam = siteKey ? `?site=${encodeURIComponent(siteKey)}` : '';
+        response = await fetch(`/api/admin/content${siteParam}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ content: cleanedContent, status }),

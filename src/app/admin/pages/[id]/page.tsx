@@ -28,6 +28,7 @@ export default function PageEdit() {
   const router = useRouter();
   const pageId = params.id as string;
   
+  const [siteKey, setSiteKey] = useState<string>('soliva');
   const [content, setContent] = useState<Content | null>(null);
   const [page, setPage] = useState<Page | null>(null);
   const [loading, setLoading] = useState(true);
@@ -50,7 +51,42 @@ export default function PageEdit() {
   const fetchContent = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/admin/content');
+      // Résoudre le template/site courant
+      let tpl = 'soliva';
+      if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem('admin-current-template');
+        if (stored) tpl = stored;
+      }
+      if (typeof window !== 'undefined') {
+        const urlTpl = new URLSearchParams(window.location.search).get('template');
+        if (urlTpl) {
+          tpl = urlTpl;
+          try { localStorage.setItem('admin-current-template', tpl); } catch {}
+        }
+      }
+      if (!tpl) {
+        try {
+          const resTpl = await fetch('/api/content', { cache: 'no-store' });
+          if (resTpl.ok) {
+            const dataTpl = await resTpl.json();
+            tpl = dataTpl?._template || 'soliva';
+            try { localStorage.setItem('admin-current-template', tpl); } catch {}
+          }
+        } catch {
+          tpl = 'soliva';
+        }
+      }
+      setSiteKey(tpl);
+      // S'assurer que l'URL porte le template courant
+      if (typeof window !== 'undefined' && tpl) {
+        const url = new URL(window.location.href);
+        if (!url.searchParams.get('template')) {
+          url.searchParams.set('template', tpl);
+          window.history.replaceState(null, '', url.toString());
+        }
+      }
+
+      const response = await fetch(`/api/admin/content?site=${encodeURIComponent(tpl)}`);
       
       if (!response.ok) {
         throw new Error('Erreur lors du chargement');
@@ -214,7 +250,7 @@ export default function PageEdit() {
       console.log('💾 Contenu après sauvegarde:', JSON.stringify((newContent as any).pages.pages, null, 2));
       
       // Sauvegarder
-      const response = await fetch('/api/admin/content', {
+      const response = await fetch(`/api/admin/content?site=${encodeURIComponent(siteKey)}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: newContent }),
@@ -232,7 +268,8 @@ export default function PageEdit() {
       
       // Rediriger vers la liste des pages après sauvegarde
       setTimeout(() => {
-        router.push('/admin/pages');
+        const tplParam = siteKey ? `?template=${encodeURIComponent(siteKey)}` : '';
+        router.push(`/admin/pages${tplParam}`);
       }, 1000);
     } catch (err) {
       console.error('Erreur:', err);
@@ -363,7 +400,7 @@ export default function PageEdit() {
         <div className="text-center">
           <h1 className="text-xl font-semibold text-gray-900 mb-2">Page non trouvée</h1>
           <button 
-            onClick={() => router.push('/admin/pages')}
+      onClick={() => router.push('/admin/pages')}
             className="text-blue-600 hover:text-blue-700"
           >
             Retour à la liste
@@ -387,7 +424,10 @@ export default function PageEdit() {
           title={pageId === 'new' ? 'Nouvelle page' : page.title}
           backButton={{
             text: '← Retour aux pages',
-            onClick: () => router.push('/admin/pages')
+            onClick: () => {
+              const tplParam = siteKey ? `?template=${encodeURIComponent(siteKey)}` : '';
+              router.push(`/admin/pages${tplParam}`);
+            }
           }}
           actions={{
             hasUnsavedChanges,

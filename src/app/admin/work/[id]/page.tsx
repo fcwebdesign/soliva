@@ -53,6 +53,7 @@ export default function WorkProjectEdit() {
   const router = useRouter();
   const projectId = params.id as string;
   
+  const [siteKey, setSiteKey] = useState<string>('soliva');
   const [content, setContent] = useState<Content | null>(null);
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
@@ -133,12 +134,36 @@ export default function WorkProjectEdit() {
     };
   }, []);
 
-
+  const resolveSiteKey = async (): Promise<string> => {
+    // 1) Paramètre d'URL ?template=...
+    if (typeof window !== 'undefined') {
+      const urlTemplate = new URLSearchParams(window.location.search).get('template');
+      if (urlTemplate) {
+        setSiteKey(urlTemplate);
+        return urlTemplate;
+      }
+    }
+    // 2) Contenu public courant (porte la clé _template)
+    try {
+      const res = await fetch('/api/content', { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        const tpl = data?._template || 'soliva';
+        setSiteKey(tpl);
+        return tpl;
+      }
+    } catch {
+      // ignore et fallback soliva
+    }
+    setSiteKey('soliva');
+    return 'soliva';
+  };
 
   const fetchContent = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/admin/content');
+      const tpl = await resolveSiteKey();
+      const response = await fetch(`/api/admin/content?site=${encodeURIComponent(tpl)}`);
       
       if (!response.ok) {
         throw new Error('Erreur lors du chargement');
@@ -486,7 +511,7 @@ export default function WorkProjectEdit() {
       }
       
       // Sauvegarder
-      const response = await fetch('/api/admin/content', {
+      const response = await fetch(`/api/admin/content?site=${encodeURIComponent(siteKey)}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -503,6 +528,8 @@ export default function WorkProjectEdit() {
         });
         throw new Error(`Erreur ${response.status}: ${errorData.error || response.statusText}`);
       }
+
+      await response.json();
 
       // ✅ CRITIQUE : Mettre à jour l'état local immédiatement après la sauvegarde
       // pour que l'interface se mette à jour sans avoir besoin de rafraîchir

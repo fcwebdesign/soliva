@@ -332,8 +332,43 @@ async function _readContentInternal(): Promise<Content> {
     }
     
     logger.debug('✅ nav.items valide:', JSON.stringify(cleanedContentWithTypography.nav.items, null, 2));
-    
-    const validated = validateContentSchema(cleanedContentWithTypography);
+
+    // ✅ PROTECTION : metadata.title / description doivent être des chaînes
+    let contentForValidation = cleanedContentWithTypography as Content;
+    const needsMetadataFix =
+      !contentForValidation.metadata ||
+      typeof (contentForValidation.metadata as any).title !== 'string' ||
+      typeof (contentForValidation.metadata as any).description !== 'string';
+
+    if (needsMetadataFix) {
+      logger.warn('⚠️ metadata.title/description manquants ou invalides, application des valeurs par défaut');
+      const seedMeta = (SEED_DATA as any).metadata || { title: '', description: '' };
+      contentForValidation = {
+        ...contentForValidation,
+        metadata: {
+          ...seedMeta,
+          ...(contentForValidation.metadata || {}),
+          title:
+            typeof (contentForValidation.metadata as any)?.title === 'string'
+              ? (contentForValidation.metadata as any).title
+              : seedMeta.title ?? '',
+          description:
+            typeof (contentForValidation.metadata as any)?.description === 'string'
+              ? (contentForValidation.metadata as any).description
+              : seedMeta.description ?? '',
+        },
+      } as Content;
+
+      // Persister la correction pour éviter les erreurs au prochain read
+      try {
+        await fs.writeFile(DATA_FILE_PATH, JSON.stringify(contentForValidation, null, 2), 'utf-8');
+        logger.info('✅ metadata corrigé et sauvegardé dans content.json');
+      } catch (e) {
+        logger.warn('⚠️ Impossible de sauvegarder la correction metadata, on continue quand même', e);
+      }
+    }
+
+    const validated = validateContentSchema(contentForValidation);
     
     logger.debug('✅ Validation réussie, retour du contenu');
     return validated as Content;

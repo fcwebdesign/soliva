@@ -66,7 +66,9 @@ export default function TemplateManagerPage() {
       const response = await fetch('/api/content', { cache: 'no-store' });
       if (response.ok) {
         const content = await response.json();
-        setCurrentTemplate(content._template || 'soliva');
+        const tpl = content._template || 'soliva';
+        setCurrentTemplate(tpl);
+        try { localStorage.setItem('admin-current-template', tpl); } catch {}
       }
     } catch (error) {
       console.error('Erreur chargement template actuel:', error);
@@ -135,6 +137,7 @@ export default function TemplateManagerPage() {
       if (response.ok) {
         const data = await response.json();
         toast.success(`Template "${templateKey}" appliqué avec succès !`);
+        try { localStorage.setItem('admin-current-template', templateKey); } catch {}
         // Recharger les templates et le template actuel après l'application
         await loadTemplates();
         await loadCurrentTemplate();

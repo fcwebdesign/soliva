@@ -26,6 +26,7 @@ export default function PagesAdmin() {
   const router = useRouter();
   const { confirm, ConfirmDialog } = useConfirmDialog();
   const [loading, setLoading] = useState(true);
+  const [siteKey, setSiteKey] = useState<string>('soliva');
   const [content, setContent] = useState<any>(null);
   const [activeTab, setActiveTab] = useState('content');
 
@@ -123,7 +124,42 @@ export default function PagesAdmin() {
   const fetchContent = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/admin/content');
+      // Résoudre le template/site courant (param ?template= ou _template de /api/content)
+      let tpl = 'soliva';
+      if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem('admin-current-template');
+        if (stored) tpl = stored;
+      }
+      if (typeof window !== 'undefined') {
+        const urlTpl = new URLSearchParams(window.location.search).get('template');
+        if (urlTpl) {
+          tpl = urlTpl;
+          try { localStorage.setItem('admin-current-template', tpl); } catch {}
+        }
+      }
+      if (!tpl) {
+        try {
+          const resTpl = await fetch('/api/content', { cache: 'no-store' });
+          if (resTpl.ok) {
+            const dataTpl = await resTpl.json();
+            tpl = dataTpl?._template || 'soliva';
+            try { localStorage.setItem('admin-current-template', tpl); } catch {}
+          }
+        } catch {
+          tpl = 'soliva';
+        }
+      }
+      setSiteKey(tpl);
+      // S'assurer que l'URL porte le template courant
+      if (typeof window !== 'undefined' && tpl) {
+        const url = new URL(window.location.href);
+        if (!url.searchParams.get('template')) {
+          url.searchParams.set('template', tpl);
+          window.history.replaceState(null, '', url.toString());
+        }
+      }
+
+      const response = await fetch(`/api/admin/content?site=${encodeURIComponent(tpl)}`);
       const data = await response.json();
       setContent(data);
       
@@ -139,10 +175,12 @@ export default function PagesAdmin() {
 
   const handleEditPage = (pageId: string) => {
     if (['home','contact','studio','work','blog'].includes(pageId)) {
-      router.push(`/admin?page=${pageId}`);
+      const tplParam = siteKey ? `&template=${encodeURIComponent(siteKey)}` : '';
+      router.push(`/admin?page=${pageId}${tplParam ? tplParam : ''}`);
     } else {
       // Pour les pages personnalisées, rediriger vers l'éditeur avec le slug
-      router.push(`/admin/pages/${pageId}`);
+      const tplParam = siteKey ? `?template=${encodeURIComponent(siteKey)}` : '';
+      router.push(`/admin/pages/${pageId}${tplParam}`);
     }
   };
 
@@ -165,7 +203,7 @@ export default function PagesAdmin() {
         newContent.pages.pinnedSystem = ps;
       }
 
-      const response = await fetch('/api/admin/content', {
+      const response = await fetch(`/api/admin/content?site=${encodeURIComponent(siteKey)}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: newContent })

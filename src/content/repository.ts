@@ -21,8 +21,13 @@ export class ContentRepository implements ContentStore {
       }
     }
 
-    // dual_write : lecture JSON par défaut
-    return fn(this.json);
+    // dual_write : lecture DB (pour refléter le dernier état), fallback JSON si la DB échoue
+    try {
+      return await fn(this.db);
+    } catch (e) {
+      this.logger.warn('DB read failed (dual_write), fallback JSON', e);
+      return fn(this.json);
+    }
   }
 
   private async write<T>(fn: (s: ContentStore) => Promise<T>): Promise<T> {
