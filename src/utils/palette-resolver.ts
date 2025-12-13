@@ -232,8 +232,8 @@ const STATIC_PALETTES: Record<string, BasePalette> = {
     secondary: '#0891B2',
     accent: '#22D3EE',
     background: '#ECFEFF',
-    text: '#083344',
-    textSecondary: '#0E7490',
+    text: '#FFFFFF',
+    textSecondary: '#E0F7FF',
     border: '#67E8F9'
   },
   
