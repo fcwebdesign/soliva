@@ -66,6 +66,7 @@ export const useAdminPage = () => {
   const [isJustSaved, setIsJustSaved] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(false);
   const [headerManagerRef, setHeaderManagerRef] = useState(null);
+  const lastSaveRef = useRef<number>(0);
 
   // Charger le contenu initial
   useEffect(() => {
@@ -77,6 +78,10 @@ export const useAdminPage = () => {
     let lastUpdateTime = 0;
     
     const handleContentUpdate = (event: CustomEvent) => {
+      // Ignorer si on vient juste de sauvegarder (évite le double reload)
+      if (lastSaveRef.current && Date.now() - lastSaveRef.current < 1500) {
+        return;
+      }
       const now = Date.now();
       
       // Éviter les rechargements trop fréquents (debounce de 500ms)
@@ -114,6 +119,10 @@ export const useAdminPage = () => {
 
     // Écouter aussi les changements de localStorage (fallback)
     const handleStorageChange = () => {
+      // Ignorer si on vient juste de sauvegarder (évite le double reload)
+      if (lastSaveRef.current && Date.now() - lastSaveRef.current < 1500) {
+        return;
+      }
       const lastUpdate = localStorage.getItem('content-updated');
       if (lastUpdate) {
         const updateTime = parseInt(lastUpdate, 10);
@@ -488,6 +497,7 @@ export const useAdminPage = () => {
       setOriginalContent(cleanedContent);
       setContent(cleanedContent);
       setPageStatus(status);
+      lastSaveRef.current = Date.now();
       
       // Notifier le front pour mise à jour live (Nav/Footer/Pages/Typography)
       try {
