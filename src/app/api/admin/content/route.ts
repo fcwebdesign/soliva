@@ -17,7 +17,7 @@ async function buildContentFromStore(siteKey: string) {
   // metadata + globals
   const meta = await repo.getMetadata(siteKey);
   const navItems = await repo.getNavigation(siteKey);
-  const footer = await repo.getFooter(siteKey);
+  const footerRecord = await repo.getFooter(siteKey);
 
   const mapNav = navItems.map((n: any) => n.url?.replace(/^\//, '') || '').filter(Boolean);
 
@@ -95,7 +95,19 @@ async function buildContentFromStore(siteKey: string) {
       items: nav.items.length ? nav.items : mapNav,
       pageLabels: nav.pageLabels || {},
     },
-    footer: footer || undefined,
+    footer: (() => {
+      if (!footerRecord) return undefined;
+      const cols = (footerRecord as any).columns || {};
+      const socials = (footerRecord as any).socials || cols.socialLinks || [];
+      const description = cols.description || (footerRecord as any).content || '';
+      const footerVariant = cols.footerVariant || cols.variant || (footerRecord as any).footerVariant || 'classic';
+      return {
+        ...cols,
+        description,
+        footerVariant,
+        socialLinks: socials,
+      };
+    })(),
     home: home || {},
     contact: contact || {},
     studio: studio || {},
@@ -299,18 +311,23 @@ export async function PUT(request: NextRequest) {
 
       // Footer
       if (content.footer) {
+        const footerData = content.footer as any;
         await prisma.footer.upsert({
           where: { siteId: site.id },
           update: {
-            content: (content.footer as any).content || '',
-            socials: (content.footer as any).socials || [],
-            columns: (content.footer as any).columns || [],
+            content: footerData.description || footerData.content || '',
+            socials: footerData.socialLinks || footerData.socials || [],
+            columns: {
+              ...footerData,
+            },
           },
           create: {
             siteId: site.id,
-            content: (content.footer as any).content || '',
-            socials: (content.footer as any).socials || [],
-            columns: (content.footer as any).columns || [],
+            content: footerData.description || footerData.content || '',
+            socials: footerData.socialLinks || footerData.socials || [],
+            columns: {
+              ...footerData,
+            },
           },
         });
       }

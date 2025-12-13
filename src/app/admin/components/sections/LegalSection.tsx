@@ -155,7 +155,7 @@ const LegalSection: React.FC<LegalSectionProps> = ({
                       <div 
                         key={typeof pageKey === 'string' ? pageKey : pageKey.id} 
                         draggable
-                        onDragStart={(e) => onDragStart(e, index)}
+                        onDragStart={(e) => onDragStart(e, `bottom-${index}` as any)}
                         onDragOver={(e) => onDragOver(e, index)}
                         onDrop={(e) => onDrop(e, index)}
                         onDragEnd={onDragEnd}
