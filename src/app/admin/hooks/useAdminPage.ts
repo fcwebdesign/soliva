@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { useConfirmDialog } from '@/hooks/useConfirmDialog';
@@ -79,7 +79,7 @@ export const useAdminPage = () => {
     
     const handleContentUpdate = (event: CustomEvent) => {
       // Ignorer si on vient juste de sauvegarder (évite le double reload)
-      if (lastSaveRef.current && Date.now() - lastSaveRef.current < 1500) {
+      if (lastSaveRef.current && Date.now() - lastSaveRef.current < 5000) {
         return;
       }
       const now = Date.now();
@@ -120,7 +120,7 @@ export const useAdminPage = () => {
     // Écouter aussi les changements de localStorage (fallback)
     const handleStorageChange = () => {
       // Ignorer si on vient juste de sauvegarder (évite le double reload)
-      if (lastSaveRef.current && Date.now() - lastSaveRef.current < 1500) {
+      if (lastSaveRef.current && Date.now() - lastSaveRef.current < 5000) {
         return;
       }
       const lastUpdate = localStorage.getItem('content-updated');
